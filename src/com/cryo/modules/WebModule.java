@@ -1,0 +1,82 @@
+package com.cryo.modules;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import com.cryo.Website;
+import com.cryo.Website.RequestType;
+import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.forums.ForumUser;
+import com.cryo.modules.forums.ForumUtils;
+
+import de.neuland.jade4j.Jade4J;
+import de.neuland.jade4j.exceptions.JadeCompilerException;
+import lombok.Synchronized;
+import spark.Request;
+import spark.Response;
+
+/**
+ * @author Cody Thompson <eldo.imo.rs@hotmail.com>
+ *
+ * Created on: Mar 7, 2017 at 7:16:12 PM
+ */
+public abstract class WebModule {
+	
+	protected Website website;
+	
+	public WebModule(Website website) {
+		this.website = website;
+	}
+	
+	public abstract String decodeRequest(Request request, Response response, RequestType type);
+	
+	@Synchronized
+	public String render(String file, HashMap<String, Object> model, Request request, Response response) {
+		model.put("isMobile", false);
+		boolean loggedIn = request.session().attributes().contains("cryo-user");
+		model.put("loggedIn", loggedIn);
+		if(loggedIn) {
+			Account account = AccountUtils.getAccount(request.session().attribute("cryo-user"));
+			if(account != null)
+				model.put("user", account);
+		}
+		try {
+			String html = Jade4J.render(file, model);
+			while(html.contains("$for-name=")) {
+				String format = html.substring(html.indexOf("$for-name=")+10);
+				format = format.substring(0, format.indexOf("$end"));
+				Account account = AccountUtils.getAccount(format);
+				String name = account != null ? AccountUtils.crownHTML(account) : format;
+				html = html.replace("$for-name="+format+"$end", name);
+			}
+			while(html.contains("$forum-name=")) {
+				String format = html.substring(html.indexOf("$forum-name=")+12);
+				format = format.substring(0, format.indexOf("$end"));
+				ForumUser user = ForumUtils.getUser(format);
+				String name = format;
+				if(user != null)
+					name = ForumUtils.crownUser(user);
+				html = html.replace("$forum-name="+format+"$end", name);
+			}
+			return html;
+		} catch (JadeCompilerException | IOException e) {
+			e.printStackTrace();
+		}
+		return "ERROR";
+	}
+	
+	public String redirect(String redirect, Request request, Response response) {
+		return redirect(redirect, 5, request, response);
+	}
+	
+	public String redirect(String redirect, int time, Request request, Response response) {
+		if(redirect == null || redirect == "")
+			redirect = "/";
+		HashMap<String, Object> model = new HashMap<>();
+		model.put("redirect", redirect);
+		model.put("time", time);
+		return render("./source/modules/redirect.jade", model, request, response);
+	}
+	
+}

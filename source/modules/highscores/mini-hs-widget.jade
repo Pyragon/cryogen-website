@@ -1,0 +1,52 @@
+script.
+  $(document).ready(function() {
+    
+    $('.mini-search').click(function() {
+      $('.mini-sh').slideToggle(500);
+    });
+    
+    $('.search-username').keypress(function(e) {
+      if(e.which == 13)
+        showPersonalHS();
+    });
+    
+    function showPersonalHS() {
+      $.post('/highscores', { display: $('.search-username').val()}, function(data) {
+        $('.mini-hs .content').html(data);
+      });
+    }
+  });
+div.mini-sh
+  div.content(style='margin: 0;')
+    div.input-group.input-group-sm
+      input.form-control.search-username(type='text', placeholder='Player Username')
+      span.input-group-btn
+        button.btn.btn-default.minihs-search(type='button')
+          span.glyphicon.glyphicon-search
+  span.chevron.glyphicon.glyphicon-chevron-down
+div.widget.minihs
+  div.header
+    h4.color-white Highscores Global
+      a(href='/highscores')
+        img.img-responsive.pull-right(src='images/hs-overall.png')
+      a.mini-search(href='#', title='Search for a Player')
+        span.glyphicon.glyphicon-search.pull-right(style='margin-right: 10px;')
+  div.content
+    table.table.mini-table
+      thead
+        tr
+          th Rank
+          th Player Username
+          th Total Level
+          th Total XP
+      tbody
+        -for hsuser in hsusers.getList()
+          -var rank = hsuser.getRank()
+          -var name = hsuser.getName()
+          -var total_level = hsuser.getTotalLevel()
+          -var total_xp = hsuser.getTotalXP()
+          tr
+            td.b-right.rank=rank
+            td.b-right= name
+            td.b-right= total_level
+            td.b-right= total_xp

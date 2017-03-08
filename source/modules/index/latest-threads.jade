@@ -1,0 +1,25 @@
+-var i = 0
+-for post in postList.getList()
+  -var message = post.getMessage()
+  -var subject = post.getSubject()
+  -var dateline = post.getDateline()
+  -var username = post.getUsername()
+  -i++
+  div(class='news-post '+(i == 1 ? '' : 'minimized'))
+    div.header
+      p.title= subject
+        a.minimize
+          span.glyphicon.glyphicon-minus
+      p.author= 'Posted '+formatter.format(dateline*1000, 'MMMMM dd, YYYY')+' by $forum-name='+username+'$end'
+    div.content(style='padding: 0px;')
+      div.wrapper(style='padding: 20px; font-size: 13px;')= message
+script.
+  $('.news-post pre').niceScroll({cursorborder: "", cursorcolor: "#222", cursorwidth: "5px"})
+  $(".minimize").click(function() {
+    $(this).closest(".news-post").find(".content").slideToggle(400);
+    $(this).html($(this).html() == '<span class="glyphicon glyphicon-plus"></span>' ? '<span class="glyphicon glyphicon-minus"></span>' : '<span class="glyphicon glyphicon-plus"></span>');
+  });
+  $(".minimized").each(function() {
+    $(this).find(".content").hide();
+    $(this).find(".minimize").html('<span class="glyphicon glyphicon-plus"></span>');
+  });

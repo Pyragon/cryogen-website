@@ -1,0 +1,123 @@
+doctype html
+html
+  head
+    title Cryogen Website
+    meta(name='description', content='Cryogen')
+    meta(name='keywords', content='')
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(http-equiv='X-UA-Compatible', content='IE=9')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    script(src='//code.jquery.com/jquery-1.10.2.js')
+    script(src='//code.jquery.com/ui/1.11.1/jquery-ui.js')
+    script(src='/bootstrap/js/bootstrap.min.js')
+    script(src='/bootstrap/js/bootbox.min.js')
+    script(src='/js/jquery.nicescroll.js')
+    
+    link(rel='icon', href='favicon.ico')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css', media='screen')
+    link(rel='stylesheet', href='/stylesheets/style.css?rand=4999')
+    link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
+    if isMobile
+      link(rel='stylesheet', href='/stylesheets/mobile.css?rand=5999')
+    block head
+  div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+    div(class='modal-dialog')
+      div(class='modal-content')
+        div(class='modal-header')
+          button(type='button', class='close', data-dismiss='modal')
+            span(aria-hidden='true') &times;
+            span(class='sr-only') Close
+          h4(class='modal-title color-white') Sign In
+            img(src='/images/icon.png', class='modal-icon')
+        div(class='modal-body')
+          div(class='alert alert-custom modal-alert', role='alert')
+          form(class='sign-in', action='/login', method='POST', role='form')
+            div(class='form-group')
+              label(for='username') Account Username:
+              input(type='text', class='form-control login-username', name='username', id='username', placeholder='Enter Username')
+            div(class='form-group')
+              label(for='password') Password
+              input(type='password', class='form-control login-password', name='password', id='password', placeholder='Enter Password')
+        div(class='modal-footer')
+          button(type='button', class='btn btn-default', data-dismiss='modal') Close
+          button(type='button', class='btn btn-danger register-btn', data-dismiss='modal', data-toggle='modal', data-target='#register') Register
+          button(type='button', class='btn btn-primary login-btn') Sign In
+  nav(class='navbar navbar-default cryogen-nav', role='navigation')
+    div(class='navbar-header')
+      button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='#navbar-collapse-1')
+        span(class='sr-only') Toggle navigation
+        -for i in [1,2,3]
+          span(class='icon-bar')
+    a(class='navbar-brand' href='/')
+      img(class='img-responsive logo', src='/images/logo.png')
+    div(class='collapse navbar-collapse', id='navbar-collapse-1')
+      ul(class='nav navbar-nav nav-items')
+        li
+          a(href='/') Homepage
+        li
+          a(href='/live/Cryogen.jar') Play
+        li(class='spacer')
+          a(href='/forums') Community
+        li
+          a(href='/highscores') Highscores
+        li
+          a(href='/account/?section=vote') Vote
+        li(class='dropdown')
+          a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
+            b(class='caret')
+          ul(class='dropdown-menu')
+            if loggedIn
+              li
+                a(href='/account/') Account Settings
+              li
+                a(href='account/?section=vote') Vote
+              li
+                a(href='#')
+                  s Donate
+            else
+              li
+                a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
+              li
+                a(href='#') Forgot my Password
+            li(class='divider')
+            li
+              a(href='#') Support
+            if loggedIn
+              li
+                a(href='/logout?redirect=/') Sign Out
+  block content
+  div(class='footer')
+    div(class='container')
+      div(class='row')
+        div(class='col-md-2')
+          h3 Cryogen
+          ul
+            li
+              a(href='#') Webclient
+            li
+              a(href='#') Download Cryogen
+        div(class='col-md-2')
+          h3 Community
+          ul
+            li
+              a(href='/forums') Forums
+            li
+              a(href='#') Highscores
+            li
+              a(href='#') Vote
+        div(class='col-md-2')
+          h3 Account
+          ul
+            if loggedIn
+              li
+                a(href='#') Account Settings
+              li
+                a(href='#') Sign Out
+            else
+              li
+                a(href='#') Sign In
+              li
+                a(href='#') Forgot my Password
+        div(class='col-md-6')
+          p
