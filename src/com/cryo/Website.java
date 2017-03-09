@@ -43,13 +43,13 @@ public class Website {
 	
 	private @Getter DBConnectionManager connectionManager;
 	
-	private static File FAVICON = new File("D:/workspace/cryogen_website/source/images/favicon.ico");
+	private static File FAVICON = new File("D:/workspace/cryogen-website/source/images/favicon.ico");
 	
 	public Website() {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
 		port(8080);
-		staticFiles.externalLocation("D:/workspace/cryogen_website/source/");
+		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});
