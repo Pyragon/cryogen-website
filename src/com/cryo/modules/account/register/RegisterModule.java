@@ -29,10 +29,8 @@ public class RegisterModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(request.session().attributes().contains("cryo-user")) {
-			redirect("/", 0, request, response);
-			return null;
-		}
+		if(request.session().attributes().contains("cryo-user") && !request.queryParams().contains("success"))
+			return redirect("/", 0, request, response);
 		if(type == RequestType.POST) {
 			String username = request.queryParams("username");
 			String password = request.queryParams("password");
@@ -60,6 +58,7 @@ public class RegisterModule extends WebModule {
 			if(!username.matches("[a-zA-Z0-9\\-_]*"))
 				return json(false, "Username contains invalid characters.");
 			AccountConnection.connection().handleRequest("register", username, password);
+			request.session().attribute("cryo-user", username);
 			return json(true, redirect("/register?success", 0, request, response));
 		}
 		HashMap<String, Object> model = new HashMap<>();
