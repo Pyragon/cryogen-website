@@ -113,10 +113,12 @@ html
               li
                 a(href='#') Account Settings
               li
-                a(href='#') Sign Out
+                a(href='/logout') Sign Out
             else
               li
-                a(href='#') Sign In
+                a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
+              li
+                a(href="/register") Register
               li
                 a(href='#') Forgot my Password
         div(class='col-md-6')
