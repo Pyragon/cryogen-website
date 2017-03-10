@@ -31,6 +31,8 @@ public class HighscoresModule extends WebModule {
 			if(!request.queryParams().contains("display"))
 				return render("./source/modules/highscores/global-mini.jade", model, request, response);
 			String name = request.queryParams("display");
+			HSData data = new HSUtils().getHSData(name);
+			model.put("hsdata", data);
 			model.put("hsname", name);
 			return render("./source/modules/highscores/personal-mini.jade", model, request, response);
 		}

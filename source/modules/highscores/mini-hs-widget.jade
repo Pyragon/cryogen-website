@@ -11,8 +11,9 @@ script.
     });
     
     function showPersonalHS() {
-      $.post('/highscores', { display: $('.search-username').val()}, function(data) {
-        $('.mini-hs .content').html(data);
+      var name = $('.search-username').val();
+      $.post('/highscores', { display:name}, function(data) {
+        $('.mini-hs').html(data);
       });
     }
   });
@@ -25,14 +26,7 @@ div.mini-sh
           span.glyphicon.glyphicon-search
   span.chevron.glyphicon.glyphicon-chevron-down
 div.widget.mini-hs
-  div.header
-    h4.color-white Mini Highscores
-      a(href='/highscores')
-        img.img-responsive.pull-right(src='images/hs-overall.png')
-      a.mini-search(href='#', title='Search for a Player')
-        span.glyphicon.glyphicon-search.pull-right(style='margin-right: 10px;')
-  div.content
-    if hsname != null
-      include personal-mini
-    else
-      include global-mini
+  if hsname != null
+    include personal-mini
+  else
+    include global-mini
