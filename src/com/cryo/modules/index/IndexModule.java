@@ -41,7 +41,7 @@ public class IndexModule extends WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("postList", list);
 		model.put("formatter", new DateFormatter());
-		model.put("hsusers", HSUtils.getMiniList(website));
+		model.put("hsusers", HSUtils.getMiniList());
 		return render("./source/modules/index/index.jade", model, request, response);
 	}
 	

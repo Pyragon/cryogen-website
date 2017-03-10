@@ -21,7 +21,7 @@ public class DisplayConnection extends DatabaseConnection {
 		switch(opcode) {
 			case "get-username":
 				String name = (String) data[1];
-				ResultSet set = select("current_names", "display_name='"+name+"'");
+				ResultSet set = select("current_names", "display_name LIKE '"+name+"'");
 				if(empty(set))
 					return null;
 				return new Object[] { getString(set, "username") };

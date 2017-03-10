@@ -9,6 +9,9 @@ import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
+import com.cryo.modules.highscores.HSUtils;
+import com.cryo.utils.JadeIterator;
+import com.cryo.utils.Utilities;
 
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
@@ -34,6 +37,9 @@ public abstract class WebModule {
 	@Synchronized
 	public String render(String file, HashMap<String, Object> model, Request request, Response response) {
 		model.put("isMobile", false);
+		model.put("jIterator", new JadeIterator());
+		model.put("hsutils", new HSUtils());
+		model.put("utils", new Utilities());
 		boolean loggedIn = request.session().attributes().contains("cryo-user");
 		model.put("loggedIn", loggedIn);
 		if(loggedIn) {
@@ -58,6 +64,16 @@ public abstract class WebModule {
 				if(user != null)
 					name = ForumUtils.crownUser(user);
 				html = html.replace("$forum-name="+format+"$end", name);
+			}
+			while(html.contains("$link=")) {
+				String format = html.substring(html.indexOf("$link=")+6);
+				format = format.substring(0, format.indexOf("$end"));
+				String[] strings = format.split(":");
+				String link = strings[0];
+				String title = strings[1];
+				String onc = strings[2];
+				String realLink = "<a onclick=\""+onc+"; return false;\" href=\""+link+"\">"+title+"</a>";
+				html = html.replace("$link="+link+":"+title+":"+onc+"$end", realLink);
 			}
 			return html;
 		} catch (JadeCompilerException | IOException e) {

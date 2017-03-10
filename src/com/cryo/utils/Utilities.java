@@ -11,7 +11,28 @@ import spark.Request;
  */
 public class Utilities {
 	
-	public static String formatNumer(long number) {
+	private static Utilities INSTANCE;
+	
+	public static Utilities instance() {
+		if(INSTANCE == null)
+			INSTANCE = new Utilities();
+		return INSTANCE;
+	}
+	
+	public String test() {
+		return "test";
+	}
+	
+	public String renderLink(String href, String text) {
+		return "<a href='"+href+"'>"+text+"</a>";
+	}
+	
+	public String formatDouble(double number) {
+		DecimalFormat f = new DecimalFormat("###,###,###");
+		return f.format(number);
+	}
+	
+	public String formatLong(long number) {
 		DecimalFormat f = new DecimalFormat("###,###,###");
 		return f.format(number);
 	}

@@ -2,6 +2,7 @@ package com.cryo.modules.highscores;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -16,5 +17,7 @@ public class HSUser {
 	private final @Getter String name;
 	
 	private final @Getter String totalLevel, totalXP;
+	
+	private @Getter @Setter double[] xp;
 	
 }

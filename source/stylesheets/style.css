@@ -789,7 +789,17 @@ Widget
     min-height: 50px;
 }
 
+.mini-hs .personal-rank {
+    text-align: center;
+    display: block;
+}
+
 .mini-hs .level {
+    text-align: center;
+    display: block;
+}
+
+.mini-hs .xp {
     text-align: center;
     display: block;
 }
@@ -830,6 +840,7 @@ Widget
 }
 
 .mini-login button {
+    float: left;
     background: #111;
     border: 1px solid #000;
     color: #666;

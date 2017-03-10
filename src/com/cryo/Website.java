@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import com.cryo.db.DBConnectionManager;
+import com.cryo.modules.account.register.RegisterModule;
+import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
@@ -59,6 +61,9 @@ public class Website {
 		post(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.POST);
 		});
+		post(HighscoresModule.PATH, (req, res) -> {
+			return new HighscoresModule(this).decodeRequest(req, res, RequestType.POST);
+		});
 		get(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.GET);
 		});
@@ -69,6 +74,9 @@ public class Website {
 		});
 		get(LiveModule.PATH, (req, res) -> {
 			return new LiveModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get(RegisterModule.PATH, (req, res) -> {
+			return new RegisterModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/favicon.ico", (req, res) -> {
 			try {

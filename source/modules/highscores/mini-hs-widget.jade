@@ -17,36 +17,22 @@ script.
     }
   });
 div.mini-sh
-  div.content(style='margin: 0;')
+  div.content
     div.input-group.input-group-sm
       input.form-control.search-username(type='text', placeholder='Player Username', style='background: #111; border: 1px solid #000; font-size: 11px;')
       span.input-group-btn
         button.btn.btn-default.minihs-search(type='button', style='background: #111; border-color: #000;')
           span.glyphicon.glyphicon-search
   span.chevron.glyphicon.glyphicon-chevron-down
-div.widget.minihs
+div.widget.mini-hs
   div.header
-    h4.color-white Global Highscores
+    h4.color-white Mini Highscores
       a(href='/highscores')
         img.img-responsive.pull-right(src='images/hs-overall.png')
       a.mini-search(href='#', title='Search for a Player')
         span.glyphicon.glyphicon-search.pull-right(style='margin-right: 10px;')
   div.content
-    table.table.mini-table
-      thead
-        tr
-          th Rank
-          th Player Username
-          th Total Level
-          th Total XP
-      tbody
-        -for hsuser in hsusers.getList()
-          -var rank = hsuser.getRank()
-          -var name = hsuser.getName()
-          -var total_level = hsuser.getTotalLevel()
-          -var total_xp = hsuser.getTotalXP()
-          tr
-            td.b-right.rank=rank
-            td.b-right= name
-            td.b-right= total_level
-            td.b-right= total_xp
+    if hsname != null
+      include personal-mini
+    else
+      include global-mini

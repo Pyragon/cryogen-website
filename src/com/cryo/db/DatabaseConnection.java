@@ -122,7 +122,7 @@ public abstract class DatabaseConnection {
 
 	public void execute(String query) {
 		try {
-			if (connection.isClosed())
+			if (connection.isClosed() || !connection.isValid(5))
 				connect();
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.execute();
@@ -134,7 +134,7 @@ public abstract class DatabaseConnection {
 
 	public ResultSet executeQuery(String query) {
 		try {
-			if (connection.isClosed())
+			if (connection.isClosed() || !connection.isValid(5))
 				connect();
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet set = statement.executeQuery();

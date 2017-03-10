@@ -1,0 +1,27 @@
+-var hsdata = hsutils.getHSData(hsname)
+-var index = -1
+if hsdata == null
+  h3= 'Player '+hsname+' not found.'
+else
+  script.
+    $('.return-but').click(function() {
+      $.post('/highscores', { }, function(data) {
+        $('.mini-hs .content').html(data);
+      });
+      return false;
+    });
+  -var name = hsdata.getName()
+  h3= 'Viewing Player: '+name+', Click '
+    a.return-but(href='#', title='Return to global') here
+    |  to return
+  -for i in jIterator.iterate(6)
+    div.row
+      -for r in jIterator.iterate(4)
+        div.col-xs-3.col-md-3
+          div.mini-skill
+            img.img-responsive(src='./images/skills_hd/'+((i*4)+r)+'.png')
+            -var rank = hsdata.getRank((i*4)+r)
+            -var ranks = rank == 0 ? 'Unranked' : ''+rank
+            span.personal-rank= 'Rank: '+ranks
+            span.level= 'Level: '+hsdata.getLevel((i*4)+r)
+            span.xp= 'XP: '+utils.formatDouble(hsdata.getXP((i*4)+r))

@@ -1,0 +1,22 @@
+extend ../default
+
+if success
+  block head
+    meta(http-equiv='refresh', content='5; url=/')
+
+block content
+  div.container
+    div.widget.register
+      div.header
+        h4.color-white Register an Account
+        h5.color-grey Registering for an account gives you access to the main website's player account panel. 
+      div.content
+        if success
+          mixin complete
+        else
+          div.row
+        
+mixin complete
+  div(style='padding: 50px 0; padding-bottom: 500px; text-align: center;')
+    p Thanks for registering! You may now login to the game, or homepage with your credentials.
+    p You are now being redirected. If you don't want to wait, you can click #[a(href='/') here] to speed things up a bit.

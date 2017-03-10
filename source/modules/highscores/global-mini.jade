@@ -1,0 +1,18 @@
+table.table.mini-table
+  thead
+    tr
+      th Rank
+      th Player Username
+      th Total Level
+      th Total XP
+  tbody
+    -for hsuser in hsusers.getList()
+      -var rank = hsuser.getRank()
+      -var name = hsuser.getName()
+      -var total_level = hsuser.getTotalLevel()
+      -var total_xp = hsuser.getTotalXP()
+      tr
+        td.b-right.rank=rank
+        td.b-right= name
+        td.b-right= total_level
+        td.b-right= total_xp
