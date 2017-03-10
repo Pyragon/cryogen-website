@@ -1,6 +1,9 @@
 package com.cryo.utils;
 
 import java.text.DecimalFormat;
+import java.util.Properties;
+
+import com.google.gson.Gson;
 
 import spark.Request;
 
@@ -27,6 +30,17 @@ public class Utilities {
 		return "<a href='"+href+"'>"+text+"</a>";
 	}
 	
+	public static String json(Properties prop) {
+		return new Gson().toJson(prop);
+	}
+	
+	public static boolean hasNullOrEmpty(String...strings) {
+		for(String s : strings)
+			if(s == null || s.equals(""))
+				return true;
+		return false;
+	}
+	
 	public String formatDouble(double number) {
 		DecimalFormat f = new DecimalFormat("###,###,###");
 		return f.format(number);
@@ -35,6 +49,27 @@ public class Utilities {
 	public String formatLong(long number) {
 		DecimalFormat f = new DecimalFormat("###,###,###");
 		return f.format(number);
+	}
+	
+	public static String formatName(String name) {
+		if (name == null)
+			return "";
+		name = name.replaceAll("_", " ");
+		name = name.toLowerCase();
+		StringBuilder newName = new StringBuilder();
+		boolean wasSpace = true;
+		for (int i = 0; i < name.length(); i++) {
+			if (wasSpace) {
+				newName.append(("" + name.charAt(i)).toUpperCase());
+				wasSpace = false;
+			} else {
+				newName.append(name.charAt(i));
+			}
+			if (name.charAt(i) == ' ') {
+				wasSpace = true;
+			}
+		}
+		return newName.toString();
 	}
 	
 	public static String formatMessage(String message) {

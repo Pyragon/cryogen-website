@@ -1,10 +1,43 @@
 extend ../default
 
-if success
-  block head
+block head
+  if success
     meta(http-equiv='refresh', content='5; url=/')
-
 block content
+  script.
+    $(document).ready(function() {
+      $('.reg-username').keypress(function(e) {
+        
+      });
+      $('.reg-btn').click(function() {
+        var username = $('.reg-username').val();
+        var password = $('.reg-password').val();
+        var passVerify = $('.reg-password-verify').val();
+        var bot = $('.bot-attempt').val();
+        var bot2 = $('.bot-attempt2').val();
+        var error = "";
+        if(username == '' || password == '' || passVerify == '' || bot == '' || bot2 == '')
+          error = "All fields must be filled out.";
+        else if(password != passVerify)
+          error = "Passwords do not match.";
+        if(error != "") {
+          $(".reg-alert").css("display", "block");
+          $(".reg-alert").html(error);
+          return false;
+        }
+        $.post('/register', {username:username, password:password,passwordVerify:passVerify,bot:bot,bot2:bot2}, function(data) {
+          var jsondata = JSON.parse(data);
+          if(jsondata.success == true) {
+            document.write(jsondata.data);
+            document.close();
+          } else {
+            $('.reg-alert').css('display', 'block');
+            $('.reg-alert').html(jsondata.error);
+          }
+        });
+        return false;
+      });
+    });
   div.container
     div.widget.register
       div.header
@@ -15,6 +48,28 @@ block content
           mixin complete
         else
           div.row
+            div.col-md-6.box
+              div.alert.alert-custom.modal-alert.reg-alert
+              label Account Username:
+              input.form-control.reg-username(type='text', placeholder='Enter desired username')
+              label Account Password:
+              input.form-control.reg-password(type='password', placeholder='Enter desired password')
+              label Retype Password:
+              input.form-control.reg-password-verify(type='password', placeholder='Retype desired password')
+              div.row
+                div.col-md-6
+                  label What is 29 + 4?
+                  input.form-control.bot-attempt(type='text', placeholder='Enter your answer')
+                div.col-md-6
+                  label What colour is Clifford, the big red dog?
+                  input.form-control.bot-attempt2(type='text', placeholder='Enter your answer')
+            div.col-md-6.register-info
+              span.glyphicon.glyphicon-arrow-left(aria-hidden='true')
+              h3 Registration Info:
+              ul
+                li Usernames: Must be between 3 and 12 alphanumeric characters in length. Donators+ have the ability to change this name.
+                li Passwords: Must be 6 or more characters of length and can contain any combination of symbols, numbers, and alpha characters. Passwords are case sensitive.
+          button.btn.btn-default.reg-btn Create Account
         
 mixin complete
   div(style='padding: 50px 0; padding-bottom: 500px; text-align: center;')

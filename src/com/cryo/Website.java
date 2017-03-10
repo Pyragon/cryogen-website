@@ -78,6 +78,9 @@ public class Website {
 		get(RegisterModule.PATH, (req, res) -> {
 			return new RegisterModule(this).decodeRequest(req, res, RequestType.GET);
 		});
+		post(RegisterModule.PATH, (req, res) -> {
+			return new RegisterModule(this).decodeRequest(req, res, RequestType.POST);
+		});
 		get("/favicon.ico", (req, res) -> {
 			try {
 				InputStream in = null;

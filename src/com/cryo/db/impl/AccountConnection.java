@@ -2,9 +2,12 @@ package com.cryo.db.impl;
 
 import java.sql.ResultSet;
 
+import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.Account;
 import com.cryo.utils.BCrypt;
+import com.cryo.utils.Utilities;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -16,19 +19,31 @@ public class AccountConnection extends DatabaseConnection {
 	public AccountConnection() {
 		super("cryogen_global");
 	}
+	
+	public static AccountConnection connection() {
+		return (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+	}
 
 	@Override
 	public Object[] handleRequest(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		switch(opcode) {
-			case "compare":
+			case "register":
 				String username = (String) data[1];
 				String password = (String) data[2];
+				String salt = BCrypt.generate_salt();
+				String hash = BCrypt.hashPassword(password, salt);
+				insert("player_data", username, password, salt, 0, 0);
+				DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
+				return new Object[] { true };
+			case "compare":
+				username = (String) data[1];
+				password = (String) data[2];
 				ResultSet set = select("player_data", "username='"+username+"'");
 				if(empty(set))
 					return null;
-				String salt = getString(set, "salt");
-				String hash = getString(set, "password");
+				salt = getString(set, "salt");
+				hash = getString(set, "password");
 				return new Object[] { BCrypt.hashPassword(password, salt).equals(hash) };
 			case "get-account":
 				username = (String) data[1];
