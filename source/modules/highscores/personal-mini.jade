@@ -1,19 +1,20 @@
 div.header
   include mini-title
 div.content
+  script.
+    $('.return-but').click(function() {
+      $.post('/highscores', { }, function(data) {
+        $('.mini-hs').html(data);
+      });
+      return false;
+    });
   -var index = -1
   if hsdata == null
-    h3= 'Player '+hsname+' not found.'
+    h3(style='text-align: center;')= 'Player '+hsname+' not found.'
+      |  Click #[a.return-but(href='#', title='Return to global') here] to go back.
   else
     h3(style='text-align: center;') &larr; #[a.return-but(href='#', title='Return to global') Go back]
     -var name = hsdata.getName()
-    script.
-      $('.return-but').click(function() {
-        $.post('/highscores', { }, function(data) {
-          $('.mini-hs').html(data);
-        });
-        return false;
-      });
     -for i in jIterator.iterate(6)
       div.row
         -for r in jIterator.iterate(4)
