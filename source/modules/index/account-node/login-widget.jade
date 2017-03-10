@@ -28,6 +28,9 @@ script.
         return false;
       }
     });
+    ('.register-btn').click(function() {
+      return false;
+    });
   });
 div(role='alert', class='alert alert-custom mini-alert')
 form(role='form')
@@ -39,5 +42,7 @@ form(role='form')
     input(type='password', name="password", placeholder='Enter Password', id='password', class='form-control pass')
   input(type="hidden", name="redirect", value="/")
   div.row
-    div(class='col-md-6 col-md-offset-3')
+    div(class='col-md-6')
       button(class='btn btn-default login') Login
+    div.col-md-6
+        button.btn.btn-default.reg-btn(onclick="window.location.href='/register'; return false;") Register
