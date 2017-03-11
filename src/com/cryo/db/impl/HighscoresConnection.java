@@ -6,8 +6,7 @@ import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.AccountUtils;
-import com.cryo.modules.highscores.HSUser;
-import com.cryo.modules.highscores.HSUserList;
+import com.cryo.modules.highscores.HSDataList;
 import com.cryo.modules.highscores.HSUtils;
 import com.cryo.modules.highscores.HSUtils.HSData;
 import com.cryo.utils.Utilities;
@@ -63,24 +62,50 @@ public class HighscoresConnection extends DatabaseConnection {
 				int[] xp = new int[25];
 				for(int i = 0; i < 25; i++)
 					xp[i] = getInt(set, "skill_"+i);
-				HSData hsdata = new HSData(totalXP, totalLevel, xp);
+				HSData hsdata = new HSData(totalXP, totalLevel, 0, xp);
 				hsdata.formatName(name);
 				hsdata.setRank(HSUtils.getRankData(name));
 				return new Object[] { hsdata };
+			case "get-skill":
+				int skill_id = (int) data[1];
+				set = selectAll("highscores", "ORDER BY skill_"+(skill_id)+" DESC LIMIT 30");
+				if(set == null || wasNull(set))
+					return null;
+				HSDataList list = new HSDataList();
+				index = 1;
+				while(next(set)) {
+					rank = index++;
+					totalXP = getDouble(set, "total_xp");
+					totalLevel = getInt(set, "total_level");
+					name = getString(set, "username");
+					xp = new int[25];
+					for(int i = 0; i < 25; i++)
+						xp[i] = getInt(set, "skill_"+i);
+					hsdata = new HSData(totalXP, totalLevel, rank, xp);
+					hsdata.formatName(name);
+					hsdata.setRank(HSUtils.getRankData(name));
+					list.add(hsdata);
+				}
+				return new Object[] { list };
 			case "get-list":
 				int size = (int) data[1];
 				set = selectAll("highscores", "ORDER BY total_level DESC, total_xp DESC LIMIT "+size);
 				if(set == null || wasNull(set))
 					return null;
-				HSUserList list = new HSUserList();
+				list = new HSDataList();
 				index = 1;
 				while(next(set)) {
 					rank = index++;
+					totalXP = getDouble(set, "total_xp");
+					totalLevel = getInt(set, "total_level");
 					name = getString(set, "username");
-					String total_level = Utilities.instance().formatLong(getInt(set, "total_level"));
-					String total_xp = Utilities.instance().formatLong(getInt(set, "total_xp"));
-					name = "$for-name="+name+"$end";
-					list.add(new HSUser(rank, name, total_level, total_xp));
+					xp = new int[25];
+					for(int i = 0; i < 25; i++)
+						xp[i] = getInt(set, "skill_"+i);
+					hsdata = new HSData(totalXP, totalLevel, rank, xp);
+					hsdata.formatName(name);
+					hsdata.setRank(HSUtils.getRankData(name));
+					list.add(hsdata);
 				}
 				return new Object[] { list };
 		}

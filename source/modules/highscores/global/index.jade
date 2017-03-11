@@ -1,0 +1,27 @@
+extend ../../default
+
+block head
+  script.
+    $(document).ready(function() {
+      $(".skill").click(function() {
+        changeSkillData($(this).attr('skill_id'));
+      });
+      
+      function changeSkillData(skill_id) {
+        $.post('/highscores', { skill_id: skill_id }, function(data) {
+          $('.highscores').html(data);
+        });
+      }
+    });
+
+block content
+  div.container(style='min-height: 700px;')
+    div.skills
+      -for i in jIterator.iterate(25)
+        a.skill(skill_id=''+i, href='#')
+          img(src='images/skills_hd/'+i+'.png')
+    div.widget.highscores(style='min-height: 400px;')
+      if skill_id == -1
+        include global-users
+      else
+        include skill-view

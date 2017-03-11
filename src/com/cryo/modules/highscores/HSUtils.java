@@ -24,11 +24,18 @@ public class HSUtils {
 		return (HSData) data[0];
 	}
 	
-	public static HSUserList getList(int size) {
+	public static HSDataList getSkillList(int skill_id) {
+		Object[] data = getConnection().handleRequest("get-skill", skill_id);
+		if(data == null)
+			return null;
+		return (HSDataList) data[0];
+	}
+	
+	public static HSDataList getList(int size) {
 		Object[] data = getConnection().handleRequest("get-list", size);
 		if(data == null)
 			return null;
-		return (HSUserList) data[0];
+		return (HSDataList) data[0];
 	}
 	
 	public static int[] getRankData(String username) {
@@ -53,6 +60,7 @@ public class HSUtils {
 		private @Getter String username;
 		private final @Getter double totalXP;
 		private final @Getter int totalLevel;
+		private final @Getter int overallRank;
 		private final @Getter int[] xp;
 		private @Getter @Setter int[] rank;
 

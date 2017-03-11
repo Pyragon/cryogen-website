@@ -16,6 +16,8 @@ public class Utilities {
 	
 	private static Utilities INSTANCE;
 	
+	public static final String[] SKILL_NAME = { "Attack", "Defence", "Strength", "Constitution", "Ranged", "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting", "Smithing", "Mining", "Herblore", "Agility", "Thieving", "Slayer", "Farming", "Runecrafting", "Hunter", "Construction", "Summoning", "Dungeoneering" };
+
 	public static Utilities instance() {
 		if(INSTANCE == null)
 			INSTANCE = new Utilities();
