@@ -40,6 +40,8 @@ import spark.Response;
  */
 public class Website {
 	
+	public static String PATH = "http://localhost/";
+	
 	private static Website INSTANCE;
 	
 	private static @Getter Properties properties;
@@ -53,6 +55,7 @@ public class Website {
 		connectionManager = new DBConnectionManager();
 		port(80);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
+		staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});
@@ -126,7 +129,7 @@ public class Website {
 	public static String getRandomImageLink() {
 		File[] files = new File("./source/images/404/").listFiles();
 		File random = files[new Random().nextInt(files.length)];
-		return "images/404/"+random.getName();
+		return String.format("%simages/404/%s", PATH, random.getName());
 	}
 	
 	public static String error(String error) {
