@@ -8,7 +8,9 @@ script.
         $(".mini-alert").html("Both fields need to be filled out");
         return;
       }
-      $.post('/login?mini-login=true', {username:user,password:pass}, function(data) {
+      var log = 'true';
+      var redirect = $('.redir').val();
+      $.post('/login?mini-login=true', {username:user,password:pass,redirect:redirect}, function(data) {
         if(data == 'failed') {
           $(".mini-alert").css("display","block");
           $(".mini-alert").html("Invalid username or password");
@@ -32,6 +34,7 @@ script.
       return false;
     });
   });
+input.redir(type='hidden', value=''+redirect)
 div(role='alert', class='alert alert-custom mini-alert')
 form(role='form')
   div(class='form-group')
@@ -40,9 +43,8 @@ form(role='form')
   div(class='form-group')
     label(for='password') Password:
     input(type='password', name="password", placeholder='Enter Password', id='password', class='form-control pass')
-  input(type="hidden", name="redirect", value="/")
   div.row
     div(class='col-md-6')
       button(class='btn btn-default login') Login
     div.col-md-6
-        button.btn.btn-default.forgot(onclick="return false;") Forgot my Password
+      button.btn.btn-default.forgot(onclick="return false;") Forgot my Password

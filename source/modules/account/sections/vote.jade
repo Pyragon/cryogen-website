@@ -1,0 +1,34 @@
+script.
+  $(document).ready(function() {
+    
+    $('.auth-char').keypress(function(e) {
+      if(e.charCode < 48 || e.charCode > 57)
+        return false;
+      var $this = $(this);
+      setTimeout(function() {
+        if($this.val().length >= parseInt($this.attr("maxLength"),10))
+          $this.next("input").focus();
+      }, 0);
+    });
+    
+  });
+div.tab-pane.fade(id='vote')
+  h5 About Auths:
+  p.small Collect auth codes by voting on the sites below. Users can then proceed to click on each auth (below) and select "Exchange Auth" to exchange the auth for one voting point credited towards your account for use with the voting shop 
+    strong or
+    | can also choose to delete the auth. You 
+    strong may
+    | trade auth codes with players. If you've recently bought an auth code from another player, you may enter it below.
+  h5 My Auths:
+  pre.auths
+    p Dumped Auths
+  h5 Voting sites
+  h5 Enter Auth Code:
+  p.small Enter a unique 12 character auth code below to claim the auth to your account. You can obtain these codes through give-aways or through trading goods to players in exchange for auth codes. You can use these codes in our voting shop for unique prizes.
+  div.claim-auth
+    div.row
+      div.col-md-10.col-md-offset-2(style='margin-left: 144px;')
+        for i in jIterator.iterate(3)
+          input(class='auth-char s'+(i+1), style='width: 150px;' type='text', maxlength='4', placeholder='_ _ _ _')
+    button.btn.btn-normal.btn-center.claim-auth-btn(style='margin-left: 307px;') Claim Auth
+        

@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import com.cryo.db.DBConnectionManager;
+import com.cryo.modules.account.AccountModule;
 import com.cryo.modules.account.register.RegisterModule;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
@@ -58,6 +59,9 @@ public class Website {
 		staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get(AccountModule.PATH, (req, res) -> {
+			return new AccountModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get(LoginModule.PATH, (req, res) -> {
 			return new LoginModule(this).decodeRequest(req, res, RequestType.GET);

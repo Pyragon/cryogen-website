@@ -1,0 +1,5 @@
+div.tab-pane.fade.in.active(id='overview')
+  h5 Account Overview
+    p.small Below is information pertaining to your account.
+    p= 'Username: '+user.getUsername()
+    p= 'Display Name: $for-name='+user.getUsername()+'$end'

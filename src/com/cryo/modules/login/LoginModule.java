@@ -27,20 +27,24 @@ public class LoginModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
+		System.out.println(request.requestMethod()+" "+type.name());
 		if(type == RequestType.GET) {
 			if(request.session().attributes().contains("cryo-user"))
 				return redirect("/", 0, request, response);
-			return render("./source/modules/account/login.jade", new HashMap<String, Object>(), request, response);
+			HashMap<String, Object> model = new HashMap<String, Object>();
+			if(request.queryParams().contains("redirect"))
+				model.put("redirect", request.queryParams("redirect"));
+			return render("./source/modules/account/login.jade", model, request, response);
 		} else if(type == RequestType.POST) {
-			String username = getRequestUsername(request);
-			String password = getRequestPassword(request);
-			boolean isMini = isMiniLogin(request);
+			String username = request.queryParams("username");
+			String password = request.queryParams("password");
+			boolean isMini = request.queryParams("mini-login") != null && request.queryParams("mini-login").equals("true");
 			AccountConnection connection = (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
 			Object[] data = connection.handleRequest("compare", username, password);
 			boolean success = data == null ? false : (boolean) data[0];
 			if(success) {
 				request.session().attribute("cryo-user", username);
-				return redirect(getRequestRedirect(request), request, response);
+				return redirect(request.queryParams("redirect"), request, response);
 			}
 			if(isMini)
 				return "failed";

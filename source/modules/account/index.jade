@@ -1,0 +1,23 @@
+extend ../default
+
+block content
+  div.container.account-area(style='min-height: 600px; padding: 20px 0;')
+    div.row
+      div.col-md-3
+        ul.nav.nav-tabs
+          li.nav.active.account-item
+            a(href='#overview', data-toggle='tab') Account overview
+          li.nav.account-item
+            a(href='#vote', data-toggle='tab') Vote
+          li.nav.account-item
+            a(href='#security', data-toggle='tab') Security Settings
+          if user.getRights() > 1
+            li.nav.account-item
+              a(href='#shop', data-toggle='tab') Cryogen shop
+      div.col-md-9
+        div.widget
+          div.tab-content.content
+            include sections/overview
+            include sections/vote
+            include sections/security
+            include sections/shop

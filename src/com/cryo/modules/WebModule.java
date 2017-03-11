@@ -82,6 +82,14 @@ public abstract class WebModule {
 		return "ERROR";
 	}
 	
+	public String showLoginPage(String redirect, Request request, Response response) {
+		if(request.session().attributes().contains("cryo-user"))
+			return redirect("/", 0, request, response);
+		HashMap<String, Object> model = new HashMap<>();
+		model.put("redirect", redirect);
+		return render("./source/modules/account/login.jade", model, request, response);
+	}
+	
 	public String redirect(String redirect, Request request, Response response) {
 		return redirect(redirect, 5, request, response);
 	}

@@ -1,0 +1,20 @@
+div.tab-pane.fade(id='shop')
+  h5 Cryogen Shop:
+  p.small The Cryogen Shop allows you to purchase items/features to be used in-game and/or on the website. All items on this page are subject to change without notice. Please also keep in mind that there are NO refunds except in a case of valid reason.
+  div.cart
+    div.row
+      div.col-md-3
+        p
+          span.color-white Total:
+          span.cart-price Cart (0) - $0
+      div.col-md-6
+        p
+          span.color-white Cryogen Shop
+      div.col-md-3
+        button.checkout Checkout
+  div.items
+    div.row
+      p Active items
+  form(id='finish', action='/paypal', method='post', style='display: none;')
+    input(type='hidden', id='data', name='data', value='null')
+  
