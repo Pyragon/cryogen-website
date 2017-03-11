@@ -10,10 +10,10 @@ div.content
         th Total XP
     tbody
       -for hsuser in hsusers.getList()
-        -var rank = hsuser.getRank()
+        -var rank = hsuser.getOverallRank()
         -var name = hsuser.getName()
         -var total_level = hsuser.getTotalLevel()
-        -var total_xp = hsuser.getTotalXP()
+        -var total_xp = utils.formatDouble(hsuser.getTotalXP())
         tr
           td.b-right.rank=rank
           td.b-right= name
