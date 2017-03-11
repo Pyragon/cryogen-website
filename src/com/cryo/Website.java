@@ -65,6 +65,9 @@ public class Website {
 		post(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.POST);
 		});
+		get(HighscoresModule.PATH, (req, res) -> {
+			return new HighscoresModule(this).decodeRequest(req, res, RequestType.GET);
+		});
 		post(HighscoresModule.PATH, (req, res) -> {
 			return new HighscoresModule(this).decodeRequest(req, res, RequestType.POST);
 		});

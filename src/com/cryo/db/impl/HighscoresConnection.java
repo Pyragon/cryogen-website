@@ -67,8 +67,9 @@ public class HighscoresConnection extends DatabaseConnection {
 				hsdata.formatName(name);
 				hsdata.setRank(HSUtils.getRankData(name));
 				return new Object[] { hsdata };
-			case "get-mini-list":
-				set = selectAll("highscores", "ORDER BY total_level DESC, total_xp DESC LIMIT 10");
+			case "get-list":
+				int size = (int) data[1];
+				set = selectAll("highscores", "ORDER BY total_level DESC, total_xp DESC LIMIT "+size);
 				if(set == null || wasNull(set))
 					return null;
 				HSUserList list = new HSUserList();

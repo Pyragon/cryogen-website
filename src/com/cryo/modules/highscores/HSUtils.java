@@ -24,8 +24,8 @@ public class HSUtils {
 		return (HSData) data[0];
 	}
 	
-	public static HSUserList getMiniList() {
-		Object[] data = getConnection().handleRequest("get-mini-list");
+	public static HSUserList getList(int size) {
+		Object[] data = getConnection().handleRequest("get-list", size);
 		if(data == null)
 			return null;
 		return (HSUserList) data[0];

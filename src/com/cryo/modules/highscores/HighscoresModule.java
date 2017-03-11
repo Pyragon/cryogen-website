@@ -26,8 +26,11 @@ public class HighscoresModule extends WebModule {
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		HashMap<String, Object> model = new HashMap<>();
-		model.put("hsusers", HSUtils.getMiniList());
-		if(type == RequestType.POST) {
+		if(type == RequestType.GET) {
+			model.put("hsusers", HSUtils.getList(30));
+			return render("./source/modules/highscores/index.jade", model, request, response);
+		} else if(type == RequestType.POST) {
+			model.put("hsusers", HSUtils.getList(10));
 			if(!request.queryParams().contains("display"))
 				return render("./source/modules/highscores/mini/global-mini.jade", model, request, response);
 			String name = request.queryParams("display");
