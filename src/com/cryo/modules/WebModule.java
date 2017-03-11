@@ -89,6 +89,10 @@ public abstract class WebModule {
 	public String redirect(String redirect, int time, Request request, Response response) {
 		if(redirect == null || redirect == "")
 			redirect = "/";
+		if(time == 0) {
+			response.redirect(redirect);
+			return "";
+		}
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("redirect", redirect);
 		model.put("time", time);
