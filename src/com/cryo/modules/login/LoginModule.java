@@ -7,6 +7,8 @@ import com.cryo.db.impl.AccountConnection;
 import com.cryo.modules.WebModule;
 import static com.cryo.utils.Utilities.*;
 
+import java.util.HashMap;
+
 import spark.Request;
 import spark.Response;
 
@@ -25,7 +27,11 @@ public class LoginModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(type == RequestType.POST) {
+		if(type == RequestType.GET) {
+			if(request.session().attributes().contains("cryo-user"))
+				return redirect("/", 0, request, response);
+			return render("./source/modules/account/login.jade", new HashMap<String, Object>(), request, response);
+		} else if(type == RequestType.POST) {
 			String username = getRequestUsername(request);
 			String password = getRequestPassword(request);
 			boolean isMini = isMiniLogin(request);
@@ -36,7 +42,6 @@ public class LoginModule extends WebModule {
 				request.session().attribute("cryo-user", username);
 				return redirect(getRequestRedirect(request), request, response);
 			}
-			System.out.println("hello");
 			if(isMini)
 				return "failed";
 			return redirect("/login", 0, request, response);

@@ -50,10 +50,13 @@ public class Website {
 	public Website() {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
-		port(8080);
+		port(80);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get(LoginModule.PATH, (req, res) -> {
+			return new LoginModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		post(LoginModule.PATH, (req, res) -> {
 			return new LoginModule(this).decodeRequest(req, res, RequestType.POST);
