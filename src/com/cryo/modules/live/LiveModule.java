@@ -45,8 +45,6 @@ public class LiveModule extends WebModule {
 			try {
 				File file = ZIP_PATH;
 				String fileType = request.queryParams("file_type");
-				if(fileType != null)
-					System.out.println(fileType);
 				String fileName = "Cryogen Client.zip";
 				if(fileType != null && fileType.equals("jar")) {
 					file = JAR_PATH;
