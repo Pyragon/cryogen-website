@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Random;
 
 import com.cryo.db.DBConnectionManager;
 import com.cryo.modules.account.register.RegisterModule;
@@ -110,13 +111,19 @@ public class Website {
 	public static String render404(Request request, Response response) {
 		response.status(404);
 		HashMap<String, Object> model = new HashMap<>();
-		model.put("random", "http://localhost:8080/images/404.jpg");
+		model.put("random", getRandomImageLink());
 		try {
 			return Jade4J.render("./source/modules/404.jade", model);
 		} catch (JadeCompilerException | IOException e) {
 			e.printStackTrace();
 		}
 		return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
+	}
+	
+	public static String getRandomImageLink() {
+		File[] files = new File("./source/images/404/").listFiles();
+		File random = files[new Random().nextInt(files.length)];
+		return "images/404/"+random.getName();
 	}
 	
 	public static String error(String error) {
