@@ -13,6 +13,8 @@ html
     script(src='/bootstrap/js/bootstrap.min.js')
     script(src='/bootstrap/js/bootbox.min.js')
     script(src='/js/jquery.nicescroll.js')
+    script(src='/js/noty/packaged/jquery.noty.packaged.min.js')
+    script(src='/js/noty/themes/cryogen.js?rand=5999', type='text/javascript')
     
     link(rel='icon', href='favicon.ico')
     link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css', media='screen')
@@ -55,8 +57,14 @@ html
       ul(class='nav navbar-nav nav-items')
         li
           a(href='/') Homepage
-        li
-          a(href='/live/Cryogen.jar') Play
+        li.dropdown
+          a.dropdown-toggle(data-toggle='dropdown') Play
+            b.caret
+          ul.dropdown-menu
+            li
+              a(href='/live/download?file_type=zip') Download as ZIP
+            li
+              a(href='/live/download?file_type=jar') Download as JAR
         li(class='spacer')
           a(href='/forums') Community
         li
