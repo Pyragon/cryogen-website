@@ -29,12 +29,12 @@ public class HighscoresModule extends WebModule {
 		model.put("hsusers", HSUtils.getMiniList());
 		if(type == RequestType.POST) {
 			if(!request.queryParams().contains("display"))
-				return render("./source/modules/highscores/global-mini.jade", model, request, response);
+				return render("./source/modules/highscores/mini/global-mini.jade", model, request, response);
 			String name = request.queryParams("display");
 			HSData data = new HSUtils().getHSData(name);
 			model.put("hsdata", data);
 			model.put("hsname", name);
-			return render("./source/modules/highscores/personal-mini.jade", model, request, response);
+			return render("./source/modules/highscores/mini/personal-mini.jade", model, request, response);
 		}
 		return Website.render404(request, response);
 	}
