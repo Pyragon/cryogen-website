@@ -305,6 +305,11 @@ h4.title {
     border: 0;
 }
 
+
+/* FA REFRESH BUTTON */
+
+.auth-refresh-spin {}
+
 .auths, .cart, .items {
     padding: 10px;
     background: #111;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.vote.VotingManager;
 
 import spark.Request;
 import spark.Response;
@@ -27,10 +28,10 @@ public class AccountOverviewModule extends WebModule {
 		if(request.session().attribute("cryo-user") == null)
 			return showLoginPage("/account?"+request.queryString(), request, response);
 		HashMap<String, Object> model = new HashMap<>();
-		if(request.queryParams().contains("section")) {
+		if(request.queryParams().contains("section"))
 			model.put("section", request.queryParams("section"));
-			System.out.println(request.queryParams("section"));
-		}
+		String username = request.session().attribute("cryo-user");
+		model.put("voteManager", new VotingManager(username));
 		return render("./source/modules/account/index.jade", model, request, response);
 	}
 	

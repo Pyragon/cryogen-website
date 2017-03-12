@@ -11,7 +11,13 @@ script.
       }, 0);
     });
     
+    $('.auth-refresh').click(function() {
+      $(this).blur();
+      $('.auth-spin').addClass('fa-spin');
+    });
+    
   });
+link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
 div.tab-pane.fade(id='vote')
   h5 About Auths:
   p.small Collect auth codes by voting on the sites below. Users can then proceed to click on each auth (below) and select "Exchange Auth" to exchange the auth for one voting point credited towards your account for use with the voting shop 
@@ -20,12 +26,18 @@ div.tab-pane.fade(id='vote')
     strong may
     | trade auth codes with players. If you've recently bought an auth code from another player, you may enter it below.
   h5 My Auths:
+    button.btn.btn-normal.auth-refresh(style='float: right;') Refresh 
+      i.fa.fa-refresh.auth-spin
+  br
   pre.auths
     p Dumped Auths
   h5 Voting sites:
     div.row
       div.col-md-6
-        div.site.enabled(title='You can currently vote at this site') Runelocus
+        -var time = voteManager.getTime(0);
+        -var clas = time == 0 ? 'enabled' : 'disabled';
+        -var titl = time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
+        div.site(class=clas, title=titl) Rune-Server
       div.col-md-6
         div.site.enabled(title='You can currently vote at this site') Rune-Server
   h5 Enter Auth Code:
