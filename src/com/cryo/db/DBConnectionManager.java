@@ -6,6 +6,7 @@ import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.HighscoresConnection;
+import com.cryo.db.impl.VotingConnection;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -30,10 +31,11 @@ public class DBConnectionManager {
 		connections.put(Connection.HIGHSCORES, new HighscoresConnection());
 		connections.put(Connection.ACCOUNT, new AccountConnection());
 		connections.put(Connection.DISPLAY, new DisplayConnection());
+		connections.put(Connection.VOTING, new VotingConnection());
 	}
 	
 	public static enum Connection {
-		FORUMS, HIGHSCORES, ACCOUNT, DISPLAY
+		FORUMS, HIGHSCORES, ACCOUNT, DISPLAY, VOTING
 	}
 	
 }

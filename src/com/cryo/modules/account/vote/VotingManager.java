@@ -1,6 +1,9 @@
 package com.cryo.modules.account.vote;
 
+import java.util.ArrayList;
 import java.util.Random;
+
+import com.cryo.db.impl.VotingConnection;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,14 @@ import lombok.RequiredArgsConstructor;
 public class VotingManager {
 	
 	private final @Getter String username;
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<AuthDAO> getAuthList() {
+		Object[] data = VotingConnection.connection().handleRequest("get-auths", username);
+		if(data == null)
+			return new ArrayList<>();
+		return (ArrayList<AuthDAO>) data[0];
+	}
 	
 	public int getTime(int site) {
 		if(new Random().nextInt(2) == 1)
