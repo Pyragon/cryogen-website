@@ -1,11 +1,13 @@
 package com.cryo.modules.account;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.vote.VotingManager;
+import com.google.gson.Gson;
 
 import spark.Request;
 import spark.Response;
@@ -32,8 +34,13 @@ public class AccountOverviewModule extends WebModule {
 		String action = request.queryParams("action");
 		switch(action) {
 			case "refresh":
-				model.put("voteManager", new VotingManager(request.session().attribute("cryo-user")));
-				return render("./source/modules/account/sections/vote/auth-list.jade", model, request, response);
+				Properties prop = new Properties();
+				VotingManager manager = new VotingManager(request.session().attribute("cryo-user"));
+				model.put("voteManager", manager);
+				prop.put("authlist", render("./source/modules/account/sections/vote/auth-list.jade", model, request, response));
+				for(int i = 1; i < 4; i++)
+					prop.put("site"+i, manager.getTime(i));
+				return new Gson().toJson(prop);
 		}
 		return Website.render404(request, response);
 	}

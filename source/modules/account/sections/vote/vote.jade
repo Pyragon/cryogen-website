@@ -1,6 +1,10 @@
 script.
   $(document).ready(function() {
     
+    setTimeout(function() {
+      refresh();
+    }, 15000);
+    
     $('.auth-char').keypress(function(e) {
       if(e.charCode < 48 || e.charCode > 57)
         return false;
@@ -13,17 +17,22 @@ script.
     
     $('.auth-refresh').click(function() {
       $(this).blur();
+      refresh();
+    });
+    
+    function refresh() {
       $('.auth-spin').addClass('fa-spin');
       setTimeout(function() {
         $('.auth-spin').removeClass('fa-spin');
       }, 2000);
       $.post('/vote', {action:'refresh'}, function(data) {
-        $('.auths').html(data);
+        var jsondata = JSON.parse(data);
+        $('.auths').html(jsondata.authlist);
         $('.refresh-alert').html('Refreshed!');
         $('.refresh-alert').css('display', '');
         $('.refresh-alert').fadeOut(2000);
       });
-    });
+    }
     
   });
 link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
@@ -44,12 +53,11 @@ div.tab-pane.fade(id='vote')
   h5 Voting sites:
     div.row
       div.col-md-6
-        -var time = voteManager.getTime(0);
-        -var clas = time == 0 ? 'enabled' : 'disabled';
-        -var titl = time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
-        div.site(class=clas, title=titl) Rune-Server
-      div.col-md-6
-        div.site.enabled(title='You can currently vote at this site') Rune-Server
+        -for i in jIterator.iterate(3)
+          -var time = voteManager.getTime(i);
+          -var clas = time == 0 ? 'enabled' : 'disabled';
+          -var titl = time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
+          div.site(class=clas, title=titl)= voteManager.getName(i)
   h5 Enter Auth Code:
   p.small Enter a unique 12 character auth code below to claim the auth to your account. You can obtain these codes through give-aways or through trading goods to players in exchange for auth codes. You can use these codes in our voting shop for unique prizes.
   div.claim-auth

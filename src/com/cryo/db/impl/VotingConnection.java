@@ -41,6 +41,13 @@ public class VotingConnection extends DatabaseConnection {
 					auths.add(new AuthDAO(id, username, auth, timestamp));
 				}
 				return new Object[] { auths };
+			case "get-time":
+				username = (String) data[1];
+				String site = (String) data[2];
+				set = select("vote_data", "username='"+username+"'");
+				if(empty(set))
+					return null;
+				return new Object[] { getTimestamp(set, site) };
 		}
 		return null;
 	}
