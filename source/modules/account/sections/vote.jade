@@ -22,7 +22,12 @@ div.tab-pane.fade(id='vote')
   h5 My Auths:
   pre.auths
     p Dumped Auths
-  h5 Voting sites
+  h5 Voting sites:
+    div.row
+      div.col-md-6
+        div.site.enabled(title='You can currently vote at this site') Runelocus
+      div.col-md-6
+        div.site.enabled(title='You can currently vote at this site') Rune-Server
   h5 Enter Auth Code:
   p.small Enter a unique 12 character auth code below to claim the auth to your account. You can obtain these codes through give-aways or through trading goods to players in exchange for auth codes. You can use these codes in our voting shop for unique prizes.
   div.claim-auth

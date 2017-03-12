@@ -1,5 +1,13 @@
 extend ../default
 
+block head
+  script.
+    $(document).ready(function() {
+      var section = "#{section}";
+      if(section != null && section != "")
+        $('.nav-tabs a[href="#'+section+'"]').tab('show');
+    });
+
 block content
   div.container.account-area(style='min-height: 600px; padding: 20px 0;')
     div.row
@@ -8,7 +16,7 @@ block content
           li.nav.active.account-item
             a(href='#overview', data-toggle='tab') Account overview
           li.nav.account-item
-            a(href='#vote', data-toggle='tab') Vote
+            a.vote(href='#vote', data-toggle='tab') Vote
           li.nav.account-item
             a(href='#security', data-toggle='tab') Security Settings
           if user.getRights() > 1

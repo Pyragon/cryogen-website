@@ -27,7 +27,6 @@ public class LoginModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		System.out.println(request.requestMethod()+" "+type.name());
 		if(type == RequestType.GET) {
 			if(request.session().attributes().contains("cryo-user"))
 				return redirect("/", 0, request, response);
