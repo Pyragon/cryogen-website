@@ -308,6 +308,12 @@ h4.title {
 
 /* FA REFRESH BUTTON */
 
+.refresh-alert {
+    float: right;
+    margin-top: 10px;
+    margin-right: 12px;
+}
+
 .auth-refresh-spin {}
 
 .auths, .cart, .items {

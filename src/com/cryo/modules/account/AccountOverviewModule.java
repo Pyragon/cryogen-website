@@ -22,6 +22,21 @@ public class AccountOverviewModule extends WebModule {
 	public AccountOverviewModule(Website website) {
 		super(website);
 	}
+	
+	public String decodeVotePost(Request request, Response response) {
+		if(request.session().attribute("cryo-user") == null)
+			return showLoginPage("/account?section=vote", request, response);
+		HashMap<String, Object> model = new HashMap<>();
+		if(!request.queryParams().contains("action"))
+			return Website.render404(request, response);
+		String action = request.queryParams("action");
+		switch(action) {
+			case "refresh":
+				model.put("voteManager", new VotingManager(request.session().attribute("cryo-user")));
+				return render("./source/modules/account/sections/vote/auth-list.jade", model, request, response);
+		}
+		return Website.render404(request, response);
+	}
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {

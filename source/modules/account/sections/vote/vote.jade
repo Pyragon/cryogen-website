@@ -14,6 +14,15 @@ script.
     $('.auth-refresh').click(function() {
       $(this).blur();
       $('.auth-spin').addClass('fa-spin');
+      setTimeout(function() {
+        $('.auth-spin').removeClass('fa-spin');
+      }, 2000);
+      $.post('/vote', {action:'refresh'}, function(data) {
+        $('.auths').html(data);
+        $('.refresh-alert').html('Refreshed!');
+        $('.refresh-alert').css('display', '');
+        $('.refresh-alert').fadeOut(2000);
+      });
     });
     
   });
@@ -28,6 +37,7 @@ div.tab-pane.fade(id='vote')
   h5 My Auths:
     button.btn.btn-normal.auth-refresh(style='float: right;') Refresh 
       i.fa.fa-refresh.auth-spin
+    p.refresh-alert(style='float: right; margin-top: 10px; margin-right: 12px; color: green;')
   br
   pre.auths
     include auth-list
