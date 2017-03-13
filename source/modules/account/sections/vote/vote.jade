@@ -182,10 +182,10 @@ div.tab-pane.fade(id='vote')
     include auth-list
   h5 Voting sites:
     div.row
-      div.col-md-6
-        -for i in jIterator.iterate(3)
-          -var time = voteManager.getTime(i);
-          -var clas = time == 0 ? 'enabled' : 'disabled';
-          -var titl = time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
+      -for i in jIterator.iterate(3)
+        -var time = voteManager.getTime(i);
+        -var clas = time == 0 ? 'enabled' : 'disabled';
+        -var titl = time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
+        div.col-md-6(class=(i == 2 ? 'col-md-offset-3' : ''))
           div.site(class=clas+" site"+(i), id="site"+(i), title=titl)= voteManager.getName(i, false)
-        
+      
