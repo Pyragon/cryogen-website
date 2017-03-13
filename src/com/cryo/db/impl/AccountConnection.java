@@ -67,9 +67,6 @@ public class AccountConnection extends DatabaseConnection {
 				int rights = getInt(set, "rights");
 				int donator = getInt(set, "donator");
 				Account account = new Account(username, rights, donator);
-				String email = getString(set, "email");
-				if(email != null && !email.equals(""))
-					account.setEmail(email);
 				return new Object[] { account };
 		}
 		return null;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
+import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.HighscoresConnection;
 import com.cryo.db.impl.VotingConnection;
@@ -32,10 +33,11 @@ public class DBConnectionManager {
 		connections.put(Connection.ACCOUNT, new AccountConnection());
 		connections.put(Connection.DISPLAY, new DisplayConnection());
 		connections.put(Connection.VOTING, new VotingConnection());
+		connections.put(Connection.EMAIL, new EmailConnection());
 	}
 	
 	public static enum Connection {
-		FORUMS, HIGHSCORES, ACCOUNT, DISPLAY, VOTING
+		FORUMS, HIGHSCORES, ACCOUNT, DISPLAY, VOTING, EMAIL
 	}
 	
 }

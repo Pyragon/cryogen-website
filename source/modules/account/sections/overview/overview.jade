@@ -1,11 +1,28 @@
 script.
   var donator = !{user.getDonator()};
   var seconds = !{seconds};
+  var email = '';
   var check = false;
   var interval;
   $(document).ready(function() {
     
+    email = $('#email-val').val();
+    
     interval = setInterval(handleDisplayTime, 1000);
+    
+    setInterval(checkEmail, 5000);
+    
+    function checkEmail() {
+      $.post('/account', { action:'get-email' }, function(data) {
+        if(data == '')
+          return;
+        if(data != email) {
+          success($('.email-alert'), 'Your email has successfully been changed.');
+          email = data;
+          $('#email').html(email);
+        }
+      });
+    }
     
     function handleDisplayTime() {
       seconds--;
@@ -146,12 +163,28 @@ script.
       element.removeClass('color-grey');
       element.addClass(cname);
     }
+    
+    $('#email-in').focusout(function() {
+      var email = $('#email-in').val();
+      if(email == '')
+        return;
+      $.post('/account', { action: 'check-email', email:email}, function(ret) {
+        if(ret == 'false') {
+          addColorClass($('#email-in-alert'), 'color-red');
+          $('#email-in-alert').css('display', '');
+          $('#email-in-alert').html('&#x2718 Invalid email');
+        } else {
+          $('#email-in-alert').css('display', 'none');
+        }
+      });
+    });
         
     $('.overview-submit').click(function() {
       var pass = $('#pass-change').val();
       var verify = $('#pass-change-verify').val();
       var cur_pass = $('.cur-pass').val();
       var display = $('.display-change').val();
+      var email = $('#email-in').val();
       if(pass != "" || verify != "") { //we are changing password
         if(pass == "" || verify == "") {
           resetPassFields();
@@ -200,6 +233,24 @@ script.
           }
         }
       }
+      if(email != "") {
+        if(cur_pass == "") {
+          error('.cur-alert', 'You must enter your current password to change your email!')
+          return;
+        }
+        $.post('/account', {action:'change-email', email:email, pass:cur_pass}, function(ret) {
+          var data = JSON.parse(ret);
+          if(data.result = false) {
+            error($('.email-alert'), data.error);
+            resetPassFields();
+            return;
+          } else {
+            success($('.email-alert'), 'Verification email successfully sent!');
+            resetPassFields();
+            $('#email-in').val('');
+          }
+        });
+      }
     });
     
     function error(cname, message) {
@@ -229,7 +280,7 @@ script.
     }
     
   });
-  
+input(type='hidden', id='email-val', value=user.getEmail())
 div.tab-pane.fade.in.active(id='overview')
   div.widget.register.overview
     div.row
@@ -240,7 +291,7 @@ div.tab-pane.fade.in.active(id='overview')
         div.col-md-6
           p.color-grey#disp-name= '$for-name='+user.getUsername()+'$end'
           p.color-grey This is the name you are seen by in-game. This does not affect your login name. 
-          p.color-grey Only Donators+ have the ability to change this name.
+          p.color-grey Only Super Donators+ have the ability to change this name.
           p
             i.fa.fa-spinner.fa-spin#error-spin(style='display: none;')
             span#in-use
@@ -265,6 +316,6 @@ div.tab-pane.fade.in.active(id='overview')
         div.col-md-6
           label Enter your current password:
         div.col-md-6
-          p.color-grey.overview Only needed if you are changing your password.
+          p.color-grey.overview Only needed if you are changing your password or email.
           input.form-control.cur-pass(type='password', placeholder='Current Password')
           button.btn.btn-normal.overview-submit(style='margin-bottom: 0px; margin-right: 0px;') Submit

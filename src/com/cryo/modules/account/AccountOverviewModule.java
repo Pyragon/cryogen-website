@@ -7,11 +7,14 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
+import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.vote.VotingManager;
+import com.cryo.utils.EmailUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
+import com.mysql.jdbc.StringUtils;
 
 import spark.Request;
 import spark.Response;
@@ -88,6 +91,17 @@ public class AccountOverviewModule extends WebModule {
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))
 				model.put("section", request.queryParams("section"));
+			if(request.queryParams().contains("action")) {
+				String action = request.queryParams("action");
+				switch(action) {
+					case "verify":
+						String random = request.queryParams("id");
+						Object[] data = EmailConnection.connection().handleRequest("verify", random);
+						model.put("success", data != null);
+						return render("./source/modules/account/sections/overview/email-verify.jade", model, request, response);
+					default: return Website.render404(request, response);
+				}
+			}
 			model.put("voteManager", new VotingManager(username));
 			Object[] data = DisplayConnection.connection().handleRequest("get-time", username);
 			int seconds = 0;
@@ -108,12 +122,49 @@ public class AccountOverviewModule extends WebModule {
 					if(data == null)
 						return "ERROR";
 					return Boolean.toString((boolean) data[0]);
+				case "get-email":
+					data = EmailConnection.connection().handleRequest("get-email", username);
+					if(data == null)
+						return "";
+					return (String) data[0];
+				case "check-email":
+					String email = request.queryParams("email");
+					if(email == null || email == "")
+						return "false";
+					boolean match = email.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+							+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+					return Boolean.toString(match);
+				case "change-email":
+					email = request.queryParams("email");
+					String pass = request.queryParams("pass");
+					Properties prop = new Properties();
+					if(StringUtils.isNullOrEmpty(email) || StringUtils.isNullOrEmpty(pass)) {
+						prop.put("result", false);
+						prop.put("error", "Invalid email or password.");
+						return new Gson().toJson(prop);
+					}
+					data = AccountConnection.connection().handleRequest("compare", username, pass);
+					if(data == null || !((boolean) data[0])) {
+						prop.put("result", false);
+						prop.put("error", "Invalid password.");
+						return new Gson().toJson(prop);
+					}
+					match = email.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+							+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+					if(!match) {
+						prop.put("result", false);
+						prop.put("error", "Invalid email.");
+						return new Gson().toJson(prop);
+					}
+					prop.put("result", true);
+					EmailUtils.sendVerificationEmail(username, email);
+					return new Gson().toJson(prop);
 				case "change-pass":
 					String new_pass = request.queryParams("pass");
 					String cur_pass = request.queryParams("cur");
 					data = AccountConnection.connection().handleRequest("change-pass", username, new_pass, cur_pass);
 					boolean success = (boolean) data[0];
-					Properties prop = new Properties();
+					prop = new Properties();
 					prop.put("result", success);
 					if(!success)
 						prop.put("error", (String) data[1]);

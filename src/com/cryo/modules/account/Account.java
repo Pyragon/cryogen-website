@@ -1,5 +1,7 @@
 package com.cryo.modules.account;
 
+import com.cryo.db.impl.EmailConnection;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,6 +18,11 @@ public class Account {
 	
 	private final @Getter int rights, donator;
 	
-	private @Getter @Setter String email;
+	public String getEmail() {
+		Object[] data = EmailConnection.connection().handleRequest("get-email", username);
+		if(data == null)
+			return "";
+		return (String) data[0];
+	}
 	
 }

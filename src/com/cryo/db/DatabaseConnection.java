@@ -1,5 +1,6 @@
 package com.cryo.db;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -55,6 +56,31 @@ public abstract class DatabaseConnection {
 	public void set(String database, String update, String clause) {
 		String query = "UPDATE " + database + " SET " + update + " WHERE " + clause + ";";
 		execute(query);
+	}
+	
+	public ResultSet select(String database, String condition, Object... values) {
+		try {
+			StringBuilder builder = new StringBuilder();
+			builder.append("SELECT * FROM "+database+" WHERE ");
+			builder.append(condition);
+			PreparedStatement stmt = connection.prepareStatement(builder.toString());
+			for(int i = 0; i < values.length; i++) {
+				Object obj = values[i];
+				int index = i+1;
+				if (obj instanceof String)
+					stmt.setString(index, (String) obj);
+				else if (obj instanceof Integer)
+					stmt.setInt(index, (int) obj);
+				else if(obj instanceof Double)
+					stmt.setDouble(index, (double) obj);
+				else if(obj instanceof Long)
+					stmt.setTimestamp(index, new Timestamp((long) obj));
+			}
+			return stmt.executeQuery();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public void insert(String database, Object... objects) {
