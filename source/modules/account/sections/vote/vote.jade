@@ -15,10 +15,49 @@ script.
       }, 0);
     });
     
+    function hasClass(target, className ) {
+      return new RegExp('(\\s|^)' + className + '(\\s|$)').test(target.className);
+    }
+    
+    $(document).delegate(".auth", "click", function() {
+      var element = $(this);
+      if($('.auth-options').length) {
+        $('.auth-options').prev().removeClass('active');
+        $('.auth-options').slideToggle(300, function() {
+          placeOptions(element);
+        });
+      } else {
+        placeOptions(element);
+      }
+    });
+    
     $('.auth-refresh').click(function() {
       $(this).blur();
+      $('.auth-options').remove();
       refresh();
     });
+    
+    $(document).delegate('.howto', 'click', function() {
+      $(this).blur();
+      var win = window.open('/howto', '_blank');
+      if(!win)
+        sendAlert('Unable to open howto page. Please allow popups on this website. Don\'t worry, we never allow ads');
+    });
+    
+    function placeOptions(element) {
+      $(".auth-options").remove();
+      element.after("<div class='auth-options'><div class='row'><div class='col-md-6'><a class='exchange' href='#'><span class='glyphicon glyphicon-transfer' aria-hidden='true'></span> Exchange for 1 Vote Credit</a></div><div class='col-md-6'><a class='howto' href='#'><span class='glyphicon glyphicon-question-sign' aria-hidden='true'></span> How to trade to other players</a></div><div class='col-md-6'><a class='delete' href='#'><span class='glyphicon glyphicon-ban-circle' aria-hidden='true'></span> Delete This Auth (permanent)</a></div></div></div>");
+      $(".auth-options").prev().addClass("active");
+      $(".auth-options").slideToggle(300);
+    }
+    
+    function getTitle(time) {
+      return time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
+    }
+    
+    function getCName(time) {
+      return time == 0 ? 'enabled' : 'disabled';
+    }
     
     function refresh() {
       $('.auth-spin').addClass('fa-spin');
@@ -31,20 +70,111 @@ script.
         $('.refresh-alert').html('Refreshed!');
         $('.refresh-alert').css('display', '');
         $('.refresh-alert').fadeOut(2000);
+        var runeserver = jsondata.site0;
+        var runelocus = jsondata.site1;
+        var toplist = jsondata.site2;
+        var sites = [ runeserver, runelocus, toplist ];
+        sites.forEach(function(item, index, array) {
+          var title = getTitle(item);
+          var className = getCName(item);
+          $('.site'+index).removeClass('enabled');
+          $('.site'+index).removeClass('disabled');
+          $('.site'+index).addClass(className);
+          document.getElementById('site'+index).title = title;
+        });
       });
     }
     
+    $(document).delegate(".delete", "click", function(e) {
+      var current = $(this);
+      var n = noty({
+        text: 'Do you want to delete this auth?',
+        type: 'confirm',
+        layout: 'center',
+        dismissQueue: false,
+        theme: 'cryogen',
+        buttons: [{
+          addClass: 'btn btn-primary', text: 'Delete', onClick: function($noty) {
+            $.post("/vote", {action:'remove', id: $(current).closest('.auths').find('.active').data('authuid')}, function(data) {
+              if(data == 'success') {
+                refresh();
+                sendAlert('Auth successfully deleted. This action cannot be undone.');
+              } else {
+                sendAlert('Error removing auth code');
+              }
+            });
+            $noty.close();
+          }
+        },
+        {
+          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+            $noty.close();
+          }
+        }]
+      })
+      e.preventDefault();
+    });
+    
+    $(document).delegate(".exchange", "click", function(e) {
+      var current = $(this);
+      var n = noty({
+        text: 'Do you want to exchange this auth?',
+        type: 'confirm',
+        layout: 'center',
+        dismissQueue: false,
+        theme: 'cryogen',
+        buttons: [{
+          addClass: 'btn btn-primary', text: 'Exchange', onClick: function($noty) {
+            $.post("/vote", { action:'exchange', id: $(current).closest('.auths').find('.active').data('authuid')}, function(data) {
+              if(data == 'success') {
+                refresh();
+                sendAlert('Auth exchanged for 1 vote credit. Visit the store in-game to spend it.');
+              } else {
+                sendAlert('Error exchanging auth code');
+              }
+            });
+            $noty.close();
+          }
+        },
+        {
+          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+            $noty.close();
+          }
+        }]
+      })
+      e.preventDefault();
+    });
+    
+    $(document).mousedown(function(e) {
+      var container = $('.auth-options');
+      if(!container.is(e.target) && container.has(e.target).length === 0) {
+        container.slideToggle(300, function() {
+          container.remove();
+        });
+      }
+    });
+    
+    function sendAlert(text) {
+      var n = noty({
+        text: text,
+        layout: 'topRight',
+        timeout: 5000,
+        theme: 'cryogen'
+      });
+    }
+
   });
 link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
 div.tab-pane.fade(id='vote')
   h5 About Auths:
   p.small Collect auth codes by voting on the sites below. Users can then proceed to click on each auth (below) and select "Exchange Auth" to exchange the auth for one voting point credited towards your account for use with the voting shop 
-    strong or
+    strong or 
     | can also choose to delete the auth. You 
-    strong may
-    | trade auth codes with players. If you've recently bought an auth code from another player, you may enter it below.
-  h5 My Auths:
-    button.btn.btn-normal.auth-refresh(style='float: right;') Refresh 
+    strong may 
+    | also trade auth codes with players. Please click the help button under each auth for more information.
+  div
+    h5(style='display: inline-block;') My Auths:
+    button.btn.btn-normal.auth-refresh(style='float: right; display: inline-block;') Refresh 
       i.fa.fa-refresh.auth-spin
     p.refresh-alert(style='float: right; margin-top: 10px; margin-right: 12px; color: green;')
   br
@@ -57,13 +187,5 @@ div.tab-pane.fade(id='vote')
           -var time = voteManager.getTime(i);
           -var clas = time == 0 ? 'enabled' : 'disabled';
           -var titl = time == 0 ? 'You can currently vote at this site' : 'You must wait another '+time+' minutes before voting again';
-          div.site(class=clas, title=titl)= voteManager.getName(i)
-  h5 Enter Auth Code:
-  p.small Enter a unique 12 character auth code below to claim the auth to your account. You can obtain these codes through give-aways or through trading goods to players in exchange for auth codes. You can use these codes in our voting shop for unique prizes.
-  div.claim-auth
-    div.row
-      div.col-md-10.col-md-offset-2(style='margin-left: 144px;')
-        for i in jIterator.iterate(3)
-          input(class='auth-char s'+(i+1), style='width: 150px;' type='text', maxlength='4', placeholder='_ _ _ _')
-    button.btn.btn-normal.btn-center.claim-auth-btn(style='margin-left: 307px;') Claim Auth
+          div.site(class=clas+" site"+(i), id="site"+(i), title=titl)= voteManager.getName(i, false)
         

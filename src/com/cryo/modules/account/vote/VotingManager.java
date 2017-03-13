@@ -21,19 +21,11 @@ public class VotingManager {
 	
 	private final @Getter String username;
 	
-	public String getRefreshJSON() {
-		Properties prop = new Properties();
-		prop.put("auth-list", getAuthList());
-		for(int i = 1; i < 4; i++)
-			prop.put("site"+i, getTime(i));
-		return new Gson().toJson(prop);
-	}
-	
-	public String getName(int index) {
+	public String getName(int index, boolean db) {
 		switch(index) {
-			case 0: return "Rune-Server";
-			case 1: return "Runelocus";
-			case 2: return "MMORPG Toplist";
+			case 0: return db ? "rune-server" : "Rune-Server";
+			case 1: return db ? "runelocus" : "Runelocus";
+			case 2: return db ? "toplist" : "MMORPG Toplist";
 		default: return "Error loading site";	
 		}
 	}
@@ -47,12 +39,12 @@ public class VotingManager {
 	}
 	
 	public int getTime(int site) {
-		Object[] data = VotingConnection.connection().handleRequest("get-time", username, "site"+site);
+		Object[] data = VotingConnection.connection().handleRequest("get-time", username, getName(site, true));
 		if(data == null)
 			return 0;
 		Timestamp timestamp = (Timestamp) data[0];
 		long millis = timestamp.getTime();
-		if(millis > System.currentTimeMillis())
+		if(millis < System.currentTimeMillis())
 			return 0;
 		long diff = System.currentTimeMillis() - millis;
 		long diffMinutes = diff / (60 * 1000);

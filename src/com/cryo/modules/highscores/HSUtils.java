@@ -5,6 +5,7 @@ import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.HighscoresConnection;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.utils.Utilities;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,10 @@ public class HSUtils {
 			rank[i] = (int) data[0];
 		}
 		return rank;
+	}
+	
+	public String getSkillName(int i) {
+		return Utilities.SKILL_NAME[i];
 	}
 	
 	public static HighscoresConnection getConnection() {

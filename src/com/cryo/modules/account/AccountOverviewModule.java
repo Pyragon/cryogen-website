@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.vote.VotingManager;
 import com.google.gson.Gson;
@@ -25,6 +26,20 @@ public class AccountOverviewModule extends WebModule {
 		super(website);
 	}
 	
+	public void decodeVoteGet(Request request, Response response) {
+		if(!request.queryParams().contains("action") || !request.queryParams().contains("secret"))
+			return;
+		String secret = request.queryParams("secret");
+		if(!secret.equals("yk1rH9w06360sXN"))
+			return;
+		String username = request.queryParams("uid");
+		switch(request.queryParams("action")) {
+			case "rune-server":
+				System.out.println("received vote for "+username);
+				break;
+		}
+	}
+	
 	public String decodeVotePost(Request request, Response response) {
 		if(request.session().attribute("cryo-user") == null)
 			return showLoginPage("/account?section=vote", request, response);
@@ -34,15 +49,32 @@ public class AccountOverviewModule extends WebModule {
 		String action = request.queryParams("action");
 		switch(action) {
 			case "refresh":
+				System.out.println("refres");
 				Properties prop = new Properties();
 				VotingManager manager = new VotingManager(request.session().attribute("cryo-user"));
 				model.put("voteManager", manager);
 				prop.put("authlist", render("./source/modules/account/sections/vote/auth-list.jade", model, request, response));
-				for(int i = 1; i < 4; i++)
+				for(int i = 0; i < 3; i++) {
 					prop.put("site"+i, manager.getTime(i));
+				}
 				return new Gson().toJson(prop);
+			case "exchange":
+				String auid = request.queryParams("id");
+				Object[] data = VotingConnection.connection().handleRequest("remove-auth", auid);
+				if(data == null)
+					return "error";
+				//TODO - send message to server
+				return "success";
+			case "remove":
+				auid = request.queryParams("id");
+				VotingConnection.connection().handleRequest("remove-auth", auid);
+				return "success";
 		}
 		return Website.render404(request, response);
+	}
+	
+	public static void logAuthEvent() {
+		//TODO - LOG EVERYTHING THAT HAPPENS TO AN AUTH
 	}
 
 	@Override

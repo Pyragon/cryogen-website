@@ -21,7 +21,9 @@ block content
         a.skill(skill_id=''+i, href='#')
           img(src='images/skills_hd/'+i+'.png')
     div.widget.highscores(style='min-height: 400px;')
-      if skill_id == -1
+      if hsuser != null
+        include personal-view
+      else if skill_id == -1
         include global-users
       else
         include skill-view

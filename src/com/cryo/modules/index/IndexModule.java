@@ -42,7 +42,7 @@ public class IndexModule extends WebModule {
 		model.put("postList", list);
 		model.put("formatter", new DateFormatter());
 		model.put("hsusers", HSUtils.getList(10));
-		model.put("redirect", "/re2");
+		model.put("redirect", "/");
 		return render("./source/modules/index/index.jade", model, request, response);
 	}
 	

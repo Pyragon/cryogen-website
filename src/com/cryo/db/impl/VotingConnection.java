@@ -28,6 +28,14 @@ public class VotingConnection extends DatabaseConnection {
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
+			case "remove-auth":
+				String auid = (String) data[1];
+				try {
+					delete("auths", "ID="+auid);
+					return new Object[] { true };
+				} catch(Exception e) {
+					return new Object[] { false };
+				}
 			case "get-auths":
 				String username = (String) data[1];
 				ResultSet set = select("auths", "username='"+username+"'");

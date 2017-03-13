@@ -17,8 +17,6 @@ block content
             a(href='#overview', data-toggle='tab') Account overview
           li.nav.account-item
             a.vote(href='#vote', data-toggle='tab') Vote
-          li.nav.account-item
-            a(href='#security', data-toggle='tab') Security Settings
           if user.getRights() > 1
             li.nav.account-item
               a(href='#shop', data-toggle='tab') Cryogen shop
@@ -27,5 +25,4 @@ block content
           div.tab-content.content
             include sections/overview
             include sections/vote/vote
-            include sections/security
             include sections/shop

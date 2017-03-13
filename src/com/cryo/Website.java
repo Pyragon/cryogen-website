@@ -54,9 +54,9 @@ public class Website {
 	public Website() {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
-		port(80);
+		port(8181);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
-		staticFiles.expireTime(600); // ten minutes
+		//staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});

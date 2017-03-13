@@ -29,6 +29,13 @@ public class HighscoresModule extends WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		try {
 			if(type == RequestType.GET) {
+				if(request.queryParams().contains("user")) {
+					String user = request.queryParams("user");
+					HSData data = new HSUtils().getHSData(user);
+					model.put("hsuser", data);
+					model.put("hsutils", new HSUtils());
+					return render("./source/modules/highscores/global/index.jade", model, request, response);
+				}
 				model.put("hsusers", HSUtils.getList(30));
 				model.put("skill_id", -1);
 				return render("./source/modules/highscores/global/index.jade", model, request, response);
