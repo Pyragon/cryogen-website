@@ -20,11 +20,18 @@ public class EmailConnection extends DatabaseConnection {
 	public static EmailConnection connection() {
 		return (EmailConnection) Website.instance().getConnectionManager().getConnection(Connection.EMAIL);
 	}
+	
+	public static EmailConnection connection(Website website) {
+		return (EmailConnection) website.getConnectionManager().getConnection(Connection.EMAIL);
+	}
 
 	@Override
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
+			case "remove-verifications":
+				delete("temp", "expiry < DATE_SUB(NOW(), INTERVAL 1 DAY);");
+				break;
 			case "add-verify":
 				String username = (String) data[1];
 				String email = (String) data[2];

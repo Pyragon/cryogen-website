@@ -46,6 +46,8 @@ public class Website {
 	
 	private static Website INSTANCE;
 	
+	public static boolean LOADED;
+	
 	private TaskManager taskManager;
 	
 	private static @Getter Properties properties;
@@ -57,7 +59,7 @@ public class Website {
 	public Website() {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
-		taskManager = new TaskManager();
+		taskManager = new TaskManager(this);
 		port(8181);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		//staticFiles.expireTime(600); // ten minutes
@@ -126,6 +128,7 @@ public class Website {
 			}
 		});
 		get("*", Website::render404);
+		LOADED = true;
 		taskManager.run();
 	}
 	

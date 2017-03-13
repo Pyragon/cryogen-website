@@ -2,6 +2,7 @@ package com.cryo.db;
 
 import java.util.HashMap;
 
+import com.cryo.Website;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
@@ -20,6 +21,7 @@ public class DBConnectionManager {
 	
 	public DBConnectionManager() {
 		init();
+		Website.LOADED = true;
 	}
 	
 	public DatabaseConnection getConnection(Connection connection) {

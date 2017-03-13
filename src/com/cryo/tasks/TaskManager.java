@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.cryo.Website;
 import com.cryo.tasks.impl.Task;
 import com.cryo.utils.Utilities;
 
@@ -18,9 +19,12 @@ public class TaskManager extends Thread {
 	
 	private ArrayList<Task> tasks;
 	
-	public TaskManager() {
+	private Website website;
+	
+	public TaskManager(Website website) {
 		setName("Task Manager");
 		setPriority(Thread.MAX_PRIORITY);
+		this.website = website;
 		load();
 	}
 	
@@ -32,8 +36,9 @@ public class TaskManager extends Thread {
 					continue;
 				if(c.getSimpleName().equals("Task"))
 					continue;
-				System.out.println("Loaded: "+c.getName());
-				tasks.add((Task) c.newInstance());
+				Task task = (Task) c.newInstance();
+				task.setWebsite(website);
+				tasks.add(task);
 			}
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
@@ -48,6 +53,14 @@ public class TaskManager extends Thread {
 	
 	public void run() {
 		while(true) {
+			if(!Website.LOADED) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				return;
+			}
 			long start = System.currentTimeMillis();
 			Calendar c = Calendar.getInstance();
 			int second = c.get(Calendar.SECOND);
