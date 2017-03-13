@@ -45,6 +45,20 @@ public class AccountConnection extends DatabaseConnection {
 				salt = getString(set, "salt");
 				hash = getString(set, "password");
 				return new Object[] { BCrypt.hashPassword(password, salt).equals(hash) };
+			case "change-pass":
+				username = (String) data[1];
+				password = (String) data[2];
+				String current = (String) data[3];
+				data = handleRequest("compare", username, current);
+				if(data == null)
+					return new Object[] { false, "Invalid username." };
+				boolean compare = (boolean) data[0];
+				if(!compare)
+					return new Object[] { false, "Invalid current password." };
+				salt = BCrypt.generate_salt();
+				hash = BCrypt.hashPassword(password, salt);
+				set("player_data", "salt='"+salt+"',password='"+hash+"'", "username='"+username+"'");
+				return new Object[] { true };
 			case "get-account":
 				username = (String) data[1];
 				set = select("player_data", "username='"+username+"'");

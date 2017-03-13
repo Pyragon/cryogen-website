@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
@@ -82,11 +83,11 @@ public class AccountOverviewModule extends WebModule {
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		if(request.session().attribute("cryo-user") == null)
 			return showLoginPage("/account?"+request.queryString(), request, response);
-			HashMap<String, Object> model = new HashMap<>();
+		String username = request.session().attribute("cryo-user");
+		HashMap<String, Object> model = new HashMap<>();
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))
 				model.put("section", request.queryParams("section"));
-			String username = request.session().attribute("cryo-user");
 			model.put("voteManager", new VotingManager(username));
 			Object[] data = DisplayConnection.connection().handleRequest("get-time", username);
 			int seconds = 0;
@@ -107,9 +108,18 @@ public class AccountOverviewModule extends WebModule {
 					if(data == null)
 						return "ERROR";
 					return Boolean.toString((boolean) data[0]);
+				case "change-pass":
+					String new_pass = request.queryParams("pass");
+					String cur_pass = request.queryParams("cur");
+					data = AccountConnection.connection().handleRequest("change-pass", username, new_pass, cur_pass);
+					boolean success = (boolean) data[0];
+					Properties prop = new Properties();
+					prop.put("result", success);
+					if(!success)
+						prop.put("error", (String) data[1]);
+					return new Gson().toJson(prop);
 				case "change-display":
 					name = request.queryParams("name");
-					String username = request.session().attribute("cryo-user");
 					Account account = AccountUtils.getAccount(username);
 					String display = AccountUtils.getDisplayName(account);
 					if(name == null || name == "")
@@ -117,7 +127,7 @@ public class AccountOverviewModule extends WebModule {
 					DisplayConnection.connection().handleRequest("change-display", username, display, Utilities.formatName(name));
 					data = DisplayConnection.connection().handleRequest("get-time", username);
 					int seconds = (int) data[0];
-					Properties prop = new Properties();
+					prop = new Properties();
 					prop.put("seconds", seconds);
 					prop.put("success", "true");
 					String html = AccountUtils.crownHTML(account);

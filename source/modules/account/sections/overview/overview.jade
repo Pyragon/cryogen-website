@@ -55,14 +55,33 @@ script.
       $('.display-change').attr('title', 'You can change your display name again in '+time);
     }
     
+    $('#pass-change').focusout(function() {
+      var pass = $(this).val();
+      var verify = $('#pass-change-verify').val();
+      if(pass == "" || verify == "") {
+        $('#pass-error').css('display', 'none');
+        return;
+      }
+    });
+    
     $('#pass-change-verify').focusout(function() {
       var pass = $('#pass-change').val();
       var verify = $(this).val();
+      if(pass == "" || verify == "") {
+        $('#pass-error').css('display', 'none');
+        return;
+      }
       if(pass != verify) {
         $('#pass-error').css('display', '');
         addColorClass($('#pass-error'), 'color-red');
         $('#pass-error').html('&#x2718 Passwords not match!')
       } else {
+        if(pass.length < 6 || pass.length > 20) {
+          $('#pass-error').css('display', '');
+          addColorClass($('#pass-error'), 'color-red');
+          $('#pass-error').html('&#x2718 Passwords must be between 6 and 20 characters!')
+          return;
+        }
         $('#pass-error').css('display', '');
         addColorClass($('#pass-error'), 'color-green');
         $('#pass-error').html('&#x2714 Passwords match!')
@@ -144,6 +163,15 @@ script.
           resetPassFields();
           error('.cur-alert', 'You must enter your current password to change it!')
         }
+        resetPassFields();
+        $.post('/account', {action:'change-pass', pass:pass, cur:cur_pass}, function(ret) {
+          var data = JSON.parse(ret);
+          if(data.result == true) {
+            success('.pass-alert', 'Password successfully changed!');
+          } else {
+            error('.pass-alert', data.error);
+          }
+        });
       }
       if(display != "") {
         if(donator == 0) {
@@ -164,7 +192,6 @@ script.
                 interval = setInterval(handleDisplayTime, 1000);
                 resetDisplayField();
               } else {
-                alert('yo');
                 error('.display-alert', data.error);
               }
             });
@@ -197,6 +224,7 @@ script.
     function resetPassFields() {
       $('#pass-change').val('');
       $('#pass-change-verify').val('');
+      $('.cur-pass').val('');
       $('#pass-error').css('display', 'none');
     }
     
@@ -226,6 +254,7 @@ div.tab-pane.fade.in.active(id='overview')
         div.col-md-6
           label Change Password:
         div.col-md-6
+          p.color-grey Must be 6 or more characters of length and can contain any combination of symbols, numbers, and alpha characters. Passwords are case sensitive.
           p#pass-error
           input.form-control#pass-change(type='password', placeholder='New Password')
           input.form-control#pass-change-verify(type='password', placeholder='Verify New Password')
