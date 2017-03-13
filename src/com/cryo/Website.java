@@ -63,6 +63,9 @@ public class Website {
 		get(AccountOverviewModule.PATH, (req, res) -> {
 			return new AccountOverviewModule(this).decodeRequest(req, res, RequestType.GET);
 		});
+		post(AccountOverviewModule.PATH, (req, res) -> {
+			return new AccountOverviewModule(this).decodeRequest(req, res, RequestType.POST);
+		});
 		post("/vote", (req, res) -> {
 			return new AccountOverviewModule(this).decodeVotePost(req, res);
 		});

@@ -94,6 +94,8 @@ public abstract class DatabaseConnection {
 					stmt.setInt(index, (int) obj);
 				else if(obj instanceof Double)
 					stmt.setDouble(index, (double) obj);
+				else if(obj instanceof Long)
+					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
 			stmt.execute();
 		} catch (SQLException e) {

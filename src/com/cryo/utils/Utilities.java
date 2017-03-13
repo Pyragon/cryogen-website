@@ -24,8 +24,36 @@ public class Utilities {
 		return INSTANCE;
 	}
 	
-	public String test() {
-		return "test";
+	public static void main(String[] args) {
+		String value = "as_-df";
+		boolean matches = value.matches("\\w*(-{2}|_{2}|-_|_-)\\w*");
+		System.out.println(matches);
+	}
+	
+	public String isValidDisplay(String name) {
+		if(!name.matches("[a-zA-Z0-9_ -]"))
+			return "Display name contains invalid characters";
+	      if(name.length() < 3 || name.length() > 12)
+	        return "Display name must be between 3 and 12 characters";
+	      if(name.replace(" ", "_").matches("\\w*(-{2}|_{2}|-_|_-)\\w*"))
+	        return "Display name cannot contain two spaces, underscores, or hyphens in a row";
+	      if(name.startsWith("-") || name.endsWith("-"))
+	        return "Display name cannot start or end with a hyphen";
+	      if(name.startsWith("_") || name.endsWith("_"))
+	        return "Display name cannot start or end with an underscore";
+	      if(name.startsWith(" ") || name.endsWith(" "))
+	        return "Display name cannot start or end with a space";
+	      if(name.toLowerCase().contains("mod") || name.toLowerCase().contains("admin"))
+	        return "Display name contains invalid words";
+	      return "";
+	}
+	
+	public static String formatNameForProtocol(String name) {
+		if (name == null)
+			return "";
+		name = name.replaceAll(" ", "_");
+		name = name.toLowerCase();
+		return name;
 	}
 	
 	public String renderLink(String href, String text) {
@@ -82,22 +110,6 @@ public class Utilities {
 		}
 		message = message.replace("{{/username}}", "{{username}}");
 		return message;
-	}
-	
-	public static String getRequestUsername(Request request) {
-		return request.queryParams("username");
-	}
-	
-	public static boolean isMiniLogin(Request request) {
-		return request.queryParams("mini-login").equals("true");
-	}
-	
-	public static String getRequestPassword(Request request) {
-		return request.queryParams("password");
-	}
-	
-	public static String getRequestRedirect(Request request) {
-		return request.queryParams("redirect");
 	}
 	
 }

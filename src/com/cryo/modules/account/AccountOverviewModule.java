@@ -5,9 +5,11 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.vote.VotingManager;
+import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
 import spark.Request;
@@ -49,7 +51,6 @@ public class AccountOverviewModule extends WebModule {
 		String action = request.queryParams("action");
 		switch(action) {
 			case "refresh":
-				System.out.println("refres");
 				Properties prop = new Properties();
 				VotingManager manager = new VotingManager(request.session().attribute("cryo-user"));
 				model.put("voteManager", manager);
@@ -81,12 +82,51 @@ public class AccountOverviewModule extends WebModule {
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		if(request.session().attribute("cryo-user") == null)
 			return showLoginPage("/account?"+request.queryString(), request, response);
-		HashMap<String, Object> model = new HashMap<>();
-		if(request.queryParams().contains("section"))
-			model.put("section", request.queryParams("section"));
-		String username = request.session().attribute("cryo-user");
-		model.put("voteManager", new VotingManager(username));
-		return render("./source/modules/account/index.jade", model, request, response);
+			HashMap<String, Object> model = new HashMap<>();
+		if(type == RequestType.GET) {
+			if(request.queryParams().contains("section"))
+				model.put("section", request.queryParams("section"));
+			String username = request.session().attribute("cryo-user");
+			model.put("voteManager", new VotingManager(username));
+			Object[] data = DisplayConnection.connection().handleRequest("get-time", username);
+			int seconds = 0;
+			if(data != null)
+				seconds = (int) data[0];
+			model.put("seconds", seconds);
+			return render("./source/modules/account/index.jade", model, request, response);
+		} else if(type == RequestType.POST) {
+			String action = request.queryParams("action");
+			if(action == null || action == "")
+				return Website.render404(request, response);
+			switch(action) {
+				case "check-display":
+					String name = request.queryParams("name");
+					if(name == null || name == "")
+						return "ERROR";
+					Object[] data = DisplayConnection.connection().handleRequest("name-exists", name);
+					if(data == null)
+						return "ERROR";
+					return Boolean.toString((boolean) data[0]);
+				case "change-display":
+					name = request.queryParams("name");
+					String username = request.session().attribute("cryo-user");
+					Account account = AccountUtils.getAccount(username);
+					String display = AccountUtils.getDisplayName(account);
+					if(name == null || name == "")
+						return "Error changing Display Name. Please contact an admin.";
+					DisplayConnection.connection().handleRequest("change-display", username, display, Utilities.formatName(name));
+					data = DisplayConnection.connection().handleRequest("get-time", username);
+					int seconds = (int) data[0];
+					Properties prop = new Properties();
+					prop.put("seconds", seconds);
+					prop.put("success", "true");
+					String html = AccountUtils.crownHTML(account);
+					prop.put("displayname", html);
+					return new Gson().toJson(prop);
+			}
+			return "";
+		}
+		return Website.render404(request, response);
 	}
 	
 }

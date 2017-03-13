@@ -102,6 +102,14 @@ h4.title {
     color: #999;
 }
 
+.color-red {
+    color: #610000;
+}
+
+.color-green {
+    color: #129a11;
+}
+
 .close {
     color: #FFF;
 }
@@ -594,6 +602,45 @@ p.small {
 
 
 /*
+* Account Overview
+*/
+
+.overview button:focus {
+    outline: 0 !important;
+}
+
+.overview-info label {
+    font-family: none;
+    padding-left: 2px;
+    font-size: 13px;
+}
+
+.overview {
+    font-size: 10px;
+}
+
+.display-disabled::-webkit-input-placeholder {
+    color: #610000;
+}
+
+.display-disabled:-moz-placeholder {
+    color: #610000;
+}
+
+.display-disabled::-moz-placeholder {
+    color: #610000;
+}
+
+.display-disabled:-ms-input-placeholder {
+    color: #610000;
+}
+
+.display-disabled {
+    border: 1px solid #610000 !important;
+}
+
+
+/*
 * Register
 */
 
@@ -844,7 +891,7 @@ Widget
     font-weight: 300;
 }
 
-.mini-login form input, .register input {
+.mini-login form input, .register input, .form-control[disabled] {
     background: #111;
     border: 1px solid #000;
     font-size: 11px;
@@ -1268,4 +1315,8 @@ kanan 1.2s infinite linear;
     100% {
         -o-transform: translateX(-20px);
     }
+}
+
+}
+
 }

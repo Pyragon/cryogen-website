@@ -55,8 +55,9 @@ public class RegisterModule extends WebModule {
 				return json(false, "Error retrieving display name details");
 			if((boolean) data[0])
 				return json(false, "Username is already in use.");
-			if(!username.matches("[a-zA-Z0-9\\-_]*"))
-				return json(false, "Username contains invalid characters.");
+			String valid = new Utilities().isValidDisplay(username);
+			if(!valid.equals(""))
+				return json(false, valid);
 			AccountConnection.connection().handleRequest("register", username, password);
 			request.session().attribute("cryo-user", username);
 			return json(true, redirect("/register?success", 0, request, response));

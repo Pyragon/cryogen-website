@@ -52,7 +52,11 @@ public class AccountConnection extends DatabaseConnection {
 					return null;
 				int rights = getInt(set, "rights");
 				int donator = getInt(set, "donator");
-				return new Object[] { new Account(username, rights, donator) };
+				Account account = new Account(username, rights, donator);
+				String email = getString(set, "email");
+				if(email != null && !email.equals(""))
+					account.setEmail(email);
+				return new Object[] { account };
 		}
 		return null;
 	}

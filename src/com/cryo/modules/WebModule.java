@@ -40,6 +40,7 @@ public abstract class WebModule {
 		model.put("jIterator", new JadeIterator());
 		model.put("hsutils", new HSUtils());
 		model.put("utils", new Utilities());
+		model.put("baseurl", "http://localhost:8181/");
 		boolean loggedIn = request.session().attributes().contains("cryo-user");
 		model.put("loggedIn", loggedIn);
 		if(loggedIn) {

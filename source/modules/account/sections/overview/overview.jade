@@ -1,0 +1,241 @@
+script.
+  var donator = !{user.getDonator()};
+  var seconds = !{seconds};
+  var check = false;
+  var interval;
+  $(document).ready(function() {
+    
+    interval = setInterval(handleDisplayTime, 1000);
+    
+    function handleDisplayTime() {
+      seconds--;
+      if(seconds <= 0) {
+        $('.display-change').attr('title', ' ');
+        $('.display-change').attr('id', 'dchange');
+        $('.display-change').attr('disabled', false);
+        $('.display-change').removeClass('display-disabled');
+        clearInterval(interval);
+        return;
+      }
+      $('.display-change').attr('id', 'disabled dchange');
+      $('.display-change').attr('disabled', true);
+      $('.display-change').addClass('display-disabled');
+      var sec = seconds;
+      var minutes = 0;
+      var hours = 0;
+      var days = 0;
+      while(sec >= 60) {
+        sec -= 60;
+        minutes++;
+        if(minutes == 60) {
+          minutes = 0;
+          hours++;
+          if(hours == 24) {
+            hours = 0;
+            days++;
+          }
+        }
+      }
+      var time = "";
+      if(days > 0)
+        time += days+" Day"+(days > 1 ? "s" : "");
+      if(hours > 0) {
+        if(days > 0)
+          time += ", ";
+            time += hours+" Hour"+(hours > 1 ? "s" : "");
+      }
+      if(minutes > 0) {
+        if(hours > 0)
+          time += ", ";
+            time += minutes+" Minute"+(minutes > 1 ? "s" : "");
+      }
+      if(minutes > 0)
+        time += ", ";
+          time += sec+" Second"+(minutes > 1 ? "s" : "");
+      $('.display-change').attr('title', 'You can change your display name again in '+time);
+    }
+    
+    $('#pass-change-verify').focusout(function() {
+      var pass = $('#pass-change').val();
+      var verify = $(this).val();
+      if(pass != verify) {
+        $('#pass-error').css('display', '');
+        addColorClass($('#pass-error'), 'color-red');
+        $('#pass-error').html('&#x2718 Passwords not match!')
+      } else {
+        $('#pass-error').css('display', '');
+        addColorClass($('#pass-error'), 'color-green');
+        $('#pass-error').html('&#x2714 Passwords match!')
+      }
+    });
+    
+    function validName(name) {
+      if(!name.match("[a-zA-Z0-9_ -]") == null)
+        return 'Display name contains invalid characters';
+      if(name.length < 3 || name.length > 12)
+        return 'Display name must be between 3 and 12 characters';
+      if(name.match("\w*(-{2}|_{2}|-_|_-)\w*") != null)
+        return 'Name cannot contain two spaces, underscores, or hyphens in a row';
+      if(name.startsWith("-") || name.endsWith("-"))
+        return 'Name cannot start or end with a hyphen';
+      if(name.startsWith("_") || name.endsWith("_"))
+        return 'Display name cannot start or end with an underscore';
+      if(name.startsWith(" ") || name.endsWith(" "))
+        return 'Display name cannot start or end with an s';
+      if(name.toLowerCase().includes("mod") || name.toLowerCase().includes("admin"))
+        return 'Display name contains invalid words';
+      return null;
+    }
+    
+    $('#dchange').focusout(function() {
+      var name = $(this).val();
+      if(name == null || name == '')
+        return;
+      $('#in-use').css('display', '');
+      $('#error-spin').css('display', '');
+      addColorClass($('#in-use'), 'color-grey');
+      $('#in-use').html(' Checking availability...');
+      var valid = validName(name);
+      if(valid == null) {
+        check = false;
+        setTimeout(function() {
+          $.post('/account', { action:'check-display', name:name }, function(data) {
+            if(!check) {
+              $('#error-spin').css('display', 'none');
+              if(data == 'false') {
+                addColorClass($('#in-use'), 'color-green');
+                $('#in-use').html('&#x2714 Display name is available!');
+              } else {
+                addColorClass($('#in-use'), 'color-red');
+                $('#in-use').html('&#x2718 Display name is in use!');
+              }
+            }
+            return false;
+          });
+        }, 1000);
+      } else {
+        addColorClass($('#in-use'), 'color-red');
+        $('#error-spin').css('display', 'none');
+        $('#in-use').html('&#x2718 '+valid+'!');
+        return;
+      }
+    });
+    
+    function addColorClass(element, cname) {
+      element.removeClass('color-red');
+      element.removeClass('color-green');
+      element.removeClass('color-grey');
+      element.addClass(cname);
+    }
+        
+    $('.overview-submit').click(function() {
+      var pass = $('#pass-change').val();
+      var verify = $('#pass-change-verify').val();
+      var cur_pass = $('.cur-pass').val();
+      var display = $('.display-change').val();
+      if(pass != "" || verify != "") { //we are changing password
+        if(pass == "" || verify == "") {
+          resetPassFields();
+          error('.pass-alert', 'Both fields must be filled out!');
+        } else if(pass != verify) {
+          resetPassFields();
+          error('.pass-alert', 'Passwords do not match!');
+        } else if(cur_pass == "") {
+          resetPassFields();
+          error('.cur-alert', 'You must enter your current password to change it!')
+        }
+      }
+      if(display != "") {
+        if(donator == 0) {
+          resetDisplayField();
+          error('.display-alert', 'You must be a Donator+ in order to change your display name!');
+        } else {
+          var valid = validName(display);
+          if(valid == null) {
+            $.post('/account', { action:'change-display', name:display }, function(ret) {
+              var data = JSON.parse(ret);
+              if(data.success == 'true') {
+                success('.display-alert', 'Display name successfully changed!');
+                $('#disp-name').html(data.displayname);
+                check = true;
+                $('#in-use').css('display', 'none');
+                $('#error-spin').css('display', 'none');
+                seconds = data.seconds;
+                interval = setInterval(handleDisplayTime, 1000);
+                resetDisplayField();
+              } else {
+                alert('yo');
+                error('.display-alert', data.error);
+              }
+            });
+          } else {
+            error('.display-alert', valid);
+          }
+        }
+      }
+    });
+    
+    function error(cname, message) {
+      $(cname).css('display', 'block');
+      $(cname).css('color', '#610000');
+      $(cname).html(message);
+      $(cname).fadeOut(3000);
+    }
+    
+    function success(cname, message) {
+      $(cname).css('display', 'block');
+      $(cname).css('color', '#1F4F09');
+      $(cname).css('background', '#45CE06');
+      $(cname).html(message);
+      $(cname).fadeOut(3000);
+    }
+    
+    function resetDisplayField() {
+      $('.display-change').val('');
+    }
+    
+    function resetPassFields() {
+      $('#pass-change').val('');
+      $('#pass-change-verify').val('');
+      $('#pass-error').css('display', 'none');
+    }
+    
+  });
+  
+div.tab-pane.fade.in.active(id='overview')
+  div.widget.register.overview
+    div.row
+      div.col-md-6.box
+        div.alert.alert-custom.modal-alert.display-alert
+        div.col-md-6.overview-info
+          label Display Name: 
+        div.col-md-6
+          p.color-grey#disp-name= '$for-name='+user.getUsername()+'$end'
+          p.color-grey This is the name you are seen by in-game. This does not affect your login name. 
+          p.color-grey Only Donators+ have the ability to change this name.
+          p
+            i.fa.fa-spinner.fa-spin#error-spin(style='display: none;')
+            span#in-use
+          -var disable = user.getDonator() > 0  && seconds == 0 ? '' : 'disabled';
+          if user.getDonator() > 0 && seconds == 0
+            input.form-control.display-change#dchange(type='text', placeholder='New Display Name')
+          else
+            input.display-disabled.display-change.form-control(type='text', placeholder='New Display Name', title='Only Donators+ can change their Display Names', id=disable+' dchange', disabled=disable)
+      div.col-md-6.box
+        div.alert.alert-custom.modal-alert.pass-alert
+        div.col-md-6
+          label Change Password:
+        div.col-md-6
+          p#pass-error
+          input.form-control#pass-change(type='password', placeholder='New Password')
+          input.form-control#pass-change-verify(type='password', placeholder='Verify New Password')
+    div.row
+      include email-display
+      div.col-md-6.box
+        div.alert.alert-custom.modal-alert.cur-alert
+        div.col-md-6
+          label Enter your current password:
+        div.col-md-6
+          p.color-grey.overview Only needed if you are changing your password.
+          input.form-control.cur-pass(type='password', placeholder='Current Password')
+          button.btn.btn-normal.overview-submit(style='margin-bottom: 0px; margin-right: 0px;') Submit

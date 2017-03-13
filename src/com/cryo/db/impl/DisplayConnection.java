@@ -1,10 +1,14 @@
 package com.cryo.db.impl;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.DBConnectionManager.Connection;
+import com.cryo.utils.Utilities;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -31,10 +35,47 @@ public class DisplayConnection extends DatabaseConnection {
 				insert("current_names", username, display);
 				insert("last_names", username, display);
 				break;
+			case "get-time":
+				username = (String) data[1];
+				Date date = new Date();
+				ResultSet set = select("delays", "username='"+username+"'");
+				if(empty(set))
+					return new Object[] { 0 };
+				Timestamp stamp = getTimestamp(set, "timestamp");
+				if(date.getTime() > stamp.getTime())
+					return new Object[] { 0 };
+				long diff = stamp.getTime() - date.getTime();
+				long seconds = diff / 1000;
+				return new Object[] { (int) seconds };
+			case "change-display":
+				username = (String) data[1];
+				display = (String) data[2];
+				String next = (String) data[3];
+				data = handleRequest("get-last-display", username);
+				if(data != null)
+					delete("last_names", "username='"+username+"'");
+				if(!Utilities.formatNameForProtocol(display).equals(username))
+					insert("last_names", username, display);
+				set = select("delays", "username='"+username+"'");
+				Calendar c = Calendar.getInstance();
+				c.add(Calendar.HOUR, 7*24);
+				long time = c.getTimeInMillis();
+				if(empty(set))
+					insert("delays", username, time);
+				else
+					set("delays", "timestamp=DEFAULT", "username='"+username+"'");
+				set("current_names", "display_name='"+next+"'", "username='"+username+"'");
+				break;
+			case "get-last-display":
+				username = (String) data[1];
+				set = select("last_names", "username='"+username+"'");
+				if(set == null || wasNull(set) || !next(set))
+					return null;
+				return new Object[] { getString(set, "display_name") };
 			case "name-exists":
 				String name = (String) data[1];
 				name = name.toLowerCase().replaceAll(" ", "_");
-				ResultSet set = select("current_names", "username='"+name+"' OR display_name='"+name+"'");
+				set = select("current_names", "username='"+name+"' OR display_name='"+name+"'");
 				if(!empty(set))
 					return new Object[] { true };
 				set = select("last_names", "username='"+name+"' OR display_name='"+name+"'");

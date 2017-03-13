@@ -2,6 +2,7 @@ package com.cryo.modules.account;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -14,5 +15,7 @@ public class Account {
 	private final @Getter String username;
 	
 	private final @Getter int rights, donator;
+	
+	private @Getter @Setter String email;
 	
 }
