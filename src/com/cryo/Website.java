@@ -23,6 +23,7 @@ import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
+import com.cryo.tasks.TaskManager;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.net.MediaType;
@@ -45,6 +46,8 @@ public class Website {
 	
 	private static Website INSTANCE;
 	
+	private TaskManager taskManager;
+	
 	private static @Getter Properties properties;
 	
 	private @Getter DBConnectionManager connectionManager;
@@ -54,6 +57,7 @@ public class Website {
 	public Website() {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
+		taskManager = new TaskManager();
 		port(8181);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		//staticFiles.expireTime(600); // ten minutes
@@ -122,6 +126,7 @@ public class Website {
 			}
 		});
 		get("*", Website::render404);
+		taskManager.run();
 	}
 	
 	public static String render404(Request request, Response response) {
