@@ -16,7 +16,7 @@ script.
       $.post('/account', { action:'get-email' }, function(data) {
         if(data == '')
           return;
-        if(data != email) {
+        if(data != email && !data.includes('Login')) {
           success($('.email-alert'), 'Your email has successfully been changed.');
           email = data;
           $('#email').html(email);
