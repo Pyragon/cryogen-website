@@ -12,7 +12,7 @@ script.
     
     function showPersonalHS() {
       var name = $('.search-username').val();
-      $.post('/highscores', { display:name}, function(data) {
+      $.post('/highscores', { display:name }, function(data) {
         $('.mini-hs').html(data);
       });
     }

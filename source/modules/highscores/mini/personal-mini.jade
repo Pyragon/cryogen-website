@@ -11,7 +11,7 @@ div.content
   -var index = -1
   if hsdata == null
     h3(style='text-align: center;')= 'Player '+hsname+' not found.'
-      |  Click #[a.return-but(href='#', title='Return to global') here] to go back.
+      |  Click #[a.color-grey.return-but(href='#', title='Return to global') here] to go back.
   else
     h3(style='text-align: center;') &larr; #[a.return-but(href='#', title='Return to global') Go back]
     -var name = hsdata.getName()
