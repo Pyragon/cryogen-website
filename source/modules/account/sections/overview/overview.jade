@@ -19,7 +19,7 @@ script.
         if(data != email && !data.includes('Login')) {
           success($('.email-alert'), 'Your email has successfully been changed.');
           email = data;
-          $('#email').html(email);
+          $('#email').html('Emai;: '+email); //put mail glyphicon
         }
       });
     }
@@ -80,6 +80,10 @@ script.
         return;
       }
     });
+    
+    function checkPassEqual(pass, verify) {
+      
+    }
     
     $('#pass-change-verify').focusout(function() {
       var pass = $('#pass-change').val();

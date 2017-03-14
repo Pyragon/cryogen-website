@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Timer;
 
 import com.cryo.db.DBConnectionManager;
 import com.cryo.modules.account.AccountOverviewModule;
@@ -24,6 +25,7 @@ import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.tasks.TaskManager;
+import com.cryo.tasks.impl.EmailVerifyTask;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.net.MediaType;
@@ -48,18 +50,18 @@ public class Website {
 	
 	public static boolean LOADED;
 	
-	private TaskManager taskManager;
-	
 	private static @Getter Properties properties;
 	
 	private @Getter DBConnectionManager connectionManager;
+	
+	private Timer fastExecutor;
 	
 	private static File FAVICON = new File("D:/workspace/cryogen-website/source/images/favicon.ico");
 	
 	public Website() {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
-		taskManager = new TaskManager(this);
+		fastExecutor = new Timer();
 		port(8181);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		//staticFiles.expireTime(600); // ten minutes
@@ -129,7 +131,7 @@ public class Website {
 		});
 		get("*", Website::render404);
 		LOADED = true;
-		taskManager.run();
+		fastExecutor.schedule(new TaskManager(), 0, 1000);
 	}
 	
 	public static String render404(Request request, Response response) {

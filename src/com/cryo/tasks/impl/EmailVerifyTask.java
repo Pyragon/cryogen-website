@@ -16,7 +16,7 @@ public class EmailVerifyTask extends Task {
 
 	@Override
 	public void run() {
-		EmailConnection.connection(website).handleRequest("remove-verifications");
+		EmailConnection.connection().handleRequest("remove-verifications");
 	}
 	
 }

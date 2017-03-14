@@ -39,7 +39,7 @@ public class AccountConnection extends DatabaseConnection {
 			case "compare":
 				username = (String) data[1];
 				password = (String) data[2];
-				ResultSet set = select("player_data", "username='"+username+"'");
+				ResultSet set = select("player_data", "username=?", username);
 				if(empty(set))
 					return null;
 				salt = getString(set, "salt");

@@ -85,7 +85,7 @@ public class AccountOverviewModule extends WebModule {
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		if(request.session().attribute("cryo-user") == null)
-			return showLoginPage("/account?"+request.queryString(), request, response);
+			return showLoginPage("/account?"+(request.queryString() == null ? "" : request.queryString()), request, response);
 		String username = request.session().attribute("cryo-user");
 		HashMap<String, Object> model = new HashMap<>();
 		if(type == RequestType.GET) {
