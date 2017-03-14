@@ -75,19 +75,10 @@ script.
     $('#pass-change').focusout(function() {
       var pass = $(this).val();
       var verify = $('#pass-change-verify').val();
-      if(pass == "" || verify == "") {
-        $('#pass-error').css('display', 'none');
-        return;
-      }
+      checkPassEqual(pass, verify);
     });
     
     function checkPassEqual(pass, verify) {
-      
-    }
-    
-    $('#pass-change-verify').focusout(function() {
-      var pass = $('#pass-change').val();
-      var verify = $(this).val();
       if(pass == "" || verify == "") {
         $('#pass-error').css('display', 'none');
         return;
@@ -107,6 +98,12 @@ script.
         addColorClass($('#pass-error'), 'color-green');
         $('#pass-error').html('&#x2714 Passwords match!')
       }
+    }
+    
+    $('#pass-change-verify').focusout(function() {
+      var pass = $('#pass-change').val();
+      var verify = $(this).val();
+      checkPassEqual(pass, verify);
     });
     
     function validName(name) {
