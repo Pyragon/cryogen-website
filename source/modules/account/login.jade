@@ -1,5 +1,11 @@
 extend ../default
 
+block head
+  script.
+    $(document).ready(function() {
+      $('.user').focus();
+    });
+
 block content
   div.container
     div.row
