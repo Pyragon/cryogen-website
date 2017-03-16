@@ -116,6 +116,8 @@ public class AccountOverviewModule extends WebModule {
 			if(action == null || action == "")
 				return Website.render404(request, response);
 			switch(action) {
+				case "update-cart":
+					return ShopManager.processRequest(action, request, response, type);
 				case "check-display":
 					String name = request.queryParams("name");
 					if(name == null || name == "")
