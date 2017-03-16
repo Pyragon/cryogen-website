@@ -20,6 +20,7 @@ import com.cryo.db.DBConnectionManager;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.register.RegisterModule;
+import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
@@ -63,6 +64,7 @@ public class Website {
 		loadProperties();
 		connectionManager = new DBConnectionManager();
 		fastExecutor = new Timer();
+		ShopManager.load(this);
 		port(8181);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		//staticFiles.expireTime(600); // ten minutes

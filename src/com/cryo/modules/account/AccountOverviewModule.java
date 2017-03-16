@@ -1,5 +1,7 @@
 package com.cryo.modules.account;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -10,6 +12,7 @@ import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.shop.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.vote.VotingManager;
 import com.cryo.utils.EmailUtils;
@@ -17,6 +20,8 @@ import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 import com.mysql.jdbc.StringUtils;
 
+import de.neuland.jade4j.Jade4J;
+import de.neuland.jade4j.exceptions.JadeCompilerException;
 import spark.Request;
 import spark.Response;
 
@@ -92,7 +97,8 @@ public class AccountOverviewModule extends WebModule {
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))
 				model.put("section", request.queryParams("section"));
-			model.put("shop", new ShopManager());
+			model.put("shopItems", ShopManager.cached);
+			model.put("shopManager", new ShopManager());
 			if(request.queryParams().contains("action")) {
 				String action = request.queryParams("action");
 				switch(action) {
@@ -116,7 +122,9 @@ public class AccountOverviewModule extends WebModule {
 			if(action == null || action == "")
 				return Website.render404(request, response);
 			switch(action) {
+				case "get-checkout-conf":
 				case "update-cart":
+				case "get-cart":
 					return ShopManager.processRequest(action, request, response, type);
 				case "check-display":
 					String name = request.queryParams("name");

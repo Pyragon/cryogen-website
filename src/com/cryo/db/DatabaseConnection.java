@@ -143,6 +143,30 @@ public abstract class DatabaseConnection {
 				.append(condition != null ? condition : "");
 		return executeQuery(builder.toString());
 	}
+	
+	public void delete(String database, String condition, Object...values) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DELETE FROM ").append(database).append(" WHERE ").append(condition);
+		try {
+			PreparedStatement stmt = connection.prepareStatement(builder.toString());
+			for(int i = 0; i < values.length; i++) {
+				Object obj = values[i];
+				int index = i+1;
+				if (obj instanceof String)
+					stmt.setString(index, (String) obj);
+				else if (obj instanceof Integer)
+					stmt.setInt(index, (int) obj);
+				else if(obj instanceof Double)
+					stmt.setDouble(index, (double) obj);
+				else if(obj instanceof Long)
+					stmt.setTimestamp(index, new Timestamp((long) obj));
+			}
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
 
 	public void delete(String database, String condition) {
 		StringBuilder builder = new StringBuilder();
