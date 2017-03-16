@@ -10,6 +10,7 @@ import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.vote.VotingManager;
 import com.cryo.utils.EmailUtils;
 import com.cryo.utils.Utilities;
@@ -91,6 +92,7 @@ public class AccountOverviewModule extends WebModule {
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))
 				model.put("section", request.queryParams("section"));
+			model.put("shop", new ShopManager());
 			if(request.queryParams().contains("action")) {
 				String action = request.queryParams("action");
 				switch(action) {

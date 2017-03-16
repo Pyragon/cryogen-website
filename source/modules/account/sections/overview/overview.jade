@@ -86,7 +86,7 @@ script.
       if(pass != verify) {
         $('#pass-error').css('display', '');
         addColorClass($('#pass-error'), 'color-red');
-        $('#pass-error').html('&#x2718 Passwords not match!')
+        $('#pass-error').html('&#x2718 Passwords do not match!')
       } else {
         if(pass.length < 6 || pass.length > 20) {
           $('#pass-error').css('display', '');

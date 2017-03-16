@@ -1,0 +1,31 @@
+doctype html
+html(lang='en')
+  head
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/test.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+  body
+    div.container
+      div.row
+        div.test.col-sm-4 .col-sm-4
+        div.test.col-sm-4 .col-sm-4
+        div.test.col-sm-4 .col-sm-4
+      div.row
+        div.test.col-sm-8 .col-sm-8
+        div.test.col-sm-4 .col-sm-4
+      div.row
+        for i in jIterator.iterate(12)
+          div.test.col-sm-1 .col-sm-1
+      div.row
+        div.col-md-4
+          button.btn.btn-error
+            span.glyphicon.glyphicon-minus
+        div.col-md-4
+          input(type='text', value='1', min='1', max='10')
+        div.col-md-4
+          button.btn.btn-ok
+            span.glyphicon.glyphicon-plus
+        

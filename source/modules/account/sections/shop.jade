@@ -1,3 +1,26 @@
+script.
+  $(document).ready(function() {
+    
+    $('.btn-ok').click(function() {
+      var item = $(this).closest('.item');
+      var cartDiv = $(this).closest('.addTo');
+      var quant = cartDiv.find('.quant');
+      quant.css('display', '');
+      $(this).css('display', 'none');
+    });
+    
+    $('.btn-error').click(function() {
+      var item = $(this).closest('.item');
+      var cartDiv = $(this).closest('.addTo');
+      var add = cartDiv.find('.add');
+      add.css('display', '');
+      $(this).css('display', 'none');
+    });
+    
+    function updateCart() {
+      
+    }
+  });
 div.tab-pane.fade(id='shop')
   h5 Cryogen Shop:
   p.small The Cryogen Shop allows you to purchase items/features to be used in-game and/or on the website. All items on this page are subject to change without notice. Please also keep in mind that there are NO refunds except in a case of valid reason.
@@ -5,16 +28,41 @@ div.tab-pane.fade(id='shop')
     div.row
       div.col-md-3
         p
-          span.color-white Total:
+          span.color-white Total: 
           span.cart-price Cart (0) - $0
       div.col-md-6
-        p
+        //- p
           span.color-white Cryogen Shop
       div.col-md-3
         button.checkout Checkout
   div.items
     div.row
-      p Active items
+      for item in shop.getItems()
+        div.col-sm-4.item-container
+          div.item(data-id=item.getId())
+            h3.white= item.getName()
+            img.img-responsive(src='/images/shop/bond.png')
+            div.row
+              div.col-sm-8.col-sm-offset-2
+                p.info
+                  span.color-white Type: 
+                  span.color-white= item.getType()
+            div.row
+              div.col-sm-8.col-sm-offset-2
+                p.small.color-grey.info= item.getDescription()
+            div.addTo(style='text-align: center;')
+              div.add(style='display: none;')
+                button.btn.btn-ok Add to Cart
+              div.quant
+                div.input-group
+                  span.input-group-btn
+                    div.col-minus
+                      button.btn.btn-danger.btn-number(data-type='minus')
+                        span.glyphicon.glyphicon-minus
+                  input.form-control.input-number(type='text', value='1', min='1', max='10')
+                  span.input-group-btn
+                    button.btn.btn-ok.btn-number(data-type='plus')
+                      span.glyphicon.glyphicon-plus
   form(id='finish', action='/paypal', method='post', style='display: none;')
     input(type='hidden', id='data', name='data', value='null')
   

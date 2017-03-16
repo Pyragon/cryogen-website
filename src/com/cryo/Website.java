@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Timer;
 
 import com.cryo.db.DBConnectionManager;
+import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.register.RegisterModule;
 import com.cryo.modules.highscores.HighscoresModule;
@@ -94,6 +95,12 @@ public class Website {
 		});
 		get(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get("/test", (req, res) -> {
+			return new TestModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		post("/test", (req, res) -> {
+			return new TestModule(this).decodeRequest(req, res, RequestType.POST);
 		});
 		get("/redirect", (req, res) -> {
 			HashMap<String, Object> model = new HashMap<>();

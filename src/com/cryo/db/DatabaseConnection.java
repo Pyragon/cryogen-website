@@ -60,6 +60,8 @@ public abstract class DatabaseConnection {
 	
 	public ResultSet select(String database, String condition, Object... values) {
 		try {
+			if (connection.isClosed() || !connection.isValid(5))
+				connect();
 			StringBuilder builder = new StringBuilder();
 			builder.append("SELECT * FROM "+database+" WHERE ");
 			builder.append(condition);
@@ -230,6 +232,8 @@ public abstract class DatabaseConnection {
 	}
 
 	public boolean wasNull(ResultSet set) {
+		if(set == null)
+			return true;
 		try {
 			return set.wasNull();
 		} catch (SQLException e) {
