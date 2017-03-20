@@ -37,11 +37,16 @@ public class ShopConnection extends DatabaseConnection {
 				String username = (String) data[1];
 				HashMap<Integer, Integer> cart = new HashMap<>();
 				ResultSet set = select("cart_data", "username=?", username);
+				if(set == null) {
+					System.out.println("yo");
+					return null;
+				}
 				if(empty(set))
 					return new Object[] { cart };
 				String item_data = getString(set, "items");
-				if(item_data == null || item_data == "")
+				if(item_data == null || item_data.equals("")) {
 					return new Object[] { cart };
+				}
 				String[] items = item_data.split(",");
 				for(String item : items) {
 					String[] sdata = item.split(":");

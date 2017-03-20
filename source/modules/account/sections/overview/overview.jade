@@ -57,18 +57,18 @@ script.
       if(days > 0)
         time += days+" Day"+(days > 1 ? "s" : "");
       if(hours > 0) {
-        if(days > 0)
+        if(time != '')
           time += ", ";
-            time += hours+" Hour"+(hours > 1 ? "s" : "");
+        time += hours+" Hour"+(hours > 1 ? "s" : "");
       }
       if(minutes > 0) {
-        if(hours > 0)
+        if(time != '')
           time += ", ";
-            time += minutes+" Minute"+(minutes > 1 ? "s" : "");
+        time += minutes+" Minute"+(minutes > 1 ? "s" : "");
       }
-      if(minutes > 0)
+      if(time != '')
         time += ", ";
-          time += sec+" Second"+(minutes > 1 ? "s" : "");
+      time += sec+" Second"+(sec > 1 ? "s" : "");
       $('.display-change').attr('title', 'You can change your display name again in '+time);
     }
     

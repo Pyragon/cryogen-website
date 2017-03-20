@@ -474,6 +474,7 @@ p.small {
 .item {
     background: #151515;
     border: 1px solid #010101;
+    border-radius: 5px;
     min-height: 300px;
 }
 

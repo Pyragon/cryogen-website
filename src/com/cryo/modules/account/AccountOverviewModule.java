@@ -121,9 +121,10 @@ public class AccountOverviewModule extends WebModule {
 			String action = request.queryParams("action");
 			if(action == null || action == "")
 				return Website.render404(request, response);
+			System.out.println(action);
 			switch(action) {
 				case "get-checkout-conf":
-				case "update-cart":
+				case "chg-quant":
 				case "get-cart":
 					return ShopManager.processRequest(action, request, response, type);
 				case "check-display":

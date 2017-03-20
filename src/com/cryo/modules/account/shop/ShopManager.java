@@ -59,73 +59,38 @@ public class ShopManager {
 				amount = items.get(id);
 			cart.put(id, amount);
 		}
-		for(int id : cart.keySet())
+		for(int id : items.keySet())
 			if(!items.containsKey(id))
 				cart.remove(id);
 		ShopConnection.connection().handleRequest("set-cart", username, cart);
 		return cart;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static String processRequest(String action, Request request, Response response, RequestType type) {
 		Properties prop = new Properties();
 		String username = request.session().attribute("cryo-user");
 		switch(action) {
-			case "get-cart":
-				Object[] data = ShopConnection.connection().handleRequest("get-cart", username);
-				if(data == null)
-					return "";
-				HashMap<Integer, Integer> cart = (HashMap<Integer, Integer>) data[0];
-				int index = 0;
-				StringBuilder builder = new StringBuilder();
-				for(int id : cart.keySet()) {
-					ShopItem item = cached.get(id);
-					if(item == null)
-						continue;
-					int amount = cart.get(id);
-					builder.append(id+":"+amount+":"+item.getPrice());
-					if(index+1 == cart.size())
-						break;
-					builder.append(",");
-				}
-				return builder.toString();
-			case "update-cart":
-				String joined = request.queryParams("cart");
-				joined = joined.substring(0, joined.length()-1);
-				String[] vars = joined.split(",");
-				cart = new HashMap<>();
-				for(String s : vars) {
-					String[] sdata = s.split(":");
-					int id = Integer.parseInt(sdata[0]);
-					int amount = Integer.parseInt(sdata[1]);
-					cart.put(id, amount);
-				}
-				cart = pushCartUpdate(username, cart);
-				int[] cart_data = getData(cart);
-				prop.put("price", cart_data[0]);
-				prop.put("total", cart_data[1]);
+			case "chg-quant":
+				int id = Integer.parseInt(request.queryParams("id"));
+				int quant = Integer.parseInt(request.queryParams("quant"));
+				String carts = "";
+				if(quant == 1)
+					carts = ShopUtils.toString(ShopUtils.increaseQuantity(username, id));
+				else
+					carts = ShopUtils.toString(ShopUtils.decreaseQuantity(username, id));
+				prop.put("cart", carts);
 				break;
+			case "get-cart":
+				String ret = ShopUtils.toString(ShopUtils.getCart(username));
+				return ret;
 			case "get-checkout-conf":
 				String html = "";
 				try {
 					HashMap<String, Object> notyM = new HashMap<>();
-					joined = request.queryParams("cart");
-					joined = joined.substring(0, joined.length()-1);
-					vars = joined.split(",");
-					if(!joined.contains(",")) {
-						vars = new String[1];
-						vars[0] = joined;
-					}
-					cart = new HashMap<>();
-					for(String s : vars) {
-						String[] sdata = s.split(":");
-						int id = Integer.parseInt(sdata[0]);
-						int amount = Integer.parseInt(sdata[1]);
-						cart.put(id, amount);
-					}
+					HashMap<Integer, Integer> cart = ShopUtils.getCart(username);
 					notyM.put("shopManager", new ShopManager());
 					notyM.put("cart", cart);
-					html = Jade4J.render("./source/modules/noty/shop_noty.jade", notyM);
+					html = Jade4J.render("./source/modules/account/sections/shop/shop_noty.jade", notyM);
 					prop.put("html", html);
 				} catch (JadeCompilerException | IOException e) {
 					e.printStackTrace();
