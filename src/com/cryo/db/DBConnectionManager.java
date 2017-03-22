@@ -8,6 +8,8 @@ import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.HighscoresConnection;
+import com.cryo.db.impl.PunishmentConnection;
+import com.cryo.db.impl.ReportsConnection;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.db.impl.VotingConnection;
 
@@ -38,10 +40,12 @@ public class DBConnectionManager {
 		connections.put(Connection.VOTING, new VotingConnection());
 		connections.put(Connection.EMAIL, new EmailConnection());
 		connections.put(Connection.SHOP, new ShopConnection());
+		connections.put(Connection.REPORTS, new ReportsConnection());
+		connections.put(Connection.PUNISH, new PunishmentConnection());
 	}
 	
 	public static enum Connection {
-		FORUMS, HIGHSCORES, ACCOUNT, DISPLAY, VOTING, EMAIL, SHOP
+		FORUMS, HIGHSCORES, ACCOUNT, DISPLAY, VOTING, EMAIL, SHOP, REPORTS, PUNISH
 	}
 	
 }

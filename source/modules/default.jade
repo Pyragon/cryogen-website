@@ -95,7 +95,7 @@ html
               a(href='#') Support
             if loggedIn
               li
-                a(href='/logout?redirect=/') Sign Out
+                a(href='/logout') Sign Out
   block content
   div(class='footer')
     div(class='container')
@@ -120,6 +120,8 @@ html
             if loggedIn
               li
                 a(href='/account') Account Settings
+              li
+                a(href='/support') Support
               li
                 a(href='/logout') Sign Out
             else

@@ -1,0 +1,32 @@
+script.
+  $(document).ready(function() {
+    $(document).on('click', '#appealable', function() {
+      alert($(this).data('id'));
+    });
+  });
+-var list = punishUtils.getPunishments(user.getUsername());
+if list.isEmpty()
+  p Nice! You have no black marks on your account. Keep it up!
+else
+  table.table
+    thead
+      tr
+        th Type
+        th Reason
+        th Punishment Date
+        th Expiry
+        th Active
+        th Appeal
+    tbody
+      for punishment in list
+        tr
+          td.b-right= punishment.getType() == 0 ? 'Mute' : 'Ban'
+          td.b-right= punishment.getReason()
+          td.b-right= formatter.formatTimestamp(punishment.getDate(), "MMMMM dd, YYYY - h:mm a")
+          td.b-right= punishment.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punishment.getExpiry(), "MMMMM dd, YYYY - h:mm a")
+          td.b-right= punishment.isActive() ? 'Active' : 'Inactive'
+          td#appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId())
+            if punishment.isAppealable()
+              span Appeal
+            else if punishment.getAppealId() != 0
+              span View Appeal

@@ -6,6 +6,45 @@ html, body {
     color: #888;
 }
 
+[contentEditable=true]:empty:not(:focus):before {
+    content: attr(data-ph)
+}
+
+#breaker {
+    text-decoration: none;
+}
+
+#appeal-info {
+    padding: 22px 120px;
+    text-align: center;
+}
+
+#appeal-info .glyphicon {
+    font-size: 22px;
+}
+
+#appeal-info h3 {
+    font-size: 15px;
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+#appeal-info ul {
+    padding: 0;
+    text-align: left;
+    font-size: 12px;
+}
+
+#appeal-info ul li {
+    margin: 15px 0;
+}
+
+#appeal-link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0174DF;
+}
+
 .login-box {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
     border: 2px solid #000;
@@ -177,6 +216,11 @@ h4.title {
 
 .dropdown-menu .divider {
     background: #18597f;
+}
+
+.supp-divider {
+    border: 1px solid #000;
+    margin: auto;
 }
 
 .navbar-collapse-1>.nav>.spacer {

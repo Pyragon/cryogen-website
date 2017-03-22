@@ -1,0 +1,55 @@
+script.
+  $(document).ready(function() {
+    
+    $('.rbug-btn').click(function() {
+      var title = $('.rbug-title').val();
+      var replicated = $('.rbug-replication').val();
+      var date = $('.rbug-date').val();
+      var info = $('.rbug-detailed').html();
+      if(title == "" || replicated == "" || date == "" || info == "") {
+        sendAlert('All fields must be filled out!', false);
+        return;
+      }
+      $.post('/support', { mod:'report_bug',title:title,replicated:replicated,date:date,info:info }, function(ret) {
+        var data = JSON.parse(ret);
+        var success = data.success;
+        if(!success) {
+          sendAlert(data.error, false);
+          return;
+        }
+        sendAlert('Report has been successfully sent. There are no ways for players to view these at the moment. But rest assured staff will see it.', true);
+        resetFields();
+      });
+    });
+  
+  function sendAlert(alert, success) {
+    $('.rbug-alert').css('display', 'block');
+    $('.rbug-alert').css('color', success ? '#1F4F09' : '#800a0a');
+    $('.rbug-alert').css('background-color', success ? '#45CE06' : '#fa5959');
+    $('.rbug-alert').html(alert);
+    $('.rbug-alert').fadeOut(success ? 10000 : 15000);
+  }
+  
+  function resetFields() {
+    $('.rbug-title').val('');
+    $('.rbug-replication').val('');
+    $('.rbug-date').val('');
+    $('.rbug-detailed').html('');
+  }
+    
+  });
+div.tab-pane.fade#report_bug
+  div.alert.alert-custom.modal-alert.rbug-alert(role='alert', style='margin-left: auto; margin-right: auto;')
+  div.row
+    div.col-md-6.box
+      div.rbug-content
+        label Report title:
+        input.form-control.rbug-title(type='text', placeholder='Enter desired title', maxlength='55')
+        label Can this bug be replicated?
+        input.form-control.rbug-replication(type='text', placeholder="Can this bug be replicated?", maxlength='20')
+        label When did you witness this bug? (Include date/time)
+        input.form-control.rbug-date(type='text', placeholder='When did you witness this bug?', maxlength='55')
+    div.col-md-6.box.rbug-info
+      label Enter a detailed report:
+      div.form-control.rbug-detailed(contenteditable='true', style='background-color:#111; border: 1px solid #000; width:350px; height:150px; overflow: auto; word-wrap: break-word;', data-ph='Enter detailed report')
+      button.btn.btn-default.rbug-btn(style='margin-right: 0px; margin-bottom: 0px;') Report Bug

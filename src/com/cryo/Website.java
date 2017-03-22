@@ -21,6 +21,7 @@ import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.register.RegisterModule;
 import com.cryo.modules.account.shop.ShopManager;
+import com.cryo.modules.account.support.AccountSupportModule;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
@@ -76,6 +77,12 @@ public class Website {
 		});
 		post(AccountOverviewModule.PATH, (req, res) -> {
 			return new AccountOverviewModule(this).decodeRequest(req, res, RequestType.POST);
+		});
+		get(AccountSupportModule.PATH, (req, res) -> {
+			return new AccountSupportModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		post(AccountSupportModule.PATH, (req, res) -> {
+			return new AccountSupportModule(this).decodeRequest(req, res, RequestType.POST);
 		});
 		post("/vote", (req, res) -> {
 			return new AccountOverviewModule(this).decodeVotePost(req, res);
