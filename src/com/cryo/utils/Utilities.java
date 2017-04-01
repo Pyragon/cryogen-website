@@ -31,9 +31,7 @@ public class Utilities {
 	}
 	
 	public static void main(String[] args) {
-		String value = "as_-df";
-		boolean matches = value.matches("\\w*(-{2}|_{2}|-_|_-)\\w*");
-		System.out.println(matches);
+		System.out.println(Math.floor(37/10));
 	}
 	
 	public String isValidDisplay(String name) {
@@ -60,6 +58,27 @@ public class Utilities {
 		name = name.replaceAll(" ", "_");
 		name = name.toLowerCase();
 		return name;
+	}
+	
+	public static String formatNameForDisplay(String name) {
+		if (name == null)
+			return "";
+		name = name.replaceAll("_", " ");
+		name = name.toLowerCase();
+		StringBuilder newName = new StringBuilder();
+		boolean wasSpace = true;
+		for (int i = 0; i < name.length(); i++) {
+			if (wasSpace) {
+				newName.append(("" + name.charAt(i)).toUpperCase());
+				wasSpace = false;
+			} else {
+				newName.append(name.charAt(i));
+			}
+			if (name.charAt(i) == ' ') {
+				wasSpace = true;
+			}
+		}
+		return newName.toString();
 	}
 	
 	public String renderLink(String href, String text) {

@@ -10,6 +10,7 @@ import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;
+import com.cryo.utils.DateFormatter;
 import com.cryo.utils.JadeIterator;
 import com.cryo.utils.Utilities;
 
@@ -40,7 +41,8 @@ public abstract class WebModule {
 		model.put("jIterator", new JadeIterator());
 		model.put("hsutils", new HSUtils());
 		model.put("utils", new Utilities());
-		model.put("baseurl", "http://localhost:8181/");
+		model.put("baseurl", "http://localhost/");
+		model.put("formatter", new DateFormatter());
 		boolean loggedIn = request.session().attributes().contains("cryo-user");
 		model.put("loggedIn", loggedIn);
 		if(loggedIn) {
@@ -54,7 +56,7 @@ public abstract class WebModule {
 				String format = html.substring(html.indexOf("$for-name=")+10);
 				format = format.substring(0, format.indexOf("$end"));
 				Account account = AccountUtils.getAccount(format);
-				String name = account != null ? AccountUtils.crownHTML(account) : format;
+				String name = account != null ? AccountUtils.crownHTML(account) : Utilities.formatNameForDisplay(format);
 				html = html.replace("$for-name="+format+"$end", name);
 			}
 			while(html.contains("$forum-name=")) {

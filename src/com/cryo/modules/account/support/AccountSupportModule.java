@@ -1,10 +1,12 @@
 package com.cryo.modules.account.support;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.support.punish.AppealModule;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.utils.DateFormatter;
 
@@ -44,6 +46,8 @@ public class AccountSupportModule extends WebModule {
 		if(request.queryParams().contains("mod"))
 			module = request.queryParams("mod");
 		switch(module) {
+			case "appeal":
+				return AppealModule.decodeRequest(this, model, request, response);
 			case "report_player":
 				return ReportPlayerModule.decodeRequest(this, request, response);
 			case "report_bug":

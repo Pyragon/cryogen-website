@@ -66,7 +66,7 @@ public class Website {
 		connectionManager = new DBConnectionManager();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
-		port(8181);
+		port(80);
 		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
 		//staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {

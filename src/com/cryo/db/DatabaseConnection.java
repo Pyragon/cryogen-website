@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.utils.Logger;
+import com.mysql.jdbc.Statement;
 
 public abstract class DatabaseConnection {
 
@@ -85,7 +86,7 @@ public abstract class DatabaseConnection {
 		return null;
 	}
 
-	public void insert(String database, Object... objects) {
+	public int insert(String database, Object... objects) {
 		try {
 			if (connection.isClosed() || !connection.isValid(5))
 				connect();
@@ -108,13 +109,15 @@ public abstract class DatabaseConnection {
 					insert.append(", ");
 			}
 			String query = "INSERT INTO `" + database + "` VALUES(" + insert.toString() + ")";
-			PreparedStatement stmt = connection.prepareStatement(query);
+			PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			int index = 0;
 			for (int i = 0; i < inserts; i++) {
 				Object obj = objs[i];
-				int index = i + 1;
+				index++;
 				if (obj instanceof String) {
 					String string = (String) obj;
 					if (string.equals("DEFAULT")) {
+						index--;
 						continue;
 					}
 					stmt.setString(index, (String) obj);
@@ -126,9 +129,13 @@ public abstract class DatabaseConnection {
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
 			stmt.execute();
+			ResultSet set = stmt.getGeneratedKeys();
+			if(set.next())
+				return set.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return -1;
 	}
 	
 	public ResultSet selectAll(String database, String condition) {

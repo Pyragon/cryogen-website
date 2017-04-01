@@ -3,9 +3,15 @@ extend ../default
 block head
   script.
     $(document).ready(function() {
-      var section = "#{section}";
+      var section = window.location.hash;
       if(section != null && section != "")
-        $('.nav-tabs a[href="#'+section+'"]').tab('show');
+        $('.nav-tabs a[href="'+section+'"]').tab('show');
+        
+        
+        $('.nav-tabs a').click(function (e) {
+          $(this).tab('show');
+          window.location.hash = this.hash;
+        });
     });
 
 block content

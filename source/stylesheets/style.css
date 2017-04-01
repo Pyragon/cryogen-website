@@ -14,6 +14,15 @@ html, body {
     text-decoration: none;
 }
 
+.icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    stroke-width: 0;
+    stroke: currentColor;
+    fill: currentColor;
+}
+
 #appeal-info {
     padding: 22px 120px;
     text-align: center;
@@ -492,6 +501,10 @@ p.small {
 .col-centered {
     float: none;
     margin: 0 auto;
+}
+
+.t-center {
+    text-align: center;
 }
 
 .col-minus {

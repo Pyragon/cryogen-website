@@ -19,4 +19,42 @@ public class PunishUtils {
 		return (ArrayList<PunishDAO>) data[0];
 	}
 	
+	public PunishDAO getPunishmentFromAppeal(int appealId) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment-from-appeal", appealId);
+		if(data == null)
+			return null;
+		return (PunishDAO) data[0];
+	}
+	
+	public AppealDAO getAppealFromPunishment(int punishment) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment", punishment);
+		if(data == null)
+			return null;
+		PunishDAO punish = (PunishDAO) data[0];
+		int appealId = punish.getAppealId();
+		data = PunishmentConnection.connection().handleRequest("get-appeal", appealId);
+		if(data == null)
+			return null;
+		return (AppealDAO) data[0];
+	}
+	
+	public AppealDAO getAppeal(int appealId) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", appealId);
+		if(data == null)
+			return null;
+		return (AppealDAO) data[0];
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<ACommentDAO> getComments(int appealId) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", appealId);
+		if(data == null)
+			return null;
+		return (ArrayList<ACommentDAO>) data[0];
+	}
+	
+	public static void createAppeal(int punishId, String title, String detailed) {
+		PunishmentConnection.connection().handleRequest("create-appeal", title, detailed, punishId);
+	}
+	
 }
