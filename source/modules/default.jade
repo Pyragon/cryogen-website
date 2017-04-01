@@ -63,40 +63,42 @@ html
             b.caret
           ul.dropdown-menu
             li
-              a(href='/live/download?file_type=zip') Download as ZIP
+              a(href='live/download?file_type=zip') Download as ZIP
             li
-              a(href='/live/download?file_type=jar') Download as JAR
+              a(href='live/download?file_type=jar') Download as JAR
         li(class='spacer')
-          a(href='/forums') Community
+          a(href='forums') Community
         li
-          a(href='/highscores') Highscores
+          a(href='highscores') Highscores
         li
-          a(href='/account?section=vote') Vote
+          a(href='account#vote') Vote
         li(class='dropdown')
           a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
             b(class='caret')
           ul(class='dropdown-menu')
             if loggedIn
               li
-                a(href='/account/') Account Settings
+                a(href='account') Account Settings
               li
-                a(href='account/?section=vote') Vote
+                a(href='account#vote') Vote
               li
-                a(href='#')
-                  s Donate
+                a(href='account#shop') Shop
             else
               li
                 a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
               li
                 a(href='#') Forgot my Password
               li
-                a(href='/register') Register
+                a(href='register') Register
             li(class='divider')
             li
-              a(href='/support') Support
+              a(href='support') Support
             if loggedIn
+              if user.getRights() > 0
+                li
+                  a(href='staff') Staff
               li
-                a(href='/logout') Sign Out
+                a(href='logout') Sign Out
   block content
   div(class='footer')
     div(class='container')
@@ -105,32 +107,35 @@ html
           h3 Cryogen
           ul
             li
-              a(href='/live/download') Download Cryogen
+              a(href='live/download') Download Cryogen
         div.col-md-4
           h3 Community
           ul
             li
-              a(href='/forums') Forums
+              a(href='forums') Forums
             li
-              a(href='#') Highscores
+              a(href='highscores') Highscores
             li
-              a(href='#') Vote
+              a(href='account#vote') Vote
         div.col-md-4
           h3 Account
           ul
             if loggedIn
               li
-                a(href='/account') Account Settings
+                a(href='account') Account Settings
               li
-                a(href='/support') Support
+                a(href='support') Support
+              if user.getRights() > 0
+                li
+                  h(href='staff') Staff
               li
-                a(href='/logout') Sign Out
+                a(href='logout') Sign Out
             else
               li
-                a(href='/support') Support
+                a(href='support') Support
               li
                 a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
               li
-                a(href="/register") Register
+                a(href="register") Register
               li
                 a(href='#') Forgot my Password
