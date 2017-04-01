@@ -27,6 +27,7 @@ import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
+import com.cryo.modules.staff.StaffModule;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.google.common.io.ByteStreams;
@@ -104,6 +105,12 @@ public class Website {
 		});
 		get(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		post(StaffModule.PATH, (req, res) -> {
+			return new StaffModule(this).decodeRequest(req, res, RequestType.POST);
+		});
+		get(StaffModule.PATH, (req, res) -> {
+			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/test", (req, res) -> {
 			return new TestModule(this).decodeRequest(req, res, RequestType.GET);

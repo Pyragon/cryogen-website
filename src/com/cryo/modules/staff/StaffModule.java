@@ -1,5 +1,7 @@
 package com.cryo.modules.staff;
 
+import java.util.HashMap;
+
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.WebModule;
@@ -16,6 +18,8 @@ import spark.Response;
  */
 public class StaffModule extends WebModule {
 	
+	public static String PATH = "/staff";
+	
 	public StaffModule(Website website) {
 		super(website);
 	}
@@ -30,10 +34,13 @@ public class StaffModule extends WebModule {
 			return showLoginPage("/staff", request, response);
 		if(account.getRights() == 0)
 			return Website.render404(request, response);
+		HashMap<String, Object> model = new HashMap<>();
 		if(type == RequestType.GET) {
-			
+			//TODO GET SECTION
+			System.out.println("lol?");
+			return render("./source/modules/staff/index.jade", model, request, response);
 		}
-		return null;
+		return "hi";
 	}
 	
 }
