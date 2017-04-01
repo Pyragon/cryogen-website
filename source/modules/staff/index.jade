@@ -2,17 +2,17 @@ extend ../default
 
 block head
   script.
-  $(document).ready(function() {
-    var section = window.location.hash;
-    if(section != null && section != "")
-      $('.nav-tabs a[href="'+section+'"]').tab('show');
-      
-      
-      $('.nav-tabs a').click(function (e) {
-        $(this).tab('show');
-        window.location.hash = this.hash;
-      });
-  });
+    $(document).ready(function() {
+      var section = window.location.hash;
+      if(section != null && section != "")
+        $('.nav-tabs a[href="'+section+'"]').tab('show');
+        
+        
+        $('.nav-tabs a').click(function (e) {
+          $(this).tab('show');
+          window.location.hash = this.hash;
+        });
+    });
 
 block content
   div.container.account-area(style='min-height: 600px; padding: 20px 0;')
