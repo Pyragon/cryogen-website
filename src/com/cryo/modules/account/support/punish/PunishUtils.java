@@ -94,7 +94,7 @@ public class PunishUtils {
 		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports");
 		if(data != null) {
 			for(PlayerReportDAO report : (ArrayList<PlayerReportDAO>) data[0]) {
-				if(report.userHasRead(username))
+				if(username != null && report.userHasRead(username))
 					continue;
 				reports.add(report);
 			}
@@ -108,7 +108,7 @@ public class PunishUtils {
 		Object[] data = ReportsConnection.connection().handleRequest("get-bug-reports");
 		if(data != null) {
 			for(BugReportDAO report : (ArrayList<BugReportDAO>) data[0]) {
-				if(report.userHasRead(username))
+				if(username != null && report.userHasRead(username))
 					continue;
 				reports.add(report);
 			}
@@ -122,7 +122,7 @@ public class PunishUtils {
 		Object[] data = PunishmentConnection.connection().handleRequest("get-appeals");
 		if(data != null) {
 			for(AppealDAO appeal : (ArrayList<AppealDAO>) data[0]) {
-				if(appeal.userHasRead(username))
+				if(username != null && appeal.userHasRead(username))
 					continue;
 				appeals.add(appeal);
 			}

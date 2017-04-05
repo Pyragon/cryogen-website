@@ -32,7 +32,7 @@ div(style='margin: 10px auto')#immediate
               th.t-center View
               th.t-center Mark
           tbody
-            for appeal in appeals
+            for appeal in i_appeals
               tr(data-id=appeal.getId(), data-type=appeal.type())
                 td.b-right Appeal
                 td.b-right= '$for-name='+appeal.getUsername()+'$end'
@@ -40,7 +40,7 @@ div(style='margin: 10px auto')#immediate
                 td.b-right= appeal.getLastAction()
                 td.b-right.link View
                 td.link#mark Mark as Read
-            for report in preports
+            for report in i_preports
               tr(data-id=report.getId(), data-type=report.type())
                 td.b-right Player Report
                 td.b-right= '$for-name='+report.getUsername()+'$end reporting $for-name='+report.getOffender()+'$end'
@@ -48,7 +48,7 @@ div(style='margin: 10px auto')#immediate
                 td.b-right= report.getLastAction()
                 td.b-right.link View
                 td.link#mark Mark as Read
-            for report in breports
+            for report in i_breports
               tr(data-id=report.getId(), data-type=report.type())
                 td.b-right Bug Report
                 td.b-right= '$for-name='+report.getUsername()+'$end'
