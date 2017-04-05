@@ -30,7 +30,7 @@ div(style='margin: 10px auto')#immediate
               th.t-center Time
               th.t-center Last Action
               th.t-center View
-              th.t-center Mark
+              th.t-center Unpin
           tbody
             for appeal in i_appeals
               tr(data-id=appeal.getId(), data-type=appeal.type())
@@ -39,7 +39,9 @@ div(style='margin: 10px auto')#immediate
                 td.b-right= formatter.formatTimestamp(appeal.getTime(), 'MMMMM dd, YYYY H:mm a')
                 td.b-right= appeal.getLastAction()
                 td.b-right.link View
-                td.link#mark Mark as Read
+                td.link#pin
+                  i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+                  span  Unpin
             for report in i_preports
               tr(data-id=report.getId(), data-type=report.type())
                 td.b-right Player Report
@@ -47,7 +49,9 @@ div(style='margin: 10px auto')#immediate
                 td.b-right= formatter.formatTimestamp(report.getTime(), 'MMMMM dd, YYYY H:mm a')
                 td.b-right= report.getLastAction()
                 td.b-right.link View
-                td.link#mark Mark as Read
+                td.link#pin
+                  i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+                  span  Unpin
             for report in i_breports
               tr(data-id=report.getId(), data-type=report.type())
                 td.b-right Bug Report
@@ -55,4 +59,6 @@ div(style='margin: 10px auto')#immediate
                 td.b-right= formatter.formatTimestamp(report.getTime(), 'MMMMM dd, YYYY H:mm a')
                 td.b-right= report.getLastAction()
                 td.b-right.link View
-                td.link#mark Mark as Read
+                td.link#pin 
+                  i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+                  span  Unpin
