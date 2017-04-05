@@ -1,0 +1,58 @@
+script.
+  $(document).ready(function() {
+  
+    $(document).on('click', '#mark', function() {
+      var elem = $(this).closest('tr');
+      var id = elem.data('id');
+      var type = elem.data('type');
+      $.post('/staff', { mod:'over', action:'mark-read', id:id, type:type }, function(ret) {
+        var data = JSON.parse(ret);
+        if(!data.success) {
+          alert(data.error);
+          return;
+        }
+        alert('worked');
+      });
+    });
+    
+  });
+div(style='margin: 10px auto')#immediate
+  h4.t-center.color-white Immediate Action Required
+    if total == 0
+      h6.t-center.color-grey No items requiring immediate action.
+    else
+      div.widget.iactions(style='margin: 10px auto;')
+        table.table.hs-table.table-condensed.table-responsive
+          thead
+            tr
+              th.t-center Action
+              th.t-center Username
+              th.t-center Time
+              th.t-center Last Action
+              th.t-center View
+              th.t-center Mark
+          tbody
+            for appeal in appeals
+              tr(data-id=appeal.getId(), data-type=appeal.type())
+                td.b-right Appeal
+                td.b-right= '$for-name='+appeal.getUsername()+'$end'
+                td.b-right= formatter.formatTimestamp(appeal.getTime(), 'MMMMM dd, YYYY H:mm a')
+                td.b-right= appeal.getLastAction()
+                td.b-right.link View
+                td.link#mark Mark as Read
+            for report in preports
+              tr(data-id=report.getId(), data-type=report.type())
+                td.b-right Player Report
+                td.b-right= '$for-name='+report.getUsername()+'$end reporting $for-name='+report.getOffender()+'$end'
+                td.b-right= formatter.formatTimestamp(report.getTime(), 'MMMMM dd, YYYY H:mm a')
+                td.b-right= report.getLastAction()
+                td.b-right.link View
+                td.link#mark Mark as Read
+            for report in breports
+              tr(data-id=report.getId(), data-type=report.type())
+                td.b-right Bug Report
+                td.b-right= '$for-name='+report.getUsername()+'$end'
+                td.b-right= formatter.formatTimestamp(report.getTime(), 'MMMMM dd, YYYY H:mm a')
+                td.b-right= report.getLastAction()
+                td.b-right.link View
+                td.link#mark Mark as Read

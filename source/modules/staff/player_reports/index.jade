@@ -1,0 +1,30 @@
+div.tab-pane.fade(id='preports')
+  div.row 
+    div.iactions
+      div(style='float: left; margin: 10px 10px;')
+        h5.color-grey Player Reports
+          h6.color-grey Currently viewing all active player reports
+      div(style='float: right; margin: 33.5px 5px;')
+        div.link
+          i.fa.fa-archive
+          span  Archive
+      table.table.hs-table.table-condensed.table-responsive.preports-table.widget
+        thead
+          tr
+            th.t-center Title
+            th.t-center Username
+            th.t-center Reporting
+            th.t-center Rule Broken
+            th.t-center View
+            th.t-center Pin
+        tbody
+          for report in preports
+            tr(data-id=report.getId())
+              td.b-right= report.getTitle()
+              td.b-right= '$for-name='+report.getUsername()+'$end'
+              td.b-right= '$for-name='+report.getOffender()+'$end'
+              td.b-right= report.getRule()
+              td.b-right.link View
+              td.link
+                i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+                span  Pin

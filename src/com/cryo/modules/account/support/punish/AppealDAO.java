@@ -1,5 +1,8 @@
 package com.cryo.modules.account.support.punish;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -13,12 +16,25 @@ import lombok.RequiredArgsConstructor;
 public class AppealDAO {
 	
 	private final int id;
-	private final String title, message;
+	private final String username, title, message;
 	private String reason;
+	private String lastAction;
 	private final int active;
+	private final int punishId;
+	private final Timestamp time;
+	
+	private ArrayList<String> usersRead;
 	
 	public String getDeclineReason() {
 		return reason;
+	}
+	
+	public String type() {
+		return "APPEAL";
+	}
+	
+	public Object[] data() {
+		return new Object[] { "DEFAULT", punishId, username, title, message, "", "DEFAULT", "", 0, "DEFAULT" };
 	}
 	
 	public String getStatus() {
@@ -37,6 +53,18 @@ public class AppealDAO {
 			case 2: return "color-red";
 			default: return "color-red";
 		}
+	}
+	
+	public boolean userHasRead(String username) {
+		if(usersRead == null)
+			return false;
+		return usersRead.contains(username);
+	}
+	
+	public void userRead(String username) {
+		if(usersRead == null)
+			usersRead = new ArrayList<>();
+		usersRead.add(username);
 	}
 	
 }

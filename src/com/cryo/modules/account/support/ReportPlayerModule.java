@@ -31,7 +31,8 @@ public class ReportPlayerModule {
 			prop.put("success", false);
 			prop.put("error", "All fields must be filled out!");
 		} else {
-			ReportsConnection.connection().handleRequest("report_player", username, title, player, rule, info, proof);
+			PlayerReportDAO report = new PlayerReportDAO(0, username, title, player, rule, info, proof, "", "", null);
+			ReportsConnection.connection().handleRequest("report_player", report);
 			prop.put("success", true);
 		}
 		return new Gson().toJson(prop);

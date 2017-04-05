@@ -27,7 +27,8 @@ public class ReportBugModule {
 			prop.put("success", false);
 			prop.put("error", "All fields must be filled out!");
 		} else {
-			ReportsConnection.connection().handleRequest("report_bug", username, title, replicated, date, info);
+			BugReportDAO report = new BugReportDAO(0, username, title, replicated, date, info, null, null, null);
+			ReportsConnection.connection().handleRequest("report_bug", report);
 			prop.put("success", true);
 		}
 		return new Gson().toJson(prop);

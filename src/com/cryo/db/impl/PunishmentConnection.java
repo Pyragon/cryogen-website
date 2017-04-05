@@ -10,6 +10,7 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.modules.account.support.punish.ACommentDAO;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishDAO;
+import com.google.gson.Gson;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -31,21 +32,26 @@ public class PunishmentConnection extends DatabaseConnection {
 		String opcode = (String) data[0];
 		switch(opcode) {
 			case "get-punishments":
-				String username = (String) data[1];
+				String username = data.length > 1 ? (String) data[1] : null;
 				ArrayList<PunishDAO> punishments = new ArrayList<>();
-				ResultSet set = select("punishments", "username=?", username);
+				ResultSet set = null;
+				if(username != null)
+					set = select("punishments", "username=?", username);
+				else
+					set = select("punishments", null);
 				if(set == null || wasNull(set))
 					return new Object[] { punishments };
 				while(next(set)) {
 					int id = getInt(set, "id");
 					int type = getInt(set, "type");
+					String user = getString(set, "username");
 					Timestamp date = getTimestamp(set, "date");
 					Timestamp expiry = getTimestamp(set, "expiry");
 					String punisher = getString(set, "punisher");
 					String reason = getString(set, "reason");
 					boolean active = getInt(set, "active") == 1;
 					int appealId = getInt(set, "appeal_id");
-					PunishDAO punish = new PunishDAO(id, username, type, date, expiry, punisher, reason, active, appealId);
+					PunishDAO punish = new PunishDAO(id, user, type, date, expiry, punisher, reason, active, appealId);
 					punishments.add(punish);
 				}
 				return new Object[] { punishments };
@@ -82,12 +88,36 @@ public class PunishmentConnection extends DatabaseConnection {
 				punish = new PunishDAO(id, username, type, date, expiry, punisher, reason, active, appealId);
 				return new Object[] { punish };
 			case "create-appeal":
-				String title = (String) data[1];
-				String detailed = (String) data[2];
-				int punish_id = (int) data[3];
-				int appeal_id = insert("appeals", "DEFAULT", title, detailed, 0);
-				set("punishments", "appeal_id="+appeal_id, "id="+punish_id);
+				AppealDAO appeal = (AppealDAO) data[1];
+				int appeal_id = insert("appeals", appeal.data());
+				set("punishments", "appeal_id="+appeal_id, "id="+appeal.getPunishId());
 				break;
+			case "get-appeals":
+				ArrayList<AppealDAO> appeals = new ArrayList<>();
+				set = select("appeals", null);
+				if(wasNull(set))
+					return null;
+				while(next(set)) {
+					id = getInt(set, "id");
+					int punishId = getInt(set, "punish_id");
+					username = getString(set, "username");
+					String title = getString(set, "title");
+					String message = getString(set, "message");
+					reason = getString(set, "reason");
+					String lastAction = getString(set, "action");
+					int activei = getInt(set, "active");
+					Timestamp time = getTimestamp(set, "time");
+					String read = getString(set, "read");
+					ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
+					appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
+					if(!reason.equals(""))
+						appeal.setReason(reason);
+					if(!lastAction.equals(""))
+						appeal.setLastAction(lastAction);
+					appeal.setUsersRead(list);
+					appeals.add(appeal);
+				}
+				return new Object[] { appeals };
 			case "get-appeal":
 				id = (int) data[1];
 				if(id == 0)
@@ -95,19 +125,27 @@ public class PunishmentConnection extends DatabaseConnection {
 				set = select("appeals", "id=?", id);
 				if(empty(set))
 					return null;
-				title = getString(set, "title");
+				id = getInt(set, "id");
+				int punishId = getInt(set, "punish_id");
+				username = getString(set, "username");
+				String title = getString(set, "title");
 				String message = getString(set, "message");
 				reason = getString(set, "reason");
+				String lastAction = getString(set, "action");
 				int activei = getInt(set, "active");
-				AppealDAO appeal = new AppealDAO(id, title, message, activei);
+				Timestamp time = getTimestamp(set, "time");
+				appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
 				if(!reason.equals(""))
 					appeal.setReason(reason);
+				if(!lastAction.equals(""))
+					appeal.setLastAction(lastAction);
 				return new Object[] { appeal };
 			case "add-comment":
 				username = (String) data[1];
 				appealId = (int) data[2];
 				String comment = (String) data[3];
 				insert("comments", "DEFAULT", appealId, username, comment, "DEFAULT");
+				set("appeals", "action=?", "id=?", "Comment posted by $for-name="+username+"$end", appealId);
 				break;
 			case "get-comments":
 				appeal_id = (int) data[1];
@@ -121,7 +159,7 @@ public class PunishmentConnection extends DatabaseConnection {
 					id = getInt(set, "id");
 					username = getString(set, "username");
 					comment = getString(set, "comment");
-					Timestamp time = getTimestamp(set, "time");
+					time = getTimestamp(set, "time");
 					list.add(new ACommentDAO(id, appeal_id, username, comment, time));
 				}
 				return new Object[] { list };

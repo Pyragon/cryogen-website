@@ -10,6 +10,14 @@ html, body {
     content: attr(data-ph)
 }
 
+.iactions td {
+    font-size: 11px;
+}
+
+.link {
+    cursor: pointer;
+}
+
 #breaker {
     text-decoration: none;
 }

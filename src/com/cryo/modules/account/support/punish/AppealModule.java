@@ -74,7 +74,7 @@ public class AppealModule {
 					prop.put("error", "All fields must be filled out!");
 					break;
 				}
-				PunishUtils.createAppeal(id, title, detailed);
+				PunishUtils.createAppeal(id, username, title, detailed);
 				String html = module.render("./source/modules/support/sections/appeal/appeal_list.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);

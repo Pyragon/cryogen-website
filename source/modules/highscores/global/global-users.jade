@@ -9,7 +9,7 @@ div.cnt
         th Total Level
         th Total XP
     tbody
-      -for user in hsusers.getList()
+      for user in hsusers.getList()
         tr
           td.b-right.rank= user.getOverallRank()
           td.b-right= user.getName()
