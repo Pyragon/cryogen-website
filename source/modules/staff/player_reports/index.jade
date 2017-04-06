@@ -2,6 +2,11 @@ script.
   var toggled = false;
   $(document).ready(function() {
   
+    var close = 'Click to close search bar.';
+    var open = 'Click to open search bar.';
+    
+    $('#search-preport-icon').attr('title', open);
+  
     $('#caction').click(function() {
       var cnt = $(this).find('.dropdwn-cnt');
       if(toggled) {
@@ -10,6 +15,29 @@ script.
         cnt.addClass('dropdwn-show');
       }
       toggled = !toggled;
+    });
+    
+    $('#search-preport-icon').click(function() {
+      var icon = $(this);
+      var search = $('#search-in');
+      var user = search.find('input').val();
+      var att = search.attr('display');
+      if(att == 'none') {
+        icon.attr('title', close);
+        search.attr('display', 'inline');
+        search.show('slide', {direction: 'right'}, 1000);
+      } else {
+        if(user == '') {
+          search.hide('slide', {direction: 'right'}, 1000, function() {
+            search.attr('display', 'none');
+            icon.attr('title', open);
+          });
+          return;
+        }
+        $('#search-error').css('display', '');
+        $('#search-error').html('error');
+        $('#search-error').fadeOut(5000);
+      }
     });
   
   });
@@ -24,7 +52,17 @@ div.tab-pane.fade(id='preports')
           div.link
             i.fa.fa-archive
             span  Archive
-      div(style='padding: 10px;')
+      div(style='padding: 15px;')
+        div#search-preport(style='clear: both; float: right; padding-bottom: 15px;')
+          p.color-grey.search-info(style='font-size: 11px; max-width: 200px;') Click the search icon to begin searching for a report. Search with criteria using name:, or type:
+          p.color-grey.search-info(style='font-size: 11px; max-width: 200px;') Example: name: cody, type: ban - what
+            br
+            span Will search for any bans for user 'Cody' with 'what' in the title.
+          p.color-red#search-error(style='display: none')
+          div
+            span.glyphicon.glyphicon-search.link#search-preport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+            div#search-in(style='float: right; display: none;', display='none')
+              input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
         table.table.hs-table.table-condensed.table-responsive.preports-table.widget
           thead
             tr
@@ -42,13 +80,14 @@ div.tab-pane.fade(id='preports')
                 td.b-right= '$for-name='+report.getUsername()+'$end'
                 td.b-right= '$for-name='+report.getOffender()+'$end'
                 td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
-                td.b-right.dropdown(style='max-width: 160px!important;')
+                td.b-right.dropdown.link(style='max-width: 160px!important;')
                   span.dropdown-toggle(data-toggle='dropdown') Click for Actions
                     b.caret
                   ul.dropdown-menu#acmenu
                     li
                       div.t-center.link#archive(style='font-size: 12px;')
                         i.fa.fa-archive
+                        |  |
                         span  Archive Report
                 td.b-right.link View
                 td.link
