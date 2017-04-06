@@ -6,6 +6,37 @@ html, body {
     color: #888;
 }
 
+#acmenu li {
+    padding: 4px;
+}
+
+.dropdwn {
+    position: relative;
+}
+
+.dropdown-menu {
+    min-width: 100%;
+}
+
+span {
+    text-align: center;
+}
+
+.dropdwn-cnt {
+    display: none;
+    position: absolute;
+    min-width: inherit;
+}
+
+.dropdwn-cnt a {
+    display: block;
+    text-decoration: none;
+}
+
+.dropdwn-show {
+    display: block;
+}
+
 [contentEditable=true]:empty:not(:focus):before {
     content: attr(data-ph)
 }
