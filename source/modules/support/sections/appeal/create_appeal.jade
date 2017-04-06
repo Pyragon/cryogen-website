@@ -41,20 +41,21 @@ script.
     
   });
 input#pid(type='hidden', value=pid)
-p.color-grey#appeal-ret(style='text-align: center') &larr; 
-  span.appeal-ret#appeal-link Go Back
-div.col-md-6.box
-  div
-    label Appeal Title
-    input.form-control#appeal-title(type='text', placeholder='Enter Appeal Title')
-    label Enter a detailed appeal:
-    div.form-control.appeal-detailed(contenteditable='true', style='background-color:#111; border: 1px solid #000; width:350px; height:150px; overflow: auto; word-wrap: break-word;', data-ph='Enter detailed report')
-div.col-md-6.box#appeal-info
-  span.glyphicon.glyphicon-ok(aria-hidden='true')
-  h3 Read before you appeal:
-  ul
-    li You are responsible for any actions taken on your account by anyone you have given your password to.
-    li You are responsible for any actions taken on your account by anyone in your household that may have obtained access to your computer.
-    br
-    li Please keep your appeals respectful and calm. We understand you may be angered about your punishment, but any flaming or otherwise will only make your appeal take longer or be denied out right.
-button.btn.btn-default.appeal-btn Create Appeal
+div(style='clear: both;')
+  p.color-grey#appeal-ret(style='text-align: center') &larr; 
+    span.appeal-ret#appeal-link Go Back
+  div.col-md-6.box
+    div
+      label Appeal Title
+      input.form-control#appeal-title(type='text', placeholder='Enter Appeal Title', style='max-width: 350px;')
+      label Enter a detailed appeal:
+      textarea.form-control.appeal-detailed(row='4', cols='50', style='background-color:#111; border: 1px solid #000; max-width: 350px;', placeholder='Enter detailed appeal')
+  div.col-md-6.box#appeal-info
+    span.glyphicon.glyphicon-ok(aria-hidden='true')
+    h3 Read before you appeal:
+    ul
+      li You are responsible for any actions taken on your account by anyone you have given your password to.
+      li You are responsible for any actions taken on your account by anyone in your household that may have obtained access to your computer.
+      br
+      li Please keep your appeals respectful and calm. We understand you may be angered about your punishment, but any flaming or otherwise will only make your appeal take longer or be denied out right.
+  button.btn.btn-default.appeal-btn Create Appeal
