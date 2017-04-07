@@ -45,6 +45,7 @@ public abstract class WebModule {
 		model.put("formatter", new DateFormatter());
 		boolean loggedIn = request.session().attributes().contains("cryo-user");
 		model.put("loggedIn", loggedIn);
+		model.put("acutils", new AccountUtils());
 		if(loggedIn) {
 			Account account = AccountUtils.getAccount(request.session().attribute("cryo-user"));
 			if(account != null)
@@ -56,7 +57,13 @@ public abstract class WebModule {
 				String format = html.substring(html.indexOf("$for-name=")+10);
 				format = format.substring(0, format.indexOf("$end"));
 				Account account = AccountUtils.getAccount(format);
-				String name = account != null ? AccountUtils.crownHTML(account) : Utilities.formatNameForDisplay(format);
+				String name = Utilities.formatNameForDisplay(format);
+				if(account != null)
+					name = AccountUtils.crownHTML(account);
+				else {
+					System.out.println(format);
+					System.out.println(html);
+				}
 				html = html.replace("$for-name="+format+"$end", name);
 			}
 			while(html.contains("$forum-name=")) {

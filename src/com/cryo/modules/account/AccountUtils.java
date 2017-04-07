@@ -20,6 +20,14 @@ public class AccountUtils {
 		return (Account) data[0];
 	}
 	
+	public Account getAcc(String username) {
+		AccountConnection connection = (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+		Object[] data = connection.handleRequest("get-account", username);
+		if(data == null)
+			return null;
+		return (Account) data[0];
+	}
+	
 	public static String getDisplayName(Account account) {
 		DisplayConnection connection = (DisplayConnection) Website.instance().getConnectionManager().getConnection(Connection.DISPLAY);
 		Object[] data = connection.handleRequest("get-display", account.getUsername());

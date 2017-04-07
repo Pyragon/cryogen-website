@@ -52,50 +52,52 @@ div.tab-pane.fade(id='preports')
           div.link
             i.fa.fa-archive
             span  Archive
-      div(style='padding: 15px;')
-        div#search-preport(style='clear: both; float: right; padding-bottom: 15px;')
-          p.color-grey.search-info(style='font-size: 11px; max-width: 200px;') Click the search icon to begin searching for a report. Search with criteria using name:, or type:
-          p.color-grey.search-info(style='font-size: 11px; max-width: 200px;') Example: name: cody, type: ban - what
-            br
-            span Will search for any bans for user 'Cody' with 'what' in the title.
-          p.color-red#search-error(style='display: none')
-          div
-            span.glyphicon.glyphicon-search.link#search-preport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
-            div#search-in(style='float: right; display: none;', display='none')
-              input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
-        table.table.hs-table.table-condensed.table-responsive.preports-table.widget
-          thead
-            tr
-              th.t-center Title
-              th.t-center Username
-              th.t-center Reporting
-              th.t-center Date
-              th.t-center Action
-              th.t-center View
-              th.t-center Pin
-          tbody
-            for report in preports
-              tr(data-id=report.getId())
-                td.b-right= report.getTitle()
-                td.b-right= '$for-name='+report.getUsername()+'$end'
-                td.b-right= '$for-name='+report.getOffender()+'$end'
-                td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
-                td.b-right.dropdown.link(style='max-width: 160px!important;')
-                  span.dropdown-toggle(data-toggle='dropdown') Click for Actions
-                    b.caret
-                  ul.dropdown-menu#acmenu
-                    li
-                      div.t-center.link#archive(style='font-size: 12px;')
-                        i.fa.fa-archive
-                        |  |
-                        span  Archive Report
-                td.b-right.link View
-                td.link
-                  -var read = report.userHasRead(user.getUsername())
-                  -var titl = read ? 'Pin this report to view it on the overview page at all times' : 'This report currently appears on the overview page. Unpin to hide it.';
-                  div(title=titl)
-                    i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
-                    if read
-                      span  Pin
-                    else
-                      span  Unpin
+  div.col-md-12(style='border: 1px solid #000; clear: both; padding: 0 10px 0 10px;')
+  div(style='padding: 15px;')
+    div#search-preport(style='clear: both; float: right; padding-bottom: 15px;')
+      p.color-grey.search-info(style='font-size: 11px; max-width: 200px;') Click the search icon to begin searching for a report. Search with criteria using name:, or type:
+      p.color-grey.search-info(style='font-size: 11px; max-width: 200px;') Example: name: cody, type: ban - what
+        br
+        span Will search for any bans for user 'Cody' with 'what' in the title.
+      p.color-red#search-error(style='display: none')
+      div
+        span.glyphicon.glyphicon-search.link#search-preport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+        div#search-in(style='float: right; display: none;', display='none')
+          input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+    div#preport-main
+      table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;')
+        thead
+          tr
+            th.t-center Title
+            th.t-center Username
+            th.t-center Reporting
+            th.t-center Date
+            th.t-center Action
+            th.t-center View
+            th.t-center Pin
+        tbody
+          for report in preports
+            tr(data-id=report.getId())
+              td.b-right= report.getTitle()
+              td.b-right= '$for-name='+report.getUsername()+'$end'
+              td.b-right= '$for-name='+report.getOffender()+'$end'
+              td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
+              td.b-right.dropdown.link(style='max-width: 160px!important;')
+                span.dropdown-toggle(data-toggle='dropdown') Click for Actions
+                  b.caret
+                ul.dropdown-menu#acmenu
+                  li
+                    div.t-center.link#archive(style='font-size: 12px;')
+                      i.fa.fa-archive
+                      |  |
+                      span  Archive Report
+              td.b-right.link View
+              td.link
+                -var read = report.userHasRead(user.getUsername())
+                -var titl = read ? 'Pin this report to view it on the overview page at all times' : 'This report currently appears on the overview page. Unpin to hide it.';
+                div(title=titl)
+                  i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+                  if read
+                    span  Pin
+                  else
+                    span  Unpi

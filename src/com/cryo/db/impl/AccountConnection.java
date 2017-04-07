@@ -61,7 +61,7 @@ public class AccountConnection extends DatabaseConnection {
 				return new Object[] { true };
 			case "get-account":
 				username = (String) data[1];
-				set = select("player_data", "username='"+username+"'");
+				set = select("player_data", "username=?", username);
 				if(empty(set))
 					return null;
 				int rights = getInt(set, "rights");

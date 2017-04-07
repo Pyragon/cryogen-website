@@ -19,6 +19,7 @@ public class AppealDAO {
 	private final String username, title, message;
 	private String reason;
 	private String lastAction;
+	private String displayName;
 	private final int active;
 	private final int punishId;
 	private final Timestamp time;

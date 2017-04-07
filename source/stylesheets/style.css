@@ -18,6 +18,17 @@ html, body {
     min-width: 100%;
 }
 
+.text-sm-input {
+    max-width: 350px;
+}
+
+.text-input {
+    max-width: 350px;
+    height: 150px;
+    background-color: #111;
+    border: 1px solid #000;
+}
+
 span {
     text-align: center;
 }

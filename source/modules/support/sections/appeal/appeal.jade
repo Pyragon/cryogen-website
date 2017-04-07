@@ -8,7 +8,9 @@ svg(style='display: none; style="position: absolute; width: 0; height: 0; overfl
       path(d='M31.568 28.617l-17.145-15.608 0.798-0.8c0.653-0.655 1.006-1.501 1.060-2.363 0.031-0.014 0.063-0.028 0.092-0.045l3.218-2.013c0.435-0.512 0.404-1.321-0.071-1.797l-5.598-5.613c-0.475-0.476-1.281-0.508-1.792-0.071l-2.007 3.227c-0.016 0.030-0.031 0.061-0.045 0.093-0.859 0.054-1.703 0.408-2.356 1.063l-3.045 3.053c-0.653 0.655-1.006 1.501-1.060 2.363-0.031 0.014-0.063 0.029-0.093 0.045l-3.218 2.013c-0.436 0.512-0.404 1.321 0.071 1.797l5.598 5.613c0.475 0.476 1.281 0.508 1.792 0.071l2.007-3.227c0.017-0.030 0.031-0.061 0.045-0.093 0.859-0.054 1.703-0.408 2.356-1.063l0.884-0.887 15.566 17.191c0.451 0.498 1.147 0.579 1.546 0.178l1.574-1.578c0.399-0.4 0.319-1.098-0.178-1.55z')
 div.tab-pane.fade#appeal
   div.row
-    h5.color-grey Appeal an Offence
-      h6.color-grey#appeal-p Below you will find a list of punishments currently active on your account.
+    div(style='float: left;')
+      h5.color-grey Appeal an Offence
+        h6.color-grey#appeal-p Below you will find a list of punishments currently active on your account.
+    div.col-md-12(style='border: 1px solid #000; margin: 15px 0; clear: both;')
     div#appeal-content
       include appeal_list

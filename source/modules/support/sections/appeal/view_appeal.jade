@@ -1,8 +1,8 @@
 script.
-  $(document).ready(function(){
+  $(document).ready(function() {
     
     $('#com-btn').click(function() {
-      var comment = $('.appeal-comment').html();
+      var comment = $('.appeal-comment').val();
       if(comment == "") {
         sendAlert('You must enter a comment first.');
         return;
@@ -20,7 +20,7 @@ script.
         }
         sendAlert('Comment submitted!');
         $('#appeal-comments').html(data.html);
-        $('.appeal-comment').html('');
+        $('.appeal-comment').val('');
       });
     });
     
@@ -48,10 +48,11 @@ script.
     
   });
 input#appeal-id(type='hidden', value=appeal.getId())
-div.col-md-12(style='border: 1px solid #000;')
-br
-div(style="margin: auto; max-width: 400px; padding: 5px;")
+input#auth(type='hidden', value=appeal.getUsername())
+span(style='float: right')
+  p.color-grey#appeal-author= 'Viewing appeal for: $for-name='+appeal.getUsername()+'$end'
   p.t-center.color-grey &larr; #[a.return-but(href='#', title='Go Back') Go back]
+div(style="margin: auto; max-width: 400px; padding: 5px; clear: both;")
   h4.color-white.t-center#title Title
     h6.t-center= appeal.getTitle()
   h4.t-center.color-white Detailed Appeal
@@ -63,10 +64,10 @@ div(style="margin: auto; max-width: 400px; padding: 5px;")
       h6.t-center= appeal.getDeclineReason()
   br
   h4.t-center.color-white Comments/Replies
-  div#appeal-comments
+  div#appeal-comments(style='white-space: pre-wrap;')
     include appeal-comments
   br
   if appeal.getActive() == 0
     p.com-error(style='display: none;')
-    div.form-control.appeal-comment(contenteditable='true', style='margin: auto; padding: 10px; background-color:#111; border: 1px solid #000; width:350px; height:150px; overflow: auto; word-wrap: break-word;', data-ph='Enter comment')
+    textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
     button.btn.btn-default#com-btn(style='margin: 15px auto;') Comment
