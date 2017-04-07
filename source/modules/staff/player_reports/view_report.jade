@@ -1,7 +1,7 @@
 script.
   $(document).ready(function() {
     $('#com-btn').click(function() {
-      alert('yo');
+      var in = $('.report-comment').val();
     });
   });
 div#view-preport(style='clear: both; float: right;')
@@ -26,5 +26,5 @@ div(style="margin: auto; max-width: 400px; padding: 5px;")
       p.t-center.color-grey.fs-10 Comments are only seen by other staff and are used to include info other staff may need to know. Such as ongoing information about an investigation into the report.
     include ../../utils/comments
     p.com-error(style='display: none;')
-    textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
+    textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
     a.btn.btn-default#com-btn(style='margin: 15px auto;') Comment
