@@ -57,7 +57,7 @@ public class AppealModule {
 				PunishmentConnection.connection().handleRequest("add-comment", request.session().attribute("cryo-user"), appealId, comment);
 				prop.put("success", true);
 				model.put("comments", new PunishUtils().getComments(appealId));
-				prop.put("html", module.render("./source/modules/support/sections/appeal/appeal-comments.jade", model, request, response));
+				prop.put("html", module.render("./source/modules/utils/comments.jade", model, request, response));
 				break;
 			case "create-appeal":
 				int id = Integer.parseInt(request.queryParams("id"));
@@ -72,6 +72,16 @@ public class AppealModule {
 				if(title.equals("") || detailed.equals("") || title.replaceAll(" ", "").equals("") || detailed.replaceAll(" ", "").equals("")) {
 					prop.put("success", false);
 					prop.put("error", "All fields must be filled out!");
+					break;
+				}
+				if(title.length() > 20) {
+					prop.put("success", false);
+					prop.put("error", "Title cannot exceed 20 characters.");
+					break;
+				}
+				if(detailed.length() > 1000) {
+					prop.put("success", false);
+					prop.put("error", "Detailed appeal cannot exceed 1k characters.");
 					break;
 				}
 				PunishUtils.createAppeal(id, username, title, detailed);

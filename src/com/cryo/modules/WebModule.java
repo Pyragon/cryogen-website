@@ -60,10 +60,6 @@ public abstract class WebModule {
 				String name = Utilities.formatNameForDisplay(format);
 				if(account != null)
 					name = AccountUtils.crownHTML(account);
-				else {
-					System.out.println(format);
-					System.out.println(html);
-				}
 				html = html.replace("$for-name="+format+"$end", name);
 			}
 			while(html.contains("$forum-name=")) {

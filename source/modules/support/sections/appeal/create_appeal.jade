@@ -14,13 +14,25 @@ script.
     $('.appeal-btn').click(function() {
       var id = $('#pid').val();
       var title = $('#appeal-title').val();
-      var detailed = $('.appeal-detailed').html();
+      var detailed = $('.appeal-detailed').val();
       if(title == '' || detailed == '') {
         sendAlert('All fields must be filled out!');
         return;
       }
+      if(title.length > 20) {
+        sendAlert('Title cannot exceed 20 characters.');
+        return;
+      }
+      if(detailed.length > 1000) {
+        sendAlert('Detailed appeal cannot exceed 1k characters.');
+        return;
+      }
       $.post('/support', { mod:'appeal', action:'create-appeal', id:id, title:title, detailed:detailed }, function(ret) {
         var data = JSON.parse(ret);
+        if(data.html == null || data.html == "") {
+          sendAlert('Session expired! Refresh the page to login again.');
+          return;
+        }
         if(!data.success) {
           sendAlert(data.error);
           return;

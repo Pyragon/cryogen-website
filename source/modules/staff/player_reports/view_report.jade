@@ -1,9 +1,38 @@
 script.
   $(document).ready(function() {
     $('#com-btn').click(function() {
-      var in = $('.report-comment').val();
+      var input = $('.report-comment').val();
+      var id = $('#rid').val();
+      if(input == '' || input.replace(/ /g, '') == '') {
+        sendAlert('You must enter a comment first.');
+        return;
+      }
+      $.post('/staff', { mod:'preport', action:'submit-com', id:id, comment:input }, function(ret) {
+        if(ret.includes('Login to')) {
+          sendAlert('Session expired! Refresh the page to login again.');
+          return;
+        }
+        var data = JSON.parse(ret);
+        if(!data.success) {
+          sendAlert(data.error);
+          return;
+        }
+        $('#comments').html(data.comments);
+        $('.report-comment').val('');
+        sendAlert('Comment successfully submitted!');
+      });
     });
+    
+    function sendAlert(text) {
+      var n = noty({
+        text: text,
+        layout: 'topRight',
+        timeout: 5000,
+        theme: 'cryogen'
+      });
+    }
   });
+input#rid(type='hidden', value=report.getId())
 div#view-preport(style='clear: both; float: right;')
   div(style='max-width: 200px; font-size: 12px;')
     p.color-grey.t-center Viewing report from 
@@ -24,7 +53,8 @@ div(style="margin: auto; max-width: 400px; padding: 5px;")
       h6.color-grey.t-center(style='white-space: pre-wrap;')= report.getProof()
     h4.color-white.t-center Comments
       p.t-center.color-grey.fs-10 Comments are only seen by other staff and are used to include info other staff may need to know. Such as ongoing information about an investigation into the report.
-    include ../../utils/comments
+    div#comments
+      include ../../utils/comments
     p.com-error(style='display: none;')
     textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
     a.btn.btn-default#com-btn(style='margin: 15px auto;') Comment
