@@ -44,13 +44,13 @@ div.tab-pane.fade#report_bug
     div.col-md-6.box
       div.rbug-content
         label Report title:
-        input.form-control.rbug-title(type='text', placeholder='Enter desired title', maxlength='55')
+        input.form-control.rbug-title.text-sm-input(type='text', placeholder='Enter desired title', maxlength='55')
         label Can this bug be replicated?
-        input.form-control.rbug-replication(type='text', placeholder="Can this bug be replicated?", maxlength='20')
+        input.form-control.rbug-replication.text-sm-input(type='text', placeholder="Can this bug be replicated?", maxlength='20')
         label When did you witness this bug? (Include date/time)
-        input.form-control.rbug-date(type='text', placeholder='When did you witness this bug?', maxlength='55')
+        input.form-control.rbug-date.text-sm-input(type='text', placeholder='When did you witness this bug?', maxlength='55')
     div.col-md-6.box.rbug-info
       label Enter a detailed report:
-      div.form-control.rbug-detailed(contenteditable='true', style='background-color:#111; border: 1px solid #000; width:350px; height:150px; overflow: auto; word-wrap: break-word;', data-ph='Enter detailed report')
+      textarea.form-control.rbug-detailed.text-input(rows='4', cols='50', placeholder='Enter detailed report')
     div.col-md-12
       button.btn.btn-default.rbug-btn Report Bug

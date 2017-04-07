@@ -46,15 +46,15 @@ div.tab-pane.fade#report_player
     div.col-md-6.box
       div.rplayer-content
         label Report title:
-        input.form-control.rplayer-title(type='text', placeholder='Enter desired title', maxlength='55')
+        input.form-control.rplayer-title.text-sm-input(type='text', placeholder='Enter desired title', maxlength='55')
         label Player you are reporting:
-        input.form-control.rplayer-player(type='text', placeholder="Enter offender's name", maxlength='12')
+        input.form-control.rplayer-player.text-sm-input(type='text', placeholder="Enter offender's name", maxlength='12')
         label What rule was broken?
-        input.form-control.rplayer-rule(type='text', placeholder='What rule was broken?', maxlength='55')
+        input.form-control.rplayer-rule.text-sm-input(type='text', placeholder='What rule was broken?', maxlength='55')
     div.col-md-6.box.rplayer-info
       label Enter a detailed report:
-      div.form-control.rplayer-detailed(contenteditable='true', style='background-color:#111; border: 1px solid #000; width:350px; height:150px; overflow: auto; word-wrap: break-word;', data-ph='Enter detailed report')
-      label Enter proof: (Link to image/video proof, separate by commas)
-      div.form-control.rplayer-proof(contenteditable='true', style='background-color:#111; border: 1px solid #000; width:350px; height:150px; overflow: auto; word-wrap: break-word;', data-ph='Enter proof')
+      textarea.form-control.rplayer-detailed.text-input(rows='4', cols='50', placeholder='Enter detailed report')
+      label(style='margin-top: 15px;') Enter proof: (Link to image/video proof, separate by commas)
+      textarea.form-control.rplayer-proof.text-input(rows='4', cols='50', placeholder='Enter proof')
     div.col-md-12
       button.btn.btn-default.rplayer-btn Report Player
