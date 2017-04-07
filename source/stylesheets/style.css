@@ -27,6 +27,7 @@ html, body {
     height: 150px;
     background-color: #111;
     border: 1px solid #000;
+    margin: auto;
 }
 
 span {
@@ -825,7 +826,7 @@ p.small {
     margin: 15px 0;
 }
 
-.register .btn, .sidebar-btn {
+.register .btn, .sidebar-btn, .btn-default {
     margin: 100px auto 30px auto;
     display: block;
     padding: 10px 50px;
@@ -843,7 +844,7 @@ p.small {
     font-size: 13px;
 }
 
-.register .btn:hover, .sidebar-btn:hover {
+.register .btn:hover, .sidebar-btn:hover, .btn-default:hover, .btn-default:active {
     border: 2px solid #050505;
     background: #111;
     color: #CCC !important;
@@ -851,6 +852,10 @@ p.small {
 
 .sidebar-btn:hover {
     border: 3px solid #666;
+}
+
+.btn-default {
+    max-width: 200px;
 }
 
 

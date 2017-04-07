@@ -1,7 +1,30 @@
-div.col-md-12(style='border: 1px solid #000;')
-br
+script.
+  $(document).ready(function() {
+    $('#com-btn').click(function() {
+      alert('yo');
+    });
+  });
+div#view-preport(style='clear: both; float: right;')
+  div(style='max-width: 200px; font-size: 12px;')
+    p.color-grey.t-center Viewing report from 
+      span#preport-auth
+    p.t-center.color-grey= 'Report made on: '+formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY hh:mm a')+'.'
+    p.t-center.color-grey &larr; #[a.return-but(href='#', title='Go Back') Go back]
 div(style="margin: auto; max-width: 400px; padding: 5px;")
-  p.t-center.color-grey Fuck me right? Go back
-  h4.color-white.t-center Title
-    h6.color-white.t-center= report.getTitle()
-  h4.color-white.t-center Reportin
+  div.row(style='clear: both;')
+    h4.color-white.t-center Title
+      h6.color-grey.t-center= report.getTitle()
+    h4.color-white.t-center Offender
+      h6.color-grey.t-center= '$for-name='+report.getOffender()+'$end'
+    h4.color-white.t-center Rule Broken
+      h6.color-grey.t-center= report.getRule()
+    h4.color-white.t-center Extra Info
+      h6.color-grey.t-center= report.getInfo()
+    h4.color-white.t-center Proof
+      h6.color-grey.t-center(style='white-space: pre-wrap;')= report.getProof()
+    h4.color-white.t-center Comments
+      p.t-center.color-grey.fs-10 Comments are only seen by other staff and are used to include info other staff may need to know. Such as ongoing information about an investigation into the report.
+    include ../../utils/comments
+    p.com-error(style='display: none;')
+    textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
+    a.btn.btn-default#com-btn(style='margin: 15px auto;') Comment

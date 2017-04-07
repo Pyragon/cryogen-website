@@ -64,10 +64,10 @@ div(style="margin: auto; max-width: 400px; padding: 5px; clear: both;")
       h6.t-center= appeal.getDeclineReason()
   br
   h4.t-center.color-white Comments/Replies
-  div#appeal-comments(style='white-space: pre-wrap;')
-    include appeal-comments
+  div#appeal-comments(style='white-space: pre-wrap; margin-bottom: 10px;')
+    include ../../../utils/comments
   br
   if appeal.getActive() == 0
     p.com-error(style='display: none;')
     textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
-    button.btn.btn-default#com-btn(style='margin: 15px auto;') Comment
+    a.btn.btn-default#com-btn(style='margin: 15px auto;') Comment
