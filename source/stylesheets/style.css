@@ -826,7 +826,7 @@ p.small {
     margin: 15px 0;
 }
 
-.register .btn, .sidebar-btn, .btn-default {
+.register .btn, .sidebar-btn, .btn-comment {
     margin: 100px auto 30px auto;
     display: block;
     padding: 10px 50px;
@@ -844,7 +844,7 @@ p.small {
     font-size: 13px;
 }
 
-.register .btn:hover, .sidebar-btn:hover, .btn-default:hover, .btn-default:active {
+.register .btn:hover, .sidebar-btn:hover, .btn-comment:hover, .btn-comment:active {
     border: 2px solid #050505;
     background: #111;
     color: #CCC !important;
