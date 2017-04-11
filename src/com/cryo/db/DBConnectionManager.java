@@ -23,12 +23,21 @@ public class DBConnectionManager {
 	private HashMap<Connection, DatabaseConnection> connections;
 	
 	public DBConnectionManager() {
+		loadDriver();
 		init();
 		Website.LOADED = true;
 	}
 	
 	public DatabaseConnection getConnection(Connection connection) {
 		return connections.get(connection);
+	}
+	
+	public void loadDriver() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void init() {
