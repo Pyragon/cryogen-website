@@ -40,6 +40,13 @@
 			<version>2.8.0</version>
 		</dependency>
 		<dependency>
+			<groupId>lombok</groupId>
+			<artifactId>com.lombok</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/library/lombok.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4</version>
