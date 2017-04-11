@@ -60,15 +60,16 @@ public class Website {
 	
 	private Timer fastExecutor;
 	
-	private static File FAVICON = new File("D:/workspace/cryogen-website/source/images/favicon.ico");
+	private static File FAVICON = null;
 	
 	public Website() {
 		loadProperties();
+		FAVICON = new File(properties.getProperty("favico"));
 		connectionManager = new DBConnectionManager();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
 		port(80);
-		staticFiles.externalLocation("D:/workspace/cryogen-website/source/");
+		staticFiles.externalLocation(properties.getProperty("extsource"));
 		//staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
@@ -201,6 +202,7 @@ public class Website {
 	
 	public static void main(String[] args) {
 		INSTANCE = new Website();
+		
 	}
 	
 	public static enum RequestType {
