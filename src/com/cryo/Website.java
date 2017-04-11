@@ -64,12 +64,12 @@ public class Website {
 	
 	public Website() {
 		loadProperties();
-		FAVICON = new File(properties.getProperty("favico"));
+		FAVICON = new File("/images/favicon.ico");
 		connectionManager = new DBConnectionManager();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
 		port(80);
-		staticFiles.externalLocation(properties.getProperty("extsource"));
+		staticFiles.externalLocation("source/");
 		//staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
