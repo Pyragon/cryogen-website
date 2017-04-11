@@ -47,6 +47,27 @@
 			<systemPath>${project.basedir}/library/lombok.jar</systemPath>
 		</dependency>
 		<dependency>
+			<groupId>guava</groupId>
+			<artifactId>com.google.guava</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/library/guava-20.0.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>JSON</groupId>
+			<artifactId>com.jsonapi</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/library/javax.json-api-1.0-javadoc.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>com.mysql</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/library/mysql.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4</version>
