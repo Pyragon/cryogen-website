@@ -62,10 +62,8 @@
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
-			<artifactId>com.mysql</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/library/mysql.jar</systemPath>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.17</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
