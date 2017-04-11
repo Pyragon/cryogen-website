@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
@@ -61,6 +62,12 @@ public class PlayerReportsModule {
 				prop.put("success", true);
 				prop.put("html", html);
 				prop.put("display", name);
+				break;
+			case "archive-report":
+				id = Integer.parseInt(request.queryParams("id"));
+				PunishmentConnection.connection().handleRequest("archive", id);
+				prop.put("success", true);
+				prop.put("html", null);
 				break;
 			case "submit-com":
 				id =  Integer.parseInt(request.queryParams("id"));

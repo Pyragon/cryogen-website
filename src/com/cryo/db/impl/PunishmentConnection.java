@@ -31,6 +31,11 @@ public class PunishmentConnection extends DatabaseConnection {
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
+			case "archive":
+				int id = (int) data[1];
+				execute("INSERT INTO archives SELECT * FROM appeals WHERE id="+id);
+				delete("appeals", "id=?", id);
+				break;
 			case "get-punishments":
 				String username = data.length > 1 ? (String) data[1] : null;
 				ArrayList<PunishDAO> punishments = new ArrayList<>();
@@ -42,7 +47,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(set == null || wasNull(set))
 					return new Object[] { punishments };
 				while(next(set)) {
-					int id = getInt(set, "id");
+					id = getInt(set, "id");
 					int type = getInt(set, "type");
 					String user = getString(set, "username");
 					Timestamp date = getTimestamp(set, "date");
@@ -60,7 +65,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				set = select("punishments", "appeal_id=?", appealId);
 				if(empty(set))
 					return null;
-				int id = getInt(set, "id");
+				id = getInt(set, "id");
 				int type = getInt(set, "type");
 				username = getString(set, "username");
 				Timestamp date = getTimestamp(set, "date");
@@ -145,7 +150,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				appealId = (int) data[2];
 				String comment = (String) data[3];
 				insert("comments", "DEFAULT", appealId, username, comment, "DEFAULT");
-				set("appeals", "action=?", "id=?", "Comment posted by $for-name="+username+"$end", appealId);
+				set("appeals", "action=?", "id=?", "Comment submitted by $for-name="+username+"$end", appealId);
 				break;
 			case "get-comments":
 				appeal_id = (int) data[1];

@@ -1,29 +1,27 @@
+script.
+  $(document).ready(function() {
+    
+  });
 table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;')
   thead
     tr
       th.t-center Title
       th.t-center Username
-      th.t-center Reporting
-      th.t-center Date
-      th.t-center Action
+      th.t-center Date Reported
+      th.t-center Date Seen
+      th.t-center Can be Replicated?
+      th.t-center Last Action
       th.t-center View
       th.t-center Pin
   tbody
-    for report in preports
+    for report in breports
       tr(data-id=report.getId(), data-type=report.type())
         td.b-right= report.getTitle()
         td.b-right= '$for-name='+report.getUsername()+'$end'
-        td.b-right= '$for-name='+report.getOffender()+'$end'
         td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
-        td.b-right.dropdown.link(style='max-width: 160px!important;')
-          span.dropdown-toggle(data-toggle='dropdown') Click for Actions
-            b.caret
-          ul.dropdown-menu#acmenu
-            li
-              div.t-center.link#archive(style='font-size: 12px;')
-                i.fa.fa-archive
-                |  |
-                span  Archive Report
+        td.b-right= report.getReplicated()
+        td.b-right= report.getDate()
+        td.b-right= report.getLastAction()
         td.b-right.link#view View
         td.link
           -var read = report.userHasRead(user.getUsername())

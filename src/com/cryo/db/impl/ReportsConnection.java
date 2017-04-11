@@ -53,6 +53,8 @@ public class ReportsConnection extends DatabaseConnection {
 				String username = (String) data[3];
 				String comment = (String) data[4];
 				insert("comments", "DEFAULT", id, type, username, comment, "DEFAULT");
+				String db = type == 0 ? "player_reports" : "bug_reports";
+				set(db, "last_action=?", "id=?", "Comment submitted by $for-name="+username+"$end", id);
 				return new Object[] { };
 			case "get-player-report":
 				id = (int) data[1];
@@ -118,6 +120,25 @@ public class ReportsConnection extends DatabaseConnection {
 					bugs.add(bug);
 				}
 				return new Object[] { bugs };
+			case "get-bug-report":
+				id = (int) data[1];
+				set = select("bug_reports", "id=?", id);
+				if(empty(set))
+					return null;
+				id = getInt(set, "id");
+				username = getString(set, "username");
+				title = getString(set, "title");
+				String replicated = getString(set, "replicated");
+				String date = getString(set, "seen");
+				info = getString(set, "info");
+				lastAction = getString(set, "last_action");
+				comment = getString(set, "comment");
+				time = getTimestamp(set, "time");
+				read = getString(set, "read");
+				list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
+				BugReportDAO bug = new BugReportDAO(id, username, title, replicated, date, info, lastAction, comment, time);
+				bug.setUsersRead(list);
+				return new Object[] { bug };
 			case "report_player":
 				report = (PlayerReportDAO) data[1];
 				insert("player_reports", (Object[]) ((PlayerReportDAO) report).data());

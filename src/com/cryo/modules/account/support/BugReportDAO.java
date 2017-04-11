@@ -29,6 +29,10 @@ public class BugReportDAO {
 		return "BUG";
 	}
 	
+	public String date() {
+		return date;
+	}
+	
 	public boolean userHasRead(String username) {
 		if(usersRead == null)
 			return false;

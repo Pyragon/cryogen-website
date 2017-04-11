@@ -13,6 +13,7 @@ import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
+import com.cryo.modules.staff.bugreports.BugReportsModule;
 import com.cryo.modules.staff.playerreports.PlayerReportsModule;
 import com.cryo.utils.DateFormatter;
 import com.google.gson.Gson;
@@ -88,6 +89,9 @@ public class StaffModule extends WebModule {
 						break;
 					case "preport":
 						prop = PlayerReportsModule.handleRequest(action, request, response, prop, this);
+						break;
+					case "breport":
+						prop = BugReportsModule.handleRequest(action, request, response, prop, this);
 						break;
 				}
 				break;

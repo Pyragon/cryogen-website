@@ -1,3 +1,11 @@
+script.
+  $(document).ready(function() {
+  
+    $(document).on('click', '.reg-btn', function() {
+      alert('yo');
+    });
+  
+  });
 doctype html
 html
   head
@@ -23,8 +31,6 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css?rand=4999')
     link(rel='stylesheet', href='/stylesheets/fonts.css')
     link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
-    if isMobile
-      link(rel='stylesheet', href='/stylesheets/mobile.css?rand=5999')
     block head
   div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
     div(class='modal-dialog')
@@ -46,7 +52,7 @@ html
               input(type='password', class='form-control login-password', name='password', id='password', placeholder='Enter Password')
         div(class='modal-footer')
           button(type='button', class='btn btn-default', data-dismiss='modal') Close
-          button(type='button', class='btn btn-danger register-btn', data-dismiss='modal', data-toggle='modal', data-target='#register') Register
+          button.reg-btn(type='button', class='btn btn-danger register-btn') Register
           button(type='button', class='btn btn-primary login-btn') Sign In
   nav(class='navbar navbar-default cryogen-nav', role='navigation')
     div(class='navbar-header')

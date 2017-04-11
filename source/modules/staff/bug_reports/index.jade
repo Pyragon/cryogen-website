@@ -1,31 +1,13 @@
 script.
-  var toggled = false;
   $(document).ready(function() {
-  
-    var close = 'Click to close search bar.';
-    var open = 'Click to open search bar.';
     
-    $('#search-preport-icon').attr('title', open);
-  
-    //click for actions
-    $('#caction').click(function() {
-      var cnt = $(this).find('.dropdwn-cnt');
-      if(toggled) {
-        cnt.removeClass('dropdwn-show');
-      } else {
-        cnt.addClass('dropdwn-show');
-      }
-      toggled = !toggled;
-    });
-    
-    //click view button
     $(document).on('click', '#view', function() {
-      var tr = $(this).closest('tr');
-      var id = tr.data('id');
-      var type = tr.data('type');
-      if(type != 'PLAYER')
+      var elem = $(this).closest('tr');
+      var id = elem.data('id');
+      var type = elem.data('type');
+      if(type != 'BUG')
         return;
-      $.post('staff', { mod:'preport', action:'view-report', id:id }, function(ret) {
+      $.post('/staff', { mod:'breport', action:'view-report', id:id }, function(ret) {
         var data = JSON.parse(ret);
         if(data.html == null || data.html == "") {
           sendAlert('Session expired! Please reload the page to login again.');
@@ -35,20 +17,21 @@ script.
           sendAlert(data.error);
           return;
         }
-        $('#preport-info').html('Currently viewing report');
-        $('#preport-main').html(data.html);
-        $('#view-preport').css('visibility', '');
-        $('#preport-auth').html(data.display);
+        $('#breport-info').html('Currently viewing report');
+        $('#breport-main').html(data.html);
       });
-    });
+    });    
+      
+    var close = 'Click to close search bar.';
+    var open = 'Click to open search bar.';
     
     //click search icon
-    $('#search-preport-icon').click(function() {
+    $('#search-breport-icon').click(function() {
       var icon = $(this);
-      var search = $('#search-pin');
+      var search = $('#search-bin');
       var user = search.find('input').val();
       var att = search.attr('display');
-      if(att == 'none') {
+      if(att == 'none' || att == '') {
         icon.attr('title', close);
         search.attr('display', 'inline');
         search.show('slide', {direction: 'right'}, 1000);
@@ -60,12 +43,12 @@ script.
           });
           return;
         }
-        $('#search-perror').css('display', '');
-        $('#search-perror').html('error');
-        $('#search-perror').fadeOut(5000);
+        $('#search-berror').css('display', '');
+        $('#search-berror').html('error');
+        $('#search-berror').fadeOut(5000);
       }
     });
-    
+      
     function sendAlert(text) {
       var n = noty({
         text: text,
@@ -74,30 +57,30 @@ script.
         theme: 'cryogen'
       });
     }
-  
+    
   });
-div.tab-pane.fade(id='preports')
-  div.row 
+div.tab-pane.fade#breports
+  div.row
     div.iactions
       div
         div(style='float: left; margin: 10px 10px;')
-          h5.color-grey Player Reports
-            h6.color-grey#preport-info Currently viewing all active player reports
+          h5.color-grey Bug Reports
+            h6.color-grey#breport-info Currently viewing all active bug reports
         div(style='float: right; margin: 33.5px 5px;')
           div.link
             i.fa.fa-archive
             span  Archive
   div.row(style='padding: 15px;')
-    div#search-preport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+    div#search-breport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
       p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for a report. Search with criteria using name:
       p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Example: name: cody - what
         br
-        span Will search for any reports by user 'Cody' with 'what' in the title.
-      p.color-red#search-perror(style='display: none')
+        span Will search for any reports by user 'cody' with 'what' in the title
+      p.color-red#search-berror(style='display: none')
       div
-        span.glyphicon.glyphicon-search.link#search-preport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
-        div#search-pin(style='float: right; display: none;', display='none')
+        span.glyphicon.glyphicon-search.link#search-breport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+        div#search-bin(style='float: right; display: none;', display='none')
           input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
     div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
-    div#preport-main
+    div#breport-main
       include report_list
