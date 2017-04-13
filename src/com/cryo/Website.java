@@ -135,7 +135,6 @@ public class Website {
 		});
 		get("/favicon.ico", (req, res) -> {
 			try {
-				System.out.println("hello");
 				InputStream in = null;
 				OutputStream out = null;
 				try {
