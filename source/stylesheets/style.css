@@ -1047,6 +1047,7 @@ Widget
     color: #666;
     font-size: 10px;
     width: 100%;
+    min-width: 120px;
 }
 
 .mini-login button:hover {
