@@ -64,7 +64,7 @@ public class Website {
 	
 	public Website() {
 		loadProperties();
-		FAVICON = new File("/images/favicon.ico");
+		FAVICON = new File("./source/images/favicon.ico");
 		connectionManager = new DBConnectionManager();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
@@ -135,6 +135,7 @@ public class Website {
 		});
 		get("/favicon.ico", (req, res) -> {
 			try {
+				System.out.println("hello");
 				InputStream in = null;
 				OutputStream out = null;
 				try {
