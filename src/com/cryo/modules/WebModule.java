@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cookies.CookieManager;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.forums.ForumUser;
@@ -43,23 +44,20 @@ public abstract class WebModule {
 		model.put("utils", new Utilities());
 		model.put("baseurl", "http://localhost/");
 		model.put("formatter", new DateFormatter());
-		boolean loggedIn = request.session().attributes().contains("cryo-user");
-		model.put("loggedIn", loggedIn);
 		model.put("acutils", new AccountUtils());
-		if(loggedIn) {
-			Account account = AccountUtils.getAccount(request.session().attribute("cryo-user"));
-			if(account != null)
-				model.put("user", account);
-		}
+		Account account = CookieManager.isLoggedIn(request);
+		model.put("loggedIn", account != null);
+		if(account != null)
+			model.put("user", account);
 		try {
 			String html = Jade4J.render(file, model);
 			while(html.contains("$for-name=")) {
 				String format = html.substring(html.indexOf("$for-name=")+10);
 				format = format.substring(0, format.indexOf("$end"));
-				Account account = AccountUtils.getAccount(format);
+				Account acc = AccountUtils.getAccount(format);
 				String name = Utilities.formatNameForDisplay(format);
-				if(account != null)
-					name = AccountUtils.crownHTML(account);
+				if(acc != null)
+					name = AccountUtils.crownHTML(acc);
 				html = html.replace("$for-name="+format+"$end", name);
 			}
 			while(html.contains("$forum-name=")) {

@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import com.cryo.db.DBConnectionManager;
 import com.google.gson.Gson;
 
 import spark.Request;
@@ -31,7 +32,7 @@ public class Utilities {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(Math.floor(37/10));
+		
 	}
 	
 	public String isValidDisplay(String name) {

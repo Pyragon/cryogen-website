@@ -2,9 +2,12 @@ package com.cryo.modules.login;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.Account;
+
 import static com.cryo.utils.Utilities.*;
 
 import java.util.HashMap;
@@ -42,7 +45,15 @@ public class LoginModule extends WebModule {
 			Object[] data = connection.handleRequest("compare", username, password);
 			boolean success = data == null ? false : (boolean) data[0];
 			if(success) {
-				request.session().attribute("cryo-user", username);
+				request.session(true).attribute("cryo-user", username);
+				data = connection.handleRequest("get-account", username);
+				if(data == null)
+					return redirect("/login", 0, request, response);
+				Account account = (Account) data[0];
+				String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
+				System.out.println("sess: "+sess_id);
+				response.cookie("cryo-sess", sess_id);
+				System.out.println("wtf");
 				return redirect(request.queryParams("redirect"), request, response);
 			}
 			if(isMini)
