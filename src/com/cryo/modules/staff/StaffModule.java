@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cookies.CookieManager;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
@@ -37,9 +38,9 @@ public class StaffModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(request.session().attribute("cryo-user") == null)
+		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/staff", request, response);
-		String username = request.session().attribute("cryo-user");
+		String username = CookieManager.getUsername(request);
 		Account account = AccountUtils.getAccount(username);
 		if(account == null)
 			return showLoginPage("/staff", request, response);

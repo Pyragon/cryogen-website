@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
@@ -23,7 +24,7 @@ public class AppealModule {
 	public static String decodeRequest(WebModule module, HashMap<String, Object> model, Request request, Response response) {
 		Properties prop = new Properties();
 		String action = request.queryParams("action");
-		String username = request.session().attribute("cryo-user");
+		String username = CookieManager.getUsername(request);
 		switch(action) {
 			case "submit-com":
 				String comment = request.queryParams("comment");
@@ -54,7 +55,7 @@ public class AppealModule {
 					prop.put("error", "Please wait for a staff member to respond before posting again.");
 					break;
 				}
-				PunishmentConnection.connection().handleRequest("add-comment", request.session().attribute("cryo-user"), appealId, comment);
+				PunishmentConnection.connection().handleRequest("add-comment", username, appealId, comment);
 				prop.put("success", true);
 				model.put("comments", new PunishUtils().getComments(appealId));
 				prop.put("html", module.render("./source/modules/utils/comments.jade", model, request, response));

@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
@@ -53,16 +54,17 @@ public class AccountOverviewModule extends WebModule {
 	}
 	
 	public String decodeVotePost(Request request, Response response) {
-		if(request.session().attribute("cryo-user") == null)
+		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/account?section=vote", request, response);
 		HashMap<String, Object> model = new HashMap<>();
 		if(!request.queryParams().contains("action"))
 			return Website.render404(request, response);
 		String action = request.queryParams("action");
+		String username = CookieManager.getUsername(request);
 		switch(action) {
 			case "refresh":
 				Properties prop = new Properties();
-				VotingManager manager = new VotingManager(request.session().attribute("cryo-user"));
+				VotingManager manager = new VotingManager(username);
 				model.put("voteManager", manager);
 				prop.put("authlist", render("./source/modules/account/sections/vote/auth-list.jade", model, request, response));
 				for(int i = 0; i < 3; i++) {
@@ -90,9 +92,9 @@ public class AccountOverviewModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(request.session().attribute("cryo-user") == null)
+		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/account?"+(request.queryString() == null ? "" : request.queryString()), request, response);
-		String username = request.session().attribute("cryo-user");
+		String username = CookieManager.getUsername(request);
 		HashMap<String, Object> model = new HashMap<>();
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))

@@ -24,7 +24,7 @@ public class LogoutModule extends WebModule {
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		String redirect = request.queryParams("redirect");
-		request.session().removeAttribute("cryo-user");
+		response.removeCookie("cryo-sess");
 		return redirect(redirect, request, response);
 	}
 	

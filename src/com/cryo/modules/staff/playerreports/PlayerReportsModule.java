@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
@@ -71,7 +72,7 @@ public class PlayerReportsModule {
 				break;
 			case "submit-com":
 				id =  Integer.parseInt(request.queryParams("id"));
-				String username = request.session().attribute("cryo-user");
+				String username = CookieManager.getUsername(request);
 				String comment = request.queryParams("comment");
 				data = ReportsConnection.connection().handleRequest("submit-com", id, 0, username, comment);
 				if(data == null) {

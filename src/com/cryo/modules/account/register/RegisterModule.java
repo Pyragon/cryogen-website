@@ -5,9 +5,11 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.Account;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
@@ -29,7 +31,7 @@ public class RegisterModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(request.session().attributes().contains("cryo-user") && !request.queryParams().contains("success"))
+		if(CookieManager.isLoggedIn(request) && !request.queryParams().contains("success"))
 			return redirect("/", 0, request, response);
 		if(type == RequestType.POST) {
 			String username = request.queryParams("username");
@@ -58,8 +60,14 @@ public class RegisterModule extends WebModule {
 			String valid = new Utilities().isValidDisplay(username);
 			if(!valid.equals(""))
 				return json(false, valid);
-			AccountConnection.connection().handleRequest("register", username, password);
-			request.session().attribute("cryo-user", username);
+			AccountConnection connection = AccountConnection.connection();
+			connection.handleRequest("register", username, password);
+			data = connection.handleRequest("get-account", username);
+			if(data == null)
+				return redirect("/login", 0, request, response);
+			Account account = (Account) data[0];
+			String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
+			response.cookie("cryo-sess", sess_id);
 			return json(true, redirect("/register?success", 0, request, response));
 		}
 		HashMap<String, Object> model = new HashMap<>();

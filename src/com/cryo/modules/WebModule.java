@@ -45,7 +45,7 @@ public abstract class WebModule {
 		model.put("baseurl", "http://localhost/");
 		model.put("formatter", new DateFormatter());
 		model.put("acutils", new AccountUtils());
-		Account account = CookieManager.isLoggedIn(request);
+		Account account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
 		if(account != null)
 			model.put("user", account);
@@ -87,7 +87,7 @@ public abstract class WebModule {
 	}
 	
 	public String showLoginPage(String redirect, Request request, Response response) {
-		if(request.session().attributes().contains("cryo-user"))
+		if(CookieManager.isLoggedIn(request))
 			return redirect("/", 0, request, response);
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("redirect", redirect);

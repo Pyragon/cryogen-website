@@ -2,6 +2,7 @@ package com.cryo.modules.account.support;
 
 import java.util.Properties;
 
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.google.gson.Gson;
@@ -17,13 +18,18 @@ import spark.Response;
 public class ReportPlayerModule {
 	
 	public static String decodeRequest(WebModule module, Request request, Response response) {
-		String username = request.session().attribute("cryo-user");
+		String username = CookieManager.getUsername(request);
+		Properties prop = new Properties();
+		if(username.equals("")) {
+			prop.put("success", false);
+			prop.put("error", "Error obtaining user information. Please reload page.");
+			return new Gson().toJson(prop);
+		}
 		String title = request.queryParams("title");
 		String player = request.queryParams("offender");
 		String rule = request.queryParams("rule");
 		String info = request.queryParams("info");
 		String proof = request.queryParams("proof");
-		Properties prop = new Properties();
 		if(player.length() > 12) {
 			prop.put("success", false);
 			prop.put("error", "Offender's name cannot exceed 12 characters.");

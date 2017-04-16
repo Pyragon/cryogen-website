@@ -31,7 +31,7 @@ public class LoginModule extends WebModule {
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		if(type == RequestType.GET) {
-			if(request.session().attributes().contains("cryo-user"))
+			if(CookieManager.isLoggedIn(request))
 				return redirect("/", 0, request, response);
 			HashMap<String, Object> model = new HashMap<String, Object>();
 			if(request.queryParams().contains("redirect"))
@@ -45,15 +45,12 @@ public class LoginModule extends WebModule {
 			Object[] data = connection.handleRequest("compare", username, password);
 			boolean success = data == null ? false : (boolean) data[0];
 			if(success) {
-				request.session(true).attribute("cryo-user", username);
 				data = connection.handleRequest("get-account", username);
 				if(data == null)
 					return redirect("/login", 0, request, response);
 				Account account = (Account) data[0];
 				String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
-				System.out.println("sess: "+sess_id);
 				response.cookie("cryo-sess", sess_id);
-				System.out.println("wtf");
 				return redirect(request.queryParams("redirect"), request, response);
 			}
 			if(isMini)

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cookies.CookieManager;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.support.punish.AppealModule;
 import com.cryo.modules.account.support.punish.PunishUtils;
@@ -28,7 +29,7 @@ public class AccountSupportModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(!request.session().attributes().contains("cryo-user")) {
+		if(!CookieManager.isLoggedIn(request)) {
 			String string = "";
 			if(request.queryString() != null)
 				string = "?"+request.queryString();

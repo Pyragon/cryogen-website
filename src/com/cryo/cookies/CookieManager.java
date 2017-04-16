@@ -21,8 +21,25 @@ public class CookieManager {
 	//User loads page, if sess_id is present, find acc from id
 	//sess_id = username+password+salt
 	
+	public static boolean isLoggedIn(Request request) {
+		if(request.cookies().containsKey("cryo-sess")) {
+			String sess_id = request.cookie("cryo-sess");
+			Object[] data = AccountConnection.connection().handleRequest("get-acc-from-sess", sess_id);
+			if(data == null)
+				return false;
+			return (Account) data[0] != null;
+		}
+		return false;
+	}
 	
-	public static Account isLoggedIn(Request request) {
+	public static String getUsername(Request request) {
+		Account account = getAccount(request);
+		if(account == null)
+			return "";
+		return account.getUsername();
+	}
+	
+	public static Account getAccount(Request request) {
 		if(request.cookies().containsKey("cryo-sess")) {
 			String sess_id = request.cookie("cryo-sess");
 			Object[] data = AccountConnection.connection().handleRequest("get-acc-from-sess", sess_id);

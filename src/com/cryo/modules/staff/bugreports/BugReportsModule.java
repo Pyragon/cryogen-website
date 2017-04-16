@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.support.BugReportDAO;
@@ -50,7 +51,7 @@ public class BugReportsModule {
 			case "submit-com":
 				id = Integer.parseInt(request.queryParams("id"));
 				String comment = request.queryParams("comment");
-				String username = request.session().attribute("cryo-user");
+				String username = CookieManager.getUsername(request);
 				ReportsConnection.connection().handleRequest("submit-com", id, 1, username, comment);
 				model = new HashMap<>();
 				model.put("comments", getComments(id));
