@@ -1,4 +1,5 @@
 script.
+  var archive = false;
   var toggled = false;
   $(document).ready(function() {
   
@@ -16,6 +17,26 @@ script.
         cnt.addClass('dropdwn-show');
       }
       toggled = !toggled;
+    });
+    
+    $('#archive-btn').click(function() {
+      var archived = !archive;
+      archive = archived;
+      $.post('/staff', { mod:'preport', action:'view-list', archived:archived }, function(ret) {
+        if(ret.includes('Login to')) {
+          sendAlert('Session expired! Refresh the page to login again.');
+          return;
+        }
+        var data = JSON.parse(ret);
+        if(!data.success) {
+          sendAlert(data.error);
+          return;
+        }
+        $('#preport-main').html(data.html);
+        var desc = archived ? 'Currently viewing all archived player reports' : 'Currently viewing all active player reports';
+        $('#archive-p').html('  '+(archived ? 'Active' : 'Archive'));
+        $('#preport-info').html(desc);
+      });
     });
     
     //click view button
@@ -84,9 +105,9 @@ div.tab-pane.fade(id='preports')
           h5.color-grey Player Reports
             h6.color-grey#preport-info Currently viewing all active player reports
         div(style='float: right; margin: 33.5px 5px;')
-          div.link
+          div.link#archive-btn
             i.fa.fa-archive
-            span  Archive
+              span#archive-p  Archive
   div.row(style='padding: 15px;')
     div#search-preport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
       p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for a report. Search with criteria using name:

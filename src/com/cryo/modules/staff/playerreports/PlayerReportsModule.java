@@ -36,10 +36,13 @@ public class PlayerReportsModule {
 	}
 	
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
+		String username = CookieManager.getUsername(request);
 		switch(action) {
 			case "view-list":
 				HashMap<String, Object> model = new HashMap<>();
-				model.put("preports", new PunishUtils().getPlayerReports(null));
+				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
+				model.put("archive", archived);
+				model.put("preports", new PunishUtils().getPlayerReports(null, archived));
 				model.put("utils", new PunishUtils());
 				model.put("formatter", new DateFormatter());
 				prop.put("success", true);
@@ -66,13 +69,14 @@ public class PlayerReportsModule {
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
-				PunishmentConnection.connection().handleRequest("archive", id);
+				ReportsConnection.connection().handleRequest("archive-report", id, 1);
 				prop.put("success", true);
-				prop.put("html", null);
+				model = new HashMap<>();
+				model.put("preports", new PunishUtils().getPlayerReports(username, false));
+				prop.put("html", module.render("./source/modules/staff/player_reports/report_list.jade", model, request, response));
 				break;
 			case "submit-com":
 				id =  Integer.parseInt(request.queryParams("id"));
-				String username = CookieManager.getUsername(request);
 				String comment = request.queryParams("comment");
 				data = ReportsConnection.connection().handleRequest("submit-com", id, 0, username, comment);
 				if(data == null) {

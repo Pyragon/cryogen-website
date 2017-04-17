@@ -33,7 +33,7 @@ public class PunishmentConnection extends DatabaseConnection {
 		switch(opcode) {
 			case "archive":
 				int id = (int) data[1];
-				execute("INSERT INTO archives SELECT * FROM appeals WHERE id="+id);
+				execute("INSERT INTO archive SELECT * FROM appeals WHERE id="+id);
 				delete("appeals", "id=?", id);
 				break;
 			case "get-punishments":

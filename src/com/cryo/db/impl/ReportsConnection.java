@@ -76,7 +76,8 @@ public class ReportsConnection extends DatabaseConnection {
 				report.setUsersRead(list);
 				return new Object[] { report };
 			case "get-player-reports":
-				set = select("player_reports", null);
+				boolean archived = (boolean) data[1];
+				set = select(archived ? "p_archive" : "player_reports", null);
 				if(wasNull(set))
 					return null;
 				ArrayList<PlayerReportDAO> players = new ArrayList<>();
@@ -95,6 +96,8 @@ public class ReportsConnection extends DatabaseConnection {
 					list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 					report = new PlayerReportDAO(id, username, title, offender, rule, info, proof, lastAction, comment, time);
 					report.setUsersRead(list);
+					if(archived)
+						report.setArchived(getTimestamp(set, "archived"));
 					players.add(report);
 				}
 				return new Object[] { players };
@@ -146,6 +149,14 @@ public class ReportsConnection extends DatabaseConnection {
 			case "report_bug":
 				BugReportDAO breport = (BugReportDAO) data[1];
 				insert("bug_reports", (Object[]) ((BugReportDAO) breport).data());
+				break;
+			case "archive-report":
+				id = (int) data[1];
+				type = (int) data[2];
+				String archive = type == 0 ? "b_archive" : "p_archive";
+				String table = type == 0 ? "bug_reports" : "player_reports";
+				execute("INSERT INTO "+archive+" SELECT *, NOW() AS archived FROM "+table+" WHERE id=?;", id);
+				delete(table, "id=?", id);
 				break;
 		}
 		return null;

@@ -8,6 +8,7 @@ import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.support.BugReportDAO;
+import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.utils.CommentDAO;
 
 import lombok.*;
@@ -31,6 +32,7 @@ public class BugReportsModule {
 	}
 	
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
+		String username = CookieManager.getUsername(request);
 		switch(action) {
 			case "view-report":
 				int id = Integer.parseInt(request.queryParams("id"));
@@ -48,10 +50,17 @@ public class BugReportsModule {
 				prop.put("success", true);
 				prop.put("html", html);
 				break;
+			case "archive-report":
+				id = Integer.parseInt(request.queryParams("id"));
+				ReportsConnection.connection().handleRequest("archive-report", id, 1);
+				prop.put("success", true);
+				model = new HashMap<>();
+				model.put("breports", new PunishUtils().getBugReports(username));
+				prop.put("html", module.render("./source/modules/staff/bug_reports/report_list.jade", model, request, response));
+				break;
 			case "submit-com":
 				id = Integer.parseInt(request.queryParams("id"));
 				String comment = request.queryParams("comment");
-				String username = CookieManager.getUsername(request);
 				ReportsConnection.connection().handleRequest("submit-com", id, 1, username, comment);
 				model = new HashMap<>();
 				model.put("comments", getComments(id));

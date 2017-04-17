@@ -89,9 +89,9 @@ public class PunishUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<PlayerReportDAO> getPlayerReports(String username) {
+	public ArrayList<PlayerReportDAO> getPlayerReports(String username, boolean archived) {
 		ArrayList<PlayerReportDAO> reports = new ArrayList<>();
-		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports");
+		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports", archived);
 		if(data != null) {
 			for(PlayerReportDAO report : (ArrayList<PlayerReportDAO>) data[0]) {
 				if(username != null && report.userHasRead(username))

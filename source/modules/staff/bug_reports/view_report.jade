@@ -25,6 +25,77 @@ script.
       });
     });
     
+    $('.details').click(function() {
+      var val = $(this).val();
+      $.post('/', { action:'view_question', viewQuestion:val }, function(ret) {
+        //ret = Properties.class -> JSON object (I use Gson for this)
+        var data = JSON.parse(ret);
+        if(!data.success) { //just in case
+          alert(data.error);
+          return;
+        }
+        //OPEN modal
+        var modal = $('#myModal');
+        modal.modal();
+        modal.find('#courseNumber').val(data.courseNumber);
+        modal.find('#subject').val(data.subject);
+        modal.find('#question').val(data.question);
+        modal.find('#askTime').val(data.askTime);
+      });
+    });
+    if(requestType == RequestType.POST) {
+      String action = request.queryParams('action');
+      if(action.equals('view_question')) {
+        int qid = Integer.parseInt(request.queryParams('viewQuestion'));
+        QuestionDetails question = QuestionDB.getQuestionById(qid);
+        Properties prop = new Properties();
+        prop.put('qid', qid);
+        prop.put('courseNumber', question.courseNumber());
+        prop.put('subject', question.subject());
+        prop.put('question', question.question());
+        prop.put('askTime', question.askTime());
+        return new Gson().toJson(prop);
+      }
+    }
+    
+    $('#archive-btn').click(function() {
+      var rid = $('#rid').val();
+      n = noty({
+        text: 'Are you sure you wish to archive this report?',
+        type: 'confirm',
+        layout: 'center',
+        dismissQueue: false,
+        theme: 'cryogen',
+        buttons: [{
+          addClass: 'btn btn-primary', text: 'Archive', onClick: function($noty) {
+            $.post("/staff", { mod:'breport', action:'archive-report', id: rid }, function(ret) {
+              if(ret.includes('Login to')) {
+                $noty.close();
+                sendAlert('Session expired! Refresh the page to login again.');
+                return;
+              }
+              var data = JSON.parse(ret);
+              if(!data.success)
+                sendAlert(data.error);
+              else {
+                $('#breport-main').html(data.html);
+                sendAlert('Post successfully archived.');
+              }
+            });
+            $noty.close();
+            n = null;
+          }
+        },
+        {
+          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+            $noty.close();
+            n = null;
+          }
+        }]
+      })
+      return false;
+    });
+    
     function sendAlert(text) {
       var n = noty({
         text: text,

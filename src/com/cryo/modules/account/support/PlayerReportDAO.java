@@ -21,6 +21,7 @@ public class PlayerReportDAO {
 	private final int id;
 	private final String username, title, offender, rule, info, proof, lastAction, comment;
 	private final Timestamp time;
+	private Timestamp archived;
 	
 	private ArrayList<String> usersRead;
 	

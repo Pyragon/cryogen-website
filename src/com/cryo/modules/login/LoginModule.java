@@ -50,7 +50,7 @@ public class LoginModule extends WebModule {
 					return redirect("/login", 0, request, response);
 				Account account = (Account) data[0];
 				String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
-				response.cookie("cryo-sess", sess_id);
+				response.cookie("cryo-sess", sess_id, 604_800);
 				return redirect(request.queryParams("redirect"), request, response);
 			}
 			if(isMini)

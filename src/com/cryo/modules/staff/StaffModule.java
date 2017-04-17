@@ -50,7 +50,7 @@ public class StaffModule extends WebModule {
 		if(type == RequestType.GET) {
 			PunishUtils utils = new PunishUtils();
 			val appeals = utils.getAppeals(username);
-			val preports = utils.getPlayerReports(username);
+			val preports = utils.getPlayerReports(username, false);
 			val breports = utils.getBugReports(username);
 			int total = appeals.size() + preports.size() + breports.size();
 			model.put("total", total);
@@ -58,7 +58,7 @@ public class StaffModule extends WebModule {
 			model.put("i_preports", preports);
 			model.put("i_breports", breports);
 			model.put("appeals", utils.getAppeals(null));
-			model.put("preports", utils.getPlayerReports(null));
+			model.put("preports", utils.getPlayerReports(null, false));
 			model.put("breports", utils.getBugReports(null));
 			model.put("utils", new PunishUtils());
 			model.put("formatter", new DateFormatter());

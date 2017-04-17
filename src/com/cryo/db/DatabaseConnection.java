@@ -215,7 +215,29 @@ public abstract class DatabaseConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return;
+	}
+	
+	public void execute(String query, Object... values) {
+		try {
+			if (connection.isClosed() || !connection.isValid(5))
+				connect();
+			PreparedStatement stmt = connection.prepareStatement(query);
+			for(int i = 0; i < values.length; i++) {
+				Object obj = values[i];
+				int index = i+1;
+				if (obj instanceof String)
+					stmt.setString(index, (String) obj);
+				else if (obj instanceof Integer)
+					stmt.setInt(index, (int) obj);
+				else if(obj instanceof Double)
+					stmt.setDouble(index, (double) obj);
+				else if(obj instanceof Long)
+					stmt.setTimestamp(index, new Timestamp((long) obj));
+			}
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ResultSet executeQuery(String query) {

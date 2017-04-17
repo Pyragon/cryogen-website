@@ -319,7 +319,9 @@ h4.title {
   text-align: center;
 }
 
-.nav-items {}
+.nav-items {
+  margin-top: 105px;
+}
 
 .alert-custom {
   background: #fa5959;
