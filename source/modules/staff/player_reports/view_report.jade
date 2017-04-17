@@ -75,21 +75,6 @@ script.
       return false;
     });
     
-    $(document).on('click', '.return-but', function() {
-      $.post('/staff', { mod:'preport', action:'view-list' }, function(ret) {
-        var data = JSON.parse(ret);
-        if(data.html == null || data.html == "") {
-          sendAlert('Session expired! Please reload the page to login again.');
-          return;
-        }
-        if(!data.success) {
-          sendAlert(data.error);
-          return;
-        }
-        $('#preport-main').html(data.html);
-      });
-    });
-    
     function sendAlert(text) {
       var n = noty({
         text: text,
@@ -105,6 +90,8 @@ div#view-preport(style='clear: both; float: right;')
     p.color-grey.t-center Viewing report from 
       span#preport-auth= '$for-name='+report.getUsername()+'$end'
     p.t-center.color-grey= 'Report made on: '+formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY hh:mm a')+'.'
+    if report.isArchived()
+      p.t-center.color-grey= 'Report archived on: '+formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY hh:mm a')+'.'
     p.t-center.color-grey &larr; #[a.return-but(href='#', title='Go Back') Go back]
 div(style="margin: auto; max-width: 400px; padding: 5px;")
   div.row(style='clear: both;')
@@ -125,6 +112,7 @@ div(style="margin: auto; max-width: 400px; padding: 5px;")
     p.com-error(style='display: none;')
     textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
     a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
-a.btn.btn-default.btn-comment.t-center#archivep-btn(style='padding: 10px 10px; margin: auto 15px 0px auto; max-width: 150px; max-height: 40px;')
-  i.fa.fa-archive
-  span  Archive
+if !report.isArchived()
+  a.btn.btn-default.btn-comment.t-center#archivep-btn(style='padding: 10px 10px; margin: auto 15px 0px auto; max-width: 150px; max-height: 40px;')
+    i.fa.fa-archive
+    span  Archive

@@ -34,7 +34,7 @@ script.
         }
         $('#preport-main').html(data.html);
         var desc = archived ? 'Currently viewing all archived player reports' : 'Currently viewing all active player reports';
-        $('#archive-p').html('  '+(archived ? 'Active' : 'Archive'));
+        $('#archive-p').html(' '+(archived ? 'Active' : 'Archive'));
         $('#preport-info').html(desc);
       });
     });
@@ -44,14 +44,11 @@ script.
       var tr = $(this).closest('tr');
       var id = tr.data('id');
       var type = tr.data('type');
+      var archive = tr.data('arc');
       if(type != 'PLAYER')
         return;
-      $.post('staff', { mod:'preport', action:'view-report', id:id }, function(ret) {
+      $.post('staff', { mod:'preport', action:'view-report', id:id, archived:archive }, function(ret) {
         var data = JSON.parse(ret);
-        if(data.html == null || data.html == "") {
-          sendAlert('Session expired! Please reload the page to login again.');
-          return;
-        }
         if(!data.success) {
           sendAlert(data.error);
           return;
@@ -85,6 +82,24 @@ script.
         $('#search-perror').html('error');
         $('#search-perror').fadeOut(5000);
       }
+    });
+    
+    $(document).on('click', '.return-but', function() {
+      $.post('/staff', { mod:'preport', action:'view-list', archived:archive }, function(ret) {
+        var data = JSON.parse(ret);
+        if(data.html == null || data.html == "") {
+          sendAlert('Session expired! Please reload the page to login again.');
+          return;
+        }
+        if(!data.success) {
+          sendAlert(data.error);
+          return;
+        }
+        $('#preport-main').html(data.html);
+        var desc = archive ? 'Currently viewing all archived player reports' : 'Currently viewing all active player reports';
+        $('#archive-p').html(' '+(archive ? 'Active' : 'Archive'));
+        $('#preport-info').html(desc);
+      });
     });
     
     function sendAlert(text) {

@@ -29,6 +29,10 @@ public class PlayerReportDAO {
 		return "PLAYER";
 	}
 	
+	public boolean isArchived() {
+		return archived != null;
+	}
+	
 	public String[] data() {
 		return new String[] { "DEFAULT", username, offender, title, rule, info, proof, "DEFAULT", "", "", "DEFAULT" };
 	}

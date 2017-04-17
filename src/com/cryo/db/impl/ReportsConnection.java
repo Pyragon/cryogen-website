@@ -58,7 +58,8 @@ public class ReportsConnection extends DatabaseConnection {
 				return new Object[] { };
 			case "get-player-report":
 				id = (int) data[1];
-				set = select("player_reports", "id=?", id);
+				boolean archived = (boolean) data[2];
+				set = select(archived ? "p_archive" : "player_reports", "id=?", id);
 				if(empty(set))
 					return null;
 				username = getString(set, "username");
@@ -74,9 +75,11 @@ public class ReportsConnection extends DatabaseConnection {
 				ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 				PlayerReportDAO report = new PlayerReportDAO(id, username, title, offender, rule, info, proof, lastAction, comment, time);
 				report.setUsersRead(list);
+				if(archived)
+					report.setArchived(getTimestamp(set, "archived"));
 				return new Object[] { report };
 			case "get-player-reports":
-				boolean archived = (boolean) data[1];
+				archived = (boolean) data[1];
 				set = select(archived ? "p_archive" : "player_reports", null);
 				if(wasNull(set))
 					return null;

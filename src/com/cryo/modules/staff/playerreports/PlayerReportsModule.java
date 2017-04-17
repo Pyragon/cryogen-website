@@ -51,7 +51,8 @@ public class PlayerReportsModule {
 			case "view-report":
 				model = new HashMap<>();
 				int id = Integer.parseInt(request.queryParams("id"));
-				Object[] data = ReportsConnection.connection().handleRequest("get-player-report", id);
+				archived = Boolean.parseBoolean(request.queryParams("archived"));
+				Object[] data = ReportsConnection.connection().handleRequest("get-player-report", id, archived);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error",  "Report not found.");
