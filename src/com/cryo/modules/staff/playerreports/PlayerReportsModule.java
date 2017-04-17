@@ -47,7 +47,7 @@ public class PlayerReportsModule {
 				PunishUtils utils = new PunishUtils();
 				val appeals = utils.getAppeals(username);
 				val preports = utils.getPlayerReports(username, false);
-				val breports = utils.getBugReports(username);
+				val breports = utils.getBugReports(username, false);
 				int total = appeals.size() + preports.size() + breports.size();
 				model.put("total", total);
 				model.put("i_appeals", appeals);
@@ -67,7 +67,6 @@ public class PlayerReportsModule {
 				model.put("archive", archived);
 				model.put("preports", new PunishUtils().getPlayerReports(null, archived));
 				model.put("utils", new PunishUtils());
-				model.put("formatter", new DateFormatter());
 				prop.put("success", true);
 				prop.put("html", module.render("./source/modules/staff/player_reports/report_list.jade", model, request, response));
 				break;

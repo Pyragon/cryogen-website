@@ -105,7 +105,8 @@ public class ReportsConnection extends DatabaseConnection {
 				}
 				return new Object[] { players };
 			case "get-bug-reports":
-				set = select("bug_reports", null);
+				archived = (boolean) data[1];
+				set = select(archived ? "b_archive" : "bug_reports", null);
 				if(wasNull(set))
 					return null;
 				ArrayList<BugReportDAO> bugs = new ArrayList<>();
@@ -123,12 +124,15 @@ public class ReportsConnection extends DatabaseConnection {
 					list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 					BugReportDAO bug = new BugReportDAO(id, username, title, replicated, date, info, lastAction, comment, time);
 					bug.setUsersRead(list);
+					if(archived)
+						bug.setArchived(getTimestamp(set, "archived"));
 					bugs.add(bug);
 				}
 				return new Object[] { bugs };
 			case "get-bug-report":
 				id = (int) data[1];
-				set = select("bug_reports", "id=?", id);
+				archived = (boolean) data[2];
+				set = select(archived ? "b_archive" : "bug_reports", "id=?", id);
 				if(empty(set))
 					return null;
 				id = getInt(set, "id");
@@ -144,6 +148,8 @@ public class ReportsConnection extends DatabaseConnection {
 				list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 				BugReportDAO bug = new BugReportDAO(id, username, title, replicated, date, info, lastAction, comment, time);
 				bug.setUsersRead(list);
+				if(archived)
+					bug.setArchived(getTimestamp(set, "archived"));
 				return new Object[] { bug };
 			case "report_player":
 				report = (PlayerReportDAO) data[1];

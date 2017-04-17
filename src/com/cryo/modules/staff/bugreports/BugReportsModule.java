@@ -36,20 +36,29 @@ public class BugReportsModule {
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
 		String username = CookieManager.getUsername(request);
 		switch(action) {
+			case "view-list":
+				HashMap<String, Object> model = new HashMap<>();
+				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
+				model.put("archive", archived);
+				model.put("breports", new PunishUtils().getBugReports(null, archived));
+				model.put("utils", new PunishUtils());
+				prop.put("success", true);
+				prop.put("html", module.render("./source/modules/staff/bug_reports/report_list.jade", model, request, response));
+				break;
 			case "click-pin":
 				int id = Integer.parseInt(request.queryParams("id"));
 				PunishUtils.pinReport(id, username, ReportType.BUG);
-				HashMap<String, Object> model = new HashMap<>();
+				model = new HashMap<>();
 				PunishUtils utils = new PunishUtils();
 				val appeals = utils.getAppeals(username);
 				val preports = utils.getPlayerReports(username, false);
-				val breports = utils.getBugReports(username);
+				val breports = utils.getBugReports(username, false);
 				int total = appeals.size() + preports.size() + breports.size();
 				model.put("total", total);
 				model.put("i_appeals", appeals);
 				model.put("i_preports", preports);
 				model.put("i_breports", breports);
-				model.put("breports", utils.getBugReports(null));
+				model.put("breports", utils.getBugReports(null, false));
 				model.put("utils", new PunishUtils());
 				String html = module.render("./source/modules/staff/overview/immediate.jade", model, request, response);
 				prop.put("success", true);
@@ -59,7 +68,8 @@ public class BugReportsModule {
 				break;
 			case "view-report":
 				id = Integer.parseInt(request.queryParams("id"));
-				Object[] data = ReportsConnection.connection().handleRequest("get-bug-report", id);
+				archived = Boolean.parseBoolean(request.queryParams("archived"));
+				Object[] data = ReportsConnection.connection().handleRequest("get-bug-report", id, archived);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Invalid report ID. Please reload the page and contact an Admin if this persists.");
@@ -75,10 +85,10 @@ public class BugReportsModule {
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
-				ReportsConnection.connection().handleRequest("archive-report", id, 1);
+				ReportsConnection.connection().handleRequest("archive-report", id, 0);
 				prop.put("success", true);
 				model = new HashMap<>();
-				model.put("breports", new PunishUtils().getBugReports(username));
+				model.put("breports", new PunishUtils().getBugReports(null, false));
 				prop.put("html", module.render("./source/modules/staff/bug_reports/report_list.jade", model, request, response));
 				break;
 			case "submit-com":

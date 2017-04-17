@@ -8,6 +8,8 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
       th.t-center Title
       th.t-center Username
       th.t-center Date Reported
+      if archive
+        th.t-center Date Archived
       th.t-center Date Seen
       th.t-center Can be Replicated?
       th.t-center Last Action
@@ -19,6 +21,8 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
         td.b-right= report.getTitle()
         td.b-right= '$for-name='+report.getUsername()+'$end'
         td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
+        if archive
+          td.b-right= formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY H:mm a')
         td.b-right= report.getReplicated()
         td.b-right= report.getDate()
         td.b-right= report.getLastAction()

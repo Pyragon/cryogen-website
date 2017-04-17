@@ -18,6 +18,7 @@ public class BugReportDAO {
 	private final int id;
 	private final String username, title, replicated, date, info, lastAction, comment;
 	private final Timestamp time;
+	private Timestamp archived;
 	
 	private ArrayList<String> usersRead;
 	
@@ -27,6 +28,10 @@ public class BugReportDAO {
 	
 	public String type() {
 		return "BUG";
+	}
+	
+	public boolean isArchived() {
+		return archived != null;
 	}
 	
 	public String date() {

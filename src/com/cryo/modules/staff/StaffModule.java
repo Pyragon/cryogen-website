@@ -51,7 +51,7 @@ public class StaffModule extends WebModule {
 			PunishUtils utils = new PunishUtils();
 			val appeals = utils.getAppeals(username);
 			val preports = utils.getPlayerReports(username, false);
-			val breports = utils.getBugReports(username);
+			val breports = utils.getBugReports(username, false);
 			int total = appeals.size() + preports.size() + breports.size();
 			model.put("total", total);
 			model.put("i_appeals", appeals);
@@ -59,7 +59,7 @@ public class StaffModule extends WebModule {
 			model.put("i_breports", breports);
 			model.put("appeals", utils.getAppeals(null));
 			model.put("preports", utils.getPlayerReports(null, false));
-			model.put("breports", utils.getBugReports(null));
+			model.put("breports", utils.getBugReports(null, false));
 			model.put("utils", new PunishUtils());
 			model.put("formatter", new DateFormatter());
 			return render("./source/modules/staff/index.jade", model, request, response);

@@ -1,4 +1,5 @@
 script.
+  var archive = false;
   $(document).ready(function() {
     
     $(document).on('click', '#view', function() {
@@ -7,9 +8,9 @@ script.
       var type = elem.data('type');
       if(type != 'BUG')
         return;
-      $.post('/staff', { mod:'breport', action:'view-report', id:id }, function(ret) {
+      $.post('/staff', { mod:'breport', action:'view-report', id:id, archived:archive }, function(ret) {
         var data = JSON.parse(ret);
-        if(data.html == null || data.html == "") {
+        if((data.html == null || data.html == "") && data.error == null) {
           sendAlert('Session expired! Please reload the page to login again.');
           return;
         }
@@ -48,6 +49,24 @@ script.
         $('#search-berror').fadeOut(5000);
       }
     });
+    
+    $(document).on('click', '.returnb-but', function() {
+      $.post('/staff', { mod:'breport', action:'view-list', archived:archive }, function(ret) {
+        var data = JSON.parse(ret);
+        if(data.html == null || data.html == "") {
+          sendAlert('Session expired! Please reload the page to login again.');
+          return;
+        }
+        if(!data.success) {
+          sendAlert(data.error);
+          return;
+        }
+        $('#breport-main').html(data.html);
+        var desc = archive ? 'Currently viewing all archived bug reports' : 'Currently viewing all active bug reports';
+        $('#archiveb-p').html(' '+(archive ? 'Active' : 'Archive'));
+        $('#breport-info').html(desc);
+      });
+    });
       
     function sendAlert(text) {
       var n = noty({
@@ -58,6 +77,26 @@ script.
       });
     }
     
+    $('#viewarch-btn').click(function() {
+      var archived = !archive;
+      archive = archived;
+      $.post('/staff', { mod:'breport', action:'view-list', archived:archived }, function(ret) {
+        var data = JSON.parse(ret);
+        if(data.html == null || data.html == "") {
+          sendAlert('Session expired! Refresh the page to login again.');
+          return;
+        }
+        if(!data.success) {
+          sendAlert(data.error);
+          return;
+        }
+        $('#breport-main').html(data.html);
+        var desc = archived ? 'Currently viewing all archived bug reports' : 'Currently viewing all active bug reports';
+        $('#archiveb-p').html(' '+(archived ? 'Active' : 'Archive'));
+        $('#breport-info').html(desc);
+      });
+    });
+    
   });
 div.tab-pane.fade#breports
   div.row
@@ -67,9 +106,9 @@ div.tab-pane.fade#breports
           h5.color-grey Bug Reports
             h6.color-grey#breport-info Currently viewing all active bug reports
         div(style='float: right; margin: 33.5px 5px;')
-          div.link
+          div.link#viewarch-btn
             i.fa.fa-archive
-            span  Archive
+            span#archiveb-p  Archive
   div.row(style='padding: 15px;')
     div#search-breport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
       p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for a report. Search with criteria using name:

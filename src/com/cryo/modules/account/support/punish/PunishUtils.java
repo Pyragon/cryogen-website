@@ -103,9 +103,9 @@ public class PunishUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<BugReportDAO> getBugReports(String username) {
+	public ArrayList<BugReportDAO> getBugReports(String username, boolean archived) {
 		ArrayList<BugReportDAO> reports = new ArrayList<>();
-		Object[] data = ReportsConnection.connection().handleRequest("get-bug-reports");
+		Object[] data = ReportsConnection.connection().handleRequest("get-bug-reports", archived);
 		if(data != null) {
 			for(BugReportDAO report : (ArrayList<BugReportDAO>) data[0]) {
 				if(username != null && report.userHasRead(username))

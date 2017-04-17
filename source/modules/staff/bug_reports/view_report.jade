@@ -1,6 +1,19 @@
 script.
   $(document).ready(function() {
   
+    var n = null;
+    
+    $(document).click(function(e) {
+      var target = e.target;
+      if(n == null)
+        return;
+      var id = n.options.id;
+      if($(e.target).closest('#'+id).length) {
+      
+      } else {
+        n.close();
+      }
+    });
   
     $('#com-btn').click(function() {
       var input = $('.report-comment').val();
@@ -25,40 +38,7 @@ script.
       });
     });
     
-    $('.details').click(function() {
-      var val = $(this).val();
-      $.post('/', { action:'view_question', viewQuestion:val }, function(ret) {
-        //ret = Properties.class -> JSON object (I use Gson for this)
-        var data = JSON.parse(ret);
-        if(!data.success) { //just in case
-          alert(data.error);
-          return;
-        }
-        //OPEN modal
-        var modal = $('#myModal');
-        modal.modal();
-        modal.find('#courseNumber').val(data.courseNumber);
-        modal.find('#subject').val(data.subject);
-        modal.find('#question').val(data.question);
-        modal.find('#askTime').val(data.askTime);
-      });
-    });
-    if(requestType == RequestType.POST) {
-      String action = request.queryParams('action');
-      if(action.equals('view_question')) {
-        int qid = Integer.parseInt(request.queryParams('viewQuestion'));
-        QuestionDetails question = QuestionDB.getQuestionById(qid);
-        Properties prop = new Properties();
-        prop.put('qid', qid);
-        prop.put('courseNumber', question.courseNumber());
-        prop.put('subject', question.subject());
-        prop.put('question', question.question());
-        prop.put('askTime', question.askTime());
-        return new Gson().toJson(prop);
-      }
-    }
-    
-    $('#archive-btn').click(function() {
+    $('#archiveb-btn').click(function() {
       var rid = $('#rid').val();
       n = noty({
         text: 'Are you sure you wish to archive this report?',
@@ -112,7 +92,7 @@ div#view-breport(style='clear: both; float: right;')
     p.color-grey.t-center Viewing report from 
       span#breport-auth= '$for-name='+report.getUsername()+'$end'
     p.t-center.color-grey= 'Report made on: '+formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY hh:mm a')+'.'
-    p.t-center.color-grey &larr; #[a.return-but(href='#', title='Go Back') Go back]
+    p.t-center.color-grey &larr; #[a.returnb-but(href='#', title='Go Back') Go back]
 div(style="margin: auto; max-width: 400px; padding: 5px;")
   div.row(style='clear: both;')
     h4.color-white.t-center Title
@@ -132,6 +112,7 @@ div(style="margin: auto; max-width: 400px; padding: 5px;")
     p.com-error(style='display: none;')
     textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
     a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
-a.btn.btn-default.btn-comment.t-center#archive-btn(style='padding: 10px 10px; margin: auto 15px 0px auto; max-width: 150px; max-height: 40px;')
-  i.fa.fa-archive
-  span  Archive
+if !report.isArchived()
+  a.btn.btn-default.btn-comment.t-center#archiveb-btn(style='padding: 10px 10px; margin: auto 15px 0px auto; max-width: 150px; max-height: 40px;')
+    i.fa.fa-archive
+    span  Archive
