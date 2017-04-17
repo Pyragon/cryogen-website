@@ -19,6 +19,45 @@ script.
       toggled = !toggled;
     });
     
+    $('.archive-cac-btn').click(function() {
+      var tr = $(this).closest('tr');
+      var id = tr.data('id');
+      noty({
+        text: 'Are you sure you wish to archive this report?',
+        type: 'confirm',
+        layout: 'center',
+        dismissQueue: false,
+        theme: 'cryogen',
+        buttons: [{
+          addClass: 'btn btn-primary', text: 'Archive', onClick: function($noty) {
+            $.post("/staff", { mod:'preport', action:'archive-report', id: id }, function(ret) {
+              if(ret.includes('Login to')) {
+                $noty.close();
+                sendAlert('Session expired! Refresh the page to login again.');
+                return;
+              }
+              var data = JSON.parse(ret);
+              if(!data.success)
+                sendAlert(data.error);
+              else {
+                $('#preport-main').html(data.html);
+                sendAlert('Post successfully archived.');
+              }
+            });
+            $noty.close();
+            n = null;
+          }
+        },
+        {
+          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+            $noty.close();
+            n = null;
+          }
+        }]
+      })
+      return false;
+    });
+    
     $('#archive-btn').click(function() {
       var archived = !archive;
       archive = archived;
