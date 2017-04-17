@@ -5,8 +5,8 @@ script.
       var title = $('.rplayer-title').val();
       var player = $('.rplayer-player').val();
       var rule = $('.rplayer-rule').val();
-      var info = $('.rplayer-detailed').html();
-      var proof = $('.rplayer-proof').html();
+      var info = $('.rplayer-detailed').val();
+      var proof = $('.rplayer-proof').val();
       if(title == "" || player == "" || rule == "" || info == "" || proof == "") {
         sendAlert('All fields must be filled out!', false);
         return;
@@ -35,8 +35,8 @@ script.
       $('.rplayer-title').val('');
       $('.rplayer-player').val('');
       $('.rplayer-rule').val('');
-      $('.rplayer-detailed').html('');
-      $('.rplayer-proof').html('');
+      $('.rplayer-detailed').val('');
+      $('.rplayer-proof').val('');
     }
     
   });
