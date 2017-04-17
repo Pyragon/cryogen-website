@@ -12,6 +12,25 @@ block head
           $(this).tab('show');
           window.location.hash = this.hash;
         });
+        
+        $(document).on('click', '#pin', function() {
+          var tr = $(this).closest('tr');
+          var id = tr.data('id');
+          var type = tr.data('type');
+          var mod = type == 'PLAYER' ? 'preport' : type == 'BUG' ? 'breport' : 'appeal';
+          $.post('/staff', { mod:mod, action:'click-pin', id:id }, function(ret) {
+            var data = JSON.parse(ret);
+            if(!data.success) {
+              alert(data.error);
+              return;
+            }
+            $('#immediate-main').html(data.immediate);
+            if(data.preports != '')
+              $('#preport-main').html(data.preports);
+            if(data.breports != '')
+              $('#breport-main').html(data.breports);
+          });
+        });
     });
 
 block content

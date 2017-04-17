@@ -75,18 +75,18 @@ public class StaffModule extends WebModule {
 				}
 				switch(module) {
 					case "over":
-						if(action.equals("mark-read")) {
-							//NEED TO SEND BACK REFRESHED IMMEDIATE ACTIONS LIST.
-							int id = Integer.parseInt(request.queryParams("id"));
-							Optional<ReportType> rType = ReportType.getType(request.queryParams("type"));
-							if(!rType.isPresent()) {
-								prop.put("success", false);
-								prop.put("error", "Incorrect report type.");
-								break;
-							}
-							PunishUtils.markReportAsRead(id, username, rType.get());
-							prop.put("success", true);
-						}
+//						if(action.equals("click-pin")) {
+//							//NEED TO SEND BACK REFRESHED IMMEDIATE ACTIONS LIST.
+//							int id = Integer.parseInt(request.queryParams("id"));
+//							Optional<ReportType> rType = ReportType.getType(request.queryParams("type"));
+//							if(!rType.isPresent()) {
+//								prop.put("success", false);
+//								prop.put("error", "Incorrect report type.");
+//								break;
+//							}
+//							PunishUtils.markReportAsRead(id, username, rType.get());
+//							prop.put("success", true);
+//						}
 						break;
 					case "preport":
 						prop = PlayerReportsModule.handleRequest(action, request, response, prop, this);

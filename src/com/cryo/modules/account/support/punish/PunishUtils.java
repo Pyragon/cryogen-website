@@ -131,7 +131,7 @@ public class PunishUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void markReportAsRead(int id, String username, ReportType type) {
+	public static void pinReport(int id, String username, ReportType type) {
 		String table = "reports";
 		switch(type) {
 			case APPEAL:
@@ -154,6 +154,8 @@ public class PunishUtils {
 			list = new Gson().fromJson(read, ArrayList.class);
 		if(!list.contains(username))
 			list.add(username);
+		else
+			list.remove(username);
 		connection.set(table, "`read`=?", "id=?", new Gson().toJson(list), id);
 	}
 	

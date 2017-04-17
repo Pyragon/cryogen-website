@@ -12,10 +12,12 @@ import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.PlayerReportDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
+import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.utils.CommentDAO;
 import com.cryo.utils.DateFormatter;
 import com.cryo.utils.Utilities;
 
+import lombok.val;
 import spark.Request;
 import spark.Response;
 
@@ -38,8 +40,29 @@ public class PlayerReportsModule {
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
 		String username = CookieManager.getUsername(request);
 		switch(action) {
-			case "view-list":
+			case "click-pin":
+				int id = Integer.parseInt(request.queryParams("id"));
+				PunishUtils.pinReport(id, username, ReportType.PLAYER);
 				HashMap<String, Object> model = new HashMap<>();
+				PunishUtils utils = new PunishUtils();
+				val appeals = utils.getAppeals(username);
+				val preports = utils.getPlayerReports(username, false);
+				val breports = utils.getBugReports(username);
+				int total = appeals.size() + preports.size() + breports.size();
+				model.put("total", total);
+				model.put("i_appeals", appeals);
+				model.put("i_preports", preports);
+				model.put("i_breports", breports);
+				model.put("preports", utils.getPlayerReports(null, false));
+				model.put("utils", new PunishUtils());
+				String html = module.render("./source/modules/staff/overview/immediate.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("immediate", html);
+				html = module.render("./source/modules/staff/player_reports/report_list.jade", model, request, response);
+				prop.put("preports", html);
+				break;
+			case "view-list":
+				model = new HashMap<>();
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
 				model.put("archive", archived);
 				model.put("preports", new PunishUtils().getPlayerReports(null, archived));
@@ -50,7 +73,7 @@ public class PlayerReportsModule {
 				break;
 			case "view-report":
 				model = new HashMap<>();
-				int id = Integer.parseInt(request.queryParams("id"));
+				id = Integer.parseInt(request.queryParams("id"));
 				archived = Boolean.parseBoolean(request.queryParams("archived"));
 				Object[] data = ReportsConnection.connection().handleRequest("get-player-report", id, archived);
 				if(data == null) {
@@ -61,7 +84,7 @@ public class PlayerReportsModule {
 				PlayerReportDAO report = (PlayerReportDAO) data[0];
 				model.put("report",  report);
 				model.put("comments", getComments(report.getId()));
-				String html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
+				html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
 				Account account = AccountUtils.getAccount(report.getUsername());
 				String name = AccountUtils.crownHTML(account);
 				prop.put("success", true);
