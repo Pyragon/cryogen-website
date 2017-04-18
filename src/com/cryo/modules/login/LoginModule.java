@@ -4,7 +4,7 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.cookies.CookieManager;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
 
@@ -41,7 +41,7 @@ public class LoginModule extends WebModule {
 			String username = request.queryParams("username");
 			String password = request.queryParams("password");
 			boolean isMini = request.queryParams("mini-login") != null && request.queryParams("mini-login").equals("true");
-			AccountConnection connection = (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+			GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
 			Object[] data = connection.handleRequest("compare", username, password);
 			boolean success = data == null ? false : (boolean) data[0];
 			if(success) {

@@ -6,6 +6,14 @@ html, body {
   color: #888;
 }
 
+#p-online {
+  margin: 0 0 auto auto;
+  max-width: 130px;
+  position: absolute;
+  z-index: 10;
+  right: 10px;
+}
+
 #acmenu li {
   padding: 4px;
 }

@@ -49,7 +49,7 @@ public class StaffModule extends WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		if(type == RequestType.GET) {
 			PunishUtils utils = new PunishUtils();
-			val appeals = utils.getAppeals(username);
+			val appeals = utils.getAppeals(username, false);
 			val preports = utils.getPlayerReports(username, false);
 			val breports = utils.getBugReports(username, false);
 			int total = appeals.size() + preports.size() + breports.size();
@@ -57,7 +57,7 @@ public class StaffModule extends WebModule {
 			model.put("i_appeals", appeals);
 			model.put("i_preports", preports);
 			model.put("i_breports", breports);
-			model.put("appeals", utils.getAppeals(null));
+			model.put("appeals", utils.getAppeals(null, false));
 			model.put("preports", utils.getPlayerReports(null, false));
 			model.put("breports", utils.getBugReports(null, false));
 			model.put("utils", new PunishUtils());

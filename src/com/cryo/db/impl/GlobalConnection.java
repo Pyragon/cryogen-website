@@ -15,20 +15,26 @@ import com.cryo.utils.Utilities;
  *
  * Created on: Mar 7, 2017 at 9:54:51 PM
  */
-public class AccountConnection extends DatabaseConnection {
+public class GlobalConnection extends DatabaseConnection {
 	
-	public AccountConnection() {
+	public GlobalConnection() {
 		super("cryogen_global");
 	}
 	
-	public static AccountConnection connection() {
-		return (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+	public static GlobalConnection connection() {
+		return (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
 	}
 
 	@Override
 	public Object[] handleRequest(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		switch(opcode) {
+			case "get-misc-data":
+				String name = (String) data[1];
+				ResultSet set = select("misc_data", "name=?", name);
+				if(empty(set))
+					return null;
+				return new Object[] { getString(set, "value") };
 			case "register":
 				String username = (String) data[1];
 				String password = (String) data[2];
@@ -40,7 +46,7 @@ public class AccountConnection extends DatabaseConnection {
 				return new Object[] { true };
 			case "get-acc-from-sess":
 				sess_id = (String) data[1];
-				ResultSet set = select("player_data", "sess_id=?", sess_id);
+				set = select("player_data", "sess_id=?", sess_id);
 				if(empty(set))
 					return null;
 				username = getString(set, "username");

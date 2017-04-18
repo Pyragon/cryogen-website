@@ -2,7 +2,7 @@ package com.cryo.modules.account;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 
 /**
@@ -13,7 +13,7 @@ import com.cryo.db.impl.DisplayConnection;
 public class AccountUtils {
 	
 	public static Account getAccount(String username) {
-		AccountConnection connection = (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+		GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
 		Object[] data = connection.handleRequest("get-account", username);
 		if(data == null)
 			return null;
@@ -21,7 +21,7 @@ public class AccountUtils {
 	}
 	
 	public Account getAcc(String username) {
-		AccountConnection connection = (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+		GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
 		Object[] data = connection.handleRequest("get-account", username);
 		if(data == null)
 			return null;

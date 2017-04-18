@@ -40,14 +40,14 @@ public class PunishUtils {
 			return null;
 		PunishDAO punish = (PunishDAO) data[0];
 		int appealId = punish.getAppealId();
-		data = PunishmentConnection.connection().handleRequest("get-appeal", appealId);
+		data = PunishmentConnection.connection().handleRequest("get-appeal", appealId, false);
 		if(data == null)
 			return null;
 		return (AppealDAO) data[0];
 	}
 	
 	public AppealDAO getAppeal(int appealId) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", appealId);
+		Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", appealId, false);
 		if(data == null)
 			return null;
 		return (AppealDAO) data[0];
@@ -64,28 +64,6 @@ public class PunishUtils {
 	public static void createAppeal(int punishId, String username, String title, String detailed) {
 		AppealDAO appeal = new AppealDAO(0, username, title, detailed, 0, punishId, null);
 		PunishmentConnection.connection().handleRequest("create-appeal", appeal);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public ArrayList<Object> getImmediateActionItems(String username) {
-		ArrayList<Object> items = new ArrayList<>();
-		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports");
-		if(data != null) {
-			for(PlayerReportDAO report : (ArrayList<PlayerReportDAO>) data[0]) {
-				if(report.userHasRead(username)) {
-					System.out.println(username);
-					continue;
-				}
-				System.out.println(report.getUsersRead()+"s");
-				items.add(report);
-			}
-		}
-		data = PunishmentConnection.connection().handleRequest("get-appeals");
-		if(data != null) {
-			for(AppealDAO appeal : (ArrayList<AppealDAO>) data[0])
-				items.add(appeal);
-		}
-		return items;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -117,9 +95,9 @@ public class PunishUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<AppealDAO> getAppeals(String username) {
+	public ArrayList<AppealDAO> getAppeals(String username, boolean archived) {
 		ArrayList<AppealDAO> appeals = new ArrayList<>();
-		Object[] data = PunishmentConnection.connection().handleRequest("get-appeals");
+		Object[] data = PunishmentConnection.connection().handleRequest("get-appeals", archived);
 		if(data != null) {
 			for(AppealDAO appeal : (ArrayList<AppealDAO>) data[0]) {
 				if(username != null && appeal.userHasRead(username))

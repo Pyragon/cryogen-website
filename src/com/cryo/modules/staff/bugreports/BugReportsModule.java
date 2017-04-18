@@ -50,7 +50,7 @@ public class BugReportsModule {
 				PunishUtils.pinReport(id, username, ReportType.BUG);
 				model = new HashMap<>();
 				PunishUtils utils = new PunishUtils();
-				val appeals = utils.getAppeals(username);
+				val appeals = utils.getAppeals(username, false);
 				val preports = utils.getPlayerReports(username, false);
 				val breports = utils.getBugReports(username, false);
 				int total = appeals.size() + preports.size() + breports.size();

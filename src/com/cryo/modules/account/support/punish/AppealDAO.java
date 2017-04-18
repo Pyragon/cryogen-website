@@ -23,6 +23,7 @@ public class AppealDAO {
 	private final int active;
 	private final int punishId;
 	private final Timestamp time;
+	private Timestamp archived;
 	
 	private ArrayList<String> usersRead;
 	
@@ -32,6 +33,10 @@ public class AppealDAO {
 	
 	public String type() {
 		return "APPEAL";
+	}
+	
+	public boolean isArchived() {
+		return archived != null;
 	}
 	
 	public Object[] data() {

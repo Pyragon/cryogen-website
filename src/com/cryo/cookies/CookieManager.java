@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.Account;
 
 import lombok.*;
@@ -24,7 +24,7 @@ public class CookieManager {
 	public static boolean isLoggedIn(Request request) {
 		if(request.cookies().containsKey("cryo-sess")) {
 			String sess_id = request.cookie("cryo-sess");
-			Object[] data = AccountConnection.connection().handleRequest("get-acc-from-sess", sess_id);
+			Object[] data = GlobalConnection.connection().handleRequest("get-acc-from-sess", sess_id);
 			if(data == null)
 				return false;
 			return (Account) data[0] != null;
@@ -42,7 +42,7 @@ public class CookieManager {
 	public static Account getAccount(Request request) {
 		if(request.cookies().containsKey("cryo-sess")) {
 			String sess_id = request.cookie("cryo-sess");
-			Object[] data = AccountConnection.connection().handleRequest("get-acc-from-sess", sess_id);
+			Object[] data = GlobalConnection.connection().handleRequest("get-acc-from-sess", sess_id);
 			if(data == null)
 				return null;
 			return (Account) data[0];

@@ -8,7 +8,7 @@ import java.util.Properties;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.cookies.CookieManager;
-import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.VotingConnection;
@@ -157,7 +157,7 @@ public class AccountOverviewModule extends WebModule {
 						prop.put("error", "Invalid email or password.");
 						return new Gson().toJson(prop);
 					}
-					data = AccountConnection.connection().handleRequest("compare", username, pass);
+					data = GlobalConnection.connection().handleRequest("compare", username, pass);
 					if(data == null || !((boolean) data[0])) {
 						prop.put("result", false);
 						prop.put("error", "Invalid password.");
@@ -176,7 +176,7 @@ public class AccountOverviewModule extends WebModule {
 				case "change-pass":
 					String new_pass = request.queryParams("pass");
 					String cur_pass = request.queryParams("cur");
-					data = AccountConnection.connection().handleRequest("change-pass", username, new_pass, cur_pass);
+					data = GlobalConnection.connection().handleRequest("change-pass", username, new_pass, cur_pass);
 					boolean success = (boolean) data[0];
 					prop = new Properties();
 					prop.put("result", success);

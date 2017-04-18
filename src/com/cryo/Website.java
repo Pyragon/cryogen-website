@@ -18,7 +18,7 @@ import java.util.Timer;
 
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.register.RegisterModule;

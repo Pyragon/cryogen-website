@@ -1,0 +1,77 @@
+script.
+	$(document).ready(function() {
+
+		var archive = false;
+		var close = 'Click to close search bar.';
+		var open = 'Click to open search bar.';
+
+		//click search icon
+		$('#search-appeal-icon').click(function() {
+			var icon = $(this);
+			var search = $('#searcha-pin');
+			var user = search.find('input').val();
+			var att = search.attr('display');
+			if(att == 'none') {
+				icon.attr('title', close);
+				search.attr('display', 'inline');
+				search.show('slide', {direction: 'right'}, 1000);
+			} else {
+				if(user == '') {
+					search.hide('slide', {direction: 'right'}, 1000, function() {
+						search.attr('display', 'none');
+						icon.attr('title', open);
+					});
+					return;
+				}
+				$('#search-aerror').css('display', '');
+				$('#search-aerror').html('error');
+				$('#search-aerror').fadeOut(5000);
+			}
+		});
+
+		$('#archivea-btn').click(function() {
+			var archived = !archive;
+			archive = archived;
+			$.post('/staff', { mod:'appeal', action:'view-list', archived:archived }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success === null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#appeal-main').html(data.html);
+				var desc = archived ? 'Currently viewing all archived player reports' : 'Currently viewing all active player reports';
+				$('#archive-ap').html(' '+(archived ? 'Active' : 'Archive'));
+				$('#appeap-info').html(desc);
+			});
+		});
+
+	});
+div.tab-pane.fade#appeals
+	div.row 
+		div.iactions
+			div
+				div(style='float: left; margin: 10px 10px;')
+					h5.color-grey Appeals
+						h6.color-grey#appealp-info Currently viewing all active appeals
+				div(style='float: right; margin: 33.5px 5px;')
+					div.link#archivea-btn
+						i.fa.fa-archive
+							span#archive-ap  Archive
+	div.row(style='padding: 15px;')
+		div#search-appeal(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for an appeal. Search with criteria using name:
+			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Example: name: cody - what
+				br
+				span Will search for any appeal by user 'Cody' with 'what' in the title.
+			p.color-red#search-aerror(style='display: none')
+			div
+				span.glyphicon.glyphicon-search.link#search-appeal-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+				div#searcha-pin(style='float: right; display: none;', display='none')
+					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+		div#appeal-main
+			include appeal_list

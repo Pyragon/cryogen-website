@@ -6,7 +6,7 @@ import java.util.Properties;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.cookies.CookieManager;
-import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
@@ -60,7 +60,7 @@ public class RegisterModule extends WebModule {
 			String valid = new Utilities().isValidDisplay(username);
 			if(!valid.equals(""))
 				return json(false, valid);
-			AccountConnection connection = AccountConnection.connection();
+			GlobalConnection connection = GlobalConnection.connection();
 			connection.handleRequest("register", username, password);
 			data = connection.handleRequest("get-account", username);
 			if(data == null)

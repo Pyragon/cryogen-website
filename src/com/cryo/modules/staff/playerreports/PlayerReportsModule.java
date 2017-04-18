@@ -45,7 +45,7 @@ public class PlayerReportsModule {
 				PunishUtils.pinReport(id, username, ReportType.PLAYER);
 				HashMap<String, Object> model = new HashMap<>();
 				PunishUtils utils = new PunishUtils();
-				val appeals = utils.getAppeals(username);
+				val appeals = utils.getAppeals(username, false);
 				val preports = utils.getPlayerReports(username, false);
 				val breports = utils.getBugReports(username, false);
 				int total = appeals.size() + preports.size() + breports.size();

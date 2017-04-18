@@ -98,8 +98,9 @@ public class PunishmentConnection extends DatabaseConnection {
 				set("punishments", "appeal_id="+appeal_id, "id="+appeal.getPunishId());
 				break;
 			case "get-appeals":
+				boolean archived = (boolean) data[1];
 				ArrayList<AppealDAO> appeals = new ArrayList<>();
-				set = select("appeals", null);
+				set = select(archived ? "archive" : "appeals", null);
 				if(wasNull(set))
 					return null;
 				while(next(set)) {
@@ -120,14 +121,17 @@ public class PunishmentConnection extends DatabaseConnection {
 					if(!lastAction.equals(""))
 						appeal.setLastAction(lastAction);
 					appeal.setUsersRead(list);
+					if(archived)
+						appeal.setArchived(getTimestamp(set, "archived"));
 					appeals.add(appeal);
 				}
 				return new Object[] { appeals };
 			case "get-appeal":
 				id = (int) data[1];
+				archived = (boolean) data[2];
 				if(id == 0)
 					return null;
-				set = select("appeals", "id=?", id);
+				set = select(archived ? "archive" : "appeals", "id=?", id);
 				if(empty(set))
 					return null;
 				id = getInt(set, "id");
@@ -140,10 +144,15 @@ public class PunishmentConnection extends DatabaseConnection {
 				int activei = getInt(set, "active");
 				Timestamp time = getTimestamp(set, "time");
 				appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
+				String read = getString(set, "read");
+				ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 				if(!reason.equals(""))
 					appeal.setReason(reason);
 				if(!lastAction.equals(""))
 					appeal.setLastAction(lastAction);
+				appeal.setUsersRead(list);
+				if(archived)
+					appeal.setArchived(getTimestamp(set, "archived"));
 				return new Object[] { appeal };
 			case "add-comment":
 				username = (String) data[1];
@@ -154,20 +163,20 @@ public class PunishmentConnection extends DatabaseConnection {
 				break;
 			case "get-comments":
 				appeal_id = (int) data[1];
-				ArrayList<ACommentDAO> list = new ArrayList<>();
+				ArrayList<ACommentDAO> cList = new ArrayList<>();
 				if(appeal_id == 0)
-					return new Object[] { list };
+					return new Object[] { cList };
 				set = select("comments", "appeal_id=? ORDER BY time DESC", appeal_id);
 				if(wasNull(set))
-					return new Object[] { list };
+					return new Object[] { cList };
 				while(next(set)) {
 					id = getInt(set, "id");
 					username = getString(set, "username");
 					comment = getString(set, "comment");
 					time = getTimestamp(set, "time");
-					list.add(new ACommentDAO(id, appeal_id, username, comment, time));
+					cList.add(new ACommentDAO(id, appeal_id, username, comment, time));
 				}
-				return new Object[] { list };
+				return new Object[] { cList };
 		}
 		return null;
 	}

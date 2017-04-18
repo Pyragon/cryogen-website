@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.cryo.db.DBConnectionManager;
+import com.cryo.db.impl.GlobalConnection;
 import com.google.gson.Gson;
 
 import spark.Request;
@@ -33,6 +34,13 @@ public class Utilities {
 	
 	public static void main(String[] args) {
 		
+	}
+	
+	public static int getOnlinePlayers() {
+		Object[] data = GlobalConnection.connection().handleRequest("get-misc-data", "players_logged");
+		if(data == null)
+			return 0;
+		return Integer.parseInt((String) data[0]);
 	}
 	
 	public String isValidDisplay(String name) {
