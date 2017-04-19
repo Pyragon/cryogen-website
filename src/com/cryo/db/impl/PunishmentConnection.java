@@ -130,7 +130,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				id = (int) data[1];
 				if(id == 0)
 					return null;
-				set = select( "appeals", "id=?", id);
+				set = select("appeals", "id=?", id);
 				if(empty(set))
 					return null;
 				id = getInt(set, "id");

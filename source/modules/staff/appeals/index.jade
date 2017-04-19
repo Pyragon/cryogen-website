@@ -29,6 +29,23 @@ script.
 			}
 		});
 
+		$(document).on('click', '#viewa', function() {
+			var elem = $(this).closest('tr');
+			var id = elem.data('id');
+			$.post('/staff', { mod:'appeal', action:'view-appeal', id:id }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#appeal-main').html(data.html);
+			});
+		});
+
 		$('#archivea-btn').click(function() {
 			var archived = !archive;
 			archive = archived;
