@@ -100,7 +100,7 @@ public class PunishmentConnection extends DatabaseConnection {
 			case "get-appeals":
 				boolean archived = (boolean) data[1];
 				ArrayList<AppealDAO> appeals = new ArrayList<>();
-				set = select(archived ? "archive" : "appeals", null);
+				set = select("appeals", null);
 				if(wasNull(set))
 					return null;
 				while(next(set)) {
@@ -121,17 +121,16 @@ public class PunishmentConnection extends DatabaseConnection {
 					if(!lastAction.equals(""))
 						appeal.setLastAction(lastAction);
 					appeal.setUsersRead(list);
-					if(archived)
-						appeal.setArchived(getTimestamp(set, "archived"));
+					if((!archived && activei != 0) || (archived && activei == 0))
+						continue;
 					appeals.add(appeal);
 				}
 				return new Object[] { appeals };
 			case "get-appeal":
 				id = (int) data[1];
-				archived = (boolean) data[2];
 				if(id == 0)
 					return null;
-				set = select(archived ? "archive" : "appeals", "id=?", id);
+				set = select( "appeals", "id=?", id);
 				if(empty(set))
 					return null;
 				id = getInt(set, "id");
@@ -151,8 +150,6 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(!lastAction.equals(""))
 					appeal.setLastAction(lastAction);
 				appeal.setUsersRead(list);
-				if(archived)
-					appeal.setArchived(getTimestamp(set, "archived"));
 				return new Object[] { appeal };
 			case "add-comment":
 				username = (String) data[1];

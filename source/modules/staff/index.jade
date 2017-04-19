@@ -1,57 +1,58 @@
 extend ../default
 
 block head
-  script.
-    $(document).ready(function() {
-      var section = window.location.hash;
-      if(section != null && section != "")
-        $('.nav-tabs a[href="'+section+'"]').tab('show');
-        
-        
-        $('.nav-tabs a').click(function (e) {
-          $(this).tab('show');
-          window.location.hash = this.hash;
-        });
-        
-        $(document).on('click', '#pin', function() {
-          var tr = $(this).closest('tr');
-          var id = tr.data('id');
-          var type = tr.data('type');
-          var mod = type == 'PLAYER' ? 'preport' : type == 'BUG' ? 'breport' : 'appeal';
-          $.post('/staff', { mod:mod, action:'click-pin', id:id }, function(ret) {
-            var data = JSON.parse(ret);
-            if(!data.success) {
-              alert(data.error);
-              return;
-            }
-            $('#immediate-main').html(data.immediate);
-            if(data.preports != '')
-              $('#preport-main').html(data.preports);
-            if(data.breports != '')
-              $('#breport-main').html(data.breports);
-          });
-        });
-    });
+	script.
+		$(document).ready(function() {
+			var section = window.location.hash;
+			if(section != null && section != "")
+				$('.nav-tabs a[href="'+section+'"]').tab('show');
+
+
+				$('.nav-tabs a').click(function (e) {
+					$(this).tab('show');
+					window.location.hash = this.hash;
+				});
+
+				$(document).on('click', '#pin', function() {
+					var tr = $(this).closest('tr');
+					var id = tr.data('id');
+					var type = tr.data('type');
+					var mod = type == 'PLAYER' ? 'preport' : type == 'BUG' ? 'breport' : 'appeal';
+					$.post('/staff', { mod:mod, action:'click-pin', id:id }, function(ret) {
+						var data = JSON.parse(ret);
+						if(!data.success) {
+							alert(data.error);
+							return;
+						}
+						$('#immediate-main').html(data.immediate);
+						if(data.preports != '')
+							$('#preport-main').html(data.preports);
+						if(data.breports != '')
+							$('#breport-main').html(data.breports);
+						if(data.appeals != '')
+							$('#appeal-main').html(data.appeals);
+					});
+				});
+		});
 
 block content
-  div.container.account-area(style='min-height: 600px; padding: 20px 0;')
-    div.row
-      div.col-md-3
-        ul.nav.nav-tabs
-          li.nav.active.account-item
-            a(href='#overview', data-toggle='tab') Overview
-          li.nav.account-item
-            a.vote(href='#preports', data-toggle='tab') Player Reports
-          if user.getRights() > 1
-            li.nav.account-item
-              a(href='#breports', data-toggle='tab') Bug Reports
-          li.nav.account-item
-            a(href="#appeals", data-toggle="tab") Appeals
-      div.col-md-9
-        div.widget
-          div.tab-content.content
-            include overview/overview
-            include player_reports/index
-            include bug_reports/index
-            include appeals/index
-            
+	div.container.account-area(style='min-height: 600px; padding: 20px 0;')
+		div.row
+			div.col-md-3
+				ul.nav.nav-tabs
+					li.nav.active.account-item
+						a(href='#overview', data-toggle='tab') Overview
+					li.nav.account-item
+						a.vote(href='#preports', data-toggle='tab') Player Reports
+					if user.getRights() > 1
+						li.nav.account-item
+							a(href='#breports', data-toggle='tab') Bug Reports
+					li.nav.account-item
+						a(href="#appeals", data-toggle="tab") Appeals
+			div.col-md-9
+				div.widget
+					div.tab-content.content
+						include overview/overview
+						include player_reports/index
+						include bug_reports/index
+						include appeals/index

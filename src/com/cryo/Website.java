@@ -135,6 +135,9 @@ public class Website {
 		post(RegisterModule.PATH, (req, res) -> {
 			return new RegisterModule(this).decodeRequest(req, res, RequestType.POST);
 		});
+		get("/players", (req, res) -> {
+			return "0";
+		});
 		get("/favicon.ico", (req, res) -> {
 			try {
 				InputStream in = null;

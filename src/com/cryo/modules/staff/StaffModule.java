@@ -14,6 +14,7 @@ import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
+import com.cryo.modules.staff.appeals.StaffAppealModule;
 import com.cryo.modules.staff.bugreports.BugReportsModule;
 import com.cryo.modules.staff.playerreports.PlayerReportsModule;
 import com.cryo.utils.DateFormatter;
@@ -93,6 +94,9 @@ public class StaffModule extends WebModule {
 						break;
 					case "breport":
 						prop = BugReportsModule.handleRequest(action, request, response, prop, this);
+						break;
+					case "appeal":
+						prop = StaffAppealModule.handleRequest(action, request, response, prop, this);
 						break;
 				}
 				break;
