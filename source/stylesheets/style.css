@@ -15,6 +15,12 @@ html, body {
   top: 5px;
 }
 
+.vis-link {
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  color: #0174DF !important;
+}
+
 #acmenu li {
   padding: 4px;
 }
@@ -106,12 +112,6 @@ span {
 
 #appeal-info ul li {
   margin: 15px 0;
-}
-
-#appeal-link {
-  cursor: pointer;
-  text-decoration: underline;
-  color: #0174DF;
 }
 
 .login-box {
@@ -572,12 +572,13 @@ p.small {
 }
 
 .btn-green {
-  background: rgba(#129a11, 0.8);
+  background: #2cb12b;
   border: 1px solid #0d670c;
 }
 
 .btn-green:hover {
-  background: #0d670c;
+  background: #188e17;
+  border: 1px solid #0a7109;
 }
 
 .cart-review {
@@ -1133,7 +1134,7 @@ Widget
 */
 
 .footer {
-  background: url('/assets/images/noise.png') repeat scroll 0 0 #1a1a1a;
+  background: url('/images/noise.png') repeat scroll 0 0 #1a1a1a;
   margin-top: 20px;
   padding: 20px 0 30px 0;
   border-top: 8px solid #111;
