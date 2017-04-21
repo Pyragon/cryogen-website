@@ -571,6 +571,15 @@ p.small {
   width: 30px;
 }
 
+.btn-green {
+  background: rgba(#129a11, 0.8);
+  border: 1px solid #0d670c;
+}
+
+.btn-green:hover {
+  background: #0d670c;
+}
+
 .cart-review {
   background: #151515;
   border: 1px solid #010101;
@@ -579,9 +588,13 @@ p.small {
   padding: 3px;
 }
 
-.review-inc {
+.appeal-response {
+  background: #151515;
   border: 1px solid #010101;
-  display:
+  min-height: 20px;
+  min-width: 80%;
+  text-align: left;
+  padding: 3px;
 }
 
 .cart-list {
