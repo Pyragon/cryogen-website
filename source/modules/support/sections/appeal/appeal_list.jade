@@ -1,61 +1,65 @@
 script.
-  $(document).ready(function() {
-    
-    $('.appealable').click(function() {
-      var id = $(this).data('id');
-      var appealId = $(this).data('appealid');
-      $.post('/support', { mod:'appeal', action:'click-appeal', id:id, appealId:appealId }, function(ret) {
-        var data = JSON.parse(ret);
-        if(data.html == null || data.html == "") {
-          sendAlert('Session expired! Please reload the page to login again.');
-          return;
-        }
-        $('#appeal-p').html(data.title);
-        $('#appeal-content').html(data.html);
-      });
-      
-    });
-    
-    
-    function sendAlert(text) {
-      var n = noty({
-        text: text,
-        layout: 'topRight',
-        timeout: 5000,
-        theme: 'cryogen'
-      });
-    }
-    
-  });
--var list = punishUtils.getPunishments(user.getUsername());
+	$(document).ready(function() {
+
+		$('.appealable').click(function() {
+			var id = $(this).data('id');
+			var appealId = $(this).data('appealid');
+			$.post('/support', { mod:'appeal', action:'click-appeal', id:id, appealId:appealId }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.html == null || data.html == "") {
+					sendAlert('Session expired! Please reload the page to login again.');
+					return;
+				}
+				$('#appeal-p').html(data.title);
+				$('#appeal-content').html(data.html);
+			});
+
+		});
+
+
+		function sendAlert(text) {
+			var n = noty({
+				text: text,
+				layout: 'topRight',
+				timeout: 5000,
+				theme: 'cryogen'
+			});
+		}
+
+	});
+-var list = punishUtils.getPunishments(user.getUsername(), false);
 if list.isEmpty()
-  p Nice! You have no black marks on your account. Keep it up!
+	p Nice! You have no black marks on your account. Keep it up!
 else
-  table.table.hs-table.table-condensed.table-responsive.widget
-    thead
-      tr
-        th Type
-        th Reason
-        th Punishment Date
-        th Expiry
-        th Active
-        th Appeal
-    tbody
-      for punishment in list
-        tr
-          td.b-right
-            span
-              if punishment.getType() == 1
-                svg.icon.icon-hammer2
-                  use(xlink:href='#icon-hammer2')
-              else
-                span.fa.fa-microphone-slash
-            span= ' '+(punishment.getType() == 0 ? 'Mute' : 'Ban')
-          td.b-right= punishment.getReason()
-          td.b-right= formatter.formatTimestamp(punishment.getDate(), "MMMMM dd, YYYY - h:mm a")
-          td.b-right= punishment.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punishment.getExpiry(), "MMMMM dd, YYYY - h:mm a")
-          td.b-right= punishment.isActive() ? 'Active' : 'Inactive'
-          if punishment.isAppealable()
-            td.appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) Appeal
-          else
-            td.appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) View Appeal
+	table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;').t-center
+		thead
+			tr
+				th.t-center Type
+				th.t-center Reason
+				th.t-center Punishment Date
+				th.t-center Expiry
+				th.t-center Status
+				th.t-center Appeal
+		tbody
+			for punishment in list
+				tr
+					td.b-right
+						span
+							if punishment.getType() == 1
+								svg.icon.icon-hammer2
+									use(xlink:href='#icon-hammer2')
+							else
+								span.fa.fa-microphone-slash
+						span= ' '+(punishment.getType() == 0 ? 'Mute' : 'Ban')
+					td.b-right= punishment.getReason()
+					td.b-right= formatter.formatTimestamp(punishment.getDate(), "MMMMM dd, YYYY - h:mm a")
+					td.b-right= punishment.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punishment.getExpiry(), "MMMMM dd, YYYY - h:mm a")
+					td.b-right
+						if punishment.getAppeal() == null
+							span  No appeal
+						else
+							span(class=''+punishment.getAppeal().getColour())= punishment.getAppeal().getStatus()
+					if punishment.isAppealable()
+						td.appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) Appeal
+					else
+						td.appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) View Appeal
