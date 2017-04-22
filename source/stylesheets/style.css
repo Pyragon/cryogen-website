@@ -1133,11 +1133,25 @@ Widget
 * Footer style
 */
 
+div#page-container {
+  position: relative;
+  margin: 0 auto;
+  height: 100%;
+  min-height: 100%;
+}
+
+div#main-content {
+  padding-bottom: 200px;
+}
+
 .footer {
-  background: url('/images/noise.png') repeat scroll 0 0 #1a1a1a;
+  background: url(/images/noise.png) repeat scroll 0 0 #1a1a1a;
   margin-top: 20px;
   padding: 20px 0 30px 0;
   border-top: 8px solid #111;
+  bottom: 0;
+  width: 100%;
+  /* min-height: inherit; */
 }
 
 .footer ul {

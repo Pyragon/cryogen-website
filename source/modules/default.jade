@@ -24,119 +24,122 @@ html
 		link(rel='stylesheet', href='/stylesheets/fonts.css')
 		link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
 		block head
-	div.color-white#p-online= 'Players Online: '+online
-	div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
-		div(class='modal-dialog')
-			div(class='modal-content')
-				div(class='modal-header')
-					button(type='button', class='close', data-dismiss='modal')
-						span(aria-hidden='true') &times;
-						span(class='sr-only') Close
-					h4(class='modal-title color-white') Sign In
-						img(src='/images/icon.png', class='modal-icon')
-				div(class='modal-body')
-					div(class='alert alert-custom modal-alert', role='alert')
-					form(class='sign-in', action='/login', method='POST', role='form')
-						div(class='form-group')
-							label(for='username') Account Username:
-							input(type='text', class='form-control login-username', name='username', id='username', placeholder='Enter Username')
-						div(class='form-group')
-							label(for='password') Password
-							input(type='password', class='form-control login-password', name='password', id='password', placeholder='Enter Password')
-				div(class='modal-footer')
-					button(type='button', class='btn btn-default', data-dismiss='modal') Close
-					button.reg-btn(type='button', class='btn btn-danger register-btn') Register
-					button(type='button', class='btn btn-primary login-btn') Sign In
-	nav(class='navbar navbar-default cryogen-nav', role='navigation')
-		div(class='navbar-header')
-			button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='#navbar-collapse-1')
-				span(class='sr-only') Toggle navigation
-				for i in [1,2,3]
-					span(class='icon-bar')
-		div(class='navbar-brand')
-			img(class='img-responsive logo', src='/images/logo.png')
-		div(class='collapse navbar-collapse', id='navbar-collapse-1')
-			ul(class='nav navbar-nav nav-items')
-				li
-					a(href='/') Homepage
-				li.dropdown
-					a.dropdown-toggle(data-toggle='dropdown') Play
-						b.caret
-					ul.dropdown-menu
+	body
+		div#page-container
+			div.color-white#p-online= 'Players Online: '+online
+			div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+				div(class='modal-dialog')
+					div(class='modal-content')
+						div(class='modal-header')
+							button(type='button', class='close', data-dismiss='modal')
+								span(aria-hidden='true') &times;
+								span(class='sr-only') Close
+							h4(class='modal-title color-white') Sign In
+								img(src='/images/icon.png', class='modal-icon')
+						div(class='modal-body')
+							div(class='alert alert-custom modal-alert', role='alert')
+							form(class='sign-in', action='/login', method='POST', role='form')
+								div(class='form-group')
+									label(for='username') Account Username:
+									input(type='text', class='form-control login-username', name='username', id='username', placeholder='Enter Username')
+								div(class='form-group')
+									label(for='password') Password
+									input(type='password', class='form-control login-password', name='password', id='password', placeholder='Enter Password')
+						div(class='modal-footer')
+							button(type='button', class='btn btn-default', data-dismiss='modal') Close
+							button.reg-btn(type='button', class='btn btn-danger register-btn') Register
+							button(type='button', class='btn btn-primary login-btn') Sign In
+			nav(class='navbar navbar-default cryogen-nav', role='navigation')
+				div(class='navbar-header')
+					button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='#navbar-collapse-1')
+						span(class='sr-only') Toggle navigation
+						for i in [1,2,3]
+							span(class='icon-bar')
+				div(class='navbar-brand')
+					img(class='img-responsive logo', src='/images/logo.png')
+				div(class='collapse navbar-collapse', id='navbar-collapse-1')
+					ul(class='nav navbar-nav nav-items')
 						li
-							a(href='live/download?file_type=zip') Download as ZIP
-						li
-							a(href='live/download?file_type=jar') Download as JAR
-				li(class='spacer')
-					a(href='forums') Community
-				li
-					a(href='highscores') Highscores
-				li
-					a(href='account#vote') Vote
-				li(class='dropdown')
-					a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
-						b(class='caret')
-					ul(class='dropdown-menu')
-						if loggedIn
-							li
-								a(href='account') Account Settings
-							li
-								a(href='account#vote') Vote
-							li
-								a(href='account#shop') Shop
-						else
-							li
-								a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
-							li
-								a(href='#') Forgot my Password
-							li
-								a(href='register') Register
-						li(class='divider')
-						li
-							a(href='support') Support
-						if loggedIn
-							if user.getRights() > 0
+							a(href='/') Homepage
+						li.dropdown
+							a.dropdown-toggle(data-toggle='dropdown') Play
+								b.caret
+							ul.dropdown-menu
 								li
-									a(href='staff') Staff
-							li
-								a(href='logout') Sign Out
-	block content
-	div(class='footer')
-		div(class='container')
-			div(class='row')
-				div.col-md-4
-					h3 Cryogen
-					ul
-						li
-							a(href='live/download') Download Cryogen
-				div.col-md-4
-					h3 Community
-					ul
-						li
-							a(href='forums') Forums
+									a(href='live/download?file_type=zip') Download as ZIP
+								li
+									a(href='live/download?file_type=jar') Download as JAR
+						li(class='spacer')
+							a(href='forums') Community
 						li
 							a(href='highscores') Highscores
 						li
 							a(href='account#vote') Vote
-				div.col-md-4
-					h3 Account
-					ul
-						if loggedIn
-							li
-								a(href='account') Account Settings
-							li
-								a(href='support') Support
-							if user.getRights() > 0
+						li(class='dropdown')
+							a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
+								b(class='caret')
+							ul(class='dropdown-menu')
+								if loggedIn
+									li
+										a(href='account') Account Settings
+									li
+										a(href='account#vote') Vote
+									li
+										a(href='account#shop') Shop
+								else
+									li
+										a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
+									li
+										a(href='#') Forgot my Password
+									li
+										a(href='register') Register
+								li(class='divider')
 								li
-									h(href='staff') Staff
-							li
-								a(href='logout') Sign Out
-						else
-							li
-								a(href='support') Support
-							li
-								a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
-							li
-								a(href="register") Register
-							li
-								a(href='#') Forgot my Password
+									a(href='support') Support
+								if loggedIn
+									if user.getRights() > 0
+										li
+											a(href='staff') Staff
+									li
+										a(href='logout') Sign Out
+			div#main-content
+				block content
+			div(class='footer')
+				div(class='container')
+					div(class='row')
+						div.col-md-4
+							h3 Cryogen
+							ul
+								li
+									a(href='live/download') Download Cryogen
+						div.col-md-4
+							h3 Community
+							ul
+								li
+									a(href='forums') Forums
+								li
+									a(href='highscores') Highscores
+								li
+									a(href='account#vote') Vote
+						div.col-md-4
+							h3 Account
+							ul
+								if loggedIn
+									li
+										a(href='account') Account Settings
+									li
+										a(href='support') Support
+									if user.getRights() > 0
+										li
+											h(href='staff') Staff
+									li
+										a(href='logout') Sign Out
+								else
+									li
+										a(href='support') Support
+									li
+										a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
+									li
+										a(href="register") Register
+									li
+										a(href='#') Forgot my Password
