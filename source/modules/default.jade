@@ -42,21 +42,8 @@ html
 				function checkIssue() {
 					var width = $(window).width();
 					$('#navbar-issue').css('display', width < 751 ? '' : 'none');
-					console.log(width);
 					clearTimeout(timeout);
 				}
-
-				$(document).on('click', '.navbar-toggle', function() {
-					var bars = $(this).find('.icon-bar');
-					bars.each(() => {
-						if(!open)
-							bars.addClass('open');
-						else
-							bars.removeClass('open');
-						console.log(open);
-					});
-					open = !open;
-				});
 
 			});
 	body
