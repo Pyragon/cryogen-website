@@ -17,6 +17,7 @@ html
 		script(src='/js/noty/themes/cryogen.js?rand=5999', type='text/javascript')
 
 		link(rel='icon', href='/favicon.ico')
+		link(rel='stylesheet', href='/stylesheets/hamb.scss')
 		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
 		link(rel='stylesheet', href='http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css')
 		link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css', media='screen')
@@ -24,9 +25,44 @@ html
 		link(rel='stylesheet', href='/stylesheets/fonts.css')
 		link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
 		block head
+		script.
+			var open = false;
+			var issue = 'We are aware of the issue regarding the navbar on small screens and are working to fix it.';
+			$(document).ready(function() {
+
+				checkIssue();
+
+				var timeout;
+
+				$(window).resize(function() {
+					clearTimeout(timeout);
+					timeout = setTimeout(checkIssue, 100);
+				});
+
+				function checkIssue() {
+					var width = $(window).width();
+					$('#navbar-issue').css('display', width < 751 ? '' : 'none');
+					console.log(width);
+					clearTimeout(timeout);
+				}
+
+				$(document).on('click', '.navbar-toggle', function() {
+					var bars = $(this).find('.icon-bar');
+					bars.each(() => {
+						if(!open)
+							bars.addClass('open');
+						else
+							bars.removeClass('open');
+						console.log(open);
+					});
+					open = !open;
+				});
+
+			});
 	body
 		div#page-container
 			div.color-white#p-online= 'Players Online: '+online
+			div.color-grey.small#navbar-issue We are aware of the issue regarding the navbar on small screens and are working to fix it
 			div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
 				div(class='modal-dialog')
 					div(class='modal-content')
@@ -49,9 +85,9 @@ html
 							button(type='button', class='btn btn-default', data-dismiss='modal') Close
 							button.reg-btn(type='button', class='btn btn-danger register-btn') Register
 							button(type='button', class='btn btn-primary login-btn') Sign In
-			nav(class='navbar navbar-default cryogen-nav', role='navigation')
+			nav(class='navbar navbar-default navbar-fixed-side navbar-fixed-side-left cryogen-nav', role='navigation')
 				div(class='navbar-header')
-					button(type='button', class='navbar-toggle', data-toggle='collapse', data-target='#navbar-collapse-1')
+					button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar-collapse-1')
 						span(class='sr-only') Toggle navigation
 						for i in [1,2,3]
 							span(class='icon-bar')
