@@ -7,7 +7,6 @@ html, body {
 }
 
 #p-online {
-  margin: 0 0 auto auto;
   max-width: 130px;
   position: absolute;
   z-index: 10;
@@ -1126,6 +1125,68 @@ Widget
 
 .hs-table .rank {
   width: 10%;
+}
+
+
+/**
+   Coded by /u/j0be in scss.
+   See scss source here -> http://codepen.io/j0be/pen/MKRVyN
+*/
+
+.navbar .navbar-toggle:hover, .navbar .navbar-toggle:focus {
+  background-color: transparent;
+}
+
+.navbar .navbar-toggle.collapsed .icon-bar {
+  background-color: #666;
+}
+
+.navbar .navbar-toggle.collapsed .icon-bar:nth-of-type(2) {
+  transform: rotate(0deg);
+  top: 0;
+}
+
+.navbar .navbar-toggle.collapsed .icon-bar:nth-of-type(3) {
+  opacity: 1;
+  width: 100%;
+  margin-left: 0;
+}
+
+.navbar .navbar-toggle.collapsed .icon-bar:nth-of-type(4) {
+  transform: rotate(0deg);
+  bottom: 0;
+}
+
+.navbar .navbar-toggle .icon-bar {
+  position: relative;
+  transition: all 500ms ease-in-out;
+}
+
+.navbar .navbar-toggle .icon-bar:nth-of-type(2) {
+  transform: rotate(45deg);
+  top: 6px;
+}
+
+.navbar .navbar-toggle .icon-bar:nth-of-type(3) {
+  opacity: 0;
+  width: 0;
+  margin-left: 50%;
+}
+
+.navbar .navbar-toggle .icon-bar:nth-of-type(4) {
+  transform: rotate(-45deg);
+  bottom: 6px;
+}
+
+#navbar-issue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  /* Need a specific value to work */
+  z-index: 10;
 }
 
 
