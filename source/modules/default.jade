@@ -26,7 +26,6 @@ html
 		block head
 		script.
 			var open = false;
-			var issue = 'We are aware of the issue regarding the navbar on small screens and are working to fix it.';
 			$(document).ready(function() {
 
 				checkIssue();
@@ -84,7 +83,7 @@ html
 						li
 							a(href='/') Homepage
 						li.dropdown
-							a.dropdown-toggle(data-toggle='dropdown') Play
+							a.link.dropdown-toggle(data-toggle='dropdown') Play
 								b.caret
 							ul.dropdown-menu
 								li
