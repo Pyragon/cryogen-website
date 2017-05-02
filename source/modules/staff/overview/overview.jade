@@ -1,4 +1,35 @@
+script.
+	$(document).ready(function() {
+
+		$(document).on('click', '.view-i', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			var type = tr.data('type');
+			$.post('/staff', { mod:'overview', action:'view', id:id, type:type }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				if(type == 'BUG') {
+					$('a[href="#breports"]').tab('show');
+					$('#breport-main').html(data.html);
+				} else if(type == 'APPEAL') {
+					$('a[href="#appeals"]').tab('show');
+					$('#appeal-main').html(data.html);
+				} else if(type == 'PLAYER') {
+					$('a[href="#preports"]').tab('show');
+					$('#preport-main').html(data.html);
+				}
+			});
+		});
+
+	});
 div.tab-pane.fade.in.active(id='overview')
-  div#immediate-main
-    include immediate
-  include interest
+	div#immediate-main
+		include immediate
+	include interest

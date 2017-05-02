@@ -71,24 +71,9 @@ public class PlayerReportsModule {
 				prop.put("html", module.render("./source/modules/staff/player_reports/report_list.jade", model, request, response));
 				break;
 			case "view-report":
-				model = new HashMap<>();
 				id = Integer.parseInt(request.queryParams("id"));
 				archived = Boolean.parseBoolean(request.queryParams("archived"));
-				Object[] data = ReportsConnection.connection().handleRequest("get-player-report", id, archived);
-				if(data == null) {
-					prop.put("success", false);
-					prop.put("error",  "Report not found.");
-					return prop;
-				}
-				PlayerReportDAO report = (PlayerReportDAO) data[0];
-				model.put("report",  report);
-				model.put("comments", getComments(report.getId()));
-				html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
-				Account account = AccountUtils.getAccount(report.getUsername());
-				String name = AccountUtils.crownHTML(account);
-				prop.put("success", true);
-				prop.put("html", html);
-				prop.put("display", name);
+				prop = viewReport(id, archived, request, response, prop, module);
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
@@ -101,7 +86,7 @@ public class PlayerReportsModule {
 			case "submit-com":
 				id =  Integer.parseInt(request.queryParams("id"));
 				String comment = request.queryParams("comment");
-				data = ReportsConnection.connection().handleRequest("submit-com", id, 0, username, comment);
+				Object[] data = ReportsConnection.connection().handleRequest("submit-com", id, 0, username, comment);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Error submitting comment. Please try again later and contact an Admin if the problem persists.");
@@ -114,6 +99,26 @@ public class PlayerReportsModule {
 				prop.put("comments", html);
 				break;
 		}
+		return prop;
+	}
+	
+	public static Properties viewReport(int id, boolean archived, Request request, Response response, Properties prop, WebModule module) {
+		Object[] data = ReportsConnection.connection().handleRequest("get-player-report", id, archived);
+		if(data == null) {
+			prop.put("success", false);
+			prop.put("error",  "Report not found.");
+			return prop;
+		}
+		HashMap<String, Object> model = new HashMap<>();
+		PlayerReportDAO report = (PlayerReportDAO) data[0];
+		model.put("report",  report);
+		model.put("comments", getComments(report.getId()));
+		String html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
+		Account account = AccountUtils.getAccount(report.getUsername());
+		String name = AccountUtils.crownHTML(account);
+		prop.put("success", true);
+		prop.put("html", html);
+		prop.put("display", name);
 		return prop;
 	}
 	

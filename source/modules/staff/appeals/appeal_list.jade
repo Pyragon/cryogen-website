@@ -25,8 +25,8 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
 						span(class=''+appeal.getColour())= appeal.getStatus()
 				else
 					td.b-right= appeal.getLastAction()
-				td.b-right Punishment Link
-				td.b-right.link#viewa View
+				td.b-right.vis-link#punisha-link View Punishment
+				td.b-right.vis-link#viewa View
 				if !archive
 					td.link
 						-var read = appeal.userHasRead(user.getUsername())

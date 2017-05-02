@@ -38,7 +38,6 @@ public abstract class WebModule {
 	
 	@Synchronized
 	public String render(String file, HashMap<String, Object> model, Request request, Response response) {
-		model.put("isMobile", false);
 		model.put("jIterator", new JadeIterator());
 		model.put("hsutils", new HSUtils());
 		model.put("utils", new Utilities());
@@ -50,6 +49,7 @@ public abstract class WebModule {
 		model.put("loggedIn", account != null);
 		if(account != null)
 			model.put("user", account);
+		model.put("isMobile", request.headers("User-Agent").toLowerCase().contains("Mobile"));
 		try {
 			String html = Jade4J.render(file, model);
 			while(html.contains("$for-name=")) {

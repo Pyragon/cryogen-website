@@ -25,6 +25,75 @@ script.
 			});
 		});
 
+		$('#close-btn').click(function() {
+			var id = $('#aid').val();
+			$.post('/staff', { mod:'appeal', action:'view-noty' }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				n = noty({
+					text: 'How would you like to close this appeal?',
+					type: 'confirm',
+					layout: 'center',
+					dismissQueue: false,
+					template: data.html,
+					theme: 'cryogen',
+					buttons: [{
+						addClass: 'btn btn-primary btn-green', text: 'Accept', onClick: function($noty) {
+							$noty.close();
+							$.post('/staff', { mod:'appeal', action:'close-appeal', id:id, close_action:'accept' }, function(ret) {
+								var data = JSON.parse(ret);
+								if(data.success == null) {
+									sendAlert('Session expired! Refresh the page to login again.');
+									return;
+								}
+								if(!data.success) {
+									sendAlert(data.error);
+									return;
+								}
+								$('#appeal-main').html(data.html);
+								sendAlert('Appeal has been successfully accepted. Please refresh the page to reflect these changes.');
+							});
+						}
+					},
+					{
+						addClass: 'btn btn-danger', text: 'Decline', onClick: function($noty) {
+							$noty.close();
+							var response = $('#response').val();
+							if(response == '' || response.replace(/ /g, '') == '') {
+								sendAlert('You must enter a reason if you are declining an appeal.');
+								return;
+							}
+							$.post('/staff', { mod:'appeal', action:'close-appeal', id:id, close_action:'decline', reason:response }, function(ret) {
+								var data = JSON.parse(ret);
+								if(data.success == null) {
+									sendAlert('Session expired! Refresh the page to login again.');
+									return;
+								}
+								if(!data.success) {
+									sendAlert(data.error);
+									return;
+								}
+								$('#appeal-main').html(data.html);
+								sendAlert('Appeal has been successfully declined.');
+							});
+						}
+					},
+					{
+						addClass: 'btn btn-primary', text: 'Cancel', onClick: function($noty) {
+							$noty.close();
+						}
+					}]
+				})
+			});
+		});
+
 		function sendAlert(text) {
 			var n = noty({
 				text: text,
@@ -61,6 +130,7 @@ div(style="margin: auto; max-width: 400px; padding: 5px;")
 		textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
 		a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
 if appeal.isActive()
-	a.btn.btn-default.btn-comment.t-center#archivea-btn(style='padding: 10px 10px; margin: auto 15px 0px auto; max-width: 150px; max-height: 40px;')
-		i.fa.fa-archive
-		span  Archive
+	a.btn.btn-default.btn-comment.t-center#close-btn(style='padding: 10px 10px; margin: auto 15px 0px auto; max-width: 150px; max-height: 40px;')
+		p
+			i.fa.fa-times
+			span  Close

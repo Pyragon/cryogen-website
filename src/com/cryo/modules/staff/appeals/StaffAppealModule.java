@@ -11,6 +11,7 @@ import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.support.BugReportDAO;
 import com.cryo.modules.account.support.punish.AppealDAO;
+import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.utils.CommentDAO;
@@ -29,7 +30,7 @@ public class StaffAppealModule {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<CommentDAO> getComments(int id) {
 		ArrayList<CommentDAO> comments = new ArrayList<>();
-		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", id);
+		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", id, 0);
 		if(data == null)
 			return comments;
 		return (ArrayList<CommentDAO>) data[0];
@@ -38,8 +39,43 @@ public class StaffAppealModule {
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
 		String username = CookieManager.getUsername(request);
 		switch(action) {
-			case "view-list":
+			case "view-noty":
 				HashMap<String, Object> model = new HashMap<>();
+				String html = module.render("./source/modules/staff/appeals/appeal_noty.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				break;
+			case "close-appeal":
+				int id = Integer.parseInt(request.queryParams("id"));
+				String closeA = request.queryParams("close_action");
+				String reason = "";
+				if(closeA.equals("decline")) {
+					reason = request.queryParams("reason");
+					if(reason.equals("")) {
+						prop.put("success", false);
+						prop.put("error", "You must put a reason if you are declining an appeal.");
+						break;
+					}
+				}
+				int new_status = closeA.equals("decline") ? 2 : closeA.equals("accept") ? 1 : 0;
+				PunishmentConnection.connection().handleRequest("close-appeal", id, new_status, username, reason);
+				prop.put("success", true);
+				Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", id);
+				if(data == null) {
+					prop.put("success", false);
+					prop.put("error", "Invalid appeal ID. Please reload the page and contact an Admin if this persists.");
+					break;
+				}
+				AppealDAO appeal = (AppealDAO) data[0];
+				model = new HashMap<>();
+				model.put("appeal", appeal);
+				model.put("comments", getComments(appeal.getId()));
+				html = module.render("./source/modules/staff/appeals/view_appeal.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				break;
+			case "view-list":
+				model = new HashMap<>();
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
 				model.put("archive", archived);
 				model.put("appeals", new PunishUtils().getAppeals(null, archived));
@@ -48,12 +84,12 @@ public class StaffAppealModule {
 				prop.put("html", module.render("./source/modules/staff/appeals/appeal_list.jade", model, request, response));
 				break;
 			case "submit-com":
-				int id = Integer.parseInt(request.queryParams("id"));
+				id = Integer.parseInt(request.queryParams("id"));
 				String comment = request.queryParams("comment");
-				PunishmentConnection.connection().handleRequest("add-comment", username, id, comment);
+				PunishmentConnection.connection().handleRequest("add-comment", username, id, 0, comment);
 				model = new HashMap<>();
 				model.put("comments", getComments(id));
-				String html = module.render("./source/modules/utils/comments.jade", model, request, response);
+				html = module.render("./source/modules/utils/comments.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("comments", html);
 				break;
@@ -80,13 +116,13 @@ public class StaffAppealModule {
 				break;
 			case "view-appeal":
 				id = Integer.parseInt(request.queryParams("id"));
-				Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", id);
+				data = PunishmentConnection.connection().handleRequest("get-appeal", id);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Invalid appeal ID. Please reload the page and contact an Admin if this persists.");
 					break;
 				}
-				AppealDAO appeal = (AppealDAO) data[0];
+				appeal = (AppealDAO) data[0];
 				model = new HashMap<>();
 				model.put("appeal", appeal);
 				model.put("comments", getComments(appeal.getId()));

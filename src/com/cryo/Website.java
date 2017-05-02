@@ -11,6 +11,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
@@ -32,6 +35,7 @@ import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.staff.StaffModule;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
+import com.cryo.utils.Utilities;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.net.MediaType;
@@ -39,6 +43,7 @@ import com.google.gson.Gson;
 
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
+import lombok.Cleanup;
 import lombok.Getter;
 import spark.Request;
 import spark.Response;
@@ -49,21 +54,21 @@ import spark.Response;
  *         Created on: Mar 7, 2017 at 1:45:54 AM
  */
 public class Website {
-	
+
 	public static String PATH = "http://localhost/";
-	
+
 	private static Website INSTANCE;
-	
+
 	public static boolean LOADED;
-	
+
 	private static @Getter Properties properties;
-	
+
 	private @Getter DBConnectionManager connectionManager;
-	
+
 	private Timer fastExecutor;
-	
+
 	private static File FAVICON = null;
-	
+
 	public Website() {
 		loadProperties();
 		FAVICON = new File("./source/images/favicon.ico");
@@ -138,6 +143,19 @@ public class Website {
 		get("/players", (req, res) -> {
 			return "0";
 		});
+		get("/online", (req, res) -> {
+			SocketAddress addr = new InetSocketAddress("localhost", 43594);
+			@Cleanup Socket socket = new Socket();
+			try {
+				socket.connect(addr, 5_000);
+			} catch(IOException e) {
+				return "offline";
+			}
+			return "online";
+		});
+		get("/create", (req, res) -> {
+			return Jade4J.render("./source/modules/staff/punishments/create_punish.jade", new HashMap<String, Object>());
+		});
 		get("/favicon.ico", (req, res) -> {
 			try {
 				InputStream in = null;
@@ -162,7 +180,7 @@ public class Website {
 		LOADED = true;
 		fastExecutor.schedule(new TaskManager(), 0, 1000);
 	}
-	
+
 	public static String render404(Request request, Response response) {
 		response.status(404);
 		HashMap<String, Object> model = new HashMap<>();
@@ -174,20 +192,20 @@ public class Website {
 		}
 		return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
 	}
-	
+
 	public static String getRandomImageLink() {
 		File[] files = new File("./source/images/404/").listFiles();
 		File random = files[new Random().nextInt(files.length)];
 		return String.format("%simages/404/%s", PATH, random.getName());
 	}
-	
+
 	public static String error(String error) {
 		HashMap<String, Object> data = new HashMap<>();
 		data.put("code", 100);
 		data.put("status", error);
 		return new Gson().toJson(data);
 	}
-	
+
 	public static void loadProperties() {
 		File file = new File("props.conf");
 		try {
@@ -200,18 +218,18 @@ public class Website {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static Website instance() {
 		return INSTANCE;
 	}
-	
+
 	public static void main(String[] args) {
 		INSTANCE = new Website();
-		
+
 	}
-	
+
 	public static enum RequestType {
 		POST, GET
 	}
-	
+
 }

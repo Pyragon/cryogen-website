@@ -17,6 +17,7 @@ script.
 				cnt.addClass('dropdwn-show');
 			}
 			toggled = !toggled;
+			return false;
 		});
 
 		$(document).on('click', '.archive-cac-btn', function() {
@@ -76,6 +77,7 @@ script.
 				$('#archive-p').html(' '+(archived ? 'Active' : 'Archive'));
 				$('#preport-info').html(desc);
 			});
+			return false;
 		});
 
 		//click view button
@@ -97,6 +99,7 @@ script.
 				$('#view-preport').css('visibility', '');
 				$('#preport-auth').html(data.display);
 			});
+			return false;
 		});
 
 		//click search icon
@@ -121,6 +124,7 @@ script.
 				$('#search-perror').html('error');
 				$('#search-perror').fadeOut(5000);
 			}
+			return false;
 		});
 
 		$(document).on('click', '.return-but', function() {
@@ -139,6 +143,7 @@ script.
 				$('#archive-p').html(' '+(archive ? 'Active' : 'Archive'));
 				$('#preport-info').html(desc);
 			});
+			return false;
 		});
 
 		function sendAlert(text) {

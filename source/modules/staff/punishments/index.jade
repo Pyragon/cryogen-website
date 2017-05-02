@@ -1,0 +1,160 @@
+script.
+	$(document).ready(function() {
+		var archive = false;
+		var close = 'Click to close search bar.';
+		var open = 'Click to open search bar.';
+
+		//click search icon
+		$('#search-punish-icon').click(function() {
+			var icon = $(this);
+			var search = $('#searchp-pin');
+			var user = search.find('input').val();
+			var att = search.attr('display');
+			if(att == 'none') {
+				icon.attr('title', close);
+				search.attr('display', 'inline');
+				search.show('slide', {direction: 'right'}, 1000);
+			} else {
+				if(user == '') {
+					search.hide('slide', {direction: 'right'}, 1000, function() {
+						search.attr('display', 'none');
+						icon.attr('title', open);
+					});
+					return;
+				}
+				$('#search-perror').css('display', '');
+				$('#search-perror').html('error');
+				$('#search-perror').fadeOut(5000);
+			}
+		});
+
+		$(document).on('click', '#punish-link', function() {
+			var elem = $(this).closest('tr');
+			var id = elem.data('id');
+			$.post('/staff', { mod:'punish', action:'view-punish', id:id }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success === null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#punish-main').html(data.html);
+			}).fail(function() {
+				sendAlert('Error connecting to website server. Please try again in a minute.');
+			});
+		});
+
+		$(document).on('click', '#appeal-link', function() {
+			var id = $(this).data('id');
+			$.post('/staff', { mod:'appeal', action:'view-appeal', id:id }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success === null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#punish-main').html(data.html);
+			});
+		});
+
+		$('#archivep-btn').click(function() {
+			var archived = !archive;
+			archive = archived;
+			$.post('/staff', { mod:'punish', action:'view-list', archived:archived }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success === null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#punish-main').html(data.html);
+				var desc = archived ? 'Currently viewing all archived punishments' : 'Currently viewing all active punishments';
+				$('#punish-ap').html(' '+(archived ? 'Active' : 'Archive'));
+				$('#punish-info').html(desc);
+			});
+		});
+
+		$(document).on('click', '.returnp-but, .returna-but', function() {
+			$.post('/staff', { mod:'punish', action:'view-list', archived:archive }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#punish-main').html(data.html);
+			});
+			return false;
+		});
+
+		$(document).on('click', '#create-p', function() {
+			$.post('/staff', { mod:'punish', action:'view_create' }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#punish-main').html(data.html);
+			});
+			return false;
+		});
+
+		function sendAlert(text) {
+			var n = noty({
+				text: text,
+				layout: 'topRight',
+				timeout: 5000,
+				theme: 'cryogen'
+			});
+		}
+
+	});
+svg(style='display: none; style="position: absolute; width: 0; height: 0; overflow: hidden;', version='1.1', xmlns='http://www.w3.org/2000/svg', xmlns:xlink="http://www.w3.org/1999/xlink")
+	defs
+		symbol#icon-hammer2(viewBox='0 0 32 32')
+			title hammer2
+			path(d='M31.568 28.617l-17.145-15.608 0.798-0.8c0.653-0.655 1.006-1.501 1.060-2.363 0.031-0.014 0.063-0.028 0.092-0.045l3.218-2.013c0.435-0.512 0.404-1.321-0.071-1.797l-5.598-5.613c-0.475-0.476-1.281-0.508-1.792-0.071l-2.007 3.227c-0.016 0.030-0.031 0.061-0.045 0.093-0.859 0.054-1.703 0.408-2.356 1.063l-3.045 3.053c-0.653 0.655-1.006 1.501-1.060 2.363-0.031 0.014-0.063 0.029-0.093 0.045l-3.218 2.013c-0.436 0.512-0.404 1.321 0.071 1.797l5.598 5.613c0.475 0.476 1.281 0.508 1.792 0.071l2.007-3.227c0.017-0.030 0.031-0.061 0.045-0.093 0.859-0.054 1.703-0.408 2.356-1.063l0.884-0.887 15.566 17.191c0.451 0.498 1.147 0.579 1.546 0.178l1.574-1.578c0.399-0.4 0.319-1.098-0.178-1.55z')
+div.tab-pane.fade#punishments
+	div.row 
+		div.iactions
+			div
+				div(style='float: left; margin: 10px 10px;')
+					h5.color-grey Punishments
+						h6.color-grey#punish-info Currently viewing all active punishments
+				div(style='float: right; margin: 33.5px 5px;')
+					div.link#create-p
+						i.fa.fa-plus-square
+						span  New
+					div.link#archivep-btn
+						i.fa.fa-archive
+							span#punish-ap  Archive
+	div.row(style='padding: 15px;')
+		div#search-punish(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for an appeal. Search with criteria using name: and type: separated by a comma
+			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Example: type:ban, name: cody, what
+				br
+				span Will search for any bans for user 'Cody' with 'what' in the title.
+			p.color-red#search-perror(style='display: none')
+			div
+				span.glyphicon.glyphicon-search.link#search-punish-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+				div#searchp-pin(style='float: right; display: none;', display='none')
+					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+		div#punish-main
+			include punish_list

@@ -37,6 +37,9 @@ public class LiveModule extends WebModule {
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		String path = request.pathInfo().replace("/live/", "");
+		if(path.equals("")) {
+			return render("./source/modules/live/index.jade", new HashMap<String, Object>(), request, response);
+		}
 		if(!path.startsWith("download"))
 			return Website.render404(request, response);
 		try {

@@ -1,5 +1,6 @@
 package com.cryo.modules.staff;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
@@ -20,6 +21,8 @@ import com.cryo.modules.staff.playerreports.PlayerReportsModule;
 import com.cryo.utils.DateFormatter;
 import com.google.gson.Gson;
 
+import de.neuland.jade4j.Jade4J;
+import de.neuland.jade4j.exceptions.JadeCompilerException;
 import lombok.val;
 import spark.Request;
 import spark.Response;
@@ -38,7 +41,7 @@ public class StaffModule extends WebModule {
 	}
 
 	@Override
-	public String decodeRequest(Request request, Response response, RequestType type) {
+	public String decodeRequest(Request request, Response response, RequestType rType) {
 		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/staff", request, response);
 		String username = CookieManager.getUsername(request);
@@ -48,7 +51,7 @@ public class StaffModule extends WebModule {
 		if(account.getRights() == 0)
 			return Website.render404(request, response);
 		HashMap<String, Object> model = new HashMap<>();
-		if(type == RequestType.GET) {
+		if(rType == RequestType.GET) {
 			PunishUtils utils = new PunishUtils();
 			val appeals = utils.getAppeals(username, false);
 			val preports = utils.getPlayerReports(username, false);
@@ -61,6 +64,7 @@ public class StaffModule extends WebModule {
 			model.put("appeals", utils.getAppeals(null, false));
 			model.put("preports", utils.getPlayerReports(null, false));
 			model.put("breports", utils.getBugReports(null, false));
+			model.put("punishments", utils.getPunishments(null, false));
 			model.put("utils", new PunishUtils());
 			model.put("formatter", new DateFormatter());
 			return render("./source/modules/staff/index.jade", model, request, response);
@@ -75,19 +79,19 @@ public class StaffModule extends WebModule {
 					break;
 				}
 				switch(module) {
-					case "over":
-//						if(action.equals("click-pin")) {
-//							//NEED TO SEND BACK REFRESHED IMMEDIATE ACTIONS LIST.
-//							int id = Integer.parseInt(request.queryParams("id"));
-//							Optional<ReportType> rType = ReportType.getType(request.queryParams("type"));
-//							if(!rType.isPresent()) {
-//								prop.put("success", false);
-//								prop.put("error", "Incorrect report type.");
-//								break;
-//							}
-//							PunishUtils.markReportAsRead(id, username, rType.get());
-//							prop.put("success", true);
-//						}
+					case "overview":
+						switch(action) {
+							case "view":
+								int id = Integer.parseInt(request.queryParams("id"));
+								String type = request.queryParams("type");
+								if(type.equals("APPEAL"))
+									prop = StaffAppealModule.handleRequest("view-appeal", request, response, prop, this);
+								else if(type.equals("PLAYER"))
+									prop = PlayerReportsModule.viewReport(id, false, request, response, prop, this);
+								else if(type.equals("BUG"))
+									prop = BugReportsModule.viewReport(id, false, request, response, prop, this);
+								break;
+						}
 						break;
 					case "preport":
 						prop = PlayerReportsModule.handleRequest(action, request, response, prop, this);
@@ -97,6 +101,9 @@ public class StaffModule extends WebModule {
 						break;
 					case "appeal":
 						prop = StaffAppealModule.handleRequest(action, request, response, prop, this);
+						break;
+					case "punish":
+						prop = PunishmentsModule.handleRequest(action, request, response, prop, this);
 						break;
 				}
 				break;

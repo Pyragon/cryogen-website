@@ -29,6 +29,40 @@ script.
 			}
 		});
 
+		$(document).on('click', '.returna-but, .returnp-but', function() {
+			$.post('/staff', { mod:'appeal', action:'view-list', archived:archive }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#appeal-main').html(data.html);
+			});
+			return false;
+		});
+
+		$(document).on('click', '#punisha-link', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			$.post('/staff', { mod:'punish', action:'view-punish', id:id, appeal:'true' }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#appeal-main').html(data.html);
+			});
+			return false;
+		});
+
 		$(document).on('click', '#viewa', function() {
 			var elem = $(this).closest('tr');
 			var id = elem.data('id');
@@ -44,6 +78,7 @@ script.
 				}
 				$('#appeal-main').html(data.html);
 			});
+			return false;
 		});
 
 		$('#archivea-btn').click(function() {
@@ -65,6 +100,15 @@ script.
 				$('#appealp-info').html(desc);
 			});
 		});
+
+		function sendAlert(text) {
+			var n = noty({
+				text: text,
+				layout: 'topRight',
+				timeout: 5000,
+				theme: 'cryogen'
+			});
+		}
 
 	});
 div.tab-pane.fade#appeals

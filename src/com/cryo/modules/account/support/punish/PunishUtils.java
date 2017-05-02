@@ -20,8 +20,8 @@ import com.google.gson.Gson;
 public class PunishUtils {
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<PunishDAO> getPunishments(String username) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-punishments", username);
+	public ArrayList<PunishDAO> getPunishments(String username, boolean archive) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-punishments", username, archive);
 		if(data == null)
 			return new ArrayList<PunishDAO>();
 		return (ArrayList<PunishDAO>) data[0];
@@ -29,6 +29,13 @@ public class PunishUtils {
 	
 	public PunishDAO getPunishmentFromAppeal(int appealId) {
 		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment-from-appeal", appealId);
+		if(data == null)
+			return null;
+		return (PunishDAO) data[0];
+	}
+	
+	public PunishDAO getPunishment(int pid) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment", pid);
 		if(data == null)
 			return null;
 		return (PunishDAO) data[0];
@@ -54,8 +61,8 @@ public class PunishUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<ACommentDAO> getComments(int appealId) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", appealId);
+	public ArrayList<ACommentDAO> getComments(int appealId, int type) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", appealId, type);
 		if(data == null)
 			return null;
 		return (ArrayList<ACommentDAO>) data[0];

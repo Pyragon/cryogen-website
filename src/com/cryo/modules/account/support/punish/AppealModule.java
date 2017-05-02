@@ -34,7 +34,7 @@ public class AppealModule {
 					prop.put("error", "No comment entered.");
 					break;
 				}
-				ArrayList<ACommentDAO> comments = new PunishUtils().getComments(appealId);
+				ArrayList<ACommentDAO> comments = new PunishUtils().getComments(appealId, 0);
 				boolean both = true;
 				if(comments.size() < 2)
 					both = false;
@@ -55,9 +55,9 @@ public class AppealModule {
 					prop.put("error", "Please wait for a staff member to respond before posting again.");
 					break;
 				}
-				PunishmentConnection.connection().handleRequest("add-comment", username, appealId, comment);
+				PunishmentConnection.connection().handleRequest("add-comment", username, appealId, 0, comment);
 				prop.put("success", true);
-				model.put("comments", new PunishUtils().getComments(appealId));
+				model.put("comments", new PunishUtils().getComments(appealId, 0));
 				prop.put("html", module.render("./source/modules/utils/comments.jade", model, request, response));
 				break;
 			case "create-appeal":
@@ -107,7 +107,7 @@ public class AppealModule {
 				}
 				PunishDAO punish = new PunishUtils().getPunishmentFromAppeal(appealId); //wasn't really needed.
 				model.put("appeal", appeal);
-				model.put("comments", new PunishUtils().getComments(appealId));
+				model.put("comments", new PunishUtils().getComments(appealId, 0));
 				prop.put("title", "Now viewing appeal for punishment type: "+(punish.getType() == 0 ? "Mute" : "Ban"));
 				prop.put("html", module.render("./source/modules/support/sections/appeal/view_appeal.jade", model, request, response));
 				prop.put("display", "$for-name="+appeal.getUsername()+"$end");

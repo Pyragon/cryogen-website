@@ -65,20 +65,36 @@ public abstract class DatabaseConnection {
 			builder.append("UPDATE ").append(database).append(" SET ")
 					.append(update).append(" WHERE ").append(clause+";");
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			for(int i = 0; i < params.length; i++) {
+			setParams(stmt, params);
+			stmt.execute();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setParams(PreparedStatement stmt, Object[] params) {
+		try {
+			int index = 0;
+			for (int i = 0; i < params.length; i++) {
 				Object obj = params[i];
-				int index = i+1;
-				if (obj instanceof String)
+				index++;
+				if (obj instanceof String) {
+					String string = (String) obj;
+					if (string.equals("DEFAULT")) {
+						index--;
+						continue;
+					}
 					stmt.setString(index, (String) obj);
-				else if (obj instanceof Integer)
+				} else if (obj instanceof Integer)
 					stmt.setInt(index, (int) obj);
 				else if(obj instanceof Double)
 					stmt.setDouble(index, (double) obj);
 				else if(obj instanceof Long)
 					stmt.setTimestamp(index, new Timestamp((long) obj));
+				else if(obj instanceof Timestamp)
+					stmt.setTimestamp(index, (Timestamp) obj);
 			}
-			stmt.execute();
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -151,6 +167,8 @@ public abstract class DatabaseConnection {
 					stmt.setDouble(index, (double) obj);
 				else if(obj instanceof Long)
 					stmt.setTimestamp(index, new Timestamp((long) obj));
+				else if(obj instanceof Timestamp)
+					stmt.setTimestamp(index, (Timestamp) obj);
 			}
 			stmt.execute();
 			ResultSet set = stmt.getGeneratedKeys();

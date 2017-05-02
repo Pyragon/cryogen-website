@@ -24,8 +24,14 @@ public class PunishDAO {
 	private final boolean active;
 	private final int appealId;
 	
+	private AppealDAO appeal;
+	
 	public boolean isAppealable() {
 		return appealId == 0;
+	}
+	
+	public Object[] data() {
+		return new Object[] { "DEFAULT", appealId, username, type, "DEFAULT", expiry, punisher, reason, (active ? 1 : 0) };
 	}
 	
 }

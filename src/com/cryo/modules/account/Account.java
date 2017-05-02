@@ -16,7 +16,7 @@ public class Account {
 	
 	private final @Getter String username;
 	
-	private final @Getter int rights, donator;
+	private final @Getter int id, rights, donator;
 	
 	public String getEmail() {
 		Object[] data = EmailConnection.connection().handleRequest("get-email", username);

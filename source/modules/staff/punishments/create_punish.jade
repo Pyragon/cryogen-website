@@ -1,0 +1,197 @@
+script.
+	$(document).ready(function() {
+
+		var mute = false;
+		var ban = false;
+
+		var acc = false;
+		var ip = false;
+
+		var days = 1;
+
+		$('#player-search').on('change keydown keyup', function() {
+			var name = $(this).val();
+			var list = $('.player-list');
+			if(name == '') {
+				$(this).css({
+					"border-bottom-left-radius": "4px",
+					"border-bottom-right-radius": "4px"
+				});
+				list.css('display', 'none');
+				list.empty();
+				return;
+			}
+			$(this).css({
+				"border-bottom-left-radius": "0px",
+				"border-bottom-right-radius": "0px"
+			});
+			$.post('/staff', { mod:'punish', action:'search-p', text:name }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.list || !data.success)
+					return;
+				list.empty();
+				list.css('display', '');
+				var i = 0;
+					while(i < data.list.length) {
+						var user = data.list[i++];
+						var player = data.list[i++];
+						var node = $('<div class="link player-value"></div>');
+						var n = $('<div class="name"></div>');
+						n.html(player);
+						node.data('name', user);
+						node.append(n);
+						$('.player-list').append(node);
+				}
+			});
+		});
+
+		$(document).on('click', '.player-value', function() {
+			var name = $(this).data('name');
+			var id = $(this).data('id');
+			//$('#player-search').blur();
+			$('#player-search').css({
+				"border-bottom-left-radius": "4px",
+				"border-bottom-right-radius": "4px"
+			});
+			$('#player-search').val(name);
+			$('.player-list').empty();
+			$('.player-list').css('display', 'none');
+		});
+
+		function sendAlert(text) {
+			var n = noty({
+				text: text,
+				layout: 'topRight',
+				timeout: 5000,
+				theme: 'cryogen'
+			});
+		}
+
+		$('.severity').click(function() {
+			var name = $(this).attr('name');
+			acc = (name === 'acc');
+			ip = (name === 'ip');
+			$('.severity').prop('checked', false);
+			$(this).prop('checked', true);
+		});
+
+		$('.ptype').click(function() {
+			var name = $(this).attr('name');
+			ban = (name === 'ban');
+			mute = (name === 'mute');
+			$('.ptype').prop('checked', false);
+			$(this).prop('checked', true);
+		});
+
+		$('.expiry').click(function() {
+			days = $(this).attr('name');
+			$('.expiry').prop('checked', false);
+			$(this).prop('checked', true);
+		});
+
+		$('.submit-punish').click(function() {
+			if(!mute && !ban) {
+				sendAlert("Please select whether it's a mute or a ban");
+				return;
+			}
+			var player = $('#player-search').val();
+			if(player === '') {
+				sendAlert("Please enter a player's name.");
+				return;
+			}
+			var type = mute ? 'mute' : 'ban';
+			var severity = acc ? 'acc' : 'ip';
+			var reason = $('#punish-reason').val();
+			if(reason.length < 6) {
+				sendAlert('Please enter a reason of at least 6 characters.');
+				return;
+			}
+			$.post('/staff', { mod:'punish', action:'create', player:player, type:type, severity:severity, expiry:days, reason:reason }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null || data.success == '') {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				alert(data.html)
+				$('#punish-main').html(data.html);
+			});
+		});
+
+		$('.returnpu-but').click(function() {
+			$.post('/staff', { mod:'punish', action:'view-list', archived:archive }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success === null) {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#punish-main').html(data.html);
+			});
+			return false;
+		});
+
+	});
+div(style='clear: both; float: right;')
+	div(style='max-width: 200px; font-size: 12px;')
+		p.color-grey.t-center Viewing punishment creation
+		p.t-center.color-grey &larr; #[a.returnpu-but(href='#', title='Go Back') Go back]
+div.register.row(style='clear: both;')
+	div(style="margin: auto; max-width: 400px; padding: 5px;")
+		div.box
+			div
+				label Player
+				input.form-control#player-search(type='text', placeholder="Start typing player's name")
+				div.player-list(style='display: none; position: absolute; max-width: 350px; z-index: 10;')
+				-var check = false;
+				//-var check = user.getRights() == 1;
+				div(style='margin-top: 10px;')
+					div.col-xs-5.col-xs-offset-1
+						label
+							input.ptype(type='radio', name='mute', style='max-width: 300px;', checked=check)
+							span.radio-punish  Mute
+					//if user.getRights() > 1
+					div.col-xs-5.col-xs-offset-1
+						label
+							input.ptype(type='radio', name='ban', style='max-width: 300px;')
+							span.radio-punish  Ban
+				label Severity
+				div
+					div.col-xs-5.col-xs-offset-1
+						label
+							input.severity(type='radio', name='acc', style='max-width: 300px;', checked)
+							span.radio-punish  Account
+					div.col-xs-5.col-xs-offset-1
+						label
+							input.severity(type='radio', name='ip', style='max-width: 300px;')
+							span.radio-punish  IP
+					div.col-xs-3
+						label
+							input.expiry(type='radio', name='1', style='max-width: 300px;', checked=true)
+							span.radio-punish  1 Day
+					div.col-xs-3
+						label
+							input.expiry(type='radio', name='2', style='max-width: 300px;')
+							span.radio-punish  2 Days
+					div.col-xs-3
+						label
+							input.expiry(type='radio', name='7', style='max-width: 300px;')
+							span.radio-punish  1 Week
+					div.col-xs-3
+						label
+							input.expiry(type='radio', name='0', style='max-width: 300px;')
+							span.radio-punish  Never
+				label Detailed Reason
+				p.small.color-grey Please keep this as brief yet thorough as possible. Remember to also be professional, this reason is seen by the player.
+				textarea.form-control#punish-reason(row='4', cols='50', style='background-color:#111; border: 1px solid #000; max-width: 350px;', placeholder='Enter detailed reason')
+				button.btn.btn-default.submit-punish Submit

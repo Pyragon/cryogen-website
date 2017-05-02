@@ -1,6 +1,7 @@
 package com.cryo.db.impl;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import com.cryo.Website;
 import com.cryo.cookies.CookieManager;
@@ -41,9 +42,24 @@ public class GlobalConnection extends DatabaseConnection {
 				String salt = BCrypt.generate_salt();
 				String hash = BCrypt.hashPassword(password, salt);
 				String sess_id = CookieManager.generateSessId(username, password, salt);
-				insert("player_data", username, password, salt, sess_id, 0, 0);
+				insert("player_data", "DEFAULT", username, password, salt, sess_id, 0, 0);
 				DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
 				return new Object[] { true };
+			case "search":
+				String text = (String) data[1];
+				text = "%"+text+"%";
+				set = select("player_data", "username LIKE ?", text);
+				ArrayList<Account> accounts = new ArrayList<Account>();
+				if(wasNull(set))
+					return null;
+				while(next(set)) {
+					data = handleRequest("get-account", getString(set, "username"));
+					if(data == null)
+						continue;
+					Account account = (Account) data[0];
+					accounts.add(account);
+				}
+				return new Object[] { accounts };
 			case "get-acc-from-sess":
 				sess_id = (String) data[1];
 				set = select("player_data", "sess_id=?", sess_id);
@@ -89,9 +105,10 @@ public class GlobalConnection extends DatabaseConnection {
 				set = select("player_data", "username=?", username);
 				if(empty(set))
 					return null;
+				int id = getInt(set, "id");
 				int rights = getInt(set, "rights");
 				int donator = getInt(set, "donator");
-				account = new Account(username, rights, donator);
+				account = new Account(username, id, rights, donator);
 				return new Object[] { account };
 		}
 		return null;

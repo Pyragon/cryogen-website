@@ -7,7 +7,10 @@ import java.util.Properties;
 import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.BugReportDAO;
+import com.cryo.modules.account.support.PlayerReportDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.utils.CommentDAO;
@@ -69,19 +72,7 @@ public class BugReportsModule {
 			case "view-report":
 				id = Integer.parseInt(request.queryParams("id"));
 				archived = Boolean.parseBoolean(request.queryParams("archived"));
-				Object[] data = ReportsConnection.connection().handleRequest("get-bug-report", id, archived);
-				if(data == null) {
-					prop.put("success", false);
-					prop.put("error", "Invalid report ID. Please reload the page and contact an Admin if this persists.");
-					break;
-				}
-				BugReportDAO report = (BugReportDAO) data[0];
-				model = new HashMap<>();
-				model.put("report", report);
-				model.put("comments", getComments(report.getId()));
-				html = module.render("./source/modules/staff/bug_reports/view_report.jade", model, request, response);
-				prop.put("success", true);
-				prop.put("html", html);
+				prop = viewReport(id, archived, request, response, prop, module);
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
@@ -102,6 +93,23 @@ public class BugReportsModule {
 				prop.put("comments", html);
 				break;
 		}
+		return prop;
+	}
+	
+	public static Properties viewReport(int id, boolean archived, Request request, Response response, Properties prop, WebModule module) {
+		Object[] data = ReportsConnection.connection().handleRequest("get-bug-report", id, archived);
+		if(data == null) {
+			prop.put("success", false);
+			prop.put("error", "Invalid report ID. Please reload the page and contact an Admin if this persists.");
+			return prop;
+		}
+		BugReportDAO report = (BugReportDAO) data[0];
+		HashMap<String, Object> model = new HashMap<>();
+		model.put("report", report);
+		model.put("comments", getComments(report.getId()));
+		String html = module.render("./source/modules/staff/bug_reports/view_report.jade", model, request, response);
+		prop.put("success", true);
+		prop.put("html", html);
 		return prop;
 	}
 	

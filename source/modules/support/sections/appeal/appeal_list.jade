@@ -1,7 +1,7 @@
 script.
 	$(document).ready(function() {
 
-		$('.appealable').click(function() {
+		$('.appeal-link').click(function() {
 			var id = $(this).data('id');
 			var appealId = $(this).data('appealid');
 			$.post('/support', { mod:'appeal', action:'click-appeal', id:id, appealId:appealId }, function(ret) {
@@ -60,6 +60,6 @@ else
 						else
 							span(class=''+punishment.getAppeal().getColour())= punishment.getAppeal().getStatus()
 					if punishment.isAppealable()
-						td.appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) Appeal
+						td.vis-link.appeal-link(data-id=punishment.getId(), data-appealid='0') Appeal
 					else
-						td.appealable#appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) View Appeal
+						td.vis-link.appeal-link(data-id=punishment.getId(), data-appealid=punishment.getAppealId()) View Appeal

@@ -1,73 +1,73 @@
 script.
-  $(document).ready(function() {
-    $('#appeal-ret').click(function() {
-      $.post('/support', { mod:'appeal', action:'get-appeal-list' }, function(ret) {
-        var data = JSON.parse(ret);
-        if(data.html == null || data.html == "") {
-          sendAlert('Session expired! Refresh the page to login again.');
-          return;
-        }
-        $('#appeal-content').html(data.html);
-      });
-    });
-    
-    $('.appeal-btn').click(function() {
-      var id = $('#pid').val();
-      var title = $('#appeal-title').val();
-      var detailed = $('.appeal-detailed').val();
-      if(title == '' || detailed == '') {
-        sendAlert('All fields must be filled out!');
-        return;
-      }
-      if(title.length > 20) {
-        sendAlert('Title cannot exceed 20 characters.');
-        return;
-      }
-      if(detailed.length > 1000) {
-        sendAlert('Detailed appeal cannot exceed 1k characters.');
-        return;
-      }
-      $.post('/support', { mod:'appeal', action:'create-appeal', id:id, title:title, detailed:detailed }, function(ret) {
-        var data = JSON.parse(ret);
-        if(data.html == null || data.html == "") {
-          sendAlert('Session expired! Refresh the page to login again.');
-          return;
-        }
-        if(!data.success) {
-          sendAlert(data.error);
-          return;
-        }
-        $('#appeal-content').html(data.html);
-        sendAlert('Appeal successfully created!');
-      });
-    });
-    
-    function sendAlert(text) {
-      var n = noty({
-        text: text,
-        layout: 'topRight',
-        timeout: 5000,
-        theme: 'cryogen'
-      });
-    }
-    
-  });
+	$(document).ready(function() {
+		$('#appeal-ret').click(function() {
+			$.post('/support', { mod:'appeal', action:'get-appeal-list' }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.html == null || data.html == "") {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				$('#appeal-content').html(data.html);
+			});
+		});
+
+		$('.appeal-btn').click(function() {
+			var id = $('#pid').val();
+			var title = $('#appeal-title').val();
+			var detailed = $('.appeal-detailed').val();
+			if(title == '' || detailed == '') {
+				sendAlert('All fields must be filled out!');
+				return;
+			}
+			if(title.length > 20) {
+				sendAlert('Title cannot exceed 20 characters.');
+				return;
+			}
+			if(detailed.length > 1000) {
+				sendAlert('Detailed appeal cannot exceed 1k characters.');
+				return;
+			}
+			$.post('/support', { mod:'appeal', action:'create-appeal', id:id, title:title, detailed:detailed }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.html == null || data.html == "") {
+					sendAlert('Session expired! Refresh the page to login again.');
+					return;
+				}
+				if(!data.success) {
+					sendAlert(data.error);
+					return;
+				}
+				$('#appeal-content').html(data.html);
+				sendAlert('Appeal successfully created!');
+			});
+		});
+
+		function sendAlert(text) {
+			var n = noty({
+				text: text,
+				layout: 'topRight',
+				timeout: 5000,
+				theme: 'cryogen'
+			});
+		}
+
+	});
 input#pid(type='hidden', value=pid)
 div(style='clear: both;')
-  p.color-grey#appeal-ret(style='text-align: center') &larr; 
-    span.appeal-ret#appeal-link Go Back
-  div.col-md-6.box
-    div
-      label Appeal Title
-      input.form-control#appeal-title(type='text', placeholder='Enter Appeal Title', style='max-width: 350px;')
-      label Enter a detailed appeal:
-      textarea.form-control.appeal-detailed(row='4', cols='50', style='background-color:#111; border: 1px solid #000; max-width: 350px;', placeholder='Enter detailed appeal')
-  div.col-md-6.box#appeal-info
-    span.glyphicon.glyphicon-ok(aria-hidden='true')
-    h3 Read before you appeal:
-    ul
-      li You are responsible for any actions taken on your account by anyone you have given your password to.
-      li You are responsible for any actions taken on your account by anyone in your household that may have obtained access to your computer.
-      br
-      li Please keep your appeals respectful and calm. We understand you may be angered about your punishment, but any flaming or otherwise will only make your appeal take longer or be denied out right.
-  button.btn.btn-default.appeal-btn Create Appeal
+	p.color-grey#appeal-ret(style='text-align: center') &larr; 
+		span.appeal-ret.vis-link Go Back
+	div.col-md-6.box
+		div
+			label Appeal Title
+			input.form-control#appeal-title(type='text', placeholder='Enter Appeal Title', style='max-width: 350px;')
+			label Enter a detailed appeal:
+			textarea.form-control.appeal-detailed(row='4', cols='50', style='background-color:#111; border: 1px solid #000; max-width: 350px;', placeholder='Enter detailed appeal')
+	div.col-md-6.box#appeal-info
+		span.glyphicon.glyphicon-ok(aria-hidden='true')
+		h3 Read before you appeal:
+		ul
+			li You are responsible for any actions taken on your account by anyone you have given your password to.
+			li You are responsible for any actions taken on your account by anyone in your household that may have obtained access to your computer.
+			br
+			li Please keep your appeals respectful and calm. We understand you may be angered about your punishment, but any flaming or otherwise will only make your appeal take longer or be denied out right.
+	button.btn.btn-default.appeal-btn Create Appeal

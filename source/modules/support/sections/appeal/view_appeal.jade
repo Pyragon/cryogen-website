@@ -1,73 +1,74 @@
 script.
-  $(document).ready(function() {
-    
-    $('#com-btn').click(function() {
-      var comment = $('.appeal-comment').val();
-      if(comment == "") {
-        sendAlert('You must enter a comment first.');
-        return;
-      }
-      var appealId = $('#appeal-id').val();
-      $.post('/support', { mod:'appeal', action:'submit-com', comment:comment, appealId:appealId }, function(ret) {
-        var data = JSON.parse(ret);
-        if(data.success == null) {
-          sendAlert('Session expired! Please reload the page to login again.');
-          return;
-        }
-        if(data.success == false) {
-          sendAlert(data.error);
-          return;
-        }
-        sendAlert('Comment submitted!');
-        $('#appeal-comments').html(data.html);
-        $('.appeal-comment').val('');
-      });
-    });
-    
-    $('.return-but').click(function() {
-      $.post('/support', { mod:'appeal', action:'get-appeal-list' }, function(ret) {
-        var data = JSON.parse(ret);
-        if(data.success == null) {
-          sendAlert('Session expired! Please reload the page to login again.');
-          return;
-        }
-        $('#appeal-content').html(data.html);
-        $('#appeal-p').html('Below you will find a list of punishments currently active on your account.');
-      });
-      return false;
-    });
-    
-    function sendAlert(text) {
-      var n = noty({
-        text: text,
-        layout: 'topRight',
-        timeout: 5000,
-        theme: 'cryogen'
-      });
-    }
-    
-  });
+	$(document).ready(function() {
+
+		$('#com-btn').click(function() {
+			var comment = $('.appeal-comment').val();
+			if(comment == "") {
+				sendAlert('You must enter a comment first.');
+				return;
+			}
+			var appealId = $('#appeal-id').val();
+			$.post('/support', { mod:'appeal', action:'submit-com', comment:comment, appealId:appealId }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null) {
+					sendAlert('Session expired! Please reload the page to login again.');
+					return;
+				}
+				if(data.success == false) {
+					sendAlert(data.error);
+					return;
+				}
+				sendAlert('Comment submitted!');
+				$('#appeal-comments').html(data.html);
+				$('.appeal-comment').val('');
+			});
+		});
+
+		$('.return-but').click(function() {
+			$.post('/support', { mod:'appeal', action:'get-appeal-list' }, function(ret) {
+				var data = JSON.parse(ret);
+				if(data.success == null) {
+					sendAlert('Session expired! Please reload the page to login again.');
+					return;
+				}
+				$('#appeal-content').html(data.html);
+				$('#appeal-p').html('Below you will find a list of punishments currently active on your account.');
+			});
+			return false;
+		});
+
+		function sendAlert(text) {
+			var n = noty({
+				text: text,
+				layout: 'topRight',
+				timeout: 5000,
+				theme: 'cryogen'
+			});
+		}
+
+	});
 input#appeal-id(type='hidden', value=appeal.getId())
 input#auth(type='hidden', value=appeal.getUsername())
 span(style='float: right')
-  p.color-grey#appeal-author= 'Viewing appeal for: $for-name='+appeal.getUsername()+'$end'
-  p.t-center.color-grey &larr; #[a.return-but(href='#', title='Go Back') Go back]
+	p.color-grey#appeal-author= 'Viewing appeal for: $for-name='+appeal.getUsername()+'$end'
+	p.t-center.color-grey= 'Appeal made on: '+formatter.formatTimestamp(appeal.getTime(), 'MMM dd, YYYY hh:mm a')+'.'
+	p.t-center.color-grey &larr; #[a.return-but(href='#', title='Go Back') Go back]
 div(style="margin: auto; max-width: 400px; padding: 5px; clear: both;")
-  h4.color-white.t-center#title Title
-    h6.t-center= appeal.getTitle()
-  h4.t-center.color-white Detailed Appeal
-    h6.t-center= appeal.getMessage()
-  h4.t-center.color-white Status
-    h6(class='t-center '+appeal.getColour())= appeal.getStatus()
-  if appeal.getActive() == 2
-    h4.t-center.color-white Declined for Reason:
-      h6.t-center= appeal.getDeclineReason()
-  br
-  h4.t-center.color-white Comments/Replies
-  div#appeal-comments(style='white-space: pre-wrap; margin-bottom: 10px;')
-    include ../../../utils/comments
-  br
-  if appeal.getActive() == 0
-    p.com-error(style='display: none;')
-    textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
-    a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
+	h4.color-white.t-center#title Title
+		h6.t-center= appeal.getTitle()
+	h4.t-center.color-white Detailed Appeal
+		h6.t-center= appeal.getMessage()
+	h4.t-center.color-white Status
+		h6(class='t-center '+appeal.getColour())= appeal.getStatus()
+	if appeal.getActive() == 2
+		h4.t-center.color-white Declined for Reason:
+			h6.t-center= appeal.getDeclineReason()
+	br
+	h4.t-center.color-white Comments/Replies
+	div#appeal-comments(style='white-space: pre-wrap; margin-bottom: 10px;')
+		include ../../../utils/comments
+	br
+	if appeal.getActive() == 0
+		p.com-error(style='display: none;')
+		textarea.form-control.appeal-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
+		a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
