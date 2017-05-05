@@ -3,11 +3,13 @@ package com.cryo.modules.staff;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import com.cryo.Website;
 import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PunishmentConnection;
@@ -16,6 +18,7 @@ import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
+import com.cryo.modules.staff.search.Filter;
 import com.cryo.utils.CommentDAO;
 
 import lombok.*;
@@ -38,10 +41,74 @@ public class PunishmentsModule {
 		return (ArrayList<CommentDAO>) data[0];
 	}
 	
+	public static String[][] FILTERS = { { "type" }, { "username" }, { "expired" }, { "status" } };
+	
+	public static String[] getFilter(String filter) {
+		for(String[] filters : FILTERS) {
+			if(filters[0].equalsIgnoreCase(filter))
+				return filters;
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
 		String username = CookieManager.getUsername(request);
 		switch (action) {
+			case "search":
+				String text = request.queryParams("search");
+				text = text.replaceAll(", ", ",");
+				String[] queries = text.split(",");
+				HashMap<String, Filter> filters = new HashMap<>();
+				boolean incorrect = false;
+				for(String query : queries) {
+					String[] values = query.split(":");
+					if(values.length != 2)
+						continue;
+					String filterName = values[0];
+					String value = values[1].toLowerCase();
+					Filter filter = Website.instance().getSearchManager().getFilter(filterName);
+					if(filter == null)
+						continue;
+					if(filters.containsKey(filter.getName())) {
+						prop.put("success", false);
+						prop.put("error", "You cannot have two of the same filters.");
+						break;
+					}
+					if(!filter.setValue(value)) {
+						incorrect = true;
+						continue;
+					}
+					filters.put(filter.getName(), filter);
+				}
+				ArrayList<Filter> filterA = new ArrayList<>();
+				filterA.addAll(filters.values());
+				Object[] data = PunishmentConnection.connection().handleRequest("search-punishments", filterA);
+				if(data == null) {
+					prop.put("success", false);
+					String results = "No search results found.";
+					if(incorrect)
+						results += " Your search results contain invalid filters.";
+					prop.put("error", results);
+					break;
+				}
+				HashMap<String, Object> model = new HashMap<>();
+				List<PunishDAO> punishments = (List<PunishDAO>) data[0];
+				if(punishments.size() == 0) {
+					prop.put("success", false);
+					prop.put("error", "No search results found.");
+					break;
+				}
+				System.out.println("hi");
+				for(Filter filter : filterA) {
+					punishments = filter.filterList(punishments);
+				}
+				System.out.println("hi2");
+				model.put("punishments", punishments);
+				String html = module.render("./source/modules/staff/punishments/punish_list.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				break;
 			case "view-punish":
 				int id = Integer.parseInt(request.queryParams("id"));
 				boolean appeal = request.queryParams("appeal") != null;
@@ -51,10 +118,10 @@ public class PunishmentsModule {
 					prop.put("error", "Invalid punishment ID. Please reload the page and contact an Admin if this persists.");
 					break;
 				}
-				HashMap<String, Object> model = new HashMap<>();
+				model = new HashMap<>();
 				model.put("punish", punish);
 				model.put("comments", getComments(id));
-				String html = module.render("./source/modules/staff/punishments/view_punish.jade", model, request, response);
+				html = module.render("./source/modules/staff/punishments/view_punish.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);
 				break;
@@ -68,7 +135,7 @@ public class PunishmentsModule {
 				cal.add(Calendar.DAY_OF_MONTH, expires);
 				Timestamp expiry = new Timestamp(cal.getTimeInMillis());
 				punish = new PunishDAO(-1, player, (type == "mute" ? 0 : 1), null, expiry, username, reason, true, 0);
-				Object[] data = PunishmentConnection.connection().handleRequest("create-punishment", punish);
+				data = PunishmentConnection.connection().handleRequest("create-punishment", punish);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Error adding punishment!");
@@ -143,7 +210,7 @@ public class PunishmentsModule {
 			case "view-list":
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
 				model = new HashMap<String, Object>();
-				ArrayList<PunishDAO> punishments = new PunishUtils().getPunishments(null, archived);
+				punishments = new PunishUtils().getPunishments(null, archived);
 				model.put("punishments", punishments);
 				html = module.render("./source/modules/staff/punishments/punish_list.jade", model, request, response);
 				prop.put("success", true);

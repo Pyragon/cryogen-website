@@ -4,6 +4,16 @@ script.
 		var close = 'Click to close search bar.';
 		var open = 'Click to open search bar.';
 
+		var changed = false;
+
+		$('#searchp-pin').find('input').keydown(function(e) {
+			if(e.which == 13) {
+				$('#search-punish-icon').click();
+				$(this).blur();
+				return false;
+			}
+		});
+
 		//click search icon
 		$('#search-punish-icon').click(function() {
 			var icon = $(this);
@@ -20,11 +30,36 @@ script.
 						search.attr('display', 'none');
 						icon.attr('title', open);
 					});
+					if(changed) {
+						$.post('/staff', { mod:'punish', action:'view-list', archived:archive }, function(ret) {
+							var data = JSON.parse(ret);
+							if(data.success === null) {
+								sendAlert('Session expired! Refresh the page to login again.');
+								return;
+							}
+							if(!data.success) {
+								sendAlert(data.error);
+								return;
+							}
+							$('#punish-main').html(data.html);
+							changed = false;
+						});
+					}
 					return;
 				}
-				$('#search-perror').css('display', '');
-				$('#search-perror').html('error');
-				$('#search-perror').fadeOut(5000);
+				changed = true;
+				$.post('/staff', { mod:'punish', action:'search', search:user }, function(ret) {
+					var data = JSON.parse(ret);
+					if(data.success === null) {
+						sendAlert('Session expired! Refresh the page to login again.');
+						return;
+					}
+					if(data.error) {
+						sendAlert(data.error);
+						return;
+					}
+					$('#punish-main').html(data.html);
+				});
 			}
 		});
 
@@ -63,7 +98,7 @@ script.
 			});
 		});
 
-		$('#archivep-btn').click(function() {
+		$('#archivepu-btn').click(function() {
 			var archived = !archive;
 			archive = archived;
 			$.post('/staff', { mod:'punish', action:'view-list', archived:archived }, function(ret) {
@@ -141,15 +176,17 @@ div.tab-pane.fade#punishments
 					div.link#create-p
 						i.fa.fa-plus-square
 						span  New
-					div.link#archivep-btn
+					div.link#archivepu-btn
 						i.fa.fa-archive
 							span#punish-ap  Archive
 	div.row(style='padding: 15px;')
 		div#search-punish(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
-			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for an appeal. Search with criteria using name: and type: separated by a comma
-			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Example: type:ban, name: cody, what
-				br
-				span Will search for any bans for user 'Cody' with 'what' in the title.
+			div.col-xs-4
+				p.color-grey.search-info Click the search icon to begin searching through punishments. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+			div.col-xs-4
+				p.color-grey.search-info Filters: type:(mute/ban), expired, status:(declined, accepted, pending, none), username:(name, must be exact username), expiry:(first date)-(second date) (dates in MM/DD/YYYY) OR expiry:never
+			div.col-xs-4
+				p.color-grey.search-info Example: type:mute, username:cody, expired:true, status:declined, expiry:04/25/2017-05/05/2017
 			p.color-red#search-perror(style='display: none')
 			div
 				span.glyphicon.glyphicon-search.link#search-punish-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')

@@ -33,6 +33,7 @@ import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.staff.StaffModule;
+import com.cryo.modules.staff.search.SearchManager;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.Utilities;
@@ -66,6 +67,8 @@ public class Website {
 	private @Getter DBConnectionManager connectionManager;
 
 	private Timer fastExecutor;
+	
+	private @Getter SearchManager searchManager;
 
 	private static File FAVICON = null;
 
@@ -73,6 +76,8 @@ public class Website {
 		loadProperties();
 		FAVICON = new File("./source/images/favicon.ico");
 		connectionManager = new DBConnectionManager();
+		searchManager = new SearchManager();
+		searchManager.load();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
 		port(80);

@@ -1,1 +1,4 @@
 //AJAX WITH PROMISE GLOBAL FUNCTION + SEND ALERT GLOBAL FUNCTION
+function reloadOverview() {
+  
+}

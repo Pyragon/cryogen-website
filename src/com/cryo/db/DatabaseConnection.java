@@ -104,7 +104,17 @@ public abstract class DatabaseConnection {
 			if (connection.isClosed() || !connection.isValid(5))
 				connect();
 			StringBuilder builder = new StringBuilder();
-			builder.append("SELECT * FROM "+database+" WHERE ");
+			builder.append("SELECT * FROM "+database);
+			if(values.length == 0) {
+				if(condition != null) {
+					builder.append(" WHERE ");
+					builder.append(condition);
+				}
+				PreparedStatement stmt = connection.prepareStatement(builder.toString());
+				System.out.println(stmt);
+				return stmt.executeQuery();
+			}
+			builder.append(" WHERE ");
 			builder.append(condition);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
 			for(int i = 0; i < values.length; i++) {
@@ -119,6 +129,7 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Long)
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
+			//System.out.println(stmt);
 			return stmt.executeQuery();
 		} catch(SQLException e) {
 			e.printStackTrace();

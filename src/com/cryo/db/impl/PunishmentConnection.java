@@ -3,6 +3,8 @@ package com.cryo.db.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
@@ -11,6 +13,7 @@ import com.cryo.modules.account.support.punish.ACommentDAO;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
+import com.cryo.modules.staff.search.Filter;
 import com.google.gson.Gson;
 
 /**
@@ -28,6 +31,7 @@ public class PunishmentConnection extends DatabaseConnection {
 		return (PunishmentConnection) Website.instance().getConnectionManager().getConnection(Connection.PUNISH);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
@@ -37,11 +41,39 @@ public class PunishmentConnection extends DatabaseConnection {
 				execute("INSERT INTO archive SELECT * FROM appeals WHERE id="+id);
 				delete("appeals", "id=?", id);
 				break;
+			case "search-punishments":
+				ArrayList<Filter> filters = (ArrayList<Filter>) data[1];
+				if(filters.size() == 0)
+					return null;
+				List<Filter> applicable = filters.stream().filter(f -> {
+					return f.getFilter() != null;
+				}).collect(Collectors.toList());
+				StringBuilder builder = new StringBuilder();
+				for(int i = 0; i < applicable.size(); i++) {
+					Filter filter = applicable.get(i);
+					builder.append(filter.getFilter());
+					if(i != applicable.size()-1)
+						builder.append(" AND ");
+				}
+				ArrayList<Object> valueList = new ArrayList<>();
+				for(Filter filter : applicable) {
+					if(filter.getFilter() != null && filter.getValue() != null)
+						valueList.add(filter.getValue());
+				}
+				Object[] values = valueList.toArray(new Object[valueList.size()]);
+				ResultSet set = select("punishments", builder.toString(), values);
+				if(wasNull(set))
+					break;
+				List<PunishDAO> punishments = new ArrayList<>();
+				while(next(set)) {
+					PunishDAO punish = loadPunishment(set);
+					punishments.add(punish);
+				}
+				return new Object[] { punishments };
 			case "get-punishments":
 				String username = (String) data[1];
 				boolean archived = (boolean) data[2];
-				ArrayList<PunishDAO> punishments = new ArrayList<>();
-				ResultSet set = null;
+				punishments = new ArrayList<>();
 				if(username != null)
 					set = select("punishments", "username=?", username);
 				else
@@ -49,23 +81,12 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(set == null || wasNull(set))
 					return new Object[] { punishments };
 				while(next(set)) {
-					id = getInt(set, "id");
-					int type = getInt(set, "type");
-					String user = getString(set, "username");
-					Timestamp date = getTimestamp(set, "date");
-					Timestamp expiry = getTimestamp(set, "expiry");
-					String punisher = getString(set, "punisher");
-					String reason = getString(set, "reason");
-					boolean active = getInt(set, "active") == 1;
-					if(expiry != null && expiry.getTime() < System.currentTimeMillis())
+					PunishDAO punish = loadPunishment(set);
+					boolean active = punish.isActive();
+					if(punish.getExpiry() != null && punish.getExpiry().getTime() < System.currentTimeMillis())
 						active = false;
 					if((active && archived) || (!active && !archived))
 						continue;
-					int appealId = getInt(set, "appeal_id");
-					PunishDAO punish = new PunishDAO(id, user, type, date, expiry, punisher, reason, active, appealId);
-					AppealDAO appeal = new PunishUtils().getAppeal(appealId);
-					if(appeal != null)
-						punish.setAppeal(appeal);
 					punishments.add(punish);
 				}
 				return new Object[] { punishments };
@@ -74,18 +95,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				set = select("punishments", "appeal_id=?", appealId);
 				if(empty(set))
 					return null;
-				id = getInt(set, "id");
-				int type = getInt(set, "type");
-				username = getString(set, "username");
-				Timestamp date = getTimestamp(set, "date");
-				Timestamp expiry = getTimestamp(set, "expiry");
-				String punisher = getString(set, "punisher");
-				String reason = getString(set, "reason");
-				boolean active = getInt(set, "active") == 1;
-				PunishDAO punish = new PunishDAO(id, username, type, date, expiry, punisher, reason, active, appealId);
-				AppealDAO appeal = new PunishUtils().getAppeal(appealId);
-				if(appeal != null)
-					punish.setAppeal(appeal);
+				PunishDAO punish = loadPunishment(set);
 				return new Object[] { punish };
 			case "get-punishment":
 				id = (int) data[1];
@@ -94,18 +104,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				set = select("punishments", "id=?", id);
 				if(empty(set))
 					return null;
-				type = getInt(set, "type");
-				username = getString(set, "username");
-				date = getTimestamp(set, "date");
-				expiry = getTimestamp(set, "expiry");
-				punisher = getString(set, "punisher");
-				reason = getString(set, "reason");
-				active = getInt(set, "active") == 1;
-				appealId = getInt(set, "appeal_id");
-				punish = new PunishDAO(id, username, type, date, expiry, punisher, reason, active, appealId);
-				appeal = new PunishUtils().getAppeal(appealId);
-				if(appeal != null)
-					punish.setAppeal(appeal);
+				punish = loadPunishment(set);
 				return new Object[] { punish };
 			case "create-punishment":
 				punish = (PunishDAO) data[1];
@@ -116,7 +115,7 @@ public class PunishmentConnection extends DatabaseConnection {
 					return null;
 				}
 			case "extend-punishment":
-				expiry = (Timestamp) data[1];
+				Timestamp expiry = (Timestamp) data[1];
 				id = (int) data[2];
 				data = new Object[expiry == null ? 1 : 2];
 				data[0] = expiry == null ? id : expiry;
@@ -125,7 +124,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				set("punishments", "expiry="+(expiry == null ? "NULL" : "?"), "id=?", data);
 				break;
 			case "create-appeal":
-				appeal = (AppealDAO) data[1];
+				AppealDAO appeal = (AppealDAO) data[1];
 				int appeal_id = insert("appeals", appeal.data());
 				set("punishments", "appeal_id="+appeal_id, "id="+appeal.getPunishId());
 				break;
@@ -136,24 +135,8 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(wasNull(set))
 					return null;
 				while(next(set)) {
-					id = getInt(set, "id");
-					int punishId = getInt(set, "punish_id");
-					username = getString(set, "username");
-					String title = getString(set, "title");
-					String message = getString(set, "message");
-					reason = getString(set, "reason");
-					String lastAction = getString(set, "action");
-					int activei = getInt(set, "active");
-					Timestamp time = getTimestamp(set, "time");
-					String read = getString(set, "read");
-					ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
-					appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
-					if(!reason.equals(""))
-						appeal.setReason(reason);
-					if(!lastAction.equals(""))
-						appeal.setLastAction(lastAction);
-					appeal.setUsersRead(list);
-					if((!archived && activei != 0) || (archived && activei == 0))
+					appeal = loadAppeal(set);
+					if((!archived && appeal.getActive() != 0) || (archived && appeal.getActive() == 0))
 						continue;
 					appeals.add(appeal);
 				}
@@ -165,29 +148,13 @@ public class PunishmentConnection extends DatabaseConnection {
 				set = select("appeals", "id=?", id);
 				if(empty(set))
 					return null;
-				id = getInt(set, "id");
-				int punishId = getInt(set, "punish_id");
-				username = getString(set, "username");
-				String title = getString(set, "title");
-				String message = getString(set, "message");
-				reason = getString(set, "reason");
-				String lastAction = getString(set, "action");
-				int activei = getInt(set, "active");
-				Timestamp time = getTimestamp(set, "time");
-				appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
-				String read = getString(set, "read");
-				ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
-				if(!reason.equals(""))
-					appeal.setReason(reason);
-				if(!lastAction.equals(""))
-					appeal.setLastAction(lastAction);
-				appeal.setUsersRead(list);
+				appeal = loadAppeal(set);
 				return new Object[] { appeal };
 			case "close-appeal":
 				id = (int) data[1];
 				int status = (int) data[2];
 				username = (String) data[3];
-				reason = data.length == 5 ? (String) data[4] : "";
+				String reason = data.length == 5 ? (String) data[4] : "";
 				if(status == 2 && reason.equals(""))
 					return null;
 				String action = "Appeal "+(status == 1 ? "accepted" : "declined")+" by $for-name="+username+"$end";
@@ -198,7 +165,7 @@ public class PunishmentConnection extends DatabaseConnection {
 			case "add-comment":
 				username = (String) data[1];
 				appealId = (int) data[2];
-				type = (int) data[3];
+				int type = (int) data[3];
 				String comment = (String) data[4];
 				insert("comments", "DEFAULT", appealId, type, username, comment, "DEFAULT");
 				if(type == 0)
@@ -217,12 +184,50 @@ public class PunishmentConnection extends DatabaseConnection {
 					id = getInt(set, "id");
 					username = getString(set, "username");
 					comment = getString(set, "comment");
-					time = getTimestamp(set, "time");
+					Timestamp time = getTimestamp(set, "time");
 					cList.add(new ACommentDAO(id, appeal_id, username, comment, time));
 				}
 				return new Object[] { cList };
 		}
 		return null;
+	}
+	
+	public PunishDAO loadPunishment(ResultSet set) {
+		int id = getInt(set, "id");
+		int type = getInt(set, "type");
+		String username = getString(set, "username");
+		Timestamp date = getTimestamp(set, "date");
+		Timestamp expiry = getTimestamp(set, "expiry");
+		String punisher = getString(set, "punisher");
+		String reason = getString(set, "reason");
+		boolean active = getInt(set, "active") == 1;
+		int appealId = getInt(set, "appeal_id");
+		PunishDAO punish = new PunishDAO(id, username, type, date, expiry, punisher, reason, active, appealId);
+		AppealDAO appeal = new PunishUtils().getAppeal(appealId);
+		if(appeal != null)
+			punish.setAppeal(appeal);
+		return punish;
+	}
+	
+	public AppealDAO loadAppeal(ResultSet set) {
+		int id = getInt(set, "id");
+		int punishId = getInt(set, "punish_id");
+		String username = getString(set, "username");
+		String title = getString(set, "title");
+		String message = getString(set, "message");
+		String reason = getString(set, "reason");
+		String lastAction = getString(set, "action");
+		int activei = getInt(set, "active");
+		Timestamp time = getTimestamp(set, "time");
+		AppealDAO appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
+		String read = getString(set, "read");
+		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
+		if(!reason.equals(""))
+			appeal.setReason(reason);
+		if(!lastAction.equals(""))
+			appeal.setLastAction(lastAction);
+		appeal.setUsersRead(list);
+		return appeal;
 	}
 	
 }

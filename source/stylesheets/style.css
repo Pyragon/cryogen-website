@@ -26,6 +26,14 @@ html, body {
   margin: 10px auto 0 auto !important;
 }
 
+.search-info {
+  font-size: 11px;
+  margin-right: 10px;
+  max-width: 200px;
+  min-height: 60px;
+  display: inline-block;
+}
+
 .vis-link {
   cursor: pointer !important;
   text-decoration: underline !important;
