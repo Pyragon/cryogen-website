@@ -1,15 +1,15 @@
 div.noty_message
-  span.noty_text
-  p.small If you wish to fully remove an item, you will need to cancel this dialog.
-  div.cart-review
-    ul
-      -for id in cart.keySet()
-        -var amount = cart.get(id);
-        -var item = shopManager.getShopItem(id);
-        li#cart-item(data-id=id)
-          span#item-info= amount+' x '+item.getName()+' '
-          span.glyphicon.glyphicon-minus#review-minus
-          span  
-          span.glyphicon.glyphicon-plus#review-plus
-  p.small If you click confirm, you will be redirected to the paypal payment page.
-  div.noty_close
+	span.noty_text
+	p.small If you wish to fully remove an item, you will need to cancel this dialog.
+	div.cart-review
+		ul
+			for id in cart.keySet()
+				-var amount = cart.get(id);
+				-var item = shopManager.getShopItem(id);
+				li#cart-item(data-id=id)
+					span#item-info= amount+' x '+item.getName()+' '
+					span.glyphicon.glyphicon-minus#review-minus
+					span  
+					span.glyphicon.glyphicon-plus#review-plus
+	p.small If you click confirm, you will be redirected to the paypal payment page.
+	div.noty_close

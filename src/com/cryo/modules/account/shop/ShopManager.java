@@ -10,7 +10,9 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ShopConnection;
+import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
+import com.cryo.paypal.PaypalTransaction;
 import com.google.gson.Gson;
 
 import de.neuland.jade4j.Jade4J;
@@ -41,7 +43,7 @@ public class ShopManager {
 	public ShopManager() {
 	}
 	
-	public ShopItem getShopItem(int id) {
+	public static ShopItem getShopItem(int id) {
 		return cached.get(id);
 	}
 	
@@ -68,7 +70,7 @@ public class ShopManager {
 		return cart;
 	}
 	
-	public static String processRequest(String action, Request request, Response response, RequestType type) {
+	public static String processRequest(String action, Request request, Response response, RequestType type, WebModule module) {
 		Properties prop = new Properties();
 		Account account = CookieManager.getAccount(request);
 		String username = account.getUsername();
@@ -86,6 +88,12 @@ public class ShopManager {
 			case "get-cart":
 				String ret = ShopUtils.toString(ShopUtils.getCart(username));
 				return ret;
+			case "confirm":
+				System.out.println("wha");
+				PaypalTransaction transaction = new PaypalTransaction(ShopUtils.getCart(username));
+				prop.put("link", transaction.getLink());
+				System.out.println("wh2a");
+				break;
 			case "get-checkout-conf":
 				String html = "";
 				try {

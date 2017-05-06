@@ -127,7 +127,8 @@ public class AccountOverviewModule extends WebModule {
 				case "get-checkout-conf":
 				case "chg-quant":
 				case "get-cart":
-					return ShopManager.processRequest(action, request, response, type);
+				case "confirm":
+					return ShopManager.processRequest(action, request, response, type, this);
 				case "check-display":
 					String name = request.queryParams("name");
 					if(name == null || name == "")

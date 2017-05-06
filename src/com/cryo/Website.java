@@ -34,6 +34,7 @@ import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.search.SearchManager;
+import com.cryo.paypal.PaypalManager;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.Utilities;
@@ -41,6 +42,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
+import com.paypal.api.payments.Payment;
 
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
@@ -65,6 +67,8 @@ public class Website {
 	private static @Getter Properties properties;
 
 	private @Getter DBConnectionManager connectionManager;
+	
+	private @Getter PaypalManager paypalManager;
 
 	private Timer fastExecutor;
 	
@@ -124,6 +128,12 @@ public class Website {
 		});
 		get(StaffModule.PATH, (req, res) -> {
 			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get("/paypal_error", (req, res) -> {
+			return error("Error getting payment URL");
+		});
+		get("/process_payment", (req, res) -> {
+			return new PaypalManager(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/test", (req, res) -> {
 			return new TestModule(this).decodeRequest(req, res, RequestType.GET);

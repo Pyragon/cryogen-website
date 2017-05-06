@@ -15,10 +15,13 @@ public class ShopUtils {
 	public static HashMap<Integer, Integer> getCart(String username) {
 		HashMap<Integer, Integer> cart = new HashMap<>();
 		Object[] data = ShopConnection.connection().handleRequest("get-cart", username);
-		System.out.println("rea");
 		if(data != null)
 			cart = (HashMap<Integer, Integer>) data[0];
 		return cart;
+	}
+	
+	public static HashMap<Integer, Integer> getItems(String username) {
+		return null;
 	}
 	
 	public static String toString(HashMap<Integer, Integer> cart) {
