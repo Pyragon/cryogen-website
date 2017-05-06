@@ -212,7 +212,7 @@ public class Website {
 	}
 
 	public static void loadProperties() {
-		File file = new File("props.conf");
+		File file = new File("props.json");
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String json = reader.readLine();
