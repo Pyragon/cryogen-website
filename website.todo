@@ -1,0 +1,15 @@
+Staff Page:
+  ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
+  ☐ Page for admins to to create announcements for the overview page
+  ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
+  ☐ Add page support to all tabs
+  ☐ Archiving report should edit 'last action', as well as add a comment, same for appeals
+  ☐ Log all events
+  ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
+  ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
+Other:
+  ☐ Page for players to view their own player/bug reports
+  ☐ Proper download page
+  ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
+Securiy:
+  ☐ Secure all requests to server

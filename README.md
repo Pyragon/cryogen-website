@@ -15,28 +15,6 @@ An empty SQL export has also been included (database_skeletons.sql), you should 
 
 ### TODO ###
 
-*   Staff section can be rewritten down to like 4-5 files.
-*   Finish Paypal transaction management
+A link to the TODO file can be found [here](website.todo).
 
-*   Forums
-
-*   Staff page
-
-    -   ~~Click 'view' on overview items needs to be done~~
-    -   Way for admins to make announcements for 'overview' page
-    -   Possibly limit searching to archived/active (atm searches through all)
-    -   Add page support to all tabs
-    -   Archiving report should edit 'last action', as well as add a comment, same for appeals
-    -   Have log for all
-    -   Refresh all pages when a punishment/appeal is accepted. Only refreshes appeal page atm
-        -   Add methods into global js file   
-
-
-*   Other
-    -   Way for players to view their own active reports
-    -   Proper download page needed
-    -   Organize pages more
-    -   'hover' to show popup for reason in punishments/appeal offence (reasons could be too long for table)
-
-*   Security
-    -   Secure and requests to website with 'secret' from properties file
+[atom-tasks](https://github.com/irrationalistic/atom-tasks) is a good package to use for viewing TODO files.
