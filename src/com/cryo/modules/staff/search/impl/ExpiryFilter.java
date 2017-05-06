@@ -37,16 +37,19 @@ public class ExpiryFilter extends Filter {
 			return true;
 		}
 		String[] values = value.split("-");
-		if(values.length != 2)
+		if(values.length != 2) {
+			System.out.println(values.length+" "+value);
 			return false;
+		}
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			from = new Timestamp(format.parse(values[0]).getTime());
 			to = new Timestamp(format.parse(values[1]).getTime());
-			if(from.getTime() > to.getTime()) 
+			if(from.getTime() > to.getTime())
 				return false;
 			this.value = null;
 		} catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;

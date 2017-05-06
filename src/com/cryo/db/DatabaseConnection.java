@@ -106,7 +106,7 @@ public abstract class DatabaseConnection {
 			StringBuilder builder = new StringBuilder();
 			builder.append("SELECT * FROM "+database);
 			if(values.length == 0) {
-				if(condition != null) {
+				if(condition != null && !condition.equals("")) {
 					builder.append(" WHERE ");
 					builder.append(condition);
 				}

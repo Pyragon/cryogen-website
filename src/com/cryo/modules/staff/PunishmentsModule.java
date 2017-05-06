@@ -99,11 +99,9 @@ public class PunishmentsModule {
 					prop.put("error", "No search results found.");
 					break;
 				}
-				System.out.println("hi");
 				for(Filter filter : filterA) {
 					punishments = filter.filterList(punishments);
 				}
-				System.out.println("hi2");
 				model.put("punishments", punishments);
 				String html = module.render("./source/modules/staff/punishments/punish_list.jade", model, request, response);
 				prop.put("success", true);
