@@ -5,12 +5,12 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.cookies.CookieManager;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateFormatter;
 import com.cryo.utils.JadeIterator;
 import com.cryo.utils.Utilities;

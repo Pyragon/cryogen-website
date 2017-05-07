@@ -5,11 +5,11 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 

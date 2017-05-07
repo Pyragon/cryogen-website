@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
 
 import spark.Request;

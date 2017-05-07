@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
@@ -14,6 +13,7 @@ import com.cryo.modules.account.support.PlayerReportDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.utils.CommentDAO;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateFormatter;
 import com.cryo.utils.Utilities;
 

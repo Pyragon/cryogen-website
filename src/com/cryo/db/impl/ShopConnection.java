@@ -38,7 +38,6 @@ public class ShopConnection extends DatabaseConnection {
 				HashMap<Integer, Integer> cart = new HashMap<>();
 				ResultSet set = select("cart_data", "username=?", username);
 				if(set == null) {
-					System.out.println("yo");
 					return null;
 				}
 				if(empty(set))

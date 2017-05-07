@@ -10,7 +10,6 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import com.cryo.Website;
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.modules.WebModule;
@@ -20,6 +19,7 @@ import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.staff.search.Filter;
 import com.cryo.utils.CommentDAO;
+import com.cryo.utils.CookieManager;
 
 import lombok.*;
 import spark.Request;

@@ -5,10 +5,10 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.cookies.CookieManager;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.support.punish.AppealModule;
 import com.cryo.modules.account.support.punish.PunishUtils;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateFormatter;
 
 import spark.Request;

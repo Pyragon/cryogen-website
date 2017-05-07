@@ -8,11 +8,11 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
 import com.cryo.paypal.PaypalTransaction;
+import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
 
 import de.neuland.jade4j.Jade4J;

@@ -156,7 +156,7 @@ public class Website {
 			return new RegisterModule(this).decodeRequest(req, res, RequestType.POST);
 		});
 		get("/players", (req, res) -> {
-			return "0";
+			return Integer.toString(Utilities.getOnlinePlayers());
 		});
 		get("/online", (req, res) -> {
 			SocketAddress addr = new InetSocketAddress("localhost", 43594);

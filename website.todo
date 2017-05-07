@@ -1,3 +1,7 @@
+It is recommended that you use atom-tasks to view TODO files.
+Shop:
+  ☐ Save cart in database as HashMap->JSON and load as such
+  ☐ Style + and - buttons to match overall site style
 Staff Page:
   ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
   ☐ Page for admins to to create announcements for the overview page
@@ -7,6 +11,8 @@ Staff Page:
   ☐ Log all events
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
+Account:
+  ☐ Changing email is not refreshing acount overview
 Other:
   ☐ Page for players to view their own player/bug reports
   ☐ Proper download page

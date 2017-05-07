@@ -4,11 +4,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import com.cryo.Website;
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.Account;
 import com.cryo.utils.BCrypt;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 
 /**

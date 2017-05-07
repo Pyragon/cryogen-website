@@ -2,9 +2,9 @@ package com.cryo.modules.account.support;
 
 import java.util.Properties;
 
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
 
 import spark.Request;

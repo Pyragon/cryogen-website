@@ -7,7 +7,6 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.cookies.CookieManager;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
@@ -16,6 +15,7 @@ import com.cryo.modules.WebModule;
 import com.cryo.modules.account.shop.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.vote.VotingManager;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.EmailUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;

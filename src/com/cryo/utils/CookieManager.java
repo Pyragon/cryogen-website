@@ -1,4 +1,4 @@
-package com.cryo.cookies;
+package com.cryo.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

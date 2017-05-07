@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.cookies.CookieManager;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
@@ -18,6 +17,7 @@ import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.modules.staff.appeals.StaffAppealModule;
 import com.cryo.modules.staff.bugreports.BugReportsModule;
 import com.cryo.modules.staff.playerreports.PlayerReportsModule;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateFormatter;
 import com.google.gson.Gson;
 
