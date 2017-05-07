@@ -39,7 +39,7 @@ public class Utilities {
 	public static int getOnlinePlayers() {
 		Object[] data = GlobalConnection.connection().handleRequest("get-misc-data", "players_logged");
 		if(data == null)
-			return 0;
+			return -1;
 		return Integer.parseInt((String) data[0]);
 	}
 	
