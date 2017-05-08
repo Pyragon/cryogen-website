@@ -383,6 +383,30 @@ h4.title {
   float: none;
 }
 
+.navbar-collapse {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.dropdown-menu {
+  background-color: #111 !important;
+}
+
+.small-bar {
+  border: 1px solid !important;
+  border-color: #000 !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  margin: auto !important;
+  max-width: 250px !important;
+  border-radius: 5px !important;
+  background-color: #181818 !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
 .navbar .navbar-collapse {
   text-align: center;
 }
@@ -496,39 +520,40 @@ h4.title {
 
 .auth-refresh-spin {}
 
-.auths, .cart, .items {
+.auths, .cart, .items, .packages {
   padding: 10px;
   background: #111;
   border: 1px solid #333;
   color: #666;
 }
 
-.auths p, .cart p, .items p {
-  margin: 5px 0;
+.auths p, .cart p, .items p, .packages p {
+  margin: 5px 5px;
 }
 
-.auth {
+.auth, .package {
   transition: color .4s;
 }
 
-.auth:hover {
+.auth:hover, .package:hover {
   cursor: pointer;
   color: #CCC;
 }
 
-.auth-options {
+.auth-options, .package-options {
   background: #0a0a0a;
+  margin: 0 1px;
   border: 1px solid #222;
   display: none;
   border-radius: 3px;
   font-size: 11px !important;
 }
 
-.auth-options .row {
+.auth-options .row, .package-options .row {
   margin: 0;
 }
 
-.auths .active {
+.auths .active, .packages .active {
   color: #CCC;
 }
 
@@ -537,14 +562,14 @@ p.small {
   padding: 5px 20px;
 }
 
-.auth-options a {
+.auth-options a, .package-options a {
   padding: 0px 10px;
   text-align: center;
   width: 100%;
   display: block;
 }
 
-.auth-options a .glyphicon {
+.auth-options a .glyphicon, .package-options a .glyphicon {
   font-size: 12px;
   color: #FFF;
 }
