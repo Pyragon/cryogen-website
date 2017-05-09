@@ -31,7 +31,7 @@ public abstract class DatabaseConnection {
 			Properties prop = Website.getProperties();
 			String user = prop.getProperty("db-user");
 			String pass = prop.getProperty("db-pass");
-			String ip = "localhost";
+			String ip = prop.getProperty("db-host");
 			connection = DriverManager.getConnection("jdbc:mysql://" + ip + "/" + database,
 					user, pass);
 		} catch (SQLException e) {

@@ -19,6 +19,7 @@ Other:
   ☐ Proper download page
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
   ☐ Fix possible memory leak
+  ☐ Make better discord avatar that matches background so it looks transparent
 Securiy:
   ☐ Secure all requests to server
   ☐ Escape everything to prevent cross-site scripting
