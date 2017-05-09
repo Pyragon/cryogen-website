@@ -9,11 +9,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
@@ -22,6 +21,7 @@ import java.util.Timer;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.io.OutputStream;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.register.RegisterModule;
@@ -81,10 +81,12 @@ public class Website {
 		FAVICON = new File("./source/images/favicon.ico");
 		connectionManager = new DBConnectionManager();
 		searchManager = new SearchManager();
+		paypalManager = new PaypalManager(this);
 		searchManager.load();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
 		port(80);
+		PaypalManager.createAPIContext();
 		staticFiles.externalLocation("source/");
 		//staticFiles.expireTime(600); // ten minutes
 		get(IndexModule.PATH, (req, res) -> {
@@ -173,8 +175,8 @@ public class Website {
 		});
 		get("/favicon.ico", (req, res) -> {
 			try {
-				InputStream in = null;
-				OutputStream out = null;
+				java.io.InputStream in = null;
+				java.io.OutputStream out = null;
 				try {
 					in = new BufferedInputStream(new FileInputStream(FAVICON));
 					out = new BufferedOutputStream(res.raw().getOutputStream());
@@ -194,6 +196,16 @@ public class Website {
 		get("*", Website::render404);
 		LOADED = true;
 		fastExecutor.schedule(new TaskManager(), 0, 1000);
+	}
+	
+	public static void sendToServer(OutputStream stream) throws IOException {
+		InetSocketAddress address = new InetSocketAddress("localhost", 5555);
+		@Cleanup Socket socket = new Socket();
+		socket.connect(address, 1500);
+		byte[] bytes = new byte[stream.offset()];
+		stream.setOffset(0);
+		stream.getBytes(bytes, 0, bytes.length);
+		socket.getOutputStream().write(bytes);
 	}
 
 	public static String render404(Request request, Response response) {

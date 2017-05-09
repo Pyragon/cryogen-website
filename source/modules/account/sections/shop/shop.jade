@@ -104,7 +104,7 @@ script.
 			}
 			$.post('/account', { action:'get-checkout-conf' }, function(ret) {
 				var data = JSON.parse(ret);
-				if(data.html.includes('Login')) {
+				if(data.success == null) {
 					sendAlert('Login session expired! Please reload the page.');
 					return;
 				}

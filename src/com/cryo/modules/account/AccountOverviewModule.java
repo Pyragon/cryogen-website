@@ -14,6 +14,7 @@ import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.shop.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
+import com.cryo.modules.account.shop.ShopUtils;
 import com.cryo.modules.account.vote.VotingManager;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.EmailUtils;
@@ -101,6 +102,7 @@ public class AccountOverviewModule extends WebModule {
 				model.put("section", request.queryParams("section"));
 			model.put("shopItems", ShopManager.cached);
 			model.put("shopManager", new ShopManager());
+			model.put("packages", ShopUtils.getItems(username));
 			if(request.queryParams().contains("action")) {
 				String action = request.queryParams("action");
 				switch(action) {
@@ -128,6 +130,9 @@ public class AccountOverviewModule extends WebModule {
 				case "chg-quant":
 				case "get-cart":
 				case "confirm":
+				case "redeem-noty":
+				case "redeem":
+				case "view-packages":
 					return ShopManager.processRequest(action, request, response, type, this);
 				case "check-display":
 					String name = request.queryParams("name");

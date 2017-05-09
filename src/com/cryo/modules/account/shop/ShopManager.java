@@ -88,24 +88,45 @@ public class ShopManager {
 			case "get-cart":
 				String ret = ShopUtils.toString(ShopUtils.getCart(username));
 				return ret;
+			case "view-packages":
+				HashMap<String, Object> model = new HashMap<>();
+				model.put("packages", ShopUtils.getItems(username));
+				String html = module.render("./source/modules/account/sections/redeem/packages.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				break;
+			case "redeem-noty":
+				html = module.render("./source/modules/account/sections/redeem/redeem_noty.jade", new HashMap<>(), request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				break;
+			case "redeem":
+				id = Integer.parseInt(request.queryParams("id"));
+				try {
+					Website.instance().getPaypalManager().sendRedeem(username, id);
+				} catch(Exception e) {
+					e.printStackTrace();
+					prop.put("success", false);
+					prop.put("error", e.getMessage());
+					break;
+				}
+				model = new HashMap<>();
+				model.put("packages", ShopUtils.getItems(username));
+				html = module.render("./source/modules/account/sections/redeem/packages.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				break;
 			case "confirm":
-				System.out.println("wha");
-				PaypalTransaction transaction = new PaypalTransaction(ShopUtils.getCart(username));
+				PaypalTransaction transaction = new PaypalTransaction(username, ShopUtils.getCart(username));
 				prop.put("link", transaction.getLink());
-				System.out.println("wh2a");
 				break;
 			case "get-checkout-conf":
-				String html = "";
-				try {
-					HashMap<String, Object> notyM = new HashMap<>();
-					HashMap<Integer, Integer> cart = ShopUtils.getCart(username);
-					notyM.put("shopManager", new ShopManager());
-					notyM.put("cart", cart);
-					html = Jade4J.render("./source/modules/account/sections/shop/shop_noty.jade", notyM);
-					prop.put("html", html);
-				} catch (JadeCompilerException | IOException e) {
-					e.printStackTrace();
-				}
+				HashMap<String, Object> notyM = new HashMap<>();
+				HashMap<Integer, Integer> cart = ShopUtils.getCart(username);
+				notyM.put("shopManager", new ShopManager());
+				notyM.put("cart", cart);
+				html = module.render("./source/modules/account/sections/shop/shop_noty.jade", notyM, request, response);
+				prop.put("html", html);
 				break;
 		}
 		return new Gson().toJson(prop);

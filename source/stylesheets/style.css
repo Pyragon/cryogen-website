@@ -1,5 +1,6 @@
 html, body {
   height: 100%;
+  width: 100%;
   background: url('../images/bg-lighting.png') no-repeat scroll center -463px #18597f;
   padding: 0;
   margin: 0;
@@ -12,6 +13,22 @@ html, body {
   z-index: 10;
   right: 10px;
   top: 10px;
+}
+
+#redeem-quant {
+  height: 23px;
+  width: 10px;
+  margin: 0 auto 5px auto;
+  border: 1px solid #000;
+  background-color: #111;
+  border-radius: 5px;
+  padding: 6px 12px;
+}
+
+.package-spinner {
+  margin: 20px auto;
+  width: 16px;
+  height: 16px;
 }
 
 .extend-radio {

@@ -8,6 +8,8 @@ import java.util.Properties;
 import java.util.Random;
 
 import com.cryo.Website;
+import com.cryo.db.impl.ShopConnection;
+import com.cryo.modules.account.shop.InvoiceDAO;
 import com.cryo.modules.account.shop.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.paypal.api.payments.Amount;
@@ -15,6 +17,7 @@ import com.paypal.api.payments.Details;
 import com.paypal.api.payments.Item;
 import com.paypal.api.payments.ItemList;
 import com.paypal.api.payments.Links;
+import com.paypal.api.payments.NameValuePair;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.RedirectUrls;
@@ -35,6 +38,10 @@ public class PaypalTransaction {
 
 	private String link;
 	
+	private String username;
+	
+	private String invoice_id;
+	
 	private ItemList list;
 	private Details details;
 	private Amount amount;
@@ -43,12 +50,14 @@ public class PaypalTransaction {
 	private Payer payer;
 	private Payment payment;
 	
-	public PaypalTransaction(HashMap<Integer, Integer> items) {
+	public PaypalTransaction(String username, HashMap<Integer, Integer> items) {
 		this.items = new HashMap<ShopItem, Integer>();
 		for(int id : items.keySet()) {
 			ShopItem item = ShopManager.getShopItem(id);
 			this.items.put(item, items.get(id));
 		}
+		this.username = username;
+		this.invoice_id = createRandomInvoice();
 		createPayer();
 		createItemList();
 		createDetails();
@@ -56,8 +65,9 @@ public class PaypalTransaction {
 		createRedirectURLs();
 		createTransaction();
 		createPayment();
+		createInvoice();
 		try {
-			APIContext context = Website.instance().getPaypalManager().getAPIContext();
+			APIContext context = PaypalManager.getAPIContext();
 			Payment created = payment.create(context);
 			for(Iterator<Links> iterator = created.getLinks().iterator(); iterator.hasNext();) {
 				Links link = iterator.next();
@@ -71,6 +81,11 @@ public class PaypalTransaction {
 			e.printStackTrace();
 			this.link = ERROR_LINK;
 		}
+	}
+	
+	public void createInvoice() {
+		InvoiceDAO invoice = new InvoiceDAO(invoice_id, username, items, true);
+		ShopConnection.connection().handleRequest("set-invoice", invoice);
 	}
 	
 	public void createPayment() {
@@ -90,10 +105,10 @@ public class PaypalTransaction {
 		transaction.setAmount(amount);
 		transaction.setItemList(list);
 		transaction.setDescription("Purchasing items from the Cryogen shop");
-		transaction.setInvoiceNumber(getRandomInvoice());
+		transaction.setInvoiceNumber(invoice_id);
 	}
 	
-	public String getRandomInvoice() {
+	public String createRandomInvoice() {
 		String invoice = "";
 		for(int i = 0; i < 15; i++) {
 			invoice += Integer.toString(new Random().nextInt(10));
@@ -116,14 +131,12 @@ public class PaypalTransaction {
 		List<Item> items = new ArrayList<Item>();
 		for(ShopItem shop_item : this.items.keySet()) {
 			Integer quantity = this.items.get(shop_item);
-			
 			Item item = new Item();
 			item.setName(shop_item.getName());
 			item.setDescription(shop_item.getDescription());
 			item.setCurrency("USD");
 			item.setQuantity(quantity.toString());
 			item.setPrice(Integer.toString(shop_item.getPrice()));
-			
 			items.add(item);
 		}
 		this.list = new ItemList();

@@ -7,7 +7,11 @@ import java.util.HashMap;
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.modules.account.shop.InvoiceDAO;
 import com.cryo.modules.account.shop.ShopItem;
+import com.cryo.modules.account.shop.ShopUtils;
+import com.google.gson.Gson;
+import com.paypal.api.payments.Invoice;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -54,6 +58,46 @@ public class ShopConnection extends DatabaseConnection {
 					cart.put(id, amount);
 				}
 				return new Object[] { cart };
+			case "set-invoice":
+				InvoiceDAO invoice = (InvoiceDAO) data[1];;
+				String packages_string = ShopUtils.toJSON(invoice.getItems());
+				insert("invoices", invoice.getInvoiceId(), invoice.getUsername(), packages_string, 1);
+				break;
+			case "get-invoice":
+				String invoice_id = (String) data[1];
+				boolean inactive = (Boolean) data[2];
+				set = select("invoices", "id=?", invoice_id);
+				if(empty(set))
+					return null;
+				username = getString(set, "username");
+				if(inactive) {
+					//We are claiming the invoice (finished paying)
+					set("invoices", "active=0", "id=?", invoice_id);
+					handleRequest("set-cart", username, new HashMap<Integer, Integer>());
+				}
+				HashMap<ShopItem, Integer> packages = ShopUtils.fromString(getString(set, "items"));
+				int active = getInt(set, "active");
+				invoice = new InvoiceDAO(invoice_id, username, packages, active == 1);
+				return new Object[] { invoice };
+			case "get-player-items":
+				username = (String) data[1];
+				set = select("items", "username=?", username);
+				packages = new HashMap<>();
+				if(empty(set))
+					return null;
+				packages_string = getString(set, "items");
+				packages = ShopUtils.fromString(packages_string);
+				return new Object[] { packages };
+			case "set-player-items":
+				username = (String) data[1];
+				packages = (HashMap<ShopItem, Integer>) data[2];
+				packages_string = ShopUtils.toJSON(packages);
+				data = handleRequest("get-player-items", username);
+				if(data != null)
+					set("items", "items=?", "username=?", packages_string, username);
+				else
+					insert("items", username, packages_string);
+				break;
 			case "set-cart":
 				username = (String) data[1];
 				cart = (HashMap<Integer, Integer>) data[2];

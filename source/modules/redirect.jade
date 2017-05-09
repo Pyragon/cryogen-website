@@ -1,13 +1,13 @@
 extend default
 
 block head
-  meta(http-equiv='refresh', content=time+'; url='+redirect)
+	meta(http-equiv='refresh', content=time+'; url='+redirect)
 
 block content
-  div.container
-    div.row
-      div.col-md-6.col-md-offset-3
-        div.widget.redirect
-          div.header
-            h4.color-white Redirecting
-            h5.color-grey You are currently being redirected. Click #[a(href=redirect) here] if you do not wish to wait.
+	div.container
+		div.row
+			div.col-md-6.col-md-offset-3
+				div.widget.redirect
+					div.header(style='border-bottom: none;')
+						h4.color-white Redirecting
+						h5.color-grey You are currently being redirected. Click #[a(href=redirect) here] if you do not wish to wait.

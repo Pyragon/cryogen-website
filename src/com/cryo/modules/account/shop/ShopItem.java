@@ -23,4 +23,12 @@ public class ShopItem {
 		return "/images/shop/"+imageName;
 	}
 	
+	@Override
+	public boolean equals(Object object) {
+		if(!(object instanceof ShopItem))
+			return false;
+		ShopItem item = (ShopItem) object;
+		return id == item.id;
+	}
+	
 }

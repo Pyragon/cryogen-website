@@ -2,6 +2,7 @@ It is recommended that you use atom-tasks to view TODO files.
 Shop:
   ☐ Save cart in database as HashMap->JSON and load as such
   ☐ Style + and - buttons to match overall site style
+  ✔ Empty cart when items get purchased @done(2017-05-07 10:39) @project(Shop)
 Staff Page:
   ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
   ☐ Page for admins to to create announcements for the overview page
@@ -17,5 +18,7 @@ Other:
   ☐ Page for players to view their own player/bug reports
   ☐ Proper download page
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
+  ☐ Fix possible memory leak
 Securiy:
   ☐ Secure all requests to server
+  ☐ Escape everything to prevent cross-site scripting
