@@ -1,32 +1,34 @@
 script.
-  $(document).ready(function() {
-    
-    $('.mini-search').click(function() {
-      $('.mini-sh').slideToggle(500);
-    });
-    
-    $('.search-username').keypress(function(e) {
-      if(e.which == 13)
-        showPersonalHS();
-    });
-    
-    function showPersonalHS() {
-      var name = $('.search-username').val();
-      $.post('/highscores', { display:name }, function(data) {
-        $('.mini-hs').html(data);
-      });
-    }
-  });
+	$(document).ready(function() {
+
+		$('.mini-search').click(function() {
+			$('.mini-sh').slideToggle(500);
+			return false;
+		});
+
+		$('.search-username').keypress(function(e) {
+			if(e.which == 13)
+				showPersonalHS();
+				return false;
+		});
+
+		function showPersonalHS() {
+			var name = $('.search-username').val();
+			$.post('/highscores', { display:name }, function(data) {
+				$('.mini-hs').html(data);
+			});
+		}
+	});
 div.mini-sh
-  div.content
-    div.input-group.input-group-sm
-      input.form-control.search-username(type='text', placeholder='Player Username', style='background: #111; border: 1px solid #000; font-size: 11px;')
-      span.input-group-btn
-        button.btn.btn-default.minihs-search(type='button', style='background: #111; border-color: #000;')
-          span.glyphicon.glyphicon-search
-  span.chevron.glyphicon.glyphicon-chevron-down
+	div.content
+		div.input-group.input-group-sm
+			input.form-control.search-username(type='text', placeholder='Player Username', style='background: #111; border: 1px solid #000; font-size: 11px;')
+			span.input-group-btn
+				button.btn.btn-default.minihs-search(type='button', style='background: #111; border-color: #000;')
+					span.glyphicon.glyphicon-search
+	span.chevron.glyphicon.glyphicon-chevron-down
 div.widget.mini-hs
-  if hsname != null
-    include personal-mini
-  else
-    include global-mini
+	if hsname != null
+		include personal-mini
+	else
+		include global-mini

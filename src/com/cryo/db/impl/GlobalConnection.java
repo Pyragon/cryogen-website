@@ -98,7 +98,8 @@ public class GlobalConnection extends DatabaseConnection {
 					return null;
 				hash = getString(set, "password");
 				salt = getString(set, "salt");
-				sess_id = CookieManager.hashSessId(account.getUsername()+""+hash+""+salt);
+				String toHash = String.format("%s%s%s", account.getUsername(), hash, salt);
+				sess_id = CookieManager.hashSessId(toHash);
 				return new Object[] { sess_id };
 			case "get-account":
 				username = (String) data[1];

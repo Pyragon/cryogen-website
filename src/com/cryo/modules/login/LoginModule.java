@@ -38,7 +38,7 @@ public class LoginModule extends WebModule {
 				model.put("redirect", request.queryParams("redirect"));
 			return render("./source/modules/account/login.jade", model, request, response);
 		} else if(type == RequestType.POST) {
-			String username = request.queryParams("username");
+			String username = request.queryParams("username").toLowerCase();
 			String password = request.queryParams("password");
 			boolean isMini = request.queryParams("mini-login") != null && request.queryParams("mini-login").equals("true");
 			GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);

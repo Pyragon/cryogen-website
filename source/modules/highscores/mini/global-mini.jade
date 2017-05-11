@@ -19,7 +19,7 @@ div.content
         th Total Level
         th Total XP
     tbody
-      -for hsuser in hsusers.getList()
+      for hsuser in hsusers.getList()
         -var rank = hsuser.getOverallRank()
         -var name = hsuser.getName()
         -var total_level = hsuser.getTotalLevel()

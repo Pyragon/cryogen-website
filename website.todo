@@ -2,6 +2,7 @@ It is recommended that you use atom-tasks to view TODO files.
 Shop:
   ☐ Save cart in database as HashMap->JSON and load as such
   ☐ Style + and - buttons to match overall site style
+  ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
   ✔ Empty cart when items get purchased @done(2017-05-07 10:39) @project(Shop)
 Staff Page:
   ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
@@ -20,6 +21,8 @@ Other:
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
   ☐ Fix possible memory leak
   ☐ Make better discord avatar that matches background so it looks transparent
+  ☐ Reduce # of connections to database when loading page
 Securiy:
   ☐ Secure all requests to server
   ☐ Escape everything to prevent cross-site scripting
+  ☐ Investigate possibly issue in db not being correct (find better way to get sess_ids)
