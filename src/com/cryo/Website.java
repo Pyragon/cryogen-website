@@ -78,7 +78,7 @@ public class Website {
 
 	public Website() {
 		loadProperties();
-		FAVICON = new File("./source/images/favicon.ico");
+		FAVICON = new File(properties.getProperty("favico"));
 		connectionManager = new DBConnectionManager();
 		searchManager = new SearchManager();
 		paypalManager = new PaypalManager(this);
@@ -194,6 +194,9 @@ public class Website {
 			}
 		});
 		get("*", Website::render404);
+		after("*", (req, res) -> {
+			
+		});
 		LOADED = true;
 		fastExecutor.schedule(new TaskManager(), 0, 1000);
 	}
