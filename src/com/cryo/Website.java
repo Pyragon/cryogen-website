@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Timer;
 
 import com.cryo.db.DBConnectionManager;
@@ -50,6 +51,7 @@ import lombok.Cleanup;
 import lombok.Getter;
 import spark.Request;
 import spark.Response;
+import spark.Spark;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -63,6 +65,8 @@ public class Website {
 	private static Website INSTANCE;
 
 	public static boolean LOADED;
+	
+	private static Scanner scanner;
 
 	private static @Getter Properties properties;
 
@@ -130,6 +134,10 @@ public class Website {
 		});
 		get(StaffModule.PATH, (req, res) -> {
 			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get("/kill_web", (req, res) -> {
+			System.exit(0);
+			return "";
 		});
 		get("/paypal_error", (req, res) -> {
 			return error("Error getting payment URL");
@@ -199,6 +207,19 @@ public class Website {
 		});
 		LOADED = true;
 		fastExecutor.schedule(new TaskManager(), 0, 1000);
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			
+			@Override
+			public void run() {
+				System.out.println("hi");
+				LOADED = false;
+				if(scanner != null)
+					scanner.close();
+				System.out.println("Stopping spark.");
+				Spark.stop();
+			}
+			
+		});
 	}
 	
 	public static void sendToServer(OutputStream stream) throws IOException {
