@@ -40,7 +40,6 @@ import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.Utilities;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.paypal.api.payments.Payment;
@@ -194,7 +193,8 @@ public class Website {
 					out.flush();
 					return "";
 				} finally {
-					Closeables.close(in, true);
+					in.close();
+					out.close();
 				}
 			} catch(Exception e) {
 				res.status(400);
