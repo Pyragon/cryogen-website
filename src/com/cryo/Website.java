@@ -59,11 +59,11 @@ import spark.Spark;
  */
 public class Website {
 
-	public static String PATH = "http://localhost/";
+	public static String PATH = "http://cryogen-rsps.com/";
 
 	private static Website INSTANCE;
 
-	public static boolean LOADED;
+	public static volatile boolean LOADED;
 	
 	private static Scanner scanner;
 
