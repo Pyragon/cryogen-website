@@ -85,7 +85,7 @@ public class Website {
 		searchManager.load();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
-		port(81);
+		port(80);
 		PaypalManager.createAPIContext();
 		staticFiles.externalLocation("source/");
 		//staticFiles.expireTime(600); // ten minutes
