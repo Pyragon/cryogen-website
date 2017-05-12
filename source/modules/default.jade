@@ -38,6 +38,12 @@ html
 					timeout = setTimeout(checkIssue, 100);
 				});
 
+				//- $(document).on('click', function(e) {
+				//- 	var target = $(e.target);
+				//- 	if(target)
+				//- 		sendAlert(target.attr('class'));
+				//- });
+
 				function checkIssue() {
 					var width = $(window).width();
 					$('.nav-items').css('margin-top', width < 751 ? '5px' : '105px');
@@ -77,7 +83,7 @@ html
 							button(type='button', class='btn btn-default', data-dismiss='modal') Close
 							button.reg-btn(type='button', class='btn btn-danger register-btn') Register
 							button(type='button', class='btn btn-primary login-btn') Sign In
-			nav(class='navbar navbar-default navbar-fixed-side navbar-fixed-side-left cryogen-nav', role='navigation')
+			nav(class='navbar navbar-default cryogen-nav', role='navigation')
 				div(class='navbar-header')
 					button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar-collapse-1')
 						span(class='sr-only') Toggle navigation
@@ -99,7 +105,7 @@ html
 									li
 										a(href='live/download?file_type=jar') Download as JAR
 							li#spacer(class='spacer')
-								a(href='forums') Community
+								a(href='http://cryogen-rsps.com:8080/') Community
 							li
 								a(href='highscores') Highscores
 							li
