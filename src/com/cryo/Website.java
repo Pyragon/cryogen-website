@@ -220,6 +220,7 @@ public class Website {
 			}
 			
 		});
+		System.out.println("Listening on port: "+properties.getProperty("port"));
 	}
 	
 	public static void sendToServer(OutputStream stream) throws IOException {
