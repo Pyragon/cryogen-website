@@ -12,6 +12,7 @@ Jade is used to compile and render templates to html
 A properties template file has been included (props_.json) for reference. Copy this file, rename and remove the underscore and edit as needed.
 
 An empty SQL export has also been included (database_skeletons.sql), you should only need to import this file into your database, and be set.
+```Please note this export requires at least MySQL v5.6.5.```
 
 ### TODO ###
 
