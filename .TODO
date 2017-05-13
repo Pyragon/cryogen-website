@@ -1,0 +1,33 @@
+It is recommended that you use atom-tasks to view TODO files.
+General:
+  ☐ Cache anything that can be for faster loading
+  ☐ Remake database connection base for ease of use and functionality
+  ☐ Reduce as many connections to database as possible
+Shop:
+  ☐ Save cart in database as HashMap->JSON and load as such
+  ☐ Style + and - buttons to match overall site style
+  ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
+  ✔ Empty cart when items get purchased @done(2017-05-07 10:39) @project(Shop)
+Staff Page:
+  ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
+  ☐ Page for admins to to create announcements for the overview page
+  ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
+  ☐ Add page support to all tabs
+  ☐ Archiving report should edit 'last action', as well as add a comment, same for appeals
+  ☐ Log all events
+  ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
+  ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
+Account:
+  ☐ Changing email is not refreshing acount overview
+Other:
+  ☐ Page for players to view their own player/bug reports
+  ☐ Proper download page
+  ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
+  ☐ Fix possible memory leak
+  ☐ Make better discord avatar that matches background so it looks transparent
+  ☐ Reduce # of connections to database when loading page
+  ☐ Create independant html pages to serve as error pages for nginx
+Securiy:
+  ☐ Secure all requests to server
+  ☐ Escape everything to prevent cross-site scripting
+  ☐ Investigate possibly issue in db not being correct (find better way to get sess_ids)
