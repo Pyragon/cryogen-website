@@ -16,6 +16,6 @@ An empty SQL export has also been included (database_skeletons.sql), you should 
 
 ### TODO ###
 
-A link to the TODO file can be found [here](website.todo).
+A link to the TODO file can be found [here](.TODO).
 
 [atom-tasks](https://github.com/irrationalistic/atom-tasks) is a good package to use for viewing TODO files.
