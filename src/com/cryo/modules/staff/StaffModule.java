@@ -3,6 +3,7 @@ package com.cryo.modules.staff;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -53,9 +54,22 @@ public class StaffModule extends WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		if(rType == RequestType.GET) {
 			PunishUtils utils = new PunishUtils();
+			int comp_total = 0;
 			val appeals = utils.getAppeals(username, false);
 			val preports = utils.getPlayerReports(username, false);
 			val breports = utils.getBugReports(username, false);
+			for(Iterator<?> it = appeals.iterator(); it.hasNext(); it.next()) {
+				if(comp_total++ > 10)
+					it.remove();
+			}
+			for(Iterator<?> it = preports.iterator(); it.hasNext(); it.next()) {
+				if(comp_total++ > 10)
+					it.remove();
+			}
+			for(Iterator<?> it = breports.iterator(); it.hasNext(); it.next()) {
+				if(comp_total++ > 10)
+					it.remove();
+			}
 			int total = appeals.size() + preports.size() + breports.size();
 			model.put("total", total);
 			model.put("i_appeals", appeals);
