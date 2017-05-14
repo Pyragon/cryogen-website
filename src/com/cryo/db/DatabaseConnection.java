@@ -67,6 +67,7 @@ public abstract class DatabaseConnection {
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
 			setParams(stmt, params);
 			stmt.execute();
+			stmt.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -111,8 +112,9 @@ public abstract class DatabaseConnection {
 					builder.append(condition);
 				}
 				PreparedStatement stmt = connection.prepareStatement(builder.toString());
-				System.out.println(stmt);
-				return stmt.executeQuery();
+				ResultSet set = stmt.executeQuery();
+				stmt.close();
+				return set;
 			}
 			builder.append(" WHERE ");
 			builder.append(condition);
@@ -129,8 +131,51 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Long)
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
-			//System.out.println(stmt);
-			return stmt.executeQuery();
+			ResultSet set = stmt.executeQuery();
+			stmt.close();
+			return set;
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public ResultSet selectCount(String database, String condition, Object... values) {
+		try {
+			if (connection.isClosed() || !connection.isValid(5))
+				connect();
+			StringBuilder builder = new StringBuilder();
+			builder.append("SELECT COUNT(*) FROM "+database);
+			if(values.length == 0) {
+				if(condition != null && !condition.equals("")) {
+					builder.append(" WHERE ");
+					builder.append(condition);
+				}
+				PreparedStatement stmt = connection.prepareStatement(builder.toString());
+				ResultSet set = stmt.executeQuery();
+				stmt.close();
+				return set;
+			}
+			builder.append(" WHERE ");
+			builder.append(condition);
+			PreparedStatement stmt = connection.prepareStatement(builder.toString());
+			for(int i = 0; i < values.length; i++) {
+				Object obj = values[i];
+				int index = i+1;
+				if (obj instanceof String)
+					stmt.setString(index, (String) obj);
+				else if (obj instanceof Integer)
+					stmt.setInt(index, (int) obj);
+				else if(obj instanceof Double)
+					stmt.setDouble(index, (double) obj);
+				else if(obj instanceof Long)
+					stmt.setTimestamp(index, new Timestamp((long) obj));
+				else if(obj instanceof Timestamp)
+					stmt.setTimestamp(index, (Timestamp) obj);
+			}
+			ResultSet set = stmt.executeQuery();
+			stmt.close();
+			return set;
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -185,6 +230,7 @@ public abstract class DatabaseConnection {
 			ResultSet set = stmt.getGeneratedKeys();
 			if(set.next())
 				return set.getInt(1);
+			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -194,13 +240,6 @@ public abstract class DatabaseConnection {
 	public ResultSet selectAll(String database, String condition) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("SELECT * FROM ").append(database).append(" "+condition);
-		return executeQuery(builder.toString());
-	}
-
-	public ResultSet select(String database, String condition) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("SELECT * FROM ").append(database).append(condition != null ? " WHERE " : "")
-				.append(condition != null ? condition : "");
 		return executeQuery(builder.toString());
 	}
 	
@@ -222,6 +261,7 @@ public abstract class DatabaseConnection {
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
 			stmt.execute();
+			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -241,6 +281,7 @@ public abstract class DatabaseConnection {
 				connect();
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.execute();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -264,6 +305,7 @@ public abstract class DatabaseConnection {
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
 			stmt.execute();
+			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -277,10 +319,20 @@ public abstract class DatabaseConnection {
 			ResultSet set = statement.executeQuery();
 			if (set != null)
 				return set;
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public int getFetchSize(ResultSet set) {
+		try {
+			return set.getFetchSize();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	public long getLongInt(ResultSet set, String string) {
@@ -295,6 +347,15 @@ public abstract class DatabaseConnection {
 	public int getInt(ResultSet set, String string) {
 		try {
 			return set.getInt(string);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public int getInt(ResultSet set, int index) {
+		try {
+			return set.getInt(index);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -326,6 +387,24 @@ public abstract class DatabaseConnection {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public int getRow(ResultSet set) {
+		try {
+			return set.getRow();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public boolean last(ResultSet set) {
+		try {
+			return set.last();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public boolean next(ResultSet set) {
