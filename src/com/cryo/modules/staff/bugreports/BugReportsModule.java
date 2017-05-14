@@ -42,8 +42,9 @@ public class BugReportsModule {
 			case "view-list":
 				HashMap<String, Object> model = new HashMap<>();
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
+				int page = Integer.parseInt(request.queryParams("page"));
 				model.put("archive", archived);
-				model.put("breports", new PunishUtils().getBugReports(null, archived));
+				model.put("breports", new PunishUtils().getBugReports(null, archived, page));
 				model.put("utils", new PunishUtils());
 				prop.put("success", true);
 				prop.put("html", module.render("./source/modules/staff/bug_reports/report_list.jade", model, request, response));

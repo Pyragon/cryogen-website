@@ -77,7 +77,6 @@ public class StaffModule extends WebModule {
 			model.put("i_breports", breports);
 			model.put("appeals", utils.getAppeals(null, false));
 			model.put("preports", utils.getPlayerReports(null, false));
-			model.put("breports", utils.getBugReports(null, false));
 			model.put("punishments", utils.getPunishments(null, false));
 			model.put("utils", new PunishUtils());
 			model.put("formatter", new DateFormatter());
