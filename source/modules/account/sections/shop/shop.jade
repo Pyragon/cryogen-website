@@ -9,6 +9,82 @@ script.
 			});
 		}
 
+		function loadCart(ret, reviewD = null) {
+			var data = JSON.parse(ret);
+			var totalI = 0;
+			var totalP = 0;
+			for(var id in data) {
+				if(data.hasOwnProperty(id)) {
+					var quantity = data[id];
+					var item_elem = $('.items').find('[data-id='+id+']');
+					var price = item_elem.data('price');
+					var but = item_elem.find('.but');
+					var quant = item_elem.find('.quant');
+					if(quantity <= 0) {
+						quant.attr('hidden', true);
+						but.attr('hidden', false);
+					} else {
+						totalI += parseInt(quantity);
+						totalP += (price*quantity);
+						quant.attr('hidden', false);
+						but.attr('hidden', true);
+						var quantT = item_elem.find('.input-number');
+						quantT.val(quantity);
+					}
+					if(reviewD != null) {
+						var rID = reviewD.data('id');
+						if(rID == id) {
+							var info = reviewD.find('#item-info');
+							var s = info.html();
+							s = s.substring(s.indexOf('x'));
+							s = quantity+' '+s;
+							info.html(s);
+						}
+					}
+				}
+			}
+			updateTotal(totalI, totalP);
+		}
+
+		function loadCart2(data, reviewD = null) {
+			var sdata = data.split(",");
+			var totalI = 0;
+			var totalP = 0;
+			for(var i = 0; i < sdata.length; i++) {
+				var items = sdata[i].split(":");
+				if(items == "")
+					continue;
+				var id = items[0];
+				var amount = items[1];
+				var price = items[2];
+				var itemd = $('.items').find('[data-id='+id+']');
+				var but = itemd.find('.but');
+				var quant = itemd.find('.quant');
+				if(amount <= 0) {
+					quant.css('display', 'none');
+					but.css('display', '');
+				} else {
+					totalI += parseInt(amount);
+					totalP += (price*amount);
+					quant.css('display', '');
+					but.css('display', 'none');
+					var quantT = itemd.find('.input-number');
+					quantT.val(amount);
+				}
+				if(reviewD != null) {
+					var rID = reviewD.data('id');
+					if(rID == id) {
+						var info = reviewD.find('#item-info');
+						var s = info.html();
+						s = s.substring(s.indexOf('x'));
+						s = amount+' '+s;
+						info.html(s);
+					}
+				}
+			}
+			updateTotal(totalI, totalP);
+		}
+
 		$('.btn-ok').click(function() {
 			var item = $(this).closest('.item');
 			increaseQuantity(item);
@@ -56,45 +132,6 @@ script.
 				var data = JSON.parse(ret);
 				loadCart(data.cart);
 			});
-		}
-
-		function loadCart(data, reviewD = null) {
-			var sdata = data.split(",");
-			var totalI = 0;
-			var totalP = 0;
-			for(var i = 0; i < sdata.length; i++) {
-				var items = sdata[i].split(":");
-				if(items == "")
-					continue;
-				var id = items[0];
-				var amount = items[1];
-				var price = items[2];
-				var itemd = $('.items').find('[data-id='+id+']');
-				var but = itemd.find('.but');
-				var quant = itemd.find('.quant');
-				if(amount <= 0) {
-					quant.css('display', 'none');
-					but.css('display', '');
-				} else {
-					totalI += parseInt(amount);
-					totalP += (price*amount);
-					quant.css('display', '');
-					but.css('display', 'none');
-					var quantT = itemd.find('.input-number');
-					quantT.val(amount);
-				}
-				if(reviewD != null) {
-					var rID = reviewD.data('id');
-					if(rID == id) {
-						var info = reviewD.find('#item-info');
-						var s = info.html();
-						s = s.substring(s.indexOf('x'));
-						s = amount+' '+s;
-						info.html(s);
-					}
-				}
-			}
-			updateTotal(totalI, totalP);
 		}
 
 		$('.checkout').click(function() {
@@ -169,7 +206,7 @@ div.tab-pane.fade(id='shop')
 		div.row
 			for item in shopItems
 				div.col-sm-4.item-container
-					div.item(data-id=item.getId())
+					div.item(data-id=item.getId(), data-price=item.getPrice())
 						h3.white= item.getName()
 						img.img-responsive(src=item.getImageLink())
 						div.row
@@ -185,9 +222,9 @@ div.tab-pane.fade(id='shop')
 							div.but(style='text-align: center;')
 								div.col-sm-10.col-sm-offset-1
 									button.btn.btn-ok.addCart Add to Cart
-							div.quant(style='display: none;')
+							div.quant(hidden=true)
 								div.col-xs-8.col-xs-offset-2(style='padding-bottom: 15px;')
-									div.input-group
+									div.input-group.chgquant
 										span.input-group-btn
 											button.quantity-left-minus.btn.btn-danger.btn-number(type='button', data-type='minus', data-field='')
 												span.glyphicon.glyphicon-minus

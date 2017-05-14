@@ -738,9 +738,15 @@ p.small {
 }
 
 .addCart {
-  margin: 10px auto;
+  margin: 5px auto 10px auto;
   padding: 5px 50px;
   transition: color .4s;
+}
+
+.chgquant {
+  margin: 5px auto 0px auto;
+  transition: color .4s;
+  max-width: 174px;
 }
 
 .btn-error {
@@ -1290,7 +1296,7 @@ Widget
   right: 0;
   margin-left: auto;
   margin-right: auto;
-  width: 400px;
+  max-width: 400px;
   /* Need a specific value to work */
   z-index: 10;
 }
