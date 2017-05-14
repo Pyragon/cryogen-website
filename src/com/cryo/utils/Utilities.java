@@ -36,6 +36,10 @@ public class Utilities {
 		
 	}
 	
+	public static long roundUp(long num, long divisor) {
+	    return (num + divisor - 1) / divisor;
+	}
+	
 	public static int getOnlinePlayers() {
 		Object[] data = GlobalConnection.connection().handleRequest("get-misc-data", "players_logged");
 		if(data == null)

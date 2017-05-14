@@ -10,6 +10,7 @@ import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.account.support.BugReportDAO;
 import com.cryo.modules.account.support.PlayerReportDAO;
+import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
 /**
@@ -87,10 +88,23 @@ public class PunishUtils {
 		return reports;
 	}
 	
-	@SuppressWarnings("unchecked")
+	public static int getTotalPages(DatabaseConnection connection, boolean archive) {
+		Object[] data = connection.handleRequest("get-total-results", archive);
+		if(data == null)
+			return 0;
+		int total = (int) data[0];
+		total = (int) Utilities.roundUp(total, 10);
+		return total;
+	}
+	
 	public ArrayList<BugReportDAO> getBugReports(String username, boolean archived) {
+		return getBugReports(username, archived, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<BugReportDAO> getBugReports(String username, boolean archived, int page) {
 		ArrayList<BugReportDAO> reports = new ArrayList<>();
-		Object[] data = ReportsConnection.connection().handleRequest("get-bug-reports", archived);
+		Object[] data = ReportsConnection.connection().handleRequest("get-bug-reports", archived, page);
 		if(data != null) {
 			for(BugReportDAO report : (ArrayList<BugReportDAO>) data[0]) {
 				if(username != null && report.userHasRead(username))

@@ -41,22 +41,12 @@ public class ShopConnection extends DatabaseConnection {
 				String username = (String) data[1];
 				HashMap<Integer, Integer> cart = new HashMap<>();
 				ResultSet set = select("cart_data", "username=?", username);
-				if(set == null) {
-					return null;
-				}
 				if(empty(set))
 					return new Object[] { cart };
 				String item_data = getString(set, "items");
-				if(item_data == null || item_data.equals("")) {
+				if(item_data == null || item_data.equals(""))
 					return new Object[] { cart };
-				}
-				String[] items = item_data.split(",");
-				for(String item : items) {
-					String[] sdata = item.split(":");
-					int id = Integer.parseInt(sdata[0]);
-					int amount = Integer.parseInt(sdata[1]);
-					cart.put(id, amount);
-				}
+				cart = ShopUtils.fromStringCart(item_data);
 				return new Object[] { cart };
 			case "set-invoice":
 				InvoiceDAO invoice = (InvoiceDAO) data[1];;
@@ -101,17 +91,9 @@ public class ShopConnection extends DatabaseConnection {
 			case "set-cart":
 				username = (String) data[1];
 				cart = (HashMap<Integer, Integer>) data[2];
-				int index = 0;
-				StringBuilder builder = new StringBuilder();
-				for(int id : cart.keySet()) {
-					int amount = cart.get(id);
-					builder.append(id+":"+amount);
-					if(index+1 == cart.size())
-						break;
-					builder.append(",");
-				}
+				String json = ShopUtils.toString(cart);
 				delete("cart_data", "username=?", username);
-				insert("cart_data", username, builder.toString());
+				insert("cart_data", username, json);
 				break;
 			case "get-items":
 				HashMap<Integer, ShopItem> itemList = new HashMap<>();

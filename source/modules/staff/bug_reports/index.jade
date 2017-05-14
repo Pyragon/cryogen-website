@@ -11,8 +11,9 @@ script.
 				if(data == null) return;
 				update(false, data.html);
 				update(true, getDescription());
+				updatePage(data.pageTotal);
 			});
-			//return false;
+			return false;
 		}
 
 		function loadReport(id) {
@@ -29,6 +30,47 @@ script.
 			$('#archiveb-p').html(' '+(archive ? 'Archive' : 'Active'));
 		}
 
+		function updatePage(page_t) {
+			var pages = [];
+			//always show first page
+			pages.push(1);
+			while(true) {
+				if(page_t == 1)
+					break;
+				//if less than 5 pages, just show option for each page
+				if(page_t <= 5) {
+					for(var i = 2; i < page_t+1; i++) {
+						pages.push(i);
+					}
+					break;
+				}
+				//otherwise second page is 1 less than current
+				pages.push(page-1);
+				//next option is current page
+				pages.push(page);
+				//if we're on last page, we don't need to display anymore
+				if(page_t == page)
+					break;
+				//otherwise we can display another
+				pages.push(page+1);
+				//and if the last option we showed wasn't the last page, show last page
+				if(page_t != (page+1))
+					pages.push(page_t);
+				break;
+			}
+			for(var i = 0; i < pages.length; i++) {
+				var span = $('<span></span>');
+				var show_page = pages[i];
+				var html = (show_page==page?'[':'')+""+show_page+""+(show_page==page?']':'');
+				if(i != (pages.length-1))
+					html += ' ';
+				if(show_page != page)
+					span.addClass('vis-link').addClass('page-link');
+				span.html(html);
+				$('#bpages').append(span);
+			}
+		}
+
 		function getDescription() {
 			return archive ? 'Currently viewing all archived bug reports' : 'Currently viewing all active bug reports';
 		}
@@ -38,16 +80,20 @@ script.
 			var id = elem.data('id');
 			var type = elem.data('type');
 			if(type != 'BUG')
-				return;
+				return false;
 			loadReport(id);
 		});    
 
-		$(document).on('click', '.returnb-but', loadBugReportList());
+		$(document).on('click', '.returnb-but', loadBugReportList);
 
 		$('#viewarch-btn').click(function() {
 			var archived = !archive;
 			archive = archived;
 			return loadBugReportList();
+		});
+
+		$(document).on('click', '#bpages .page-link', function() {
+
 		});
 
 		var close = 'Click to close search bar.';
@@ -101,4 +147,7 @@ div.tab-pane.fade#breports
 				div#search-bin(style='float: right; display: none;', display='none')
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
-		div#breport-main
+		div
+			div#breport-main
+			div.pages Pages: 
+				div#bpages

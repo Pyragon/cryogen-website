@@ -67,7 +67,6 @@ public abstract class DatabaseConnection {
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
 			setParams(stmt, params);
 			stmt.execute();
-			stmt.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -112,9 +111,7 @@ public abstract class DatabaseConnection {
 					builder.append(condition);
 				}
 				PreparedStatement stmt = connection.prepareStatement(builder.toString());
-				ResultSet set = stmt.executeQuery();
-				stmt.close();
-				return set;
+				return stmt.executeQuery();
 			}
 			builder.append(" WHERE ");
 			builder.append(condition);
@@ -131,9 +128,7 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Long)
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
-			ResultSet set = stmt.executeQuery();
-			stmt.close();
-			return set;
+			return stmt.executeQuery();
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -152,9 +147,7 @@ public abstract class DatabaseConnection {
 					builder.append(condition);
 				}
 				PreparedStatement stmt = connection.prepareStatement(builder.toString());
-				ResultSet set = stmt.executeQuery();
-				stmt.close();
-				return set;
+				return stmt.executeQuery();
 			}
 			builder.append(" WHERE ");
 			builder.append(condition);
@@ -173,9 +166,7 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Timestamp)
 					stmt.setTimestamp(index, (Timestamp) obj);
 			}
-			ResultSet set = stmt.executeQuery();
-			stmt.close();
-			return set;
+			return stmt.executeQuery();
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -230,7 +221,6 @@ public abstract class DatabaseConnection {
 			ResultSet set = stmt.getGeneratedKeys();
 			if(set.next())
 				return set.getInt(1);
-			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -261,7 +251,6 @@ public abstract class DatabaseConnection {
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
 			stmt.execute();
-			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -281,7 +270,6 @@ public abstract class DatabaseConnection {
 				connect();
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.execute();
-			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -305,7 +293,6 @@ public abstract class DatabaseConnection {
 					stmt.setTimestamp(index, new Timestamp((long) obj));
 			}
 			stmt.execute();
-			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -319,7 +306,6 @@ public abstract class DatabaseConnection {
 			ResultSet set = statement.executeQuery();
 			if (set != null)
 				return set;
-			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

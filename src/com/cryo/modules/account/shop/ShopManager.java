@@ -126,6 +126,7 @@ public class ShopManager {
 				notyM.put("shopManager", new ShopManager());
 				notyM.put("cart", cart);
 				html = module.render("./source/modules/account/sections/shop/shop_noty.jade", notyM, request, response);
+				prop.put("success", true);
 				prop.put("html", html);
 				break;
 		}

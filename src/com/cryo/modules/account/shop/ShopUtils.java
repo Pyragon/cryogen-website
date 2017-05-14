@@ -81,29 +81,22 @@ public class ShopUtils {
 	}
 	
 	public static String toString(HashMap<Integer, Integer> cart) {
-		int index = 0;
-		StringBuilder builder = new StringBuilder();
+		HashMap<String, String> list = new HashMap<>();
 		for(int id : cart.keySet()) {
-			ShopItem item = ShopManager.cached.get(id);
-			if(item == null)
-				continue;
-			int amount = cart.get(id);
-			builder.append(id+":"+amount+":"+item.getPrice());
-			if(index+1 == cart.size())
-				break;
-			builder.append(",");
+			String sId = Integer.toString(id);
+			String quantity = Integer.toString(cart.get(id));
+			list.put(sId, quantity);
 		}
-		return builder.toString();
+		return new Gson().toJson(list);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, Integer> fromStringCart(String cart) {
-		String[] vars = cart.split(",");
 		HashMap<Integer, Integer> map = new HashMap<>();
-		for(String s : vars) {
-			String[] sdata = s.split(":");
-			int id = Integer.parseInt(sdata[0]);
-			int amount = Integer.parseInt(sdata[1]);
-			map.put(id, amount);
+		HashMap<String, String> list = new Gson().fromJson(cart, HashMap.class);
+		for(String s : list.keySet()) {
+			String q = list.get(s);
+			map.put(Integer.parseInt(s), Integer.parseInt(q));
 		}
 		return map;
 	}

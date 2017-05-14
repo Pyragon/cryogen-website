@@ -3,9 +3,10 @@ General:
   ☐ Cache anything that can be for faster loading
   ☐ Remake database connection base for ease of use and functionality
   ☐ Reduce as many connections to database as possible
+  ☐ Find memory leak in website
 Shop:
-  ☐ Save cart in database as HashMap->JSON and load as such
-  ☐ Style + and - buttons to match overall site style
+  ✔ Save cart in database as HashMap->JSON and load as such @done(2017-05-14 04:09) @project(Shop)
+  ✔ Style + and - buttons to match overall site style @done(2017-05-14 04:25) @project(Shop)
   ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
   ✔ Empty cart when items get purchased @done(2017-05-07 10:39) @project(Shop)
 Staff Page:
@@ -17,6 +18,7 @@ Staff Page:
   ☐ Log all events
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
+  ☐ Add too many results check to all pages
 Account:
   ☐ Changing email is not refreshing acount overview
 Other:
@@ -28,6 +30,7 @@ Other:
   ☐ Reduce # of connections to database when loading page
   ☐ Create independant html pages to serve as error pages for nginx
 Securiy:
-  ☐ Secure all requests to server
-  ☐ Escape everything to prevent cross-site scripting
-  ☐ Investigate possibly issue in db not being correct (find better way to get sess_ids)
+  ☐ Secure all requests to server (though should be secured through sessions already)
+  ☐ Update sessions to be more secure. (Create random sess_id and add to database with sess_ids->usernames, allows more than one user to have it)
+  ☐ Reset sess_ids when user changes the password
+  ☐ Investigate possibly issue in db sess_ids not being correct (find better way to get sess_ids)

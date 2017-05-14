@@ -64,17 +64,17 @@ public class Website {
 	private static Website INSTANCE;
 
 	public static volatile boolean LOADED;
-	
+
 	private static Scanner scanner;
 
 	private static @Getter Properties properties;
 
 	private @Getter DBConnectionManager connectionManager;
-	
+
 	private @Getter PaypalManager paypalManager;
 
 	private Timer fastExecutor;
-	
+
 	private @Getter SearchManager searchManager;
 
 	private static File FAVICON = null;
@@ -203,12 +203,11 @@ public class Website {
 		});
 		get("*", Website::render404);
 		after("*", (req, res) -> {
-			
+
 		});
-		LOADED = true;
 		fastExecutor.schedule(new TaskManager(), 0, 1000);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
-			
+
 			@Override
 			public void run() {
 				System.out.println("hi");
@@ -218,11 +217,11 @@ public class Website {
 				System.out.println("Stopping spark.");
 				Spark.stop();
 			}
-			
+
 		});
 		System.out.println("Listening on port: "+properties.getProperty("port"));
 	}
-	
+
 	public static void sendToServer(OutputStream stream) throws IOException {
 		InetSocketAddress address = new InetSocketAddress("localhost", 5555);
 		@Cleanup Socket socket = new Socket();

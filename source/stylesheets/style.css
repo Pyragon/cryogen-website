@@ -43,6 +43,23 @@ html, body {
   margin: 10px auto 0 auto !important;
 }
 
+
+/* staff pagination */
+
+.pages {
+  font-size: 10px;
+  float: right;
+  margin: 10px 5px;
+}
+
+.page-link {
+  text-decoration: none !important;
+}
+
+#bpages, .pages {
+  display: inline-block;
+}
+
 .search-info {
   font-size: 11px;
   margin-right: 10px;
@@ -53,7 +70,7 @@ html, body {
 
 .vis-link {
   cursor: pointer !important;
-  text-decoration: underline !important;
+  text-decoration: underline;
   color: #0174DF !important;
 }
 

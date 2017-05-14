@@ -10,6 +10,7 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.modules.account.support.BugReportDAO;
 import com.cryo.modules.account.support.PlayerReportDAO;
 import com.cryo.utils.CommentDAO;
+import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
 /**
@@ -104,9 +105,21 @@ public class ReportsConnection extends DatabaseConnection {
 					players.add(report);
 				}
 				return new Object[] { players };
+			case "get-total-results":
+				archived = (boolean) data[1];
+				set = selectCount(archived ? "b_archive" : "bug_reports", null);
+				if(empty(set))
+					return new Object[] { 0 };
+				int total = getInt(set, 1);
+				return new Object[] { total };
 			case "get-bug-reports":
 				archived = (boolean) data[1];
-				set = select(archived ? "b_archive" : "bug_reports", null);
+				int page = (int) data[2];
+				if(page == 0) page = 1;
+				int offset = (page - 1) * 10;
+				String table = archived ? "b_archive" : "bug_reports";
+				table += " LIMIT "+offset+",10";
+				set = select(table, null);
 				if(wasNull(set))
 					return null;
 				ArrayList<BugReportDAO> bugs = new ArrayList<>();
@@ -163,7 +176,7 @@ public class ReportsConnection extends DatabaseConnection {
 				id = (int) data[1];
 				type = (int) data[2];
 				String archive = type == 0 ? "b_archive" : "p_archive";
-				String table = type == 0 ? "bug_reports" : "player_reports";
+				table = type == 0 ? "bug_reports" : "player_reports";
 				execute("INSERT INTO "+archive+" SELECT *, NOW() AS archived FROM "+table+" WHERE id=?;", id);
 				delete(table, "id=?", id);
 				break;
