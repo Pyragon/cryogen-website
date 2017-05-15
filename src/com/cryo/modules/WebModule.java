@@ -102,7 +102,7 @@ public abstract class WebModule {
 	public String redirect(String redirect, int time, Request request, Response response) {
 		if(redirect == null || redirect == "")
 			redirect = "/";
-		if(time == 0) {
+		if(time == -1) {
 			response.redirect(redirect);
 			return "";
 		}
