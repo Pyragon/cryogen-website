@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.impl.GlobalConnection;
@@ -33,11 +35,18 @@ public class Utilities {
 	}
 	
 	public static void main(String[] args) {
-		
+		System.out.println(new Utilities().isValidDisplay("cody $sd"));
 	}
 	
 	public static long roundUp(long num, long divisor) {
 	    return (num + divisor - 1) / divisor;
+	}
+	
+	public static boolean matches(String name) {
+		CharSequence seq = name;
+		Pattern pattern = Pattern.compile("[a-zA-Z0-9_ -]*", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(seq);
+		return matcher.matches();
 	}
 	
 	public static int getOnlinePlayers() {
@@ -48,7 +57,7 @@ public class Utilities {
 	}
 	
 	public String isValidDisplay(String name) {
-		if(!name.matches("[a-zA-Z0-9_ -]"))
+		if(!name.matches("[a-zA-Z0-9_ -]*"))
 			return "Display name contains invalid characters";
 	      if(name.length() < 3 || name.length() > 12)
 	        return "Display name must be between 3 and 12 characters";
