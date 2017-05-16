@@ -53,6 +53,28 @@ public abstract class DatabaseConnection {
 			e.printStackTrace();
 		}
 	}
+	
+	public void set(String database, String update, String clause, SQLQuery query_inter, Object...params) {
+		if(params == null || params.length == 0) {
+			String query = "UPDATE " + database + " SET " + update + " WHERE " + clause + ";";
+			execute(query);
+			return;
+		}
+		try {
+			StringBuilder builder = new StringBuilder();
+			builder.append("UPDATE ").append(database).append(" SET ")
+					.append(update).append(" WHERE ").append(clause+";");
+			PreparedStatement stmt = connection.prepareStatement(builder.toString());
+			try {
+				setParams(stmt, params);
+				stmt.execute();
+			} finally {
+				stmt.close();
+			}
+		} catch(Exception e) {
+			
+		}
+	}
 
 	public void set(String database, String update, String clause, Object... params) {
 		if(params == null || params.length == 0) {
@@ -270,6 +292,7 @@ public abstract class DatabaseConnection {
 				connect();
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.execute();
+			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

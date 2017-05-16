@@ -50,7 +50,7 @@ public class RegisterModule extends WebModule {
 				error = "Passwords do not match.";
 			else if(!bot.equals("33") || !bot2.toLowerCase().equals("red")) 
 				error = "Wrong bot verification answer";
-			if(error != "")
+			if(!error.equals(""))
 				return json(false, error);
 			Object[] data = DisplayConnection.connection().handleRequest("name-exists", username);
 			if(data == null)

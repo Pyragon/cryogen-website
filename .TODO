@@ -4,6 +4,8 @@ General:
   ☐ Remake database connection base for ease of use and functionality
   ☐ Reduce as many connections to database as possible
   ☐ Find memory leak in website
+  ☐ Add a 'Website update in: ' countdown to pages like in-game restart counter
+  ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
 Shop:
   ✔ Save cart in database as HashMap->JSON and load as such @done(2017-05-14 04:09) @project(Shop)
   ✔ Style + and - buttons to match overall site style @done(2017-05-14 04:25) @project(Shop)
@@ -13,7 +15,7 @@ Staff Page:
   ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
   ☐ Page for admins to to create announcements for the overview page
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
-  ☐ Add page support to all tabs
+  ☐ Finish page support to all tabs
   ☐ Archiving report should edit 'last action', as well as add a comment, same for appeals
   ☐ Log all events
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
