@@ -56,7 +56,7 @@ html, body {
   text-decoration: none !important;
 }
 
-#bpages, .pages {
+.pages div {
   display: inline-block;
 }
 
