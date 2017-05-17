@@ -110,7 +110,7 @@ public class PunishmentsModule {
 				break;
 			case "view-punish":
 				int id = Integer.parseInt(request.queryParams("id"));
-				boolean appeal = request.queryParams("appeal") != null;
+				boolean appeal = Boolean.parseBoolean(request.queryParams("appeal"));
 				PunishDAO punish = appeal ? new PunishUtils().getPunishmentFromAppeal(id) : new PunishUtils().getPunishment(id);
 				if (punish == null) {
 					prop.put("success", false);
