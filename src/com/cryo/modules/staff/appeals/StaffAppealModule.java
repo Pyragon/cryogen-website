@@ -77,10 +77,12 @@ public class StaffAppealModule {
 			case "view-list":
 				model = new HashMap<>();
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
+				int page = Integer.parseInt(request.queryParams("page"));
 				model.put("archive", archived);
-				model.put("appeals", new PunishUtils().getAppeals(null, archived));
+				model.put("appeals", new PunishUtils().getAppeals(null, archived, page));
 				model.put("utils", new PunishUtils());
 				prop.put("success", true);
+				prop.put("pageTotal", PunishUtils.getTotalPages(PunishmentConnection.connection(), archived ? "archive" : "appeals"));
 				prop.put("html", module.render("./source/modules/staff/appeals/appeal_list.jade", model, request, response));
 				break;
 			case "submit-com":

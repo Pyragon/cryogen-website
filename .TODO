@@ -1,4 +1,6 @@
 It is recommended that you use atom-tasks to view TODO files.
+Pagination:
+  ☐ Set page back to 1 when archives are viewed/unviewed
 General:
   ☐ Cache anything that can be for faster loading
   ☐ Remake database connection base for ease of use and functionality

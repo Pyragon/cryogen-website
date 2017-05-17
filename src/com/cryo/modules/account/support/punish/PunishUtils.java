@@ -20,9 +20,13 @@ import com.google.gson.Gson;
  */
 public class PunishUtils {
 	
-	@SuppressWarnings("unchecked")
 	public ArrayList<PunishDAO> getPunishments(String username, boolean archive) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-punishments", username, archive);
+		return getPunishments(username, archive, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<PunishDAO> getPunishments(String username, boolean archive, int page) {
+		Object[] data = PunishmentConnection.connection().handleRequest("get-punishments", username, archive, page);
 		if(data == null)
 			return new ArrayList<PunishDAO>();
 		return (ArrayList<PunishDAO>) data[0];
@@ -119,10 +123,14 @@ public class PunishUtils {
 		return reports;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public ArrayList<AppealDAO> getAppeals(String username, boolean archived) {
+		return getAppeals(username, archived, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<AppealDAO> getAppeals(String username, boolean archived, int page) {
 		ArrayList<AppealDAO> appeals = new ArrayList<>();
-		Object[] data = PunishmentConnection.connection().handleRequest("get-appeals", archived);
+		Object[] data = PunishmentConnection.connection().handleRequest("get-appeals", archived, page);
 		if(data != null) {
 			for(AppealDAO appeal : (ArrayList<AppealDAO>) data[0]) {
 				if(username != null && appeal.userHasRead(username))

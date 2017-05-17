@@ -73,11 +73,14 @@ public class PunishmentConnection extends DatabaseConnection {
 			case "get-punishments":
 				String username = (String) data[1];
 				boolean archived = (boolean) data[2];
+				int page = (int) data[3];
+				if(page == 0) page = 1;
+				int offset = (page - 1) * 10;
 				punishments = new ArrayList<>();
 				if(username != null)
-					set = select("punishments", "username=?", username);
+					set = select("punishments", "username=? LIMIT "+offset+",10", username);
 				else
-					set = select("punishments", null);
+					set = select("punishments LIMIT "+offset+",10", null);
 				if(set == null || wasNull(set))
 					return new Object[] { punishments };
 				while(next(set)) {
@@ -90,6 +93,14 @@ public class PunishmentConnection extends DatabaseConnection {
 					punishments.add(punish);
 				}
 				return new Object[] { punishments };
+			case "get-total-results":
+				String table = (String) data[1];
+				boolean archive = table.equals("archive");
+				set = selectCount(table, archive ? "active!=?" : "active=?", 0);
+				if(empty(set))
+					return new Object[] { 0 };
+				int total = getInt(set, 1);
+				return new Object[] { total };
 			case "get-punishment-from-appeal":
 				int appealId = (int) data[1];
 				set = select("punishments", "appeal_id=?", appealId);
@@ -130,16 +141,15 @@ public class PunishmentConnection extends DatabaseConnection {
 				break;
 			case "get-appeals":
 				archived = (boolean) data[1];
+				page = (int) data[2];
+				if(page == 0) page = 1;
+				offset = (page - 1) * 10;
 				ArrayList<AppealDAO> appeals = new ArrayList<>();
-				set = select("appeals", null);
+				set = select("appeals", (archived ? "active!=?" : "active=?")+" LIMIT "+offset+",10", 0);
 				if(wasNull(set))
 					return null;
-				while(next(set)) {
-					appeal = loadAppeal(set);
-					if((!archived && appeal.getActive() != 0) || (archived && appeal.getActive() == 0))
-						continue;
-					appeals.add(appeal);
-				}
+				while(next(set))
+					appeals.add(loadAppeal(set));
 				return new Object[] { appeals };
 			case "get-appeal":
 				id = (int) data[1];

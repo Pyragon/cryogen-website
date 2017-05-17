@@ -49,10 +49,17 @@ function getPages(page_t) {
         var show_page = pages[i];
         var span = $(`<span data-page=${show_page}></span>`);
         var html = (show_page==page?'[':'')+''+show_page+''+(show_page==page?']':'');
-        if(show_page == 1)
+        var next = i == pages.length-1 ? null : pages[i+1];
+        var last = i == 0 ? null : pages[i-1];
+        if(show_page == 1) {
             html = 'First';
-        else if(show_page == page_t)
+            if(next !== null && next !== 2)
+                html += '...';
+        } else if(show_page == page_t) {
             html = 'Last';
+            if(last != null && last != show_page-1)
+                html = '...Last';
+        }
         if(i != (pages.length-1))
             html += ' ';
         span.html(html);
@@ -76,6 +83,24 @@ function getJSON(ret) {
     return data;
 }
 
+function loadPunishment(id, appeal) {
+    $.post('/staff', { mod:'punish', action:'view-punish', id:id, appeal:appeal }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return;
+        update(false, data.html, 'punish');
+        update(true, 'Currently viewing punishment', 'punish');
+    });
+}
+
+function loadAppeal(id) {
+    $.post('/staff', { mod:'appeal', action:'view-appeal', id:id }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return;
+        update(false, data.html, 'appeal');
+        update(true, 'Currently viewing appeal', 'appeal');
+    });
+}
+
 function loadList(mod, archive, page) {
     $.post('/staff', { mod:mod, action:'view-list', archived:archive, page:page }, function(ret) {
         var data = getJSON(ret);
@@ -97,15 +122,17 @@ function loadReport(mod, archive, id) {
 
 function update(info, data, mod) {
     $(`#${mod}-${info ? 'info' : 'main'}`).html(data);
-    $('#archive-'+mod).html(' '+(archive ? 'Archive' : 'Active'));
+    if(info)
+        $('#archive-'+mod).html(' '+(archive ? 'Archive' : 'Active'));
 }
 
 function updatePage(page_t, mod) {
     $('#'+mod+'-pages').html(getPages(page_t).html());
 }
 
-function getDescription(archive) {
-    return archive ? 'Currently viewing all archived bug reports' : 'Currently viewing all active bug reports';
+function getDescription(archive, mod) {
+    var mods = mod === 'preport' ? 'player reports' : mod === 'breport' ? 'bug reports' : 'appeals';
+    return archive ? 'Currently viewing all archived '+mods : 'Currently viewing all active '+mods;
 }
 
 function sendAlert(text) {

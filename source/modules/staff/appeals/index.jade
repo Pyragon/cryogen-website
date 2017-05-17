@@ -1,25 +1,58 @@
 script.
+	var archive = false;
+	var page = 1;
 	$(document).ready(function() {
 
-		var archive = false;
-		var close = 'Click to close search bar.';
-		var open = 'Click to open search bar.';
+		loadAppealList();
 
-		//click search icon
+		function loadAppealList() {
+			loadList('appeal', archive, page);
+			return false;
+		}
+
+		function loadAppeal(id) {
+			loadReport('preport', archive, id);
+		}
+
+		$(document).on('click', '.returna-but, .returnp-but', loadAppealList);
+
+		$(document).on('click', '#punisha-link', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			loadPunishment(id, 'true');
+			return false;
+		});
+
+		$(document).on('click', '#viewa', function() {
+			loadAppeal($(this).closest('tr').data('id'));
+			return false;
+		});
+
+		$('#archivea-btn').click(function() {
+			archive = !archive;
+			return loadPlayerReportList();
+		});
+
+		$(document).on('click', '.page-link', function() {
+			page = $(this).data('page');
+			return loadAppealList();
+		})
+
+			//click search icon
 		$('#search-appeal-icon').click(function() {
 			var icon = $(this);
 			var search = $('#searcha-pin');
 			var user = search.find('input').val();
 			var att = search.attr('display');
 			if(att == 'none') {
-				icon.attr('title', close);
+				icon.attr('title', CLOSE);
 				search.attr('display', 'inline');
 				search.show('slide', {direction: 'right'}, 1000);
 			} else {
 				if(user == '') {
 					search.hide('slide', {direction: 'right'}, 1000, function() {
 						search.attr('display', 'none');
-						icon.attr('title', open);
+						icon.attr('title', OPEN);
 					});
 					return;
 				}
@@ -28,88 +61,6 @@ script.
 				$('#search-aerror').fadeOut(5000);
 			}
 		});
-
-		$(document).on('click', '.returna-but, .returnp-but', function() {
-			$.post('/staff', { mod:'appeal', action:'view-list', archived:archive }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success == null || data.success == '') {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#appeal-main').html(data.html);
-			});
-			return false;
-		});
-
-		$(document).on('click', '#punisha-link', function() {
-			var tr = $(this).closest('tr');
-			var id = tr.data('id');
-			$.post('/staff', { mod:'punish', action:'view-punish', id:id, appeal:'true' }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success == null || data.success == '') {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#appeal-main').html(data.html);
-			});
-			return false;
-		});
-
-		$(document).on('click', '#viewa', function() {
-			var elem = $(this).closest('tr');
-			var id = elem.data('id');
-			$.post('/staff', { mod:'appeal', action:'view-appeal', id:id }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success == null || data.success == '') {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#appeal-main').html(data.html);
-			});
-			return false;
-		});
-
-		$('#archivea-btn').click(function() {
-			var archived = !archive;
-			archive = archived;
-			$.post('/staff', { mod:'appeal', action:'view-list', archived:archived }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success === null) {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#appeal-main').html(data.html);
-				var desc = archived ? 'Currently viewing all archived appeals' : 'Currently viewing all active appeals';
-				$('#archive-ap').html(' '+(archived ? 'Active' : 'Archive'));
-				$('#appealp-info').html(desc);
-			});
-		});
-
-		function sendAlert(text) {
-			var n = noty({
-				text: text,
-				layout: 'topRight',
-				timeout: 5000,
-				theme: 'cryogen'
-			});
-		}
-
 	});
 div.tab-pane.fade#appeals
 	div.row 
@@ -135,4 +86,5 @@ div.tab-pane.fade#appeals
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#appeal-main
-			include appeal_list
+		div.pages Pages: 
+			div#appeal-pages
