@@ -77,26 +77,42 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(page == 0) page = 1;
 				int offset = (page - 1) * 10;
 				punishments = new ArrayList<>();
+				String query = "";
 				if(username != null)
-					set = select("punishments", "username=? LIMIT "+offset+",10", username);
+					query+= "username=? AND";
+				if(archived)
+					query+= "active!=0 OR expiry > NOW()";
 				else
-					set = select("punishments LIMIT "+offset+",10", null);
+					query += "active=0 AND (expiry IS NULL OR expiry < NOW())";
+				query += " LIMIT "+offset+",10";
+				if(username != null)
+					set = select("punishments", query, username);
+				else
+					set = select("punishments", query);
 				if(set == null || wasNull(set))
 					return new Object[] { punishments };
 				while(next(set)) {
 					PunishDAO punish = loadPunishment(set);
-					boolean active = punish.isActive();
-					if(punish.getExpiry() != null && punish.getExpiry().getTime() < System.currentTimeMillis())
-						active = false;
-					if((active && archived) || (!active && !archived))
-						continue;
 					punishments.add(punish);
 				}
 				return new Object[] { punishments };
 			case "get-total-results":
 				String table = (String) data[1];
-				boolean archive = table.equals("archive");
-				set = selectCount(table, archive ? "active!=?" : "active=?", 0);
+				boolean isAppeal = table.equals("appeals") || table.equals("archive");
+				boolean archive = table.equals("archive") || table.contains("-a");
+				if(table.contains("-a"))
+					table = table.replaceAll("-a", "");
+				query = "";
+				if(archive) {
+					query+= "active!=0";
+					if(!isAppeal)
+						query+= " OR expiry > NOW()";
+				} else {
+					query += "active=0";
+					if(!isAppeal)
+						query += " AND (expiry IS NULL OR expiry < NOW())";
+				}
+				set = selectCount(table, query);
 				if(empty(set))
 					return new Object[] { 0 };
 				int total = getInt(set, 1);

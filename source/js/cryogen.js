@@ -43,7 +43,8 @@ function getPages(page_t) {
         break;
     }
   //last value = last page
-    pages.push(page_t);
+    if(page_t != 1)
+        pages.push(page_t);
     var elem = $('<div></div>');
     for(var i = 0; i < pages.length; i++) {
         var show_page = pages[i];
@@ -83,21 +84,25 @@ function getJSON(ret) {
     return data;
 }
 
-function loadPunishment(id, appeal) {
+function loadPunishment(id, appeal, mod) {
     $.post('/staff', { mod:'punish', action:'view-punish', id:id, appeal:appeal }, function(ret) {
         var data = getJSON(ret);
         if(data == null) return;
-        update(false, data.html, 'punish');
-        update(true, 'Currently viewing punishment', 'punish');
+        update(false, data.html, mod);
+        update(true, 'Currently viewing punishment', mod);
+    }).fail(function() {
+        sendAlert('Error connecting to the website server. Please try again later.');
     });
 }
 
-function loadAppeal(id) {
+function loadAppeal(id, mod) {
     $.post('/staff', { mod:'appeal', action:'view-appeal', id:id }, function(ret) {
         var data = getJSON(ret);
         if(data == null) return;
-        update(false, data.html, 'appeal');
-        update(true, 'Currently viewing appeal', 'appeal');
+        update(false, data.html, mod);
+        update(true, 'Currently viewing appeal', mod);
+    }).fail(function() {
+        sendAlert('Error connecting to the website server. Please try again later.');
     });
 }
 
@@ -108,6 +113,8 @@ function loadList(mod, archive, page) {
         update(false, data.html, mod);
         update(true, getDescription(archive), mod);
         updatePage(data.pageTotal, mod);
+    }).fail(function() {
+        sendAlert('Error connecting to the website server. Please try again later.');
     });
 }
 
@@ -117,6 +124,8 @@ function loadReport(mod, archive, id) {
         if(data == null) return;
         update(true, 'Currently viewing report', mod);
         update(false, data.html, mod);
+    }).fail(function() {
+        sendAlert('Error connecting to the website server. Please try again later.');
     });
 }
 

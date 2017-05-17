@@ -1,10 +1,45 @@
 script.
+	var archive = false;
+	var changed = false;
+	var page = 1;
 	$(document).ready(function() {
-		var archive = false;
-		var close = 'Click to close search bar.';
-		var open = 'Click to open search bar.';
 
-		var changed = false;
+		loadPunishmentList();
+
+		function loadPunishmentList() {
+			loadList('punish', archive, page);
+			return false;
+		}
+
+		function loadPunish(id) {
+			loadPunishment(id, false);
+			return false;
+		}
+
+		$(document).on('click', '#punish-link', function() {
+			var elem = $(this).closest('tr');
+			var id = elem.data('id');
+			return loadPunish(id);
+		});
+
+		$(document).on('click', '#appeal-link', function() {
+			var id = $(this).data('id');
+			return loadAppeal(id, 'punish');
+		});
+
+		$('#archivepu-btn').click(function() {
+			archive = !archive;
+			return loadPunishmentList();
+		});
+
+		$(document).on('click', '.returnp-but, .returna-but', function() {
+			return loadPunishmentList();
+		});
+
+		$(document).on('click', '.page-link', function() {
+			page = $(this).data('page');
+			loadPunishmentList();
+		});
 
 		$('#searchp-pin').find('input').keydown(function(e) {
 			if(e.which == 13) {
@@ -12,6 +47,15 @@ script.
 				$(this).blur();
 				return false;
 			}
+		});
+
+		$(document).on('click', '#create-p', function() {
+			$.post('/staff', { mod:'punish', action:'view_create' }, function(ret) {
+				var data = getJSON(ret);
+				if(data == null) return;
+				update(false, data.html, 'punish');
+			});
+			return false;
 		});
 
 		//click search icon
@@ -63,102 +107,6 @@ script.
 			}
 		});
 
-		$(document).on('click', '#punish-link', function() {
-			var elem = $(this).closest('tr');
-			var id = elem.data('id');
-			$.post('/staff', { mod:'punish', action:'view-punish', id:id }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success === null) {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#punish-main').html(data.html);
-			}).fail(function() {
-				sendAlert('Error connecting to website server. Please try again in a minute.');
-			});
-		});
-
-		$(document).on('click', '#appeal-link', function() {
-			var id = $(this).data('id');
-			$.post('/staff', { mod:'appeal', action:'view-appeal', id:id }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success === null) {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#punish-main').html(data.html);
-			});
-		});
-
-		$('#archivepu-btn').click(function() {
-			var archived = !archive;
-			archive = archived;
-			$.post('/staff', { mod:'punish', action:'view-list', archived:archived }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success === null) {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#punish-main').html(data.html);
-				var desc = archived ? 'Currently viewing all archived punishments' : 'Currently viewing all active punishments';
-				$('#punish-ap').html(' '+(archived ? 'Active' : 'Archive'));
-				$('#punish-info').html(desc);
-			});
-		});
-
-		$(document).on('click', '.returnp-but, .returna-but', function() {
-			$.post('/staff', { mod:'punish', action:'view-list', archived:archive }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success == null || data.success == '') {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#punish-main').html(data.html);
-			});
-			return false;
-		});
-
-		$(document).on('click', '#create-p', function() {
-			$.post('/staff', { mod:'punish', action:'view_create' }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.success == null || data.success == '') {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#punish-main').html(data.html);
-			});
-			return false;
-		});
-
-		function sendAlert(text) {
-			var n = noty({
-				text: text,
-				layout: 'topRight',
-				timeout: 5000,
-				theme: 'cryogen'
-			});
-		}
-
 	});
 svg(style='display: none; style="position: absolute; width: 0; height: 0; overflow: hidden;', version='1.1', xmlns='http://www.w3.org/2000/svg', xmlns:xlink="http://www.w3.org/1999/xlink")
 	defs
@@ -194,4 +142,5 @@ div.tab-pane.fade#punishments
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#punish-main
-			include punish_list
+		div.pages Pages: 
+			div#punish-pages

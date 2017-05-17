@@ -11,7 +11,7 @@ script.
 		}
 
 		function loadAppeal(id) {
-			loadReport('preport', archive, id);
+			loadAppeal(id, 'appeal');
 		}
 
 		$(document).on('click', '.returna-but, .returnp-but', loadAppealList);
@@ -19,7 +19,7 @@ script.
 		$(document).on('click', '#punisha-link', function() {
 			var tr = $(this).closest('tr');
 			var id = tr.data('id');
-			loadPunishment(id, 'true');
+			loadPunishment(id, 'true', 'appeal');
 			return false;
 		});
 

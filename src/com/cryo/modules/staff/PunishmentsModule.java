@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.cryo.Website;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PunishmentConnection;
+import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.Account;
 import com.cryo.modules.account.AccountUtils;
@@ -207,11 +208,14 @@ public class PunishmentsModule {
 				break;
 			case "view-list":
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
+				int page = Integer.parseInt(request.queryParams("page"));
 				model = new HashMap<String, Object>();
-				punishments = new PunishUtils().getPunishments(null, archived);
+				punishments = new PunishUtils().getPunishments(null, archived, page);
 				model.put("punishments", punishments);
 				html = module.render("./source/modules/staff/punishments/punish_list.jade", model, request, response);
 				prop.put("success", true);
+				int total = PunishUtils.getTotalPages(PunishmentConnection.connection(), "punishments"+(archived ? "-a":""));
+				prop.put("pageTotal", total);
 				prop.put("html", html);
 				break;
 		}
