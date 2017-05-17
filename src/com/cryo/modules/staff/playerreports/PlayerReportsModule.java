@@ -64,10 +64,12 @@ public class PlayerReportsModule {
 			case "view-list":
 				model = new HashMap<>();
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
+				int page = Integer.parseInt(request.queryParams("page"));
 				model.put("archive", archived);
-				model.put("preports", new PunishUtils().getPlayerReports(null, archived));
+				model.put("preports", new PunishUtils().getPlayerReports(null, archived, page));
 				model.put("utils", new PunishUtils());
 				prop.put("success", true);
+				prop.put("pageTotal", PunishUtils.getTotalPages(ReportsConnection.connection(), archived ? "p_archive" : "player_reports"));
 				prop.put("html", module.render("./source/modules/staff/player_reports/report_list.jade", model, request, response));
 				break;
 			case "view-report":

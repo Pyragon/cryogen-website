@@ -1,12 +1,43 @@
 script.
 	var archive = false;
 	var toggled = false;
+	var page = 1;
 	$(document).ready(function() {
 
-		var close = 'Click to close search bar.';
-		var open = 'Click to open search bar.';
-
 		$('#search-preport-icon').attr('title', open);
+
+		loadPlayerReportList();
+
+		function loadPlayerReportList() {
+			loadList('preport', archive, page);
+			return false;
+		}
+
+		function loadPlayerReport(id) {
+			loadReport('preport', archive, id);
+		}
+
+		$(document).on('click', '#view', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			var type = tr.data('type');
+			if(type != 'PLAYER')
+				return;
+			loadPlayerReport(id);
+			return false;
+		});
+
+		$(document).on('click', '.return-but', loadPlayerReportList);
+
+		$('#archive-btn').click(function() {
+			archive = !archive;
+			return loadPlayerReportList();
+		});
+
+		$(document).on('click', '.page-link', function() {
+			page = $(this).data('page');
+			return loadPlayerReportList();
+		})
 
 		//click for actions
 		$(document).on('click', '#caction', function() {
@@ -59,48 +90,7 @@ script.
 			return false;
 		});
 
-		$('#archive-btn').click(function() {
-			var archived = !archive;
-			archive = archived;
-			$.post('/staff', { mod:'preport', action:'view-list', archived:archived }, function(ret) {
-				if(ret.includes('Login to')) {
-					sendAlert('Session expired! Refresh the page to login again.');
-					return;
-				}
-				var data = JSON.parse(ret);
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#preport-main').html(data.html);
-				var desc = archived ? 'Currently viewing all archived player reports' : 'Currently viewing all active player reports';
-				$('#archive-p').html(' '+(archived ? 'Active' : 'Archive'));
-				$('#preport-info').html(desc);
-			});
-			return false;
-		});
-
-		//click view button
-		$(document).on('click', '#view', function() {
-			var tr = $(this).closest('tr');
-			var id = tr.data('id');
-			var type = tr.data('type');
-			var archive = tr.data('arc');
-			if(type != 'PLAYER')
-				return;
-			$.post('staff', { mod:'preport', action:'view-report', id:id, archived:archive }, function(ret) {
-				var data = JSON.parse(ret);
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#preport-info').html('Currently viewing report');
-				$('#preport-main').html(data.html);
-				$('#view-preport').css('visibility', '');
-				$('#preport-auth').html(data.display);
-			});
-			return false;
-		});
+		$('#search-preport-icon').attr('title', OPEN);
 
 		//click search icon
 		$('#search-preport-icon').click(function() {
@@ -109,14 +99,14 @@ script.
 			var user = search.find('input').val();
 			var att = search.attr('display');
 			if(att == 'none') {
-				icon.attr('title', close);
+				icon.attr('title', CLOSE);
 				search.attr('display', 'inline');
 				search.show('slide', {direction: 'right'}, 1000);
 			} else {
 				if(user == '') {
 					search.hide('slide', {direction: 'right'}, 1000, function() {
 						search.attr('display', 'none');
-						icon.attr('title', open);
+						icon.attr('title', OPEN);
 					});
 					return;
 				}
@@ -126,34 +116,6 @@ script.
 			}
 			return false;
 		});
-
-		$(document).on('click', '.return-but', function() {
-			$.post('/staff', { mod:'preport', action:'view-list', archived:archive }, function(ret) {
-				var data = JSON.parse(ret);
-				if(data.html == null || data.html == "") {
-					sendAlert('Session expired! Please reload the page to login again.');
-					return;
-				}
-				if(!data.success) {
-					sendAlert(data.error);
-					return;
-				}
-				$('#preport-main').html(data.html);
-				var desc = archive ? 'Currently viewing all archived player reports' : 'Currently viewing all active player reports';
-				$('#archive-p').html(' '+(archive ? 'Active' : 'Archive'));
-				$('#preport-info').html(desc);
-			});
-			return false;
-		});
-
-		function sendAlert(text) {
-			var n = noty({
-				text: text,
-				layout: 'topRight',
-				timeout: 5000,
-				theme: 'cryogen'
-			});
-		}
 
 	});
 div.tab-pane.fade(id='preports')
@@ -180,4 +142,5 @@ div.tab-pane.fade(id='preports')
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#preport-main
-			include report_list
+		div.pages Pages:
+			div#preport-pages

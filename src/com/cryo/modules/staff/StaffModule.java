@@ -58,15 +58,18 @@ public class StaffModule extends WebModule {
 			val appeals = utils.getAppeals(username, false);
 			val preports = utils.getPlayerReports(username, false);
 			val breports = utils.getBugReports(username, false);
-			for(Iterator<?> it = appeals.iterator(); it.hasNext(); it.next()) {
+			for(Iterator<?> it = appeals.iterator(); it.hasNext();) {
+				it.next();
 				if(comp_total++ > 10)
 					it.remove();
 			}
-			for(Iterator<?> it = preports.iterator(); it.hasNext(); it.next()) {
+			for(Iterator<?> it = preports.iterator(); it.hasNext();) {
+				it.next();
 				if(comp_total++ > 10)
 					it.remove();
 			}
-			for(Iterator<?> it = breports.iterator(); it.hasNext(); it.next()) {
+			for(Iterator<?> it = breports.iterator(); it.hasNext();) {
+				it.next();
 				if(comp_total++ > 10)
 					it.remove();
 			}

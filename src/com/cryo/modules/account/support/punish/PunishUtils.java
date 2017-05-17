@@ -74,10 +74,14 @@ public class PunishUtils {
 		PunishmentConnection.connection().handleRequest("create-appeal", appeal);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public ArrayList<PlayerReportDAO> getPlayerReports(String username, boolean archived) {
+		return getPlayerReports(username, archived, 0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<PlayerReportDAO> getPlayerReports(String username, boolean archived, int page) {
 		ArrayList<PlayerReportDAO> reports = new ArrayList<>();
-		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports", archived);
+		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports", archived, page);
 		if(data != null) {
 			for(PlayerReportDAO report : (ArrayList<PlayerReportDAO>) data[0]) {
 				if(username != null && report.userHasRead(username))
@@ -88,8 +92,8 @@ public class PunishUtils {
 		return reports;
 	}
 	
-	public static int getTotalPages(DatabaseConnection connection, boolean archive) {
-		Object[] data = connection.handleRequest("get-total-results", archive);
+	public static int getTotalPages(DatabaseConnection connection, String table) {
+		Object[] data = connection.handleRequest("get-total-results", table);
 		if(data == null)
 			return 0;
 		int total = (int) data[0];

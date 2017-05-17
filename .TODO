@@ -6,6 +6,8 @@ General:
   ☐ Find memory leak in website
   ☐ Add a 'Website update in: ' countdown to pages like in-game restart counter
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
+  ☐ Switch all error blocks to use the sendAlert instead
+  ☐ Add an error function to the sendAlert
 Shop:
   ✔ Save cart in database as HashMap->JSON and load as such @done(2017-05-14 04:09) @project(Shop)
   ✔ Style + and - buttons to match overall site style @done(2017-05-14 04:25) @project(Shop)

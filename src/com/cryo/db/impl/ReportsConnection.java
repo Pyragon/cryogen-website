@@ -81,7 +81,12 @@ public class ReportsConnection extends DatabaseConnection {
 				return new Object[] { report };
 			case "get-player-reports":
 				archived = (boolean) data[1];
-				set = select(archived ? "p_archive" : "player_reports", null);
+				int page = (int) data[2];
+				if(page == 0) page = 1;
+				int offset = (page - 1) * 10;
+				String table = archived ? "p_archive" : "player_reports";
+				table += " LIMIT "+offset+",10";
+				set = select(table, null);
 				if(wasNull(set))
 					return null;
 				ArrayList<PlayerReportDAO> players = new ArrayList<>();
@@ -106,18 +111,18 @@ public class ReportsConnection extends DatabaseConnection {
 				}
 				return new Object[] { players };
 			case "get-total-results":
-				archived = (boolean) data[1];
-				set = selectCount(archived ? "b_archive" : "bug_reports", null);
+				table = (String) data[1];
+				set = selectCount(table, null);
 				if(empty(set))
 					return new Object[] { 0 };
 				int total = getInt(set, 1);
 				return new Object[] { total };
 			case "get-bug-reports":
 				archived = (boolean) data[1];
-				int page = (int) data[2];
+				page = (int) data[2];
 				if(page == 0) page = 1;
-				int offset = (page - 1) * 10;
-				String table = archived ? "b_archive" : "bug_reports";
+				offset = (page - 1) * 10;
+				table = archived ? "b_archive" : "bug_reports";
 				table += " LIMIT "+offset+",10";
 				set = select(table, null);
 				if(wasNull(set))

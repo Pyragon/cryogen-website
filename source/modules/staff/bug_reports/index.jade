@@ -6,42 +6,18 @@ script.
 		loadBugReportList();
 
 		function loadBugReportList() {
-			$.post('/staff', { mod:'breport', action:'view-list', archived:archive, page:page }, function(ret) {
-				var data = getJSON(ret);
-				if(data == null) return;
-				update(false, data.html);
-				update(true, getDescription());
-				updatePage(data.pageTotal);
-			});
+			loadList('breport', archive, page);
 			return false;
 		}
 
-		function loadReport(id) {
-			$.post('/staff', { mod:'breport', action:'view-report', id:id, archived:archive }, function(ret) {
-				var data = getJSON(ret);
-				if(data == null) return;
-				update(true, 'Currently viewing report');
-				update(false, data.html);
-			});
-		}
-
-		function update(info, data) {
-			$(info ? '#breport-info' : '#breport-main').html(data);
-			$('#archiveb-p').html(' '+(archive ? 'Archive' : 'Active'));
-		}
-
-		function updatePage(page_t) {
-			$('#bpages').html(getPages(page_t).html());
+		function loadBugReport(id) {
+			loadReport('breport', archive, id);
 		}
 
 		$(document).on('click', '.page-link', function() {
 			page = $(this).data('page');
-			loadBugReportList();
+			return loadBugReportList();
 		});
-
-		function getDescription() {
-			return archive ? 'Currently viewing all archived bug reports' : 'Currently viewing all active bug reports';
-		}
 
 		$(document).on('click', '#view', function() {
 			var elem = $(this).closest('tr');
@@ -49,19 +25,18 @@ script.
 			var type = elem.data('type');
 			if(type != 'BUG')
 				return false;
-			loadReport(id);
+			loadBugReport(id);
+			return false;
 		});    
 
 		$(document).on('click', '.returnb-but', loadBugReportList);
 
 		$('#viewarch-btn').click(function() {
-			var archived = !archive;
-			archive = archived;
+			archive = !archive;
 			return loadBugReportList();
 		});
 
-		var close = 'Click to close search bar.';
-		var open = 'Click to open search bar.';
+		$('#search-breport-icon').attr('title', OPEN);
 
 		//click search icon
 		$('#search-breport-icon').click(function() {
@@ -70,14 +45,14 @@ script.
 			var user = search.find('input').val();
 			var att = search.attr('display');
 			if(att == 'none' || att == '') {
-				icon.attr('title', close);
+				icon.attr('title', CLOSE);
 				search.attr('display', 'inline');
 				search.show('slide', {direction: 'right'}, 1000);
 			} else {
 				if(user == '') {
 					search.hide('slide', {direction: 'right'}, 1000, function() {
 						search.attr('display', 'none');
-						icon.attr('title', open);
+						icon.attr('title', OPEN);
 					});
 					return;
 				}
@@ -98,7 +73,7 @@ div.tab-pane.fade#breports
 				div(style='float: right; margin: 33.5px 5px;')
 					div.link#viewarch-btn
 						i.fa.fa-archive
-						span#archiveb-p  Archive
+						span#archive-breport  Archive
 	div.row(style='padding: 15px;')
 		div#search-breport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
 			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for a report. Search with criteria using name:
@@ -114,4 +89,4 @@ div.tab-pane.fade#breports
 		div
 			div#breport-main
 			div.pages Pages: 
-				div#bpages
+				div#breport-pages

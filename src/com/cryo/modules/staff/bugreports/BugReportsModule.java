@@ -47,7 +47,7 @@ public class BugReportsModule {
 				model.put("breports", new PunishUtils().getBugReports(null, archived, page));
 				model.put("utils", new PunishUtils());
 				prop.put("success", true);
-				prop.put("pageTotal", PunishUtils.getTotalPages(ReportsConnection.connection(), archived));
+				prop.put("pageTotal", PunishUtils.getTotalPages(ReportsConnection.connection(), (archived ? "b_archive" : "bug_reports")));
 				prop.put("html", module.render("./source/modules/staff/bug_reports/report_list.jade", model, request, response));
 				break;
 			case "click-pin":
