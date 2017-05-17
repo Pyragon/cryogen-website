@@ -10,10 +10,6 @@ script.
 			return false;
 		}
 
-		function loadAppeal(id) {
-			loadAppeal(id, 'appeal');
-		}
-
 		$(document).on('click', '.returna-but, .returnp-but', loadAppealList);
 
 		$(document).on('click', '#punisha-link', function() {
@@ -24,7 +20,7 @@ script.
 		});
 
 		$(document).on('click', '#viewa', function() {
-			loadAppeal($(this).closest('tr').data('id'));
+			loadAppeal($(this).closest('tr').data('id'), 'appeal');
 			return false;
 		});
 
