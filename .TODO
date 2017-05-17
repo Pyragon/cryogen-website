@@ -19,7 +19,7 @@ Staff Page:
   ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
   ☐ Page for admins to to create announcements for the overview page
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
-  ☐ Finish page support to all tabs
+  ✔ Finish page support to all tabs @done(2017-05-17 04:45) @project(Staff Page)
   ☐ Archiving report should edit 'last action', as well as add a comment, same for appeals
   ☐ Log all events
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
