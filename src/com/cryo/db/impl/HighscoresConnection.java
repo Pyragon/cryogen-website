@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.db.SQLQuery;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.highscores.HSDataList;
@@ -21,6 +22,47 @@ public class HighscoresConnection extends DatabaseConnection {
 	public HighscoresConnection() {
 		super("cryogen_global");
 	}
+	
+	private final SQLQuery GET_RANK = (set) -> {
+		if(empty(set)) return null;
+		int rank = getInt(set, 2);
+		System.out.println(rank);
+		return new Object[] { rank };
+	};
+	
+	private final SQLQuery GET_HS_DATA = (set) -> {
+		String username = getString(set, "username");
+		double totalXP = getDouble(set, "total_xp");
+		int totalLevel = getInt(set, "total_level");
+		int[] xp = new int[25];
+		for(int i = 0; i < 25; i++)
+			xp[i] = getInt(set, "skill_"+i);
+		HSData hsdata = new HSData(totalXP, totalLevel, 0, xp);
+		hsdata.formatName(username);
+		hsdata.setRank(HSUtils.getRankData(username));
+		return new Object[] { hsdata };
+	};
+	
+	private final SQLQuery GET_SKILL_LIST = (set) -> {
+		if(wasNull(set))
+			return null;
+		HSDataList list = new HSDataList();
+		int index = 1;
+		while(next(set)) {
+			int rank = index++;
+			Double totalXP = getDouble(set, "total_xp");
+			int totalLevel = getInt(set, "total_level");
+			String name = getString(set, "username");
+			int[] xp = new int[25];
+			for(int i = 0; i < 25; i++)
+				xp[i] = getInt(set, "skill_"+i);
+			HSData hsdata = new HSData(totalXP, totalLevel, rank, xp);
+			hsdata.formatName(name);
+			hsdata.setRank(HSUtils.getRankData(name));
+			list.add(hsdata);
+		}
+		return new Object[] { list };
+	};
 
 	@Override
 	public Object[] handleRequest(Object... data) {
@@ -29,94 +71,31 @@ public class HighscoresConnection extends DatabaseConnection {
 			case "get-rank":
 				String username = (String) data[1];
 				String skill = "skill_"+((int) data[2]);
-				String query = "SELECT * FROM highscores ORDER BY "+skill+" DESC";
-				int index = 0;
-				int rank = 0;
-				ResultSet set = executeQuery(query);
-				if(set == null || wasNull(set))
-					return null;
-				while(next(set)) {
-					index++;
-					String hsname = getString(set, "username");
-					if(hsname.equals(username)) {
-						rank = index;
-						break;
-					}
-				}
-				return new Object[] { rank };
+				String query = "SELECT x.username, x.position FROM (SELECT t.username, t."+skill+", @rownum := @rownum + 1 AS position FROM `highscores` t JOIN (SELECT @rownum := 0) r ORDER BY total_level DESC, total_xp) x WHERE x.username = ?";
+				data = getResults(query, GET_RANK, username);
+				break;
 			case "get-hs-data":
 				String name = (String) data[1];
-				set = getHSData(name);
-				if(set == null) {
+				data = select("highscores", "username=?", GET_HS_DATA, name);
+				if(data == null) {
 					DisplayConnection connection = (DisplayConnection) Website.instance().getConnectionManager().getConnection(Connection.DISPLAY);
 					Object[] disp = connection.handleRequest("get-username", name);
-					if(disp == null)
-						return null;
+					if(disp == null) return null;
 					name = (String) disp[0];
-					set = getHSData(name);
-					if(set == null)
-						return null;
+					data = select("highscores", "username=?", GET_HS_DATA, name);
+					if(data == null) return null;
 				}
-				double totalXP = getDouble(set, "total_xp");
-				int totalLevel = getInt(set, "total_level");
-				int[] xp = new int[25];
-				for(int i = 0; i < 25; i++)
-					xp[i] = getInt(set, "skill_"+i);
-				HSData hsdata = new HSData(totalXP, totalLevel, 0, xp);
-				hsdata.formatName(name);
-				hsdata.setRank(HSUtils.getRankData(name));
-				return new Object[] { hsdata };
+				return data == null ? null : new Object[] { (HSData) data[0] };
 			case "get-skill":
 				int skill_id = (int) data[1];
-				set = selectAll("highscores", "ORDER BY skill_"+(skill_id)+" DESC LIMIT 30");
-				if(set == null || wasNull(set))
-					return null;
-				HSDataList list = new HSDataList();
-				index = 1;
-				while(next(set)) {
-					rank = index++;
-					totalXP = getDouble(set, "total_xp");
-					totalLevel = getInt(set, "total_level");
-					name = getString(set, "username");
-					xp = new int[25];
-					for(int i = 0; i < 25; i++)
-						xp[i] = getInt(set, "skill_"+i);
-					hsdata = new HSData(totalXP, totalLevel, rank, xp);
-					hsdata.formatName(name);
-					hsdata.setRank(HSUtils.getRankData(name));
-					list.add(hsdata);
-				}
-				return new Object[] { list };
+				data = select("highscores ORDER BY skill_? DESC LIMIT 30", "", GET_SKILL_LIST, skill_id);
+				return data == null ? null : new Object[] { (HSDataList) data[0] };
 			case "get-list":
 				int size = (int) data[1];
-				set = selectAll("highscores", "ORDER BY total_level DESC, total_xp DESC LIMIT "+size);
-				if(set == null || wasNull(set))
-					return null;
-				list = new HSDataList();
-				index = 1;
-				while(next(set)) {
-					rank = index++;
-					totalXP = getDouble(set, "total_xp");
-					totalLevel = getInt(set, "total_level");
-					name = getString(set, "username");
-					xp = new int[25];
-					for(int i = 0; i < 25; i++)
-						xp[i] = getInt(set, "skill_"+i);
-					hsdata = new HSData(totalXP, totalLevel, rank, xp);
-					hsdata.formatName(name);
-					hsdata.setRank(HSUtils.getRankData(name));
-					list.add(hsdata);
-				}
-				return new Object[] { list };
+				data = select("highscores ORDER BY total_level DESC, total_xp DESC LIMIT ?", "", GET_SKILL_LIST, size);
+				return data == null ? null : new Object[] { (HSDataList) data[0] };
 		}
 		return null;
-	}
-	
-	private ResultSet getHSData(String name) {
-		ResultSet set = select("highscores", "username='"+name+"'");
-		if(empty(set))
-			return null;
-		return set;
 	}
 	
 }

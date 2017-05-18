@@ -8,7 +8,7 @@ import com.cryo.Website.RequestType;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
@@ -65,7 +65,7 @@ public class RegisterModule extends WebModule {
 			data = connection.handleRequest("get-account", username);
 			if(data == null)
 				return redirect("/login", 0, request, response);
-			Account account = (Account) data[0];
+			AccountDAO account = (AccountDAO) data[0];
 			String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
 			response.cookie("cryo-sess", sess_id);
 			return json(true, redirect("/register?success", 0, request, response));

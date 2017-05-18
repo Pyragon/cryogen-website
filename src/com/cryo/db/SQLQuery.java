@@ -2,8 +2,6 @@ package com.cryo.db;
 
 import java.sql.ResultSet;
 
-import lombok.*;
-
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
  *
@@ -12,6 +10,6 @@ import lombok.*;
 @FunctionalInterface
 public interface SQLQuery {
 	
-	public Object[] handleResult(ResultSet set, Object... params);
+	public Object[] handleResult(ResultSet set);
 	
 }

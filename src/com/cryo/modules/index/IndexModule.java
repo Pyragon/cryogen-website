@@ -47,7 +47,7 @@ public class IndexModule extends WebModule {
 	}
 	
 	@RequiredArgsConstructor
-	public static class LatestPost {
+	public static class PostDAO {
 		
 		private final @Getter String subject, message, username;
 		
@@ -57,13 +57,13 @@ public class IndexModule extends WebModule {
 	
 	public static class PostList {
 		
-		private final @Getter ArrayList<LatestPost> list;
+		private final @Getter ArrayList<PostDAO> list;
 		
 		public PostList() {
 			list = new ArrayList<>();
 		}
 		
-		public void add(LatestPost thread) {
+		public void add(PostDAO thread) {
 			list.add(thread);
 		}
 		

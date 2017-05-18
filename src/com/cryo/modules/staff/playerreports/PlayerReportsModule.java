@@ -7,7 +7,7 @@ import java.util.Properties;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.PlayerReportDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
@@ -116,7 +116,7 @@ public class PlayerReportsModule {
 		model.put("report",  report);
 		model.put("comments", getComments(report.getId()));
 		String html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
-		Account account = AccountUtils.getAccount(report.getUsername());
+		AccountDAO account = AccountUtils.getAccount(report.getUsername());
 		String name = AccountUtils.crownHTML(account);
 		prop.put("success", true);
 		prop.put("html", html);

@@ -14,7 +14,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import com.cryo.Website;
 import com.cryo.db.impl.EmailConnection;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 
 /**
@@ -28,7 +28,7 @@ public class EmailUtils {
 		final String email_user = "pyragon.eldo@gmail.com";
 		final String password = (String) Website.getProperties().get("emailpass");
 		final String random = RandomStringUtils.random(20, true, true);
-		final Account account = AccountUtils.getAccount(username);
+		final AccountDAO account = AccountUtils.getAccount(username);
 		if(account == null)
 			return;
 		EmailConnection.connection().handleRequest("add-verify", username, email, random);

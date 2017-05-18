@@ -10,7 +10,7 @@ import java.util.Properties;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
@@ -46,7 +46,7 @@ public class StaffModule extends WebModule {
 		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/staff", request, response);
 		String username = CookieManager.getUsername(request);
-		Account account = AccountUtils.getAccount(username);
+		AccountDAO account = AccountUtils.getAccount(username);
 		if(account == null)
 			return showLoginPage("/staff", request, response);
 		if(account.getRights() == 0)

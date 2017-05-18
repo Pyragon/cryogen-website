@@ -12,7 +12,7 @@ import lombok.Setter;
  * Created on: Mar 7, 2017 at 9:55:54 PM
  */
 @RequiredArgsConstructor
-public class Account {
+public class AccountDAO {
 	
 	private final @Getter String username;
 	

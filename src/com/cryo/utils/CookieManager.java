@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import com.cryo.db.impl.GlobalConnection;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 
 import lombok.*;
 import spark.Request;
@@ -27,25 +27,25 @@ public class CookieManager {
 			Object[] data = GlobalConnection.connection().handleRequest("get-acc-from-sess", sess_id);
 			if(data == null)
 				return false;
-			return (Account) data[0] != null;
+			return (AccountDAO) data[0] != null;
 		}
 		return false;
 	}
 	
 	public static String getUsername(Request request) {
-		Account account = getAccount(request);
+		AccountDAO account = getAccount(request);
 		if(account == null)
 			return "";
 		return account.getUsername();
 	}
 	
-	public static Account getAccount(Request request) {
+	public static AccountDAO getAccount(Request request) {
 		if(request.cookies().containsKey("cryo-sess")) {
 			String sess_id = request.cookie("cryo-sess");
 			Object[] data = GlobalConnection.connection().handleRequest("get-acc-from-sess", sess_id);
 			if(data == null)
 				return null;
-			return (Account) data[0];
+			return (AccountDAO) data[0];
 		}
 		return null;
 	}

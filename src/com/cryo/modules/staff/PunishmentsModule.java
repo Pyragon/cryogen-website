@@ -14,7 +14,7 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
@@ -196,10 +196,10 @@ public class PunishmentsModule {
 					prop.put("success", false);
 					break;
 				}
-				ArrayList<Account> list = (ArrayList<Account>) data[0];
+				ArrayList<AccountDAO> list = (ArrayList<AccountDAO>) data[0];
 				Object[] array = new Object[list.size() * 2];
 				int index = 0;
-				for(Account account : list) {
+				for(AccountDAO account : list) {
 					array[index++] = account.getUsername();
 					array[index++] = AccountUtils.crownHTML(account);
 				}

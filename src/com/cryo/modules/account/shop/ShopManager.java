@@ -10,7 +10,7 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.paypal.PaypalTransaction;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
@@ -72,7 +72,7 @@ public class ShopManager {
 	
 	public static String processRequest(String action, Request request, Response response, RequestType type, WebModule module) {
 		Properties prop = new Properties();
-		Account account = CookieManager.getAccount(request);
+		AccountDAO account = CookieManager.getAccount(request);
 		String username = account.getUsername();
 		switch(action) {
 			case "chg-quant":

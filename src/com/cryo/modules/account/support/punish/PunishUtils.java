@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import com.cryo.db.DatabaseConnection;
+import com.cryo.db.SQLQuery;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.account.support.BugReportDAO;
@@ -156,10 +157,9 @@ public class PunishUtils {
 				break;
 		}
 		DatabaseConnection connection = type == ReportType.APPEAL ? PunishmentConnection.connection() : ReportsConnection.connection();
-		ResultSet set = connection.select(table, "id=?", id);
-		if(connection.empty(set))
-			return;
-		String read = connection.getString(set, "read");
+		Object[] data = connection.select(table, "id=?", connection.GET_READ, id);
+		if(data == null) return;
+		String read = (String) data[0];
 		ArrayList<String> list = new ArrayList<String>();
 		if(!read.equals(""))
 			list = new Gson().fromJson(read, ArrayList.class);

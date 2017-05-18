@@ -1,30 +1,21 @@
 It is recommended that you use atom-tasks to view TODO files.
-Pagination:
-  ☐ Set page back to 1 when archives are viewed/unviewed
 General:
   ☐ Cache anything that can be for faster loading
-  ☐ Remake database connection base for ease of use and functionality
   ☐ Reduce as many connections to database as possible
   ☐ Find memory leak in website
   ☐ Add a 'Website update in: ' countdown to pages like in-game restart counter
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Switch all error blocks to use the sendAlert instead
-  ☐ Add an error function to the sendAlert
 Shop:
-  ✔ Save cart in database as HashMap->JSON and load as such @done(2017-05-14 04:09) @project(Shop)
-  ✔ Style + and - buttons to match overall site style @done(2017-05-14 04:25) @project(Shop)
   ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
-  ✔ Empty cart when items get purchased @done(2017-05-07 10:39) @project(Shop)
 Staff Page:
-  ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
   ☐ Page for admins to to create announcements for the overview page
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
-  ✔ Finish page support to all tabs @done(2017-05-17 04:45) @project(Staff Page)
   ☐ Archiving report should edit 'last action', as well as add a comment, same for appeals
   ☐ Log all events
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
-  ☐ Add too many results check to all pages
+  ☐ Add too many results check when searching through pages in staff section
 Account:
   ☐ Changing email is not refreshing acount overview
 Other:
@@ -40,3 +31,14 @@ Securiy:
   ☐ Update sessions to be more secure. (Create random sess_id and add to database with sess_ids->usernames, allows more than one user to have it)
   ☐ Reset sess_ids when user changes the password
   ☐ Investigate possibly issue in db sess_ids not being correct (find better way to get sess_ids)
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+  ✔ Remake database connection base for ease of use and functionality @done(2017-05-18 03:50) @project(General)
+  ✔ Add an error function to the sendAlert @done(2017-05-18 03:51) @project(General)
+  ✔ Set page back to 1 when archives are viewed/unviewed @done(2017-05-17 04:48) @project(Pagination)
+  ✔ Save cart in database as HashMap->JSON and load as such @done(2017-05-14 04:09) @project(Shop)
+  ✔ Style + and - buttons to match overall site style @done(2017-05-14 04:25) @project(Shop)
+  ✔ Empty cart when items get purchased @done(2017-05-07 10:39) @project(Shop)
+  ✔ Clicking 'view' via the Overview tab @done(2017-05-06 06:45) @project(Staff Page)
+  ✔ Finish page support to all tabs @done(2017-05-17 04:45) @project(Staff Page)

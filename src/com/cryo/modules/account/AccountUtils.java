@@ -12,15 +12,15 @@ import com.cryo.db.impl.DisplayConnection;
  */
 public class AccountUtils {
 	
-	public static Account getAccount(String username) {
+	public static AccountDAO getAccount(String username) {
 		GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
 		Object[] data = connection.handleRequest("get-account", username);
 		if(data == null)
 			return null;
-		return (Account) data[0];
+		return (AccountDAO) data[0];
 	}
 	
-	public static String getDisplayName(Account account) {
+	public static String getDisplayName(AccountDAO account) {
 		DisplayConnection connection = (DisplayConnection) Website.instance().getConnectionManager().getConnection(Connection.DISPLAY);
 		Object[] data = connection.handleRequest("get-display", account.getUsername());
 		if(data == null)
@@ -28,7 +28,7 @@ public class AccountUtils {
 		return (String) data[0];
 	}
 	
-	public static String crownHTML(Account account) {
+	public static String crownHTML(AccountDAO account) {
 		String colour = "";
 		String img = "";
 		String display = "";

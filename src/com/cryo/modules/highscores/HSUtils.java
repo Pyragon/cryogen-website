@@ -3,7 +3,7 @@ package com.cryo.modules.highscores;
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.HighscoresConnection;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.utils.Utilities;
 
@@ -45,7 +45,8 @@ public class HSUtils {
 			Object[] data = getConnection().handleRequest("get-rank", username, i);
 			if(data == null)
 				rank[i] = 0;
-			rank[i] = (int) data[0];
+			else
+				rank[i] = (int) data[0];
 		}
 		return rank;
 	}

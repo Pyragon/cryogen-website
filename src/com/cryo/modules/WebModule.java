@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
@@ -45,7 +45,7 @@ public abstract class WebModule {
 		model.put("formatter", new DateFormatter());
 		model.put("acutils", new AccountUtils());
 		model.put("online", Utilities.getOnlinePlayers());
-		Account account = CookieManager.getAccount(request);
+		AccountDAO account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
 		if(account != null)
 			model.put("user", account);
@@ -55,7 +55,7 @@ public abstract class WebModule {
 			while(html.contains("$for-name=")) {
 				String format = html.substring(html.indexOf("$for-name=")+10);
 				format = format.substring(0, format.indexOf("$end"));
-				Account acc = AccountUtils.getAccount(format);
+				AccountDAO acc = AccountUtils.getAccount(format);
 				String name = Utilities.formatNameForDisplay(format);
 				if(acc != null)
 					name = AccountUtils.crownHTML(acc);

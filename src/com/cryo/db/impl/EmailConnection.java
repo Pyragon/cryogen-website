@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.db.SQLQuery;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -24,6 +25,11 @@ public class EmailConnection extends DatabaseConnection {
 	public static EmailConnection connection(Website website) {
 		return (EmailConnection) website.getConnectionManager().getConnection(Connection.EMAIL);
 	}
+	
+	private final SQLQuery GET_USER_EMAIL = (set) -> {
+		if(empty(set)) return null;
+		return new Object[] { getString(set, "username"), getString(set, "email") };
+	};
 
 	@Override
 	public Object[] handleRequest(Object... data) {
@@ -40,20 +46,18 @@ public class EmailConnection extends DatabaseConnection {
 				break;
 			case "verify":
 				random = (String) data[1];
-				ResultSet set = select("temp", "random=?", random);
-				if(empty(set))
-					return null;
-				username = getString(set, "username");
-				email = getString(set, "email");
+				data = select("temp", "random=?", GET_USER_EMAIL, random);
+				if(data == null) return null;
+				username = (String) data[0];
+				email = (String) data[1];
 				insert("linked", username, email);
 				delete("temp", "username='"+username+"'");
 				return new Object[] { };
 			case "get-email":
 				username = (String) data[1];
-				set = select("linked", "username=?", username);
-				if(empty(set))
-					return null;
-				return new Object[] { getString(set, "email") };
+				data = select("linked", "username=?", GET_USER_EMAIL, username);
+				if(data == null) return null;
+				return new Object[] { (String) data[1] };
 		}
 		return null;
 	}

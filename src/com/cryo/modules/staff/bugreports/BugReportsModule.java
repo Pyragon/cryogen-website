@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.Account;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.BugReportDAO;
 import com.cryo.modules.account.support.PlayerReportDAO;

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.db.SQLQuery;
 import com.cryo.modules.account.support.punish.ACommentDAO;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishDAO;
@@ -30,6 +31,51 @@ public class PunishmentConnection extends DatabaseConnection {
 	public static PunishmentConnection connection() {
 		return (PunishmentConnection) Website.instance().getConnectionManager().getConnection(Connection.PUNISH);
 	}
+	
+	private final SQLQuery GET_PUNISHMENTS = (set) -> {
+		if(wasNull(set)) return null;
+		List<PunishDAO> punishments = new ArrayList<>();
+		while(next(set)) {
+			PunishDAO punish = loadPunishment(set);
+			punishments.add(punish);
+		}
+		return new Object[] { punishments };
+	};
+	
+	private final SQLQuery GET_APPEALS = (set) -> {
+		if(wasNull(set)) return null;
+		List<AppealDAO> appeals = new ArrayList<>();
+		while(next(set)) {
+			AppealDAO appeal = loadAppeal(set);
+			appeals.add(appeal);
+		}
+		return new Object[] { appeals };
+	};
+	
+	private final SQLQuery GET_PUNISHMENT = (set) -> {
+		if(empty(set)) return null;
+		return new Object[] { loadPunishment(set) };
+	};
+	
+	private final SQLQuery GET_APPEAL = (set) -> {
+		if(empty(set)) return null;
+		return new Object[] { loadAppeal(set) };
+	};
+	
+	private final SQLQuery GET_COMMENTS = (set) -> {
+		ArrayList<ACommentDAO> cList = new ArrayList<>();
+		if(wasNull(set))
+			return new Object[] { cList };
+		while(next(set)) {
+			int id = getInt(set, "id");
+			int appeal_id = getInt(set, "fid");
+			String username = getString(set, "username");
+			String comment = getString(set, "comment");
+			Timestamp time = getTimestamp(set, "time");
+			cList.add(new ACommentDAO(id, appeal_id, username, comment, time));
+		}
+		return new Object[] { cList };
+	};
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -61,41 +107,27 @@ public class PunishmentConnection extends DatabaseConnection {
 						valueList.add(filter.getValue());
 				}
 				Object[] values = valueList.toArray(new Object[valueList.size()]);
-				ResultSet set = select("punishments", builder.toString(), values);
-				if(wasNull(set))
-					break;
-				List<PunishDAO> punishments = new ArrayList<>();
-				while(next(set)) {
-					PunishDAO punish = loadPunishment(set);
-					punishments.add(punish);
-				}
-				return new Object[] { punishments };
+				data = select("punishments", builder.toString(), GET_PUNISHMENTS, values);
+				return data == null ? null : new Object[] { (ArrayList<PunishDAO>) data[0] };
 			case "get-punishments":
 				String username = (String) data[1];
 				boolean archived = (boolean) data[2];
 				int page = (int) data[3];
 				if(page == 0) page = 1;
 				int offset = (page - 1) * 10;
-				punishments = new ArrayList<>();
 				String query = "";
 				if(username != null)
 					query+= "username=? AND";
 				if(archived)
-					query+= "active!=0 OR expiry > NOW()";
+					query+= " active!=0 OR expiry > NOW()";
 				else
-					query += "active=0 AND (expiry IS NULL OR expiry < NOW())";
+					query += " active=0 AND (expiry IS NULL OR expiry < NOW())";
 				query += " LIMIT "+offset+",10";
 				if(username != null)
-					set = select("punishments", query, username);
+					data = select("punishments", query, GET_PUNISHMENTS, username);
 				else
-					set = select("punishments", query);
-				if(set == null || wasNull(set))
-					return new Object[] { punishments };
-				while(next(set)) {
-					PunishDAO punish = loadPunishment(set);
-					punishments.add(punish);
-				}
-				return new Object[] { punishments };
+					data = select("punishments", query, GET_PUNISHMENTS);
+				return new Object[] { data == null ? new ArrayList<PunishDAO>() : (ArrayList<PunishDAO>) data[0] };
 			case "get-total-results":
 				String table = (String) data[1];
 				boolean isAppeal = table.equals("appeals") || table.equals("archive");
@@ -112,29 +144,21 @@ public class PunishmentConnection extends DatabaseConnection {
 					if(!isAppeal)
 						query += " AND (expiry IS NULL OR expiry < NOW())";
 				}
-				set = selectCount(table, query);
-				if(empty(set))
-					return new Object[] { 0 };
-				int total = getInt(set, 1);
-				return new Object[] { total };
+				return new Object[] { selectCount(table, query) };
 			case "get-punishment-from-appeal":
 				int appealId = (int) data[1];
-				set = select("punishments", "appeal_id=?", appealId);
-				if(empty(set))
-					return null;
-				PunishDAO punish = loadPunishment(set);
-				return new Object[] { punish };
+				data = select("punishments", "appeal_id=?", GET_PUNISHMENT, appealId);
+				if(data == null) return null;
+				return new Object[] { (PunishDAO) data[0] };
 			case "get-punishment":
 				id = (int) data[1];
 				if(id == 0)
 					return null;
-				set = select("punishments", "id=?", id);
-				if(empty(set))
-					return null;
-				punish = loadPunishment(set);
-				return new Object[] { punish };
+				data = select("punishments", "id=?", GET_PUNISHMENT, id);
+				if(data == null) return null;
+				return new Object[] { (PunishDAO) data[0] };
 			case "create-punishment":
-				punish = (PunishDAO) data[1];
+				PunishDAO punish = (PunishDAO) data[1];
 				try {
 					insert("punishments", punish.data());
 					return new Object[] { };
@@ -161,21 +185,14 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(page == 0) page = 1;
 				offset = (page - 1) * 10;
 				ArrayList<AppealDAO> appeals = new ArrayList<>();
-				set = select("appeals", (archived ? "active!=?" : "active=?")+" LIMIT "+offset+",10", 0);
-				if(wasNull(set))
-					return null;
-				while(next(set))
-					appeals.add(loadAppeal(set));
-				return new Object[] { appeals };
+				data = select("appeals", (archived ? "active!=?" : "active=?")+" LIMIT "+offset+",10", GET_APPEALS, 0);
+				return new Object[] { data == null ? appeals : (ArrayList<AppealDAO>) data[0] };
 			case "get-appeal":
 				id = (int) data[1];
 				if(id == 0)
 					return null;
-				set = select("appeals", "id=?", id);
-				if(empty(set))
-					return null;
-				appeal = loadAppeal(set);
-				return new Object[] { appeal };
+				data = select("appeals", "id=?", GET_APPEAL, id);
+				return data == null ? null : new Object[] { (AppealDAO) data[0] };
 			case "close-appeal":
 				id = (int) data[1];
 				int status = (int) data[2];
@@ -203,17 +220,8 @@ public class PunishmentConnection extends DatabaseConnection {
 				ArrayList<ACommentDAO> cList = new ArrayList<>();
 				if(appeal_id == 0)
 					return new Object[] { cList };
-				set = select("comments", "fid=? AND type=? ORDER BY time DESC", appeal_id, type);
-				if(wasNull(set))
-					return new Object[] { cList };
-				while(next(set)) {
-					id = getInt(set, "id");
-					username = getString(set, "username");
-					comment = getString(set, "comment");
-					Timestamp time = getTimestamp(set, "time");
-					cList.add(new ACommentDAO(id, appeal_id, username, comment, time));
-				}
-				return new Object[] { cList };
+				data = select("comments", "fid=? AND type=? ORDER BY time DESC", GET_COMMENTS, appeal_id, type);
+				return data == null ? null : new Object[] { (ArrayList<ACommentDAO>) data[0] };
 		}
 		return null;
 	}
@@ -235,6 +243,7 @@ public class PunishmentConnection extends DatabaseConnection {
 		return punish;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public AppealDAO loadAppeal(ResultSet set) {
 		int id = getInt(set, "id");
 		int punishId = getInt(set, "punish_id");

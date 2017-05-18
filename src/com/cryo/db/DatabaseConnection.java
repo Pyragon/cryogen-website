@@ -5,13 +5,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
 import com.cryo.Website;
+import com.cryo.io.Stream;
 import com.cryo.utils.Logger;
+import com.google.gson.internal.Streams;
 import com.mysql.jdbc.Statement;
 
 public abstract class DatabaseConnection {
@@ -121,75 +125,63 @@ public abstract class DatabaseConnection {
 		}
 	}
 	
-	public ResultSet select(String database, String condition, Object... values) {
+	public Object[] select(String database, String condition, SQLQuery query, Object... values) {
 		try {
-			if (connection.isClosed() || !connection.isValid(5))
+			if(connection.isClosed() || !connection.isValid(5))
 				connect();
 			StringBuilder builder = new StringBuilder();
 			builder.append("SELECT * FROM "+database);
-			if(values.length == 0) {
-				if(condition != null && !condition.equals("")) {
-					builder.append(" WHERE ");
-					builder.append(condition);
-				}
-				PreparedStatement stmt = connection.prepareStatement(builder.toString());
-				return stmt.executeQuery();
-			}
-			builder.append(" WHERE ");
-			builder.append(condition);
-			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			for(int i = 0; i < values.length; i++) {
-				Object obj = values[i];
-				int index = i+1;
-				if (obj instanceof String)
-					stmt.setString(index, (String) obj);
-				else if (obj instanceof Integer)
-					stmt.setInt(index, (int) obj);
-				else if(obj instanceof Double)
-					stmt.setDouble(index, (double) obj);
-				else if(obj instanceof Long)
-					stmt.setTimestamp(index, new Timestamp((long) obj));
-			}
-			return stmt.executeQuery();
-		} catch(SQLException e) {
+			if(condition != null && !condition.equals(""))
+				builder.append(" WHERE ").append(condition);
+			Object[] data = getResults(builder.toString(), query, values);
+			return data;
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
-	public ResultSet selectCount(String database, String condition, Object... values) {
+	
+	public int selectCount(String database, String condition, Object...values) {
 		try {
-			if (connection.isClosed() || !connection.isValid(5))
+			if(connection.isClosed() || !connection.isValid(5))
 				connect();
 			StringBuilder builder = new StringBuilder();
 			builder.append("SELECT COUNT(*) FROM "+database);
-			if(values.length == 0) {
-				if(condition != null && !condition.equals("")) {
-					builder.append(" WHERE ");
-					builder.append(condition);
-				}
-				PreparedStatement stmt = connection.prepareStatement(builder.toString());
-				return stmt.executeQuery();
-			}
-			builder.append(" WHERE ");
-			builder.append(condition);
+			if(condition != null && !condition.equals(""))
+				builder.append(" WHERE ").append(condition);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			for(int i = 0; i < values.length; i++) {
-				Object obj = values[i];
-				int index = i+1;
-				if (obj instanceof String)
-					stmt.setString(index, (String) obj);
-				else if (obj instanceof Integer)
-					stmt.setInt(index, (int) obj);
-				else if(obj instanceof Double)
-					stmt.setDouble(index, (double) obj);
-				else if(obj instanceof Long)
-					stmt.setTimestamp(index, new Timestamp((long) obj));
-				else if(obj instanceof Timestamp)
-					stmt.setTimestamp(index, (Timestamp) obj);
-			}
-			return stmt.executeQuery();
+			setParams(stmt, values);
+			ResultSet set = stmt.executeQuery();
+			if(!set.next()) return 0;
+			int count = set.getInt(1);
+			System.out.println(count+" "+stmt);
+			set.close();
+			stmt.close();
+			return count;
 		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public Object[] getResults(String builder, SQLQuery query, Object... values) {
+		try {
+			PreparedStatement stmt = null;
+			ResultSet set = null;
+			try {
+				stmt = connection.prepareStatement(builder.toString());
+				setParams(stmt, values);
+				set = stmt.executeQuery();
+				Object[] result = query.handleResult(set);
+				set.close();
+				return result;
+			} finally {
+				if(stmt != null)
+					stmt.close();
+				if(set != null)
+					set.close();
+			}
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -333,6 +325,28 @@ public abstract class DatabaseConnection {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public final SQLQuery GET_READ = (set) -> {
+		return empty(set) ? null : new Object[] { getString(set, "read") };
+	};
+	
+	public boolean containsRow(ResultSet set, String row) {
+		try {
+			ResultSetMetaData rsMetaData = set.getMetaData();
+			int numberOfColumns = rsMetaData.getColumnCount();
+	
+			// get the column names; column indexes start from 1
+			for (int i = 1; i < numberOfColumns + 1; i++) {
+			    String columnName = rsMetaData.getColumnName(i);
+			    // Get the name of the column's table name
+			    if (row.equals(columnName))
+			    	return true;
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public int getFetchSize(ResultSet set) {

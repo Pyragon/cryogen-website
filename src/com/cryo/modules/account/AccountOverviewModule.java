@@ -191,7 +191,7 @@ public class AccountOverviewModule extends WebModule {
 					return new Gson().toJson(prop);
 				case "change-display":
 					name = request.queryParams("name");
-					Account account = AccountUtils.getAccount(username);
+					AccountDAO account = AccountUtils.getAccount(username);
 					String display = AccountUtils.getDisplayName(account);
 					if(name == null || name == "")
 						return "Error changing Display Name. Please contact an admin.";

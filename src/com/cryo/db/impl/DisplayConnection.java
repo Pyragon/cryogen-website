@@ -1,12 +1,12 @@
 package com.cryo.db.impl;
 
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.db.SQLQuery;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.utils.Utilities;
 
@@ -36,17 +36,9 @@ public class DisplayConnection extends DatabaseConnection {
 				insert("last_names", username, display);
 				break;
 			case "get-time":
-				username = (String) data[1];
-				Date date = new Date();
-				ResultSet set = select("delays", "username='"+username+"'");
-				if(empty(set))
-					return new Object[] { 0 };
-				Timestamp stamp = getTimestamp(set, "timestamp");
-				if(date.getTime() > stamp.getTime())
-					return new Object[] { 0 };
-				long diff = stamp.getTime() - date.getTime();
-				long seconds = diff / 1000;
-				return new Object[] { (int) seconds };
+				data = select("delays", "username=?", GET_TIME, (String) data[1]);
+				if(data == null) return null;
+				return new Object[] { (int) data[0] };
 			case "change-display":
 				username = (String) data[1];
 				display = (String) data[2];
@@ -56,11 +48,11 @@ public class DisplayConnection extends DatabaseConnection {
 					delete("last_names", "username='"+username+"'");
 				if(!Utilities.formatNameForProtocol(display).equals(username))
 					insert("last_names", username, display);
-				set = select("delays", "username='"+username+"'");
+				data = handleRequest("get-time", username);
 				Calendar c = Calendar.getInstance();
 				c.add(Calendar.HOUR, 7*24);
 				long time = c.getTimeInMillis();
-				if(empty(set))
+				if(data == null)
 					insert("delays", username, time);
 				else
 					set("delays", "timestamp=DEFAULT", "username='"+username+"'");
@@ -68,32 +60,52 @@ public class DisplayConnection extends DatabaseConnection {
 				break;
 			case "get-last-display":
 				username = (String) data[1];
-				set = select("last_names", "username='"+username+"'");
-				if(set == null || wasNull(set) || !next(set))
-					return null;
-				return new Object[] { getString(set, "display_name") };
+				data = select("last_names", "username=?", GET_LAST_DISPLAY, username);
+				if(data == null) return null;
+				return new Object[] { (String) data[0] };
 			case "name-exists":
 				String name = (String) data[1];
 				name = name.toLowerCase().replaceAll(" ", "_");
-				set = select("current_names", "username='"+name+"' OR display_name='"+name+"'");
-				if(!empty(set))
+				data = select("current_names", "username=? OR display_name=?", GET_USER_DISPLAY, name, name);
+				if(data != null)
 					return new Object[] { true };
-				set = select("last_names", "username='"+name+"' OR display_name='"+name+"'");
-				return new Object[] { !empty(set) };
+				data = select("last_names", "username=? OR display_name=?", GET_USER_DISPLAY, name, name);
+				return new Object[] { data != null };
 			case "get-username":
 				name = (String) data[1];
-				set = select("current_names", "display_name LIKE '"+name+"'");
-				if(empty(set))
-					return null;
-				return new Object[] { getString(set, "username") };
+				data = select("current_names", "display_name LIKE ?", GET_USER_DISPLAY, name);
+				if(data == null) return null;
+				return new Object[] { (String) data[0] };
 			case "get-display":
 				name = (String) data[1];
-				set = select("current_names", "username='"+name+"'");
-				if(empty(set))
-					return null;
-				return new Object[] { getString(set, "display_name") };
+				data = select("current_names", "username=?", GET_USER_DISPLAY, name);
+				if(data == null) return null;
+				return new Object[] { (String) data[1] };
 		}
 		return null;
 	}
+	
+	private final SQLQuery GET_TIME = (set) -> {
+		if(empty(set))
+			return new Object[] { 0 };
+		Timestamp stamp = getTimestamp(set, "timestamp");
+		Date date = new Date();
+		if(date.getTime() > stamp.getTime())
+			return new Object[] { 0 };
+		long diff = stamp.getTime() - date.getTime();
+		long seconds = diff / 1000;
+		return new Object[] { (int) seconds };
+	};
+	
+	private final SQLQuery GET_USER_DISPLAY = (set) -> {
+		if(empty(set))
+			return null;
+		return new Object[] { getString(set, "username"), getString(set, "display_name") };
+	};
+	
+	private final SQLQuery GET_LAST_DISPLAY = (set) -> {
+		if(empty(set)) return null;
+		return new Object[] { getString(set, "display_name") };
+	};
 	
 }
