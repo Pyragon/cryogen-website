@@ -1,4 +1,7 @@
 It is recommended that you use atom-tasks to view TODO files.
+Bugs:
+  ☐ Bug reports via staff section only show 5/page
+  ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 General:
   ☐ Cache anything that can be for faster loading
   ☐ Reduce as many connections to database as possible

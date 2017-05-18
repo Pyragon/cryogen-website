@@ -167,19 +167,19 @@ public abstract class DatabaseConnection {
 		try {
 			PreparedStatement stmt = null;
 			ResultSet set = null;
+			Object[] result;
 			try {
 				stmt = connection.prepareStatement(builder.toString());
 				setParams(stmt, values);
 				set = stmt.executeQuery();
-				Object[] result = query.handleResult(set);
-				set.close();
-				return result;
+				result = query.handleResult(set);
 			} finally {
 				if(stmt != null)
 					stmt.close();
 				if(set != null)
 					set.close();
 			}
+			return result;
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

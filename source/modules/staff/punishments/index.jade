@@ -76,34 +76,16 @@ script.
 						icon.attr('title', open);
 					});
 					if(changed) {
-						$.post('/staff', { mod:'punish', action:'view-list', archived:archive }, function(ret) {
-							var data = JSON.parse(ret);
-							if(data.success === null) {
-								sendAlert('Session expired! Refresh the page to login again.');
-								return;
-							}
-							if(!data.success) {
-								sendAlert(data.error);
-								return;
-							}
-							$('#punish-main').html(data.html);
-							changed = false;
-						});
+						loadPunishmentList();
+						changed = false;
 					}
-					return;
+					return false;
 				}
 				changed = true;
 				$.post('/staff', { mod:'punish', action:'search', search:user }, function(ret) {
-					var data = JSON.parse(ret);
-					if(data.success === null) {
-						sendAlert('Session expired! Refresh the page to login again.');
-						return;
-					}
-					if(data.error) {
-						sendAlert(data.error);
-						return;
-					}
-					$('#punish-main').html(data.html);
+					var data = getJSON(ret);
+					if(data == null) return false;
+					update(false, data.html, 'punish');
 				});
 			}
 		});

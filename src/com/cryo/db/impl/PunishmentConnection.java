@@ -48,7 +48,6 @@ public class PunishmentConnection extends DatabaseConnection {
 		while(next(set)) {
 			AppealDAO appeal = loadAppeal(set);
 			appeals.add(appeal);
-			System.out.println("appeal");
 		}
 		return new Object[] { appeals };
 	};
