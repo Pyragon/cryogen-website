@@ -154,7 +154,6 @@ public abstract class DatabaseConnection {
 			ResultSet set = stmt.executeQuery();
 			if(!set.next()) return 0;
 			int count = set.getInt(1);
-			System.out.println(count+" "+stmt);
 			set.close();
 			stmt.close();
 			return count;

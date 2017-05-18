@@ -1,13 +1,13 @@
 script.
 	var archive = false;
 	var changed = false;
-	var page = 1;
+	var punish_page = 1;
 	$(document).ready(function() {
 
 		loadPunishmentList();
 
 		function loadPunishmentList() {
-			loadList('punish', archive, page);
+			loadList('punish', archive, punish_page);
 			return false;
 		}
 
@@ -29,7 +29,7 @@ script.
 
 		$('#archivepu-btn').click(function() {
 			archive = !archive;
-			page = 1;
+			punish_page = 1;
 			return loadPunishmentList();
 		});
 
@@ -37,8 +37,8 @@ script.
 			return loadPunishmentList();
 		});
 
-		$(document).on('click', '.page-link', function() {
-			page = $(this).data('page');
+		$(document).on('click', '#punish-pages .page-link', function() {
+			punish_page = $(this).data('page');
 			loadPunishmentList();
 		});
 

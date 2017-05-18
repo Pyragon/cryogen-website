@@ -1,12 +1,12 @@
 script.
 	var archive = false;
-	var page = 1;
+	var breport_page = 1;
 	$(document).ready(function() {
 
 		loadBugReportList();
 
 		function loadBugReportList() {
-			loadList('breport', archive, page);
+			loadList('breport', archive, breport_page);
 			return false;
 		}
 
@@ -14,8 +14,8 @@ script.
 			loadReport('breport', archive, id);
 		}
 
-		$(document).on('click', '.page-link', function() {
-			page = $(this).data('page');
+		$(document).on('click', '#breport-pages .page-link', function() {
+			breport_page = $(this).data('page');
 			return loadBugReportList();
 		});
 
@@ -33,7 +33,7 @@ script.
 
 		$('#viewarch-btn').click(function() {
 			archive = !archive;
-			page = 1;
+			breport_page = 1;
 			return loadBugReportList();
 		});
 

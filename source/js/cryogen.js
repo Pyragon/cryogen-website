@@ -6,7 +6,7 @@ function reloadOverview() {
 const CLOSE = 'Click to close search bar.';
 const OPEN = 'Click to open search bar.';
 
-function getPages(page_t) {
+function getPages(page_t, page) {
     var pages = [];
   //always show first page
     pages.push(1);
@@ -112,7 +112,7 @@ function loadList(mod, archive, page) {
         if(data == null) return;
         update(false, data.html, mod);
         update(true, getDescription(archive), mod);
-        updatePage(data.pageTotal, mod);
+        updatePage(data.pageTotal, page, mod);
     }).fail(function() {
         sendAlert('Error connecting to the website server. Please try again later.');
     });
@@ -135,8 +135,8 @@ function update(info, data, mod) {
         $('#archive-'+mod).html(' '+(archive ? 'Archive' : 'Active'));
 }
 
-function updatePage(page_t, mod) {
-    $('#'+mod+'-pages').html(getPages(page_t).html());
+function updatePage(page_t, page, mod) {
+    $('#'+mod+'-pages').html(getPages(page_t, page).html());
 }
 
 function getDescription(archive, mod) {

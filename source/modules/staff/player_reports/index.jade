@@ -1,7 +1,7 @@
 script.
 	var archive = false;
 	var toggled = false;
-	var page = 1;
+	var preport_page = 1;
 	$(document).ready(function() {
 
 		$('#search-preport-icon').attr('title', open);
@@ -9,7 +9,7 @@ script.
 		loadPlayerReportList();
 
 		function loadPlayerReportList() {
-			loadList('preport', archive, page);
+			loadList('preport', archive, preport_page);
 			return false;
 		}
 
@@ -31,12 +31,12 @@ script.
 
 		$('#archive-btn').click(function() {
 			archive = !archive;
-			page = 1;
+			preport_page = 1;
 			return loadPlayerReportList();
 		});
 
-		$(document).on('click', '.page-link', function() {
-			page = $(this).data('page');
+		$(document).on('click', '#preport-pages .page-link', function() {
+			preport_page = $(this).data('page');
 			return loadPlayerReportList();
 		})
 

@@ -1,12 +1,12 @@
 script.
 	var archive = false;
-	var page = 1;
+	var appeal_page = 1;
 	$(document).ready(function() {
 
 		loadAppealList();
 
 		function loadAppealList() {
-			loadList('appeal', archive, page);
+			loadList('appeal', archive, appeal_page);
 			return false;
 		}
 
@@ -26,12 +26,12 @@ script.
 
 		$('#archivea-btn').click(function() {
 			archive = !archive;
-			page = 1;
+			appeal_page = 1;
 			return loadPlayerReportList();
 		});
 
-		$(document).on('click', '.page-link', function() {
-			page = $(this).data('page');
+		$(document).on('click', '#appeal-pages .page-link', function() {
+			appeal_page = $(this).data('page');
 			return loadAppealList();
 		});
 
