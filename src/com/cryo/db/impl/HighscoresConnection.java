@@ -26,11 +26,12 @@ public class HighscoresConnection extends DatabaseConnection {
 	private final SQLQuery GET_RANK = (set) -> {
 		if(empty(set)) return null;
 		int rank = getInt(set, 2);
-		System.out.println(rank);
 		return new Object[] { rank };
 	};
 	
 	private final SQLQuery GET_HS_DATA = (set) -> {
+		if(empty(set))
+			return null;
 		String username = getString(set, "username");
 		double totalXP = getDouble(set, "total_xp");
 		int totalLevel = getInt(set, "total_level");
@@ -70,6 +71,7 @@ public class HighscoresConnection extends DatabaseConnection {
 		switch(opcode) {
 			case "get-rank":
 				String username = (String) data[1];
+				System.out.println(username);
 				String skill = "skill_"+((int) data[2]);
 				String query = "SELECT x.username, x.position FROM (SELECT t.username, t."+skill+", @rownum := @rownum + 1 AS position FROM `highscores` t JOIN (SELECT @rownum := 0) r ORDER BY total_level DESC, total_xp) x WHERE x.username = ?";
 				data = getResults(query, GET_RANK, username);

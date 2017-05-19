@@ -18,6 +18,14 @@ script.
 				$('.mini-hs').html(data);
 			});
 		}
+
+		$(document).on('click', '.hsuser', function() {
+			var name = $(this).data('user');
+			alert(name);
+			$.post('/highscores', { display:name }, function(ret) {
+				$('.mini-hs').html(ret);
+			});
+		});
 	});
 div.mini-sh
 	div.content

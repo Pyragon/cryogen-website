@@ -1,32 +1,22 @@
 div.header
-  include mini-title
-  script.
-    $(document).ready(function() {
-      $(document).delegate(".hsuser", "click", function() {
-        var name = $(this).attr('user');
-        $.post('/highscores', { display:name }, function(data) {
-          $('.mini-hs').html(data);
-        });
-        return false;
-      });
-    });
+	include mini-title
 div.content
-  table.table.mini-table
-    thead
-      tr
-        th Rank
-        th Player Username
-        th Total Level
-        th Total XP
-    tbody
-      for hsuser in hsusers.getList()
-        -var rank = hsuser.getOverallRank()
-        -var name = hsuser.getName()
-        -var total_level = hsuser.getTotalLevel()
-        -var total_xp = utils.formatDouble(hsuser.getTotalXP())
-        tr
-          td.b-right.rank=rank
-          td.b-right
-            span.hsuser(style='cursor: pointer;', href='#', user=hsuser.getUsername())= hsuser.getName()
-          td.b-right= total_level
-          td.b-right= total_xp
+	table.table.mini-table
+		thead
+			tr
+				th Rank
+				th Player Username
+				th Total Level
+				th Total XP
+		tbody
+			for hsuser in hsusers.getList()
+				-var rank = hsuser.getOverallRank()
+				-var name = hsuser.getName()
+				-var total_level = hsuser.getTotalLevel()
+				-var total_xp = utils.formatDouble(hsuser.getTotalXP())
+				tr
+					td.b-right.rank=rank
+					td.b-right
+						span.hsuser(style='cursor: pointer;', href='#', data-user=hsuser.getUsername())= hsuser.getName()
+					td.b-right= total_level
+					td.b-right= total_xp
