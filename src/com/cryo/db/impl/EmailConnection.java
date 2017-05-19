@@ -50,8 +50,9 @@ public class EmailConnection extends DatabaseConnection {
 				if(data == null) return null;
 				username = (String) data[0];
 				email = (String) data[1];
+				delete("temp", "username=?", username);
+				delete("linked", "username=?", username);
 				insert("linked", username, email);
-				delete("temp", "username='"+username+"'");
 				return new Object[] { };
 			case "get-email":
 				username = (String) data[1];
