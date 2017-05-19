@@ -75,7 +75,7 @@ public class ForumConnection extends DatabaseConnection {
 				}
 				return data == null ? null : new Object[] { (ForumUser) data[0] };
 			case "get-latest-threads":
-				data = select("mybb_threads", "fid=2 OR fid=4 OR fid=5 AND deletetime=0 ORDER BY dateline DESC LIMIT 5", GET_LATEST_THREADS);
+				data = select("mybb_threads", "(fid=4 OR fid=5) AND deletetime=0 ORDER BY dateline DESC LIMIT 5", GET_LATEST_THREADS);
 				if(data == null) {
 					System.out.println("null data");
 					return null;
