@@ -7,9 +7,10 @@ script.
 		});
 
 		$('.search-username').keypress(function(e) {
-			if(e.which == 13)
+			if(e.which == 13) {
 				showPersonalHS();
 				return false;
+			}
 		});
 
 		function showPersonalHS() {
