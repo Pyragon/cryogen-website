@@ -1,49 +1,46 @@
 script.
-  $(document).ready(function() {
-    function miniLogin() {
-      var user = $(".user").val();
-      var pass = $(".pass").val();
-      if(user == '' || pass == '') {
-        $(".mini-alert").css("display","block");
-        $(".mini-alert").html("Both fields need to be filled out");
-        return;
-      }
-      var log = 'true';
-      var redirect = "#{redirect}";
-      $.post('/login?mini-login=true', {username:user,password:pass,redirect:redirect}, function(data) {
-        if(data == 'failed') {
-          $(".mini-alert").css("display","block");
-          $(".mini-alert").html("Invalid username or password");
-          return;
-        }
-        document.write(data);
-        document.close();
-      });
-    }
-    $('.login').click(function() {
-      miniLogin();
-      return false;
-    });
-    $('.user').keypress(function(e) {
-      if(e.which == 13) {
-        $('.pass').focus();
-        return false;
-      }
-    });
-    ('.register-btn').click(function() {
-      return false;
-    });
-  });
+	$(document).ready(function() {
+		function miniLogin() {
+			var user = $(".user").val();
+			var pass = $(".pass").val();
+			if(user == '' || pass == '') {
+				$(".mini-alert").css("display","block");
+				$(".mini-alert").html("Both fields need to be filled out");
+				return;
+			}
+			var log = 'true';
+			var redirect = "#{redirect}";
+			$.post('/login?mini-login=true', {username:user,password:pass,redirect:redirect}, function(data) {
+				if(data == 'failed') {
+					$(".mini-alert").css("display","block");
+					$(".mini-alert").html("Invalid username or password");
+					return;
+				}
+				document.write(data);
+				document.close();
+			});
+		}
+		$('.login').click(function() {
+			miniLogin();
+			return false;
+		});
+		$('.user').keypress(function(e) {
+			if(e.which == 13) {
+				$('.pass').focus();
+				return false;
+			}
+		});
+	});
 div(role='alert', class='alert alert-custom mini-alert')
 form(role='form')
-  div(class='form-group')
-    label(for='username') Username:
-    input(type='text', name="username", placeholder='Enter Username', id='username', class='form-control user')
-  div(class='form-group')
-    label(for='password') Password:
-    input(type='password', name="password", placeholder='Enter Password', id='password', class='form-control pass')
-  div.row
-    div.col-xs-offset-1.col-xs-4.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-offset-1
-      button(class='btn btn-default login') Login
-    div.col-xs-offset-1.col-xs-4.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-offset-1
-      button.btn.btn-default.forgot(onclick="return false;") Forgot my Password
+	div(class='form-group')
+		label(for='username') Username:
+		input(type='text', name="username", placeholder='Enter Username', id='username', class='form-control user')
+	div(class='form-group')
+		label(for='password') Password:
+		input(type='password', name="password", placeholder='Enter Password', id='password', class='form-control pass')
+	div.row
+		div.col-xs-offset-1.col-xs-4.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-offset-1
+			button(class='btn btn-default login') Login
+		div.col-xs-offset-1.col-xs-4.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-offset-1
+			button.btn.btn-default.forgot(onclick="return false;") Forgot my Password
