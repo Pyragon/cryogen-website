@@ -51,14 +51,11 @@ public class EmailUtils {
 			message.setFrom(new InternetAddress("webm@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(email));
-			message.setSubject("Testing Subject");
-			message.setText("Hello, "+AccountUtils.getDisplayName(account)+""
-				+ "\n\nYour verification is nearly complete. Click or paste this link into your browser to verify your email! http://localhost:8181/account?action=verify&id="+random+"\""
-						+ "\n\nThis link will expire in 24 hours.");
+			message.setSubject("Cryogen - Email verification almost complete!");
+			message.setText("Hello, "+AccountUtils.getDisplayName(account)+"!"
+				+ "\n\nYour verification is nearly complete. Click or paste this link into your browser to verify your email! http://cryogen-rsps.com/account?action=verify&id="+random+"\n\nThis link will expire in 24 hours.");
 
 			Transport.send(message);
-
-			System.out.println("Done");
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

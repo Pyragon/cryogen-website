@@ -93,27 +93,27 @@ public class AccountOverviewModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
+		HashMap<String, Object> model = new HashMap<>();
+		if(request.queryParams().contains("action")) {
+			String action = request.queryParams("action");
+			switch(action) {
+				case "verify":
+					String random = request.queryParams("id");
+					Object[] data = EmailConnection.connection().handleRequest("verify", random);
+					model.put("success", data != null);
+					return render("./source/modules/account/sections/overview/email-verify.jade", model, request, response);
+				//default: return Website.render404(request, response);
+			}
+		}
 		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/account?"+(request.queryString() == null ? "" : request.queryString()), request, response);
 		String username = CookieManager.getUsername(request);
-		HashMap<String, Object> model = new HashMap<>();
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))
 				model.put("section", request.queryParams("section"));
 			model.put("shopItems", ShopManager.cached);
 			model.put("shopManager", new ShopManager());
 			model.put("packages", ShopUtils.getItems(username));
-			if(request.queryParams().contains("action")) {
-				String action = request.queryParams("action");
-				switch(action) {
-					case "verify":
-						String random = request.queryParams("id");
-						Object[] data = EmailConnection.connection().handleRequest("verify", random);
-						model.put("success", data != null);
-						return render("./source/modules/account/sections/overview/email-verify.jade", model, request, response);
-					default: return Website.render404(request, response);
-				}
-			}
 			model.put("voteManager", new VotingManager(username));
 			Object[] data = DisplayConnection.connection().handleRequest("get-time", username);
 			int seconds = 0;

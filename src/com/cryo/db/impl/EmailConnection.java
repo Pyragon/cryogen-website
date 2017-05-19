@@ -42,6 +42,7 @@ public class EmailConnection extends DatabaseConnection {
 				String username = (String) data[1];
 				String email = (String) data[2];
 				String random = (String) data[3];
+				delete("temp", "username=?", username);
 				insert("temp", username, email, random, "DEFAULT");
 				break;
 			case "verify":

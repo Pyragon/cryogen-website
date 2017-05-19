@@ -1,11 +1,12 @@
 It is recommended that you use atom-tasks to view TODO files.
 Bugs:
-  ☐ Bug reports via staff section only show 5/page
+  ☐ Bug reports via staff section only show 5/page <- no fucking clue. Just don't get it
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
+  ☐ Ranks are being loaded like 10x/person
 General:
   ☐ Cache anything that can be for faster loading
   ☐ Reduce as many connections to database as possible
-  ☐ Find memory leak in website
+  ☐ Find memory leak in website <- possibly done
   ☐ Add a 'Website update in: ' countdown to pages like in-game restart counter
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Switch all error blocks to use the sendAlert instead
@@ -20,7 +21,7 @@ Staff Page:
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
   ☐ Add too many results check when searching through pages in staff section
 Account:
-  ☐ Changing email is not refreshing acount overview
+  ✔ Changing email is not refreshing acount overview @done(2017-05-19 09:39) @project(Account)
 Other:
   ☐ Page for players to view their own player/bug reports
   ☐ Proper download page

@@ -74,6 +74,7 @@ public class ReportsConnection extends DatabaseConnection {
 			BugReportDAO bug = loadBugReport(set);
 			bugs.add(bug);
 		}
+		System.out.println(bugs.size());
 		return new Object[] { bugs };
 	};
 	
@@ -164,7 +165,8 @@ public class ReportsConnection extends DatabaseConnection {
 				table = archived ? "b_archive" : "bug_reports";
 				table += " LIMIT "+offset+",10";
 				data = select(table, null, GET_BUG_REPORTS);
-				return data == null ? null : new Object[] { (ArrayList<BugReportDAO>) data[0] };
+				ArrayList<BugReportDAO> reports = (ArrayList<BugReportDAO>) data[0];
+				return data == null ? null : new Object[] { reports };
 			case "get-bug-report":
 				id = (int) data[1];
 				archived = (boolean) data[2];
