@@ -19,6 +19,8 @@ public class EmailConnection extends DatabaseConnection {
 	}
 	
 	public static EmailConnection connection() {
+		if(Website.instance() == null || Website.instance().getConnectionManager() == null)
+			return null; //quick fix
 		return (EmailConnection) Website.instance().getConnectionManager().getConnection(Connection.EMAIL);
 	}
 	
