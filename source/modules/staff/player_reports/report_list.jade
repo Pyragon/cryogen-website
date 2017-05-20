@@ -9,6 +9,7 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
 			th.t-center Title
 			th.t-center Username
 			th.t-center Reporting
+			th.t-center Last Action
 			if archive
 				th.t-center Date reported
 				th.t-center Date archived
@@ -25,6 +26,7 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
 				td.b-right= report.getTitle()
 				td.b-right= '$for-name='+report.getUsername()+'$end'
 				td.b-right= '$for-name='+report.getOffender()+'$end'
+				td.b-right= report.getLastAction()
 				td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
 				if archive
 					td.b-right= formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY H:mm a')
