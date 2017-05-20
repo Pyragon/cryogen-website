@@ -79,7 +79,7 @@ public class PlayerReportsModule {
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
-				ReportsConnection.connection().handleRequest("archive-report", id, 1);
+				ReportsConnection.connection().handleRequest("archive-report", id, 1, username);
 				prop.put("success", true);
 				model = new HashMap<>();
 				model.put("preports", new PunishUtils().getPlayerReports(username, false));

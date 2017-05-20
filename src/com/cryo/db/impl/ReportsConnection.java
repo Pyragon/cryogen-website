@@ -183,9 +183,11 @@ public class ReportsConnection extends DatabaseConnection {
 			case "archive-report":
 				id = (int) data[1];
 				type = (int) data[2];
+				username = (String) data[3];
 				String archive = type == 0 ? "b_archive" : "p_archive";
 				table = type == 0 ? "bug_reports" : "player_reports";
 				execute("INSERT INTO "+archive+" SELECT *, NOW() AS archived FROM "+table+" WHERE id=?;", id);
+				set(archive, "last_action=?", "id=?", "Report archived by $for-name="+username+"$end", id);
 				delete(table, "id=?", id);
 				break;
 		}
