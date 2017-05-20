@@ -150,21 +150,25 @@ public class ReportsConnection extends DatabaseConnection {
 				int page = (int) data[2];
 				if(page == 0) page = 1;
 				int offset = (page - 1) * 10;
-				String table = archived ? "p_archive" : "player_reports";
-				table += " LIMIT "+offset+",10";
-				data = select(table, null, GET_PLAYER_REPORTS);
+				StringBuilder builder = new StringBuilder();
+				builder.append(archived ? "p_archive" : "player_reports")
+						.append(" ORDER BY ").append(archived ? "archived" : "time")
+						.append(" DESC LIMIT "+offset+",10");
+				data = select(builder.toString(), null, GET_PLAYER_REPORTS);
 				return data == null ? null : new Object[] { (ArrayList<PlayerReportDAO>) data[0] };
 			case "get-total-results":
-				table = (String) data[1];
+				String table = (String) data[1];
 				return new Object[] { selectCount(table, null) };
 			case "get-bug-reports":
 				archived = (boolean) data[1];
 				page = (int) data[2];
 				if(page == 0) page = 1;
 				offset = (page - 1) * 10;
-				table = archived ? "b_archive" : "bug_reports";
-				table += " LIMIT "+offset+",10";
-				data = select(table, null, GET_BUG_REPORTS);
+				builder = new StringBuilder();
+				builder.append(archived ? "b_archive" : "bug_reports")
+						.append(" ORDER BY ").append(archived ? "archived" : "time")
+						.append(" DESC LIMIT "+offset+",10");
+				data = select(builder.toString(), null, GET_BUG_REPORTS);
 				ArrayList<BugReportDAO> reports = (ArrayList<BugReportDAO>) data[0];
 				return data == null ? null : new Object[] { reports };
 			case "get-bug-report":

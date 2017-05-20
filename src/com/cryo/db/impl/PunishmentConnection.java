@@ -115,18 +115,18 @@ public class PunishmentConnection extends DatabaseConnection {
 				int page = (int) data[3];
 				if(page == 0) page = 1;
 				int offset = (page - 1) * 10;
-				String query = "";
+				builder = new StringBuilder();
 				if(username != null)
-					query+= "username=? AND";
+					builder.append("username=? AND ");
 				if(archived)
-					query+= " active!=0 OR expiry > NOW()";
+					builder.append(" active!=0 OR expiry > NOW()");
 				else
-					query += " active=0 AND (expiry IS NULL OR expiry < NOW())";
-				query += " LIMIT "+offset+",10";
+					builder.append(" active=0 AND (expiry IS NULL OR expiry < NOW())");
+				builder.append(" ORDER BY date DESC LIMIT "+offset+",10");
 				if(username != null)
-					data = select("punishments", query, GET_PUNISHMENTS, username);
+					data = select("punishments", builder.toString(), GET_PUNISHMENTS, username);
 				else
-					data = select("punishments", query, GET_PUNISHMENTS);
+					data = select("punishments", builder.toString(), GET_PUNISHMENTS);
 				return new Object[] { data == null ? new ArrayList<PunishDAO>() : (ArrayList<PunishDAO>) data[0] };
 			case "get-total-results":
 				String table = (String) data[1];
@@ -134,7 +134,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				boolean archive = table.equals("archive") || table.contains("-a");
 				if(table.contains("-a"))
 					table = table.replaceAll("-a", "");
-				query = "";
+				String query = "";
 				if(archive) {
 					query+= "active!=0";
 					if(!isAppeal)
@@ -185,7 +185,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(page == 0) page = 1;
 				offset = (page - 1) * 10;
 				ArrayList<AppealDAO> appeals = new ArrayList<>();
-				data = select("appeals", (archived ? "active!=?" : "active=?")+" LIMIT "+offset+",10", GET_APPEALS, 0);
+				data = select("appeals", (archived ? "active!=?" : "active=?")+" ORDER BY time DESC LIMIT "+offset+",10", GET_APPEALS, 0);
 				return new Object[] { data == null ? appeals : (ArrayList<AppealDAO>) data[0] };
 			case "get-appeal":
 				id = (int) data[1];
