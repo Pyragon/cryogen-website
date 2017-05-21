@@ -27,7 +27,7 @@ script.
 		$('#archivea-btn').click(function() {
 			archive = !archive;
 			appeal_page = 1;
-			return loadPlayerReportList();
+			return loadAppealList();
 		});
 
 		$(document).on('click', '#appeal-pages .page-link', function() {
@@ -69,7 +69,7 @@ div.tab-pane.fade#appeals
 				div(style='float: right; margin: 33.5px 5px;')
 					div.link#archivea-btn
 						i.fa.fa-archive
-							span#archive-ap  Archive
+							span#archive-appeal  Archive
 	div.row(style='padding: 15px;')
 		div#search-appeal(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
 			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for an appeal. Search with criteria using name:

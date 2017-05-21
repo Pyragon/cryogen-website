@@ -132,7 +132,7 @@ function loadReport(mod, archive, id) {
 function update(info, data, mod) {
     $(`#${mod}-${info ? 'info' : 'main'}`).html(data);
     if(info)
-        $('#archive-'+mod).html(' '+(archive ? 'Archive' : 'Active'));
+        $('#archive-'+mod).html(' '+(!archive ? 'Archive' : 'Active'));
 }
 
 function updatePage(page_t, page, mod) {
