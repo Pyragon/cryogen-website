@@ -47,15 +47,16 @@ public class ReportsConnection extends DatabaseConnection {
 	private final SQLQuery GET_PLAYER_REPORT = (set) -> {
 		if(empty(set))
 			return null;
-		return new Object[] { loadPlayerReport(set) };
+		return new Object[] { loadPlayerReport(set, containsRow(set, "archived")) };
 	};
 	
 	private final SQLQuery GET_PLAYER_REPORTS = (set) -> {
 		if(wasNull(set))
 			return null;
 		ArrayList<PlayerReportDAO> players = new ArrayList<>();
+		boolean archived = containsRow(set, "archived");
 		while(next(set)) {
-			PlayerReportDAO report = loadPlayerReport(set);
+			PlayerReportDAO report = loadPlayerReport(set, archived);
 			players.add(report);
 		}
 		return new Object[] { players };
@@ -63,23 +64,23 @@ public class ReportsConnection extends DatabaseConnection {
 	
 	private final SQLQuery GET_BUG_REPORT = (set) -> {
 		if(empty(set)) return null;
-		return new Object[] { loadBugReport(set) };
+		return new Object[] { loadBugReport(set, containsRow(set, "archived")) };
 	};
 	
 	private final SQLQuery GET_BUG_REPORTS = (set) -> {
 		if(wasNull(set))
 			return null;
 		ArrayList<BugReportDAO> bugs = new ArrayList<>();
+		boolean archived = containsRow(set, "archived");
 		while(next(set)) {
-			BugReportDAO bug = loadBugReport(set);
+			BugReportDAO bug = loadBugReport(set, archived);
 			bugs.add(bug);
 		}
-		System.out.println(bugs.size());
 		return new Object[] { bugs };
 	};
 	
 	@SuppressWarnings("unchecked")
-	private final PlayerReportDAO loadPlayerReport(ResultSet set) {
+	private final PlayerReportDAO loadPlayerReport(ResultSet set, boolean archived) {
 		int id = getInt(set, "id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
@@ -94,15 +95,13 @@ public class ReportsConnection extends DatabaseConnection {
 		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 		PlayerReportDAO report = new PlayerReportDAO(id, username, title, offender, rule, info, proof, lastAction, comment, time);
 		report.setUsersRead(list);
-		if(containsRow(set, "archived"))
+		if(archived)
 			report.setArchived(getTimestamp(set, "archived"));
 		return report;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private final BugReportDAO loadBugReport(ResultSet set) {
-		if(empty(set))
-			return null;
+	private final BugReportDAO loadBugReport(ResultSet set, boolean archived) {
 		int id = getInt(set, "id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
@@ -116,7 +115,7 @@ public class ReportsConnection extends DatabaseConnection {
 		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 		BugReportDAO bug = new BugReportDAO(id, username, title, replicated, date, info, lastAction, comment, time);
 		bug.setUsersRead(list);
-		if(containsRow(set, "archived"))
+		if(archived)
 			bug.setArchived(getTimestamp(set, "archived"));
 		return bug;
 	}
@@ -188,9 +187,10 @@ public class ReportsConnection extends DatabaseConnection {
 				id = (int) data[1];
 				type = (int) data[2];
 				username = (String) data[3];
-				String archive = type == 0 ? "b_archive" : "p_archive";
-				table = type == 0 ? "bug_reports" : "player_reports";
+				String archive = type == 1 ? "b_archive" : "p_archive";
+				table = type == 1 ? "bug_reports" : "player_reports";
 				execute("INSERT INTO "+archive+" SELECT *, NOW() AS archived FROM "+table+" WHERE id=?;", id);
+				handleRequest("submit-com", id, type, "cryobot", "Report has been archived by $for-name="+username+"$end.");
 				set(archive, "last_action=?", "id=?", "Report archived by $for-name="+username+"$end", id);
 				delete(table, "id=?", id);
 				break;

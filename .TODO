@@ -2,7 +2,6 @@ It is recommended that you use atom-tasks to view TODO files.
 Bugs:
   ☐ Bug reports via staff section only show 5/page <- no fucking clue. Just don't get it
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
-  ☐ Ranks are being loaded like 10x/person
 General:
   ☐ Cache anything that can be for faster loading
   ☐ Reduce as many connections to database as possible
@@ -15,13 +14,12 @@ Shop:
 Staff Page:
   ☐ Page for admins to to create announcements for the overview page
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
-  ☐ Archiving report should edit 'last action', as well as add a comment, same for appeals
   ☐ Log all events
+  ☐ Finish searching for rest of staff page
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
   ☐ Add too many results check when searching through pages in staff section
 Account:
-  ✔ Changing email is not refreshing acount overview @done(2017-05-19 09:39) @project(Account)
 Other:
   ☐ Page for players to view their own player/bug reports
   ☐ Proper download page
@@ -38,6 +36,9 @@ Securiy:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Fix whatever the fuck is wrong with bug reports @done(2017-05-21 04:31) @project(Bugs)
+  ✔ Archiving report should edit 'last action', as well as add a comment, same for appeals @done(2017-05-21 04:32) @project(Staff Page)
+  ✔ Changing email is not refreshing acount overview @done(2017-05-19 09:39) @project(Account)
   ✔ Remake database connection base for ease of use and functionality @done(2017-05-18 03:50) @project(General)
   ✔ Add an error function to the sendAlert @done(2017-05-18 03:51) @project(General)
   ✔ Set page back to 1 when archives are viewed/unviewed @done(2017-05-17 04:48) @project(Pagination)

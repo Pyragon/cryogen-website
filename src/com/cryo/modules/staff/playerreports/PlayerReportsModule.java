@@ -34,7 +34,8 @@ public class PlayerReportsModule {
 		Object[] data = ReportsConnection.connection().handleRequest("get-comments", id, 0);
 		if(data == null)
 			return comments;
-		return (ArrayList<CommentDAO>) data[0];
+		comments = (ArrayList<CommentDAO>) data[0];
+		return comments;
 	}
 	
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
@@ -79,7 +80,7 @@ public class PlayerReportsModule {
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
-				ReportsConnection.connection().handleRequest("archive-report", id, 1, username);
+				ReportsConnection.connection().handleRequest("archive-report", id, 0, username);
 				prop.put("success", true);
 				model = new HashMap<>();
 				model.put("preports", new PunishUtils().getPlayerReports(username, false));
@@ -111,10 +112,13 @@ public class PlayerReportsModule {
 			prop.put("error",  "Report not found.");
 			return prop;
 		}
+		System.out.println("ID: "+id);
 		HashMap<String, Object> model = new HashMap<>();
 		PlayerReportDAO report = (PlayerReportDAO) data[0];
 		model.put("report",  report);
-		model.put("comments", getComments(report.getId()));
+		ArrayList<CommentDAO> comments = getComments(report.getId());
+		System.out.println("Comments: "+comments.size());
+		model.put("comments", comments);
 		String html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
 		AccountDAO account = AccountUtils.getAccount(report.getUsername());
 		String name = AccountUtils.crownHTML(account);

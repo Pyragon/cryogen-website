@@ -78,7 +78,7 @@ public class BugReportsModule {
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));
-				ReportsConnection.connection().handleRequest("archive-report", id, 0, username);
+				ReportsConnection.connection().handleRequest("archive-report", id, 1, username);
 				prop.put("success", true);
 				model = new HashMap<>();
 				model.put("breports", new PunishUtils().getBugReports(null, false));
