@@ -82,11 +82,6 @@ public class PunishmentConnection extends DatabaseConnection {
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
-			case "archive":
-				int id = (int) data[1];
-				execute("INSERT INTO archive SELECT * FROM appeals WHERE id="+id);
-				delete("appeals", "id=?", id);
-				break;
 			case "search-punishments":
 				ArrayList<Filter> filters = (ArrayList<Filter>) data[1];
 				if(filters.size() == 0)
@@ -151,7 +146,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(data == null) return null;
 				return new Object[] { (PunishDAO) data[0] };
 			case "get-punishment":
-				id = (int) data[1];
+				int id = (int) data[1];
 				if(id == 0)
 					return null;
 				data = select("punishments", "id=?", GET_PUNISHMENT, id);
