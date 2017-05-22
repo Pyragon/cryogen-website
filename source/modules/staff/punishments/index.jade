@@ -40,7 +40,6 @@ script.
 		$(document).on('click', '#punish-pages .page-link', function() {
 			punish_page = $(this).data('page');
 			if(searching['punish'] == true) {
-				console.log('page: '+punish_page);
 				search('punish', punish_page);
 				return false;
 			}
