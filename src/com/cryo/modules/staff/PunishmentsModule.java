@@ -57,56 +57,22 @@ public class PunishmentsModule {
 		String username = CookieManager.getUsername(request);
 		switch (action) {
 			case "search":
-				String text = request.queryParams("search");
-				text = text.replaceAll(", ", ",");
-				String[] queries = text.split(",");
-				HashMap<String, Filter> filters = new HashMap<>();
-				boolean incorrect = false;
-				for(String query : queries) {
-					String[] values = query.split(":");
-					if(values.length != 2)
-						continue;
-					String filterName = values[0];
-					String value = values[1].toLowerCase();
-					Filter filter = Website.instance().getSearchManager().getFilter(filterName);
-					if(filter == null)
-						continue;
-					if(filters.containsKey(filter.getName())) {
-						prop.put("success", false);
-						prop.put("error", "You cannot have two of the same filters.");
-						break;
-					}
-					if(!filter.setValue(value)) {
-						incorrect = true;
-						continue;
-					}
-					filters.put(filter.getName(), filter);
-				}
-				ArrayList<Filter> filterA = new ArrayList<>();
-				filterA.addAll(filters.values());
-				Object[] data = PunishmentConnection.connection().handleRequest("search-punishments", filterA);
-				if(data == null) {
-					prop.put("success", false);
-					String results = "No search results found.";
-					if(incorrect)
-						results += " Your search results contain invalid filters.";
-					prop.put("error", results);
-					break;
-				}
 				HashMap<String, Object> model = new HashMap<>();
-				List<PunishDAO> punishments = (List<PunishDAO>) data[0];
-				if(punishments.size() == 0) {
-					prop.put("success", false);
-					prop.put("error", "No search results found.");
+				String text = request.queryParams("search");
+				int page = Integer.parseInt(request.queryParams("page"));
+				Properties search_results = Website.instance().getSearchManager().search("punish", text, page, PunishmentConnection.connection());
+				prop.put("success", search_results.get("success"));
+				if(!(boolean) search_results.get("success")) {
+					prop.put("error", search_results.get("error"));
 					break;
 				}
-				for(Filter filter : filterA) {
-					punishments = filter.filterList(punishments);
-				}
+				List<PunishDAO> punishments = (List<PunishDAO>) search_results.get("results");
 				model.put("punishments", punishments);
 				String html = module.render("./source/modules/staff/punishments/punish_list.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);
+				prop.put("pageTotal", search_results.get("pageTotal"));
+				prop.put("filters", search_results.get("filters"));
 				break;
 			case "view-punish":
 				int id = Integer.parseInt(request.queryParams("id"));
@@ -134,7 +100,7 @@ public class PunishmentsModule {
 				cal.add(Calendar.DAY_OF_MONTH, expires);
 				Timestamp expiry = new Timestamp(cal.getTimeInMillis());
 				punish = new PunishDAO(-1, player, (type == "mute" ? 0 : 1), null, expiry, username, reason, true, 0);
-				data = PunishmentConnection.connection().handleRequest("create-punishment", punish);
+				Object[] data = PunishmentConnection.connection().handleRequest("create-punishment", punish);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Error adding punishment!");
@@ -208,7 +174,7 @@ public class PunishmentsModule {
 				break;
 			case "view-list":
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
-				int page = Integer.parseInt(request.queryParams("page"));
+				page = Integer.parseInt(request.queryParams("page"));
 				model = new HashMap<String, Object>();
 				punishments = new PunishUtils().getPunishments(null, archived, page);
 				model.put("punishments", punishments);

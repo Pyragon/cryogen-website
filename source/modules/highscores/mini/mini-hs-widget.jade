@@ -25,6 +25,7 @@ script.
 			$.post('/highscores', { display:name }, function(ret) {
 				$('.mini-hs').html(ret);
 			});
+			return false;
 		});
 	});
 div.mini-sh

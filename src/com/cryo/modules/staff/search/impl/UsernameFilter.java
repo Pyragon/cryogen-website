@@ -16,13 +16,18 @@ public class UsernameFilter extends Filter {
 	}
 
 	@Override
-	public String getFilter() {
+	public String getFilter(String mod) {
 		return "username LIKE ?";
 	}
 
 	@Override
-	public boolean setValue(String value) {
+	public boolean setValue(String mod, String value) {
 		this.value = value;
+		return true;
+	}
+
+	@Override
+	public boolean appliesTo(String mod) {
 		return true;
 	}
 	

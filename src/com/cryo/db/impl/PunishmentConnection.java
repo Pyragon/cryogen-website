@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import com.cryo.Website;
@@ -15,6 +16,7 @@ import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.staff.search.Filter;
+import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
 /**
@@ -82,35 +84,33 @@ public class PunishmentConnection extends DatabaseConnection {
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
-			case "search-punishments":
-				ArrayList<Filter> filters = (ArrayList<Filter>) data[1];
-				if(filters.size() == 0)
-					return null;
-				List<Filter> applicable = filters.stream().filter(f -> {
-					return f.getFilter() != null;
-				}).collect(Collectors.toList());
-				StringBuilder builder = new StringBuilder();
-				for(int i = 0; i < applicable.size(); i++) {
-					Filter filter = applicable.get(i);
-					builder.append(filter.getFilter());
-					if(i != applicable.size()-1)
-						builder.append(" AND ");
-				}
-				ArrayList<Object> valueList = new ArrayList<>();
-				for(Filter filter : applicable) {
-					if(filter.getFilter() != null && filter.getValue() != null)
-						valueList.add(filter.getValue());
-				}
-				Object[] values = valueList.toArray(new Object[valueList.size()]);
-				data = select("punishments", builder.toString(), GET_PUNISHMENTS, values);
+			case "search-appeal":
+			case "search-punish":
+				boolean isAppeal = opcode.contains("appeal");
+				Properties queryValues = (Properties) data[1];
+				int page = (int) data[2];
+				String query = (String) queryValues.get("query");
+				Object[] values = (Object[]) queryValues.get("values");
+				if(page == 0) page = 1;
+				int offset = (page - 1) * 10;
+				query += " LIMIT "+offset+",10";
+				data = select(isAppeal ? "appeals" : "punishments", query, isAppeal ? GET_APPEALS : GET_PUNISHMENTS, values);
 				return data == null ? null : new Object[] { (ArrayList<PunishDAO>) data[0] };
+			case "search-results-appeal":
+			case "search-results-punish":
+				isAppeal = opcode.contains("appeal");
+				queryValues = (Properties) data[1];
+				query = (String) queryValues.get("query");
+				values = (Object[]) queryValues.get("values");
+				int total = selectCount(isAppeal ? "appeals" : "punishments", query, values);
+				return new Object[] { (int) Utilities.roundUp(total, 10) };
 			case "get-punishments":
 				String username = (String) data[1];
 				boolean archived = (boolean) data[2];
-				int page = (int) data[3];
+				page = (int) data[3];
 				if(page == 0) page = 1;
-				int offset = (page - 1) * 10;
-				builder = new StringBuilder();
+				offset = (page - 1) * 10;
+				StringBuilder builder = new StringBuilder();
 				if(username != null)
 					builder.append("username=? AND ");
 				if(archived)
@@ -125,11 +125,11 @@ public class PunishmentConnection extends DatabaseConnection {
 				return new Object[] { data == null ? new ArrayList<PunishDAO>() : (ArrayList<PunishDAO>) data[0] };
 			case "get-total-results":
 				String table = (String) data[1];
-				boolean isAppeal = table.equals("appeals") || table.equals("archive");
+				isAppeal = table.equals("appeals") || table.equals("archive");
 				boolean archive = table.equals("archive") || table.contains("-a");
 				if(table.contains("-a"))
 					table = table.replaceAll("-a", "");
-				String query = "";
+				query = "";
 				if(archive) {
 					query+= "active!=0";
 					if(!isAppeal)

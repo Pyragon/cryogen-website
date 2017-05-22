@@ -39,10 +39,20 @@ script.
 
 		$(document).on('click', '#punish-pages .page-link', function() {
 			punish_page = $(this).data('page');
+			if(searching['punish'] == true) {
+				console.log('page: '+punish_page);
+				search('punish', punish_page);
+				return false;
+			}
 			loadPunishmentList();
+			return false;
 		});
 
-		$('#searchp-pin').find('input').keydown(function(e) {
+		$('#search-punish-icon').click(function() {
+			clickSearchIcon('punish', archive, punish_page);
+		});
+
+		$('#search-punish-pin').find('input').keydown(function(e) {
 			if(e.which == 13) {
 				$('#search-punish-icon').click();
 				$(this).blur();
@@ -57,37 +67,6 @@ script.
 				update(false, data.html, 'punish');
 			});
 			return false;
-		});
-
-		//click search icon
-		$('#search-punish-icon').click(function() {
-			var icon = $(this);
-			var search = $('#searchp-pin');
-			var user = search.find('input').val();
-			var att = search.attr('display');
-			if(att == 'none') {
-				icon.attr('title', close);
-				search.attr('display', 'inline');
-				search.show('slide', {direction: 'right'}, 1000);
-			} else {
-				if(user == '') {
-					search.hide('slide', {direction: 'right'}, 1000, function() {
-						search.attr('display', 'none');
-						icon.attr('title', open);
-					});
-					if(changed) {
-						loadPunishmentList();
-						changed = false;
-					}
-					return false;
-				}
-				changed = true;
-				$.post('/staff', { mod:'punish', action:'search', search:user }, function(ret) {
-					var data = getJSON(ret);
-					if(data == null) return false;
-					update(false, data.html, 'punish');
-				});
-			}
 		});
 
 	});
@@ -121,8 +100,9 @@ div.tab-pane.fade#punishments
 			p.color-red#search-perror(style='display: none')
 			div
 				span.glyphicon.glyphicon-search.link#search-punish-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
-				div#searchp-pin(style='float: right; display: none;', display='none')
+				div#search-punish-pin(style='float: right; display: none;', display='none')
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.search-filters-punish(style='clear: both; float: right;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#punish-main
 		div.pages Pages: 

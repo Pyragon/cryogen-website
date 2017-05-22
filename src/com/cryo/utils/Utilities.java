@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -20,16 +21,17 @@ import spark.Request;
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
  *
- * Created on: Mar 7, 2017 at 9:48:36 PM
+ *         Created on: Mar 7, 2017 at 9:48:36 PM
  */
 public class Utilities {
 	
 	private static Utilities INSTANCE;
 	
-	public static final String[] SKILL_NAME = { "Attack", "Defence", "Strength", "Constitution", "Ranged", "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting", "Smithing", "Mining", "Herblore", "Agility", "Thieving", "Slayer", "Farming", "Runecrafting", "Hunter", "Construction", "Summoning", "Dungeoneering" };
-
+	public static final String[] SKILL_NAME = { "Attack", "Defence", "Strength", "Constitution", "Ranged", "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching", "Fishing", "Firemaking", "Crafting", "Smithing", "Mining", "Herblore",
+			"Agility", "Thieving", "Slayer", "Farming", "Runecrafting", "Hunter", "Construction", "Summoning", "Dungeoneering" };
+	
 	public static Utilities instance() {
-		if(INSTANCE == null)
+		if (INSTANCE == null)
 			INSTANCE = new Utilities();
 		return INSTANCE;
 	}
@@ -39,7 +41,7 @@ public class Utilities {
 	}
 	
 	public static long roundUp(long num, long divisor) {
-	    return (num + divisor - 1) / divisor;
+		return (num + divisor - 1) / divisor;
 	}
 	
 	public static boolean matches(String name) {
@@ -51,27 +53,27 @@ public class Utilities {
 	
 	public static int getOnlinePlayers() {
 		Object[] data = GlobalConnection.connection().handleRequest("get-misc-data", "players_logged");
-		if(data == null)
+		if (data == null)
 			return -1;
 		return Integer.parseInt((String) data[0]);
 	}
 	
 	public String isValidDisplay(String name) {
-		if(!name.matches("[a-zA-Z0-9_ -]*"))
+		if (!name.matches("[a-zA-Z0-9_ -]*"))
 			return "Display name contains invalid characters";
-	      if(name.length() < 3 || name.length() > 12)
-	        return "Display name must be between 3 and 12 characters";
-	      if(name.replace(" ", "_").matches("\\w*(-{2}|_{2}|-_|_-)\\w*"))
-	        return "Display name cannot contain two spaces, underscores, or hyphens in a row";
-	      if(name.startsWith("-") || name.endsWith("-"))
-	        return "Display name cannot start or end with a hyphen";
-	      if(name.startsWith("_") || name.endsWith("_"))
-	        return "Display name cannot start or end with an underscore";
-	      if(name.startsWith(" ") || name.endsWith(" "))
-	        return "Display name cannot start or end with a space";
-	      if(name.toLowerCase().contains("mod") || name.toLowerCase().contains("admin"))
-	        return "Display name contains invalid words";
-	      return "";
+		if (name.length() < 3 || name.length() > 12)
+			return "Display name must be between 3 and 12 characters";
+		if (name.replace(" ", "_").matches("\\w*(-{2}|_{2}|-_|_-)\\w*"))
+			return "Display name cannot contain two spaces, underscores, or hyphens in a row";
+		if (name.startsWith("-") || name.endsWith("-"))
+			return "Display name cannot start or end with a hyphen";
+		if (name.startsWith("_") || name.endsWith("_"))
+			return "Display name cannot start or end with an underscore";
+		if (name.startsWith(" ") || name.endsWith(" "))
+			return "Display name cannot start or end with a space";
+		if (name.toLowerCase().contains("mod") || name.toLowerCase().contains("admin"))
+			return "Display name contains invalid words";
+		return "";
 	}
 	
 	public static String formatNameForProtocol(String name) {
@@ -104,16 +106,16 @@ public class Utilities {
 	}
 	
 	public String renderLink(String href, String text) {
-		return "<a href='"+href+"'>"+text+"</a>";
+		return "<a href='" + href + "'>" + text + "</a>";
 	}
 	
 	public static String json(Properties prop) {
 		return new Gson().toJson(prop);
 	}
 	
-	public static boolean hasNullOrEmpty(String...strings) {
-		for(String s : strings)
-			if(s == null || s.equals(""))
+	public static boolean hasNullOrEmpty(String... strings) {
+		for (String s : strings)
+			if (s == null || s.equals(""))
 				return true;
 		return false;
 	}
@@ -190,9 +192,9 @@ public class Utilities {
 	}
 	
 	public static String formatMessage(String message) {
-		if(message.contains("{{username}}")) {
+		if (message.contains("{{username}}")) {
 			String name = "Guest";
-			//TODO - check for logged in user
+			// TODO - check for logged in user
 			message = message.replace("{{username}}", name);
 		}
 		message = message.replace("{{/username}}", "{{username}}");

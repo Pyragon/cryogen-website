@@ -22,12 +22,32 @@ public class StatusFilter extends Filter {
 	}
 
 	@Override
-	public String getFilter() {
-		return null;
+	public boolean setValue(String mod, String value) {
+		value = value.toLowerCase();
+		if(!value.equals("declined") && !value.equals("accepted") && !value.equals("pending") && !value.equals("none"))
+			return false;
+		int status = value.equals("declined") ? 2 : value.equals("accepted") ? 1 : value.equals("none") ? -1 : 0;
+		if(mod.equals("appeal") && status == -1)
+			return false;
+		this.value = status;
+		return true;
+	}
+
+	@Override
+	public String getFilter(String mod) {
+		if(mod.equals("punish") || !(value instanceof Integer) || (int) value == -1)
+			return null;
+		int value = (int) this.value;
+		return "status="+value;
 	}
 	
-	public List<PunishDAO> filterList(List<PunishDAO> list) {
-		return list.stream()
+	@SuppressWarnings("unchecked")
+	public List<?> filterList(List<?> list) {
+		if(list.size() == 0) return list;
+		if(!(list.get(0) instanceof PunishDAO))
+			return list;
+		List<PunishDAO> punishments = (List<PunishDAO>) list;
+		return punishments.stream()
 				.filter(this::hasDesiredStatus)
 				.collect(Collectors.toList());
 	}
@@ -40,12 +60,8 @@ public class StatusFilter extends Filter {
 	}
 
 	@Override
-	public boolean setValue(String value) {
-		value = value.toLowerCase();
-		if(!value.equals("declined") && !value.equals("accepted") && !value.equals("pending") && !value.equals("none"))
-			return false;
-		this.value = value.equals("declined") ? 2 : value.equals("accepted") ? 1 : value.equals("none") ? -1 : 0;
-		return true;
+	public boolean appliesTo(String mod) {
+		return mod.equals("punish") || mod.equals("appeal");
 	}
 	
 }

@@ -18,7 +18,7 @@ Staff Page:
   ☐ Finish searching for rest of staff page
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
-  ☐ Add too many results check when searching through pages in staff section
+  ✔ Add too many results check when searching through pages in staff section - (Adding page support to search as well) @done(2017-05-21 08:03) @project(Staff Page)
 Account:
 Other:
   ☐ Page for players to view their own player/bug reports

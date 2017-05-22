@@ -152,3 +152,128 @@ function sendAlert(text) {
         theme: 'cryogen'
     });
 }
+
+//staff section search
+
+var search_filters = [];
+var searching = [];
+
+function updateFilters(mod, filters) {
+    search_filters[mod] = filters;
+    var elem = $('.search-filters-'+mod);
+    var search = '';
+    elem.empty();
+    for(var k in filters) {
+        if(filters.hasOwnProperty(k)) {
+            var name = k;
+            var value = filters[k];
+            var filter = $('<div></div>').addClass('search-filter').append(`${name}:${value}`);
+            filter.attr('data-name', name);
+            filter.attr('data-value', value);
+            filter.attr('data-mod', mod);
+            elem.append(filter);
+        }
+    }
+    addFilterRemoval();
+    return filtersToQuery(mod);
+}
+
+function filtersToQuery(mod) {
+    var search = '';
+    var filters = search_filters[mod];
+    var i = 0;
+    for(var k in filters) {
+        var name = k;
+        var value = filters[k];
+        if(filters.hasOwnProperty(k)) {
+            search += `${name}:${value}`;
+            if(i++ != filters.length-1)
+                search += ', ';
+        }
+    }
+    return search;
+}
+
+function addFilterRemoval() {
+    $('.search-filter').append($('<i></i>').addClass('remove-filter fa fa-times-circle'));
+}
+
+function removeFilter(mod, name) {
+    var filters = search_filters[mod];
+    delete filters[name];
+    var query = updateFilters(mod, filters);
+    search(mod, 1, query);
+}
+
+function search(mod, page, input=null) {
+    if(input === null)
+        input = filtersToQuery(mod);
+    if(input === '' || input === ',' || input === ', ') {
+        loadList(mod, false, 1);
+        updateSearchInput(mod, '');
+        searching[mod] = false;
+        return false;
+    }
+    searching[mod] = true;
+    changed = true;
+    $.post('/staff', { mod:mod, action:'search', search:input, page:page }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return false;
+        update(false, data.html, mod);
+        updateSearchInput(mod, updateFilters(mod, data.filters));
+        updatePage(data.pageTotal, page, mod);
+    });
+}
+
+function updateSearchInput(mod, input) {
+    $('#search-'+mod+'-pin').find('input').val(input);
+}
+
+function clickSearchIcon(mod, archive, page) {
+    var icon = $(this);
+    var search = $('#search-'+mod+'-pin');
+    var input = search.find('input');
+    var user = input.val();
+    var att = search.attr('display');
+    if(att === 'none') {
+        icon.attr('title', CLOSE);
+        search.attr('display', 'inline');
+        search.show('slide', {
+            direction: 'right'
+        }, 1000);
+    } else {
+        if(user === '') {
+            search.hide('slide', {
+                direction: 'right'
+            }, 1000, function() {
+                search.attr('display', 'none');
+                icon.attr('title', OPEN);
+            });
+            if(changed) {
+                loadList(mod, archive, page);
+                changed = false;
+            }
+            return false;
+        }
+        this.search(mod, page, user);
+    }
+    return false;
+}
+
+//static
+
+$(document).ready(function() {
+
+    $(document).on('click', '.remove-filter', function() {
+        var filter = $(this).closest('.search-filter');
+        if(typeof filter === 'undefined')
+            return false;
+        var name = filter.data('name');
+        var mod = filter.data('mod');
+        if(name === '' || mod === '')
+            return false;
+        removeFilter(mod, name);
+        return false;
+    });
+
+});

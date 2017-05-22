@@ -21,7 +21,7 @@ public class ExpiryFilter extends Filter {
 	}
 
 	@Override
-	public String getFilter() {
+	public String getFilter(String mod) {
 		if(from == null || to == null)
 			return "expiry IS NULL";
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -29,7 +29,7 @@ public class ExpiryFilter extends Filter {
 	}
 
 	@Override
-	public boolean setValue(String value) {
+	public boolean setValue(String mod, String value) {
 		value = value.toLowerCase();
 		if(value.equals("never")) {
 			this.from = null;
@@ -37,10 +37,8 @@ public class ExpiryFilter extends Filter {
 			return true;
 		}
 		String[] values = value.split("-");
-		if(values.length != 2) {
-			System.out.println(values.length+" "+value);
+		if(values.length != 2)
 			return false;
-		}
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			from = new Timestamp(format.parse(values[0]).getTime());
@@ -53,6 +51,11 @@ public class ExpiryFilter extends Filter {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public boolean appliesTo(String mod) {
+		return mod.equals("punish");
 	}
 	
 }

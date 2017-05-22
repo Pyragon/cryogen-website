@@ -3,6 +3,7 @@ package com.cryo.modules.staff.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cryo.db.DatabaseConnection;
 import com.cryo.modules.account.support.punish.PunishDAO;
 
 import lombok.*;
@@ -18,11 +19,13 @@ public abstract class Filter {
 	public final @Getter String name;
 	protected @Getter Object value;
 	
-	public abstract String getFilter();
+	public abstract String getFilter(String mod);
 	
-	public abstract boolean setValue(String value);
+	public abstract boolean setValue(String mod, String value);
 	
-	public List<PunishDAO> filterList(List<PunishDAO> list) {
+	public abstract boolean appliesTo(String mod);
+	
+	public List<?> filterList(List<?> list) {
 		return list;
 	}
 	

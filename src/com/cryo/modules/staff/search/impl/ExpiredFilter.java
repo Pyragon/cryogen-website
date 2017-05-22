@@ -1,5 +1,6 @@
 package com.cryo.modules.staff.search.impl;
 
+import com.cryo.db.DatabaseConnection;
 import com.cryo.modules.staff.search.Filter;
 
 import lombok.*;
@@ -18,12 +19,12 @@ public class ExpiredFilter extends Filter {
 	}
 
 	@Override
-	public String getFilter() {
+	public String getFilter(String mod) {
 		return "expiry "+(expired ? "<" : ">")+" NOW()";
 	}
 	
 	@Override
-	public boolean setValue(String value) {
+	public boolean setValue(String mod, String value) {
 		value = value.toLowerCase();
 		if(!value.equals("true") && !value.equals("false")
 				&& !value.equals("yes") && !value.equals("no"))
@@ -31,6 +32,11 @@ public class ExpiredFilter extends Filter {
 		expired = (value.equals("true") || value.equals("yes"));
 		this.value = null;
 		return true;
+	}
+
+	@Override
+	public boolean appliesTo(String mod) {
+		return mod.equals("punish");
 	}
 	
 }

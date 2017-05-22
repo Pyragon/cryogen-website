@@ -16,17 +16,22 @@ public class TypeFilter extends Filter {
 	}
 
 	@Override
-	public String getFilter() {
+	public String getFilter(String mod) {
 		return "type=?";
 	}
 
 	@Override
-	public boolean setValue(String value) {
+	public boolean setValue(String mod, String value) {
 		value = value.toLowerCase();
 		if(!value.equals("mute") && !value.equals("ban"))
 			return false;
 		this.value = value.equals("mute") ? 0 : 1;
 		return true;
+	}
+
+	@Override
+	public boolean appliesTo(String mod) {
+		return mod.equals("punish");
 	}
 	
 }
