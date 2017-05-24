@@ -12,7 +12,7 @@ function getPages(page_t, page) {
     pages.push(1);
     while(true) {
     //if only 1 page, we only display the 1
-        if(page_t == 1)
+        if(page_t <= 1)
             break;
     //if under than 5 pages, we'll only ever display the 5
         if(page_t <= 5) {
@@ -43,7 +43,7 @@ function getPages(page_t, page) {
         break;
     }
   //last value = last page
-    if(page_t != 1)
+    if(page_t > 1)
         pages.push(page_t);
     var elem = $('<div></div>');
     for(var i = 0; i < pages.length; i++) {
