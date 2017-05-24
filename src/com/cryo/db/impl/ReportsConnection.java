@@ -3,6 +3,7 @@ package com.cryo.db.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
@@ -10,7 +11,10 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.modules.account.support.BugReportDAO;
 import com.cryo.modules.account.support.PlayerReportDAO;
+import com.cryo.modules.account.support.punish.AppealDAO;
+import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.utils.CommentDAO;
+import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
 /**
@@ -125,6 +129,38 @@ public class ReportsConnection extends DatabaseConnection {
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
+			case "search-breport":
+			case "search-preport":
+				boolean isBug = opcode.contains("breport");
+				Properties queryValues = (Properties) data[1];
+				int page = (int) data[2];
+				boolean isArchive = (boolean) data[3];
+				String query = (String) queryValues.get("query");
+				Object[] values = (Object[]) queryValues.get("values");
+				if(page == 0) page = 1;
+				int offset = (page - 1) * 10;
+				query += " LIMIT "+offset+",10";
+				String table = "";
+				if(isArchive)
+					table = isBug ? "b_archive" : "p_archive";
+				else
+					table = isBug ? "bug_reports" : "player_reports";
+				data = select(table, query, isBug ? GET_BUG_REPORTS : GET_PLAYER_REPORTS, values);
+				return data == null ? null : new Object[] { isBug ? (ArrayList<BugReportDAO>) data[0] : (ArrayList<PlayerReportDAO>) data[0] };
+			case "search-results-breport":
+			case "search-results-preport":
+				isBug = opcode.contains("breport");
+				queryValues = (Properties) data[1];
+				isArchive = (boolean) data[2];
+				query = (String) queryValues.get("query");
+				values = (Object[]) queryValues.get("values");
+				table = "";
+				if(isArchive)
+					table = isBug ? "b_archive" : "p_archive";
+				else
+					table = isBug ? "bug_reports" : "player_reports";
+				int total = selectCount(table, query, values);
+				return new Object[] { (int) Utilities.roundUp(total, 10) };
 			case "get-comments":
 				int report_id = (int) data[1];
 				int type = (int) data[2];
@@ -146,9 +182,9 @@ public class ReportsConnection extends DatabaseConnection {
 				return data == null ? null : new Object[] { (PlayerReportDAO) data[0] };
 			case "get-player-reports":
 				archived = (boolean) data[1];
-				int page = (int) data[2];
+				page = (int) data[2];
 				if(page == 0) page = 1;
-				int offset = (page - 1) * 10;
+				offset = (page - 1) * 10;
 				StringBuilder builder = new StringBuilder();
 				builder.append(archived ? "p_archive" : "player_reports")
 						.append(" ORDER BY ").append(archived ? "archived" : "time")
@@ -156,7 +192,7 @@ public class ReportsConnection extends DatabaseConnection {
 				data = select(builder.toString(), null, GET_PLAYER_REPORTS);
 				return data == null ? null : new Object[] { (ArrayList<PlayerReportDAO>) data[0] };
 			case "get-total-results":
-				String table = (String) data[1];
+				table = (String) data[1];
 				return new Object[] { selectCount(table, null) };
 			case "get-bug-reports":
 				archived = (boolean) data[1];

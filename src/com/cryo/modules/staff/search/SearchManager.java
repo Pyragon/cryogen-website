@@ -48,6 +48,10 @@ public class SearchManager {
 	}
 	
 	public Properties search(String mod, String text, int page, DatabaseConnection connection) {
+		return search(mod, text, page, false, connection);
+	}
+	
+	public Properties search(String mod, String text, int page, boolean archive, DatabaseConnection connection) {
 		text = text.replaceAll(", ", ",");
 		String[] queries = text.split(",");
 		HashMap<String, Filter> filters = new HashMap<>();
@@ -81,8 +85,8 @@ public class SearchManager {
 		}
 		ArrayList<Filter> filterA = new ArrayList<>();
 		filterA.addAll(filters.values());
-		Object[] data = connection.handleRequest("search-"+mod, getQueryValue(mod, filterA), page);
-		Object[] countData = connection.handleRequest("search-results-"+mod, getQueryValue(mod, filterA));
+		Object[] data = connection.handleRequest("search-"+mod, getQueryValue(mod, filterA), page, archive);
+		Object[] countData = connection.handleRequest("search-results-"+mod, getQueryValue(mod, filterA), archive);
 		if(data == null || countData == null) {
 			prop.put("success", false);
 			String results = "No search results found.";

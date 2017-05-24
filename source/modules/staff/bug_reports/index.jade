@@ -39,28 +39,28 @@ script.
 
 		$('#search-breport-icon').attr('title', OPEN);
 
-		//click search icon
+			//click search icon
 		$('#search-breport-icon').click(function() {
-			var icon = $(this);
-			var search = $('#search-bin');
-			var user = search.find('input').val();
-			var att = search.attr('display');
-			if(att == 'none' || att == '') {
-				icon.attr('title', CLOSE);
-				search.attr('display', 'inline');
-				search.show('slide', {direction: 'right'}, 1000);
-			} else {
-				if(user == '') {
-					search.hide('slide', {direction: 'right'}, 1000, function() {
-						search.attr('display', 'none');
-						icon.attr('title', OPEN);
-					});
-					return;
-				}
-				$('#search-berror').css('display', '');
-				$('#search-berror').html('error');
-				$('#search-berror').fadeOut(5000);
+			clickSearchIcon('breport', archive, appeal_page);
+		});
+
+		$('#search-breport-pin').find('input').keydown(function(e) {
+			if(e.which == 13) {
+				$('#search-breport-icon').click();
+				$(this).blur();
+				return false;
 			}
+		});
+
+		$(document).on('click', '.search-filters-breport .remove-filter', function() {
+			var filter = $(this).closest('.search-filter');
+			if(typeof filter === 'undefined')
+				return false;
+			var name = filter.data('name');
+			if(name === '')
+				return false;
+			removeFilter('breport', name, archive);
+			return false;
 		});
 
 	});
@@ -77,17 +77,22 @@ div.tab-pane.fade#breports
 						span#archive-breport  Archive
 	div.row(style='padding: 15px;')
 		div#search-breport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
-			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for a report. Search with criteria using name:
-			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Example: name: cody - what
-				br
-				span Will search for any reports by user 'cody' with 'what' in the title
-			p.color-red#search-berror(style='display: none')
+			div.col-xs-4
+				p.color-grey.search-info Click the search icon to begin searching through bug reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+			div.col-xs-4
+				p.color-grey.search-info Filters: username:(name, must be exact username)
+					br
+					br
+					span (More to be added)
+			div.col-xs-4
+				p.color-grey.search-info Example: username:cody
 			div
 				span.glyphicon.glyphicon-search.link#search-breport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
-				div#search-bin(style='float: right; display: none;', display='none')
+				div#search-breport-pin(style='float: right; display: none;', display='none')
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.search-filters-breport(style='clear: both; float: right;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div
 			div#breport-main
-			div.pages Pages: 
+			div.pages 
 				div#breport-pages

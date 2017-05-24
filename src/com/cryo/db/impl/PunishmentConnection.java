@@ -125,8 +125,8 @@ public class PunishmentConnection extends DatabaseConnection {
 				return new Object[] { data == null ? new ArrayList<PunishDAO>() : (ArrayList<PunishDAO>) data[0] };
 			case "get-total-results":
 				String table = (String) data[1];
-				isAppeal = table.equals("appeals") || table.equals("archive");
-				boolean archive = table.equals("archive") || table.contains("-a");
+				isAppeal = table.contains("appeals");
+				boolean archive = table.contains("-a");
 				if(table.contains("-a"))
 					table = table.replaceAll("-a", "");
 				query = "";

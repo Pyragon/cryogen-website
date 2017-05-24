@@ -90,6 +90,7 @@ function loadPunishment(id, appeal, mod) {
         if(data == null) return;
         update(false, data.html, mod);
         update(true, 'Currently viewing punishment', mod);
+        hidePages(mod);
     }).fail(function() {
         sendAlert('Error connecting to the website server. Please try again later.');
     });
@@ -101,6 +102,7 @@ function loadAppeal(id, mod) {
         if(data == null) return;
         update(false, data.html, mod);
         update(true, 'Currently viewing appeal', mod);
+        hidePages(mod);
     }).fail(function() {
         sendAlert('Error connecting to the website server. Please try again later.');
     });
@@ -113,6 +115,7 @@ function loadList(mod, archive, page) {
         update(false, data.html, mod);
         update(true, getDescription(archive), mod);
         updatePage(data.pageTotal, page, mod);
+        removeFilters(mod);
     }).fail(function() {
         sendAlert('Error connecting to the website server. Please try again later.');
     });
@@ -124,6 +127,7 @@ function loadReport(mod, archive, id) {
         if(data == null) return;
         update(true, 'Currently viewing report', mod);
         update(false, data.html, mod);
+        hidePages(mod);
     }).fail(function() {
         sendAlert('Error connecting to the website server. Please try again later.');
     });
@@ -135,8 +139,12 @@ function update(info, data, mod) {
         $('#archive-'+mod).html(' '+(!archive ? 'Archive' : 'Active'));
 }
 
+function hidePages(mod) {
+    $('#'+mod+'-pages').html('');
+}
+
 function updatePage(page_t, page, mod) {
-    $('#'+mod+'-pages').html(getPages(page_t, page).html());
+    $('#'+mod+'-pages').html('Pages: '+getPages(page_t, page).html());
 }
 
 function getDescription(archive, mod) {
@@ -198,25 +206,31 @@ function addFilterRemoval() {
     $('.search-filter').append($('<i></i>').addClass('remove-filter fa fa-times-circle'));
 }
 
-function removeFilter(mod, name) {
+function removeFilter(mod, name, archive) {
     var filters = search_filters[mod];
     delete filters[name];
     var query = updateFilters(mod, filters);
-    search(mod, 1, query);
+    search(mod, 1, archive, query);
 }
 
-function search(mod, page, input=null) {
+function removeFilters(mod) {
+    delete search_filters[mod];
+    $('.search-filters-'+mod).empty();
+    updateSearchInput(mod, '');
+}
+
+function search(mod, page, archive, input=null) {
     if(input === null)
         input = filtersToQuery(mod);
     if(input === '' || input === ',' || input === ', ') {
-        loadList(mod, false, 1);
+        loadList(mod, archive, 1);
         updateSearchInput(mod, '');
         searching[mod] = false;
         return false;
     }
     searching[mod] = true;
     changed = true;
-    $.post('/staff', { mod:mod, action:'search', search:input, page:page }, function(ret) {
+    $.post('/staff', { mod:mod, action:'search', search:input, page:page, archive:archive }, function(ret) {
         var data = getJSON(ret);
         if(data == null) return false;
         update(false, data.html, mod);
@@ -255,7 +269,7 @@ function clickSearchIcon(mod, archive, page) {
             }
             return false;
         }
-        this.search(mod, page, user);
+        this.search(mod, page, archive, user);
     }
     return false;
 }
@@ -263,17 +277,5 @@ function clickSearchIcon(mod, archive, page) {
 //static
 
 $(document).ready(function() {
-
-    $(document).on('click', '.remove-filter', function() {
-        var filter = $(this).closest('.search-filter');
-        if(typeof filter === 'undefined')
-            return false;
-        var name = filter.data('name');
-        var mod = filter.data('mod');
-        if(name === '' || mod === '')
-            return false;
-        removeFilter(mod, name);
-        return false;
-    });
 
 });

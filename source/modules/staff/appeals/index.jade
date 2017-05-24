@@ -48,6 +48,17 @@ script.
 			}
 		});
 
+		$(document).on('click', '.search-filters-appeal .remove-filter', function() {
+			var filter = $(this).closest('.search-filter');
+			if(typeof filter === 'undefined')
+				return false;
+			var name = filter.data('name');
+			if(name === '')
+				return false;
+			removeFilter('appeal', name, archive);
+			return false;
+		});
+
 	});
 div.tab-pane.fade#appeals
 	div.row 
@@ -59,7 +70,7 @@ div.tab-pane.fade#appeals
 				div(style='float: right; margin: 33.5px 5px;')
 					div.link#archivea-btn
 						i.fa.fa-archive
-							span#archive-appeal  Archive
+						span#archive-appeal  Archive
 	div.row(style='padding: 15px;')
 		div#search-appeal(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
 			div.col-xs-4
@@ -75,5 +86,5 @@ div.tab-pane.fade#appeals
 		div.search-filters-appeal(style='clear: both; float: right;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#appeal-main
-		div.pages Pages: 
+		div.pages
 			div#appeal-pages

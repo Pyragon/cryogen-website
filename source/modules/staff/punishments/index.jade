@@ -68,6 +68,17 @@ script.
 			return false;
 		});
 
+		$(document).on('click', '.search-filters-punish .remove-filter', function() {
+			var filter = $(this).closest('.search-filter');
+			if(typeof filter === 'undefined')
+				return false;
+			var name = filter.data('name');
+			if(name === '')
+				return false;
+			removeFilter('punish', name, archive);
+			return false;
+		});
+
 	});
 div.tab-pane.fade#punishments
 	div.row 
@@ -82,7 +93,7 @@ div.tab-pane.fade#punishments
 						span  New
 					div.link#archivepu-btn
 						i.fa.fa-archive
-							span#archive-punish  Archive
+						span#archive-punish  Archive
 	div.row(style='padding: 15px;')
 		div#search-punish(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
 			div.col-xs-4
@@ -98,5 +109,5 @@ div.tab-pane.fade#punishments
 		div.search-filters-punish(style='clear: both; float: right;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#punish-main
-		div.pages Pages: 
+		div.pages
 			div#punish-pages

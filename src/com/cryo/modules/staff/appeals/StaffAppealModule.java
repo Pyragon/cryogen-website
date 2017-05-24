@@ -102,7 +102,7 @@ public class StaffAppealModule {
 				model.put("appeals", new PunishUtils().getAppeals(null, archived, page));
 				model.put("utils", new PunishUtils());
 				prop.put("success", true);
-				prop.put("pageTotal", PunishUtils.getTotalPages(PunishmentConnection.connection(), archived ? "archive" : "appeals"));
+				prop.put("pageTotal", PunishUtils.getTotalPages(PunishmentConnection.connection(), "appeals"+(archived ? "-a":"")));
 				prop.put("html", module.render("./source/modules/staff/appeals/appeal_list.jade", model, request, response));
 				break;
 			case "submit-com":
