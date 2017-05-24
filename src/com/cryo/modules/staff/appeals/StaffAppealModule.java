@@ -2,6 +2,7 @@ package com.cryo.modules.staff.appeals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import com.cryo.Website;
@@ -36,12 +37,31 @@ public class StaffAppealModule {
 		return (ArrayList<CommentDAO>) data[0];
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Properties handleRequest(String action, Request request, Response response, Properties prop, WebModule module) {
 		String username = CookieManager.getUsername(request);
 		switch(action) {
-			case "view-noty":
+			case "search":
 				HashMap<String, Object> model = new HashMap<>();
-				String html = module.render("./source/modules/staff/appeals/appeal_noty.jade", model, request, response);
+				String text = request.queryParams("search");
+				int page = Integer.parseInt(request.queryParams("page"));
+				Properties search_results = Website.instance().getSearchManager().search("appeal", text, page, PunishmentConnection.connection());
+				prop.put("success", search_results.get("success"));
+				if(!(boolean) search_results.get("success")) {
+					prop.put("error", search_results.get("error"));
+					break;
+				}
+				List<AppealDAO> punishments = (List<AppealDAO>) search_results.get("results");
+				model.put("appeals", punishments);
+				String html = module.render("./source/modules/staff/appeals/appeal_list.jade", model, request, response);
+				prop.put("success", true);
+				prop.put("html", html);
+				prop.put("pageTotal", search_results.get("pageTotal"));
+				prop.put("filters", search_results.get("filters"));
+				break;
+			case "view-noty":
+				model = new HashMap<>();
+				html = module.render("./source/modules/staff/appeals/appeal_noty.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);
 				break;
@@ -77,7 +97,7 @@ public class StaffAppealModule {
 			case "view-list":
 				model = new HashMap<>();
 				boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
-				int page = Integer.parseInt(request.queryParams("page"));
+				page = Integer.parseInt(request.queryParams("page"));
 				model.put("archive", archived);
 				model.put("appeals", new PunishUtils().getAppeals(null, archived, page));
 				model.put("utils", new PunishUtils());

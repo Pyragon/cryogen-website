@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class AppealDAO {
 	
 	private final int id;
+	private final int type;
 	private final String username, title, message;
 	private String reason;
 	private String lastAction;
@@ -39,7 +40,7 @@ public class AppealDAO {
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", punishId, username, title, message, "", "DEFAULT", "", 0, "DEFAULT" };
+		return new Object[] { "DEFAULT", type, punishId, username, title, message, "", "DEFAULT", "", 0, "DEFAULT" };
 	}
 	
 	public String getStatus() {

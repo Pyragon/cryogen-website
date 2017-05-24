@@ -40,7 +40,7 @@ public class PunishUtils {
 		return (PunishDAO) data[0];
 	}
 	
-	public PunishDAO getPunishment(int pid) {
+	public static PunishDAO getPunishment(int pid) {
 		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment", pid);
 		if(data == null)
 			return null;
@@ -75,7 +75,9 @@ public class PunishUtils {
 	}
 	
 	public static void createAppeal(int punishId, String username, String title, String detailed) {
-		AppealDAO appeal = new AppealDAO(0, username, title, detailed, 0, punishId, null);
+		PunishDAO punish = getPunishment(punishId);
+		if(punish == null) return;
+		AppealDAO appeal = new AppealDAO(0, punish.getType(), username, title, detailed, 0, punishId, null);
 		PunishmentConnection.connection().handleRequest("create-appeal", appeal);
 	}
 	

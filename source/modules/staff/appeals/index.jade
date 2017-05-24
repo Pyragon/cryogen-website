@@ -37,27 +37,17 @@ script.
 
 			//click search icon
 		$('#search-appeal-icon').click(function() {
-			var icon = $(this);
-			var search = $('#searcha-pin');
-			var user = search.find('input').val();
-			var att = search.attr('display');
-			if(att == 'none') {
-				icon.attr('title', CLOSE);
-				search.attr('display', 'inline');
-				search.show('slide', {direction: 'right'}, 1000);
-			} else {
-				if(user == '') {
-					search.hide('slide', {direction: 'right'}, 1000, function() {
-						search.attr('display', 'none');
-						icon.attr('title', OPEN);
-					});
-					return;
-				}
-				$('#search-aerror').css('display', '');
-				$('#search-aerror').html('error');
-				$('#search-aerror').fadeOut(5000);
+			clickSearchIcon('appeal', archive, appeal_page);
+		});
+
+		$('#search-appeal-pin').find('input').keydown(function(e) {
+			if(e.which == 13) {
+				$('#search-appeal-icon').click();
+				$(this).blur();
+				return false;
 			}
 		});
+
 	});
 div.tab-pane.fade#appeals
 	div.row 
@@ -72,15 +62,17 @@ div.tab-pane.fade#appeals
 							span#archive-appeal  Archive
 	div.row(style='padding: 15px;')
 		div#search-appeal(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
-			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Click the search icon to begin searching for an appeal. Search with criteria using name:
-			p.color-grey.search-info(style='font-size: 11px; margin-right: 10px; max-width: 200px; display: inline-block;') Example: name: cody - what
-				br
-				span Will search for any appeal by user 'Cody' with 'what' in the title.
-			p.color-red#search-aerror(style='display: none')
+			div.col-xs-4
+				p.color-grey.search-info Click the search icon to begin searching through appeals. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+			div.col-xs-4
+				p.color-grey.search-info Filters: type:(mute/ban), status:(declined, accepted, pending), username:(name, must be exact username), date:(first date)-(second date) (dates in dd/MM/yyyy)
+			div.col-xs-4
+				p.color-grey.search-info Example: type:ban, username:cody, status:pending, date:22/05/2017-24/05/2017
 			div
 				span.glyphicon.glyphicon-search.link#search-appeal-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
-				div#searcha-pin(style='float: right; display: none;', display='none')
+				div#search-appeal-pin(style='float: right; display: none;', display='none')
 					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.search-filters-appeal(style='clear: both; float: right;')
 		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
 		div#appeal-main
 		div.pages Pages: 

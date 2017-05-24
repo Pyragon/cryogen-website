@@ -31,7 +31,7 @@ public class TypeFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("punish");
+		return mod.equals("punish") || mod.equals("appeal");
 	}
 	
 }

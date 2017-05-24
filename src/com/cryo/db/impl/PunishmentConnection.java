@@ -95,7 +95,7 @@ public class PunishmentConnection extends DatabaseConnection {
 				int offset = (page - 1) * 10;
 				query += " LIMIT "+offset+",10";
 				data = select(isAppeal ? "appeals" : "punishments", query, isAppeal ? GET_APPEALS : GET_PUNISHMENTS, values);
-				return data == null ? null : new Object[] { (ArrayList<PunishDAO>) data[0] };
+				return data == null ? null : new Object[] { isAppeal ? (ArrayList<AppealDAO>) data[0] : (ArrayList<PunishDAO>) data[0] };
 			case "search-results-appeal":
 			case "search-results-punish":
 				isAppeal = opcode.contains("appeal");
@@ -172,7 +172,7 @@ public class PunishmentConnection extends DatabaseConnection {
 			case "create-appeal":
 				AppealDAO appeal = (AppealDAO) data[1];
 				int appeal_id = insert("appeals", appeal.data());
-				set("punishments", "appeal_id="+appeal_id, "id="+appeal.getPunishId());
+				set("punishments", "appeal_id=?", "id=?", appeal_id, appeal.getPunishId());
 				break;
 			case "get-appeals":
 				archived = (boolean) data[1];
@@ -241,6 +241,7 @@ public class PunishmentConnection extends DatabaseConnection {
 	@SuppressWarnings("unchecked")
 	public AppealDAO loadAppeal(ResultSet set) {
 		int id = getInt(set, "id");
+		int type = getInt(set, "type");
 		int punishId = getInt(set, "punish_id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
@@ -249,7 +250,7 @@ public class PunishmentConnection extends DatabaseConnection {
 		String lastAction = getString(set, "action");
 		int activei = getInt(set, "active");
 		Timestamp time = getTimestamp(set, "time");
-		AppealDAO appeal = new AppealDAO(id, username, title, message, activei, punishId, time);
+		AppealDAO appeal = new AppealDAO(id, type, username, title, message, activei, punishId, time);
 		String read = getString(set, "read");
 		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 		if(!reason.equals(""))

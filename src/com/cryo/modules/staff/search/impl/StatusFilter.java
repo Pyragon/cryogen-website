@@ -37,8 +37,7 @@ public class StatusFilter extends Filter {
 	public String getFilter(String mod) {
 		if(mod.equals("punish") || !(value instanceof Integer) || (int) value == -1)
 			return null;
-		int value = (int) this.value;
-		return "status="+value;
+		return "active=?";
 	}
 	
 	@SuppressWarnings("unchecked")

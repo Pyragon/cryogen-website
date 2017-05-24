@@ -1,14 +1,12 @@
 table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;')
 	thead
 		tr
+			th.t-center Type
 			th.t-center Title
 			th.t-center Username
-			if archive
-				th.t-center Date reported
-				th.t-center Appeal Result
-			else
-				th.t-center Date
-				th.t-center Last Action
+			th.t-center Appeal Date
+			th.t-center Last Action
+			th.t-center Status
 			th.t-center Punishment
 			th.t-center View
 			if !archive
@@ -17,14 +15,20 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
 		for appeal in appeals
 			-var arch = archive ? 'true' : 'false';
 			tr(data-id=appeal.getId(), data-type=appeal.type(), data-arc=arch)
+				td.b-right
+					span
+						if appeal.getType() == 1
+							svg.icon.icon-hammer2
+								use(xlink:href='#icon-hammer2')
+						else
+							span.fa.fa-microphone-slash
+					span= ' '+(appeal.getType() == 0 ? 'Mute' : 'Ban')
 				td.b-right= appeal.getTitle()
 				td.b-right= '$for-name='+appeal.getUsername()+'$end'
 				td.b-right= formatter.formatTimestamp(appeal.getTime(), 'MMM dd, YYYY H:mm a')
-				if archive
-					td.b-right
-						span(class=''+appeal.getColour())= appeal.getStatus()
-				else
-					td.b-right= appeal.getLastAction()
+				td.b-right= appeal.getLastAction()
+				td.b-right
+					span(class=''+appeal.getColour())= appeal.getStatus()
 				td.b-right.vis-link#punisha-link View Punishment
 				td.b-right.vis-link#viewa View
 				if !archive
