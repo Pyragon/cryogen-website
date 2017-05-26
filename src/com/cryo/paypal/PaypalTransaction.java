@@ -34,7 +34,7 @@ public class PaypalTransaction {
 	
 	private HashMap<ShopItem, Integer> items;
 	
-	private static String ERROR_LINK = "http://localhost/paypal_error";
+	private static String ERROR_LINK = "http://cryogen-rsps.com/paypal_error";
 
 	private String link;
 	
@@ -75,7 +75,6 @@ public class PaypalTransaction {
 					continue;
 				if(link.getRel().equalsIgnoreCase("approval_url"))
 					this.link = link.getHref();
-				System.out.println(link.getRel()+" "+link.getHref());
 			}
 		} catch(PayPalRESTException e) {
 			e.printStackTrace();

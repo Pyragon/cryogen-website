@@ -77,7 +77,7 @@ public class PaypalManager extends WebModule {
 		try {
 			Payment created = payment.execute(context, execution);
 			Transaction transaction = null;
-			if(created.getTransactions() == null || (transaction = created.getTransactions().get(0)) == null) {
+			if(created.getTransactions() == null || created.getTransactions().size() == 0 || (transaction = created.getTransactions().get(0)) == null) {
 				model.put("error", true);
 				return render("./source/modules/account/sections/shop/post_payment.jade", model, request, response);
 			}
