@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Timer;
 
+import com.cryo.cache.CachingManager;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.GlobalConnection;
@@ -66,17 +67,17 @@ public class Website {
 
 	public static volatile boolean LOADED;
 
-	private static Scanner scanner;
-
 	private static @Getter Properties properties;
 
-	private @Getter DBConnectionManager connectionManager;
+	private @Getter final DBConnectionManager connectionManager;
 
-	private @Getter PaypalManager paypalManager;
+	private @Getter final PaypalManager paypalManager;
+	
+	private @Getter final CachingManager cachingManager;
 
-	private Timer fastExecutor;
+	private final Timer fastExecutor;
 
-	private @Getter SearchManager searchManager;
+	private final @Getter SearchManager searchManager;
 
 	private static File FAVICON = null;
 
@@ -86,7 +87,9 @@ public class Website {
 		connectionManager = new DBConnectionManager();
 		searchManager = new SearchManager();
 		paypalManager = new PaypalManager(this);
+		cachingManager = new CachingManager();
 		searchManager.load();
+		cachingManager.loadCachedItems();
 		fastExecutor = new Timer();
 		ShopManager.load(this);
 		port(Integer.parseInt(properties.getProperty("port")));
@@ -211,10 +214,7 @@ public class Website {
 
 			@Override
 			public void run() {
-				System.out.println("hi");
 				LOADED = false;
-				if(scanner != null)
-					scanner.close();
 				System.out.println("Stopping spark.");
 				Spark.stop();
 			}

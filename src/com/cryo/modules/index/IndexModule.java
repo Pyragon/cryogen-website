@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.cache.CachedItem;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.modules.WebModule;
@@ -41,7 +42,10 @@ public class IndexModule extends WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("postList", list);
 		model.put("formatter", new DateUtils());
-		model.put("hsusers", HSUtils.getList(10));
+		CachedItem cache = Website.instance().getCachingManager().get("hs-cache");
+		if(cache == null)
+			return Website.error("Error loading HS Cache.");
+		model.put("hsusers", cache.getCachedData("mini-list"));
 		model.put("redirect", "/");
 		return render("./source/modules/index/index.jade", model, request, response);
 	}

@@ -18,7 +18,7 @@ import lombok.Setter;
  */
 public class HSUtils {
 	
-	public HSData getHSData(String username) {
+	public static HSData getHSData(String username) {
 		Object[] data = getConnection().handleRequest("get-hs-data", username);
 		if(data == null)
 			return null;
