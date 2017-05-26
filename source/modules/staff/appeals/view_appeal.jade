@@ -94,14 +94,17 @@ script.
 			});
 		});
 
-		function sendAlert(text) {
-			var n = noty({
-				text: text,
-				layout: 'topRight',
-				timeout: 5000,
-				theme: 'cryogen'
-			});
-		}
+		$(document).click(function(e) {
+			var target = e.target;
+			if(n == null)
+				return;
+			var id = n.options.id;
+			if($(e.target).closest('#'+id).length) {
+
+			} else {
+				n.close();
+			}
+		});
 
 	});
 input#aid(type='hidden', value=appeal.getId())

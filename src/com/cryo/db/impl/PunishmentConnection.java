@@ -114,9 +114,9 @@ public class PunishmentConnection extends DatabaseConnection {
 				if(username != null)
 					builder.append("username=? AND ");
 				if(archived)
-					builder.append(" active!=0 OR expiry > NOW()");
+					builder.append(" active=0 OR expiry < NOW()");
 				else
-					builder.append(" active=0 AND (expiry IS NULL OR expiry < NOW())");
+					builder.append(" active!=0 AND (expiry IS NULL OR expiry > NOW())");
 				builder.append(" ORDER BY date DESC LIMIT "+offset+",10");
 				if(username != null)
 					data = select("punishments", builder.toString(), GET_PUNISHMENTS, username);

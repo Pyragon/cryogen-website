@@ -87,6 +87,7 @@ public class StaffAppealModule {
 					break;
 				}
 				AppealDAO appeal = (AppealDAO) data[0];
+				
 				model = new HashMap<>();
 				model.put("appeal", appeal);
 				model.put("comments", getComments(appeal.getId()));

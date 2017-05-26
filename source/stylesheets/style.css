@@ -25,6 +25,20 @@ html, body {
   padding: 6px 12px;
 }
 
+.create-a {
+  margin: auto;
+  text-align: center;
+}
+
+.create-a input {
+  margin: auto auto 5px 5px;
+  border-radius: 2px;
+  background: #151515;
+  border: 1px solid #010101;
+  text-align: left;
+  padding: 3px;
+}
+
 .package-spinner {
   margin: 20px auto;
   width: 16px;
@@ -315,23 +329,23 @@ h4.title {
 }
 
 .color-white {
-  color: #FFF;
+  color: #FFF !important;
 }
 
 .color-grey {
-  color: #999;
+  color: #999 !important;
 }
 
 .color-red {
-  color: #FF0000;
+  color: #FF0000 !important;
 }
 
 .color-green {
-  color: #129a11;
+  color: #129a11 !important;
 }
 
 .close {
-  color: #FFF;
+  color: #FFF !important;
 }
 
 .minimize {

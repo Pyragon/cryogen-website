@@ -17,6 +17,8 @@ import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
+import com.cryo.modules.staff.announcements.AnnouncementModule;
+import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.modules.staff.appeals.StaffAppealModule;
 import com.cryo.modules.staff.bugreports.BugReportsModule;
 import com.cryo.modules.staff.playerreports.PlayerReportsModule;
@@ -91,6 +93,7 @@ public class StaffModule extends WebModule {
 			Properties prop = new Properties();
 			String module = request.queryParams("mod");
 			String action = request.queryParams("action");
+			//TODO - send username to other modules so they don't have to reuse CookieManager method
 			while(true) {
 				if(module == null || action == null || module.equals("") || action.equals("")) {
 					prop.put("success", false);
@@ -111,6 +114,9 @@ public class StaffModule extends WebModule {
 									prop = BugReportsModule.viewReport(id, false, request, response, prop, this);
 								break;
 						}
+						break;
+					case "announce":
+						prop = AnnouncementModule.handleRequest(action, username, request, response, prop, this);
 						break;
 					case "preport":
 						prop = PlayerReportsModule.handleRequest(action, request, response, prop, this);

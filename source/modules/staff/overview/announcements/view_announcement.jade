@@ -1,0 +1,5 @@
+div.noty_message
+	span(style='font-size:20px;')= announcement.getTitle()
+	p.small(style='margin-bottom:5px;')= 'Made by: $for-name='+announcement.getUsername()+'$end'
+p.t-center.color-grey= announcement.getAnnouncement()
+div.noty_close
