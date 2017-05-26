@@ -9,7 +9,7 @@ import com.cryo.modules.WebModule;
 import com.cryo.modules.account.support.punish.AppealModule;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateFormatter;
+import com.cryo.utils.DateUtils;
 
 import spark.Request;
 import spark.Response;
@@ -37,7 +37,7 @@ public class AccountSupportModule extends WebModule {
 		} 
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("punishUtils", new PunishUtils());
-		model.put("formatter", new DateFormatter());
+		model.put("formatter", new DateUtils());
 		if(type == RequestType.GET) {
 			if(request.queryParams().contains("section"))
 				model.put("section", request.queryParams("section"));

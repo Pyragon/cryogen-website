@@ -172,6 +172,7 @@ public abstract class DatabaseConnection {
 				stmt = connection.prepareStatement(builder.toString());
 				setParams(stmt, values);
 				set = stmt.executeQuery();
+				//System.out.println(stmt);
 				result = query.handleResult(set);
 			} finally {
 				if(stmt != null)

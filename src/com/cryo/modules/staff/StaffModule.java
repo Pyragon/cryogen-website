@@ -22,7 +22,7 @@ import com.cryo.modules.staff.bugreports.BugReportsModule;
 import com.cryo.modules.staff.playerreports.PlayerReportsModule;
 import com.cryo.modules.staff.search.Filter;
 import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateFormatter;
+import com.cryo.utils.DateUtils;
 import com.google.gson.Gson;
 
 import de.neuland.jade4j.Jade4J;
@@ -85,7 +85,7 @@ public class StaffModule extends WebModule {
 			model.put("preports", utils.getPlayerReports(null, false));
 			model.put("punishments", utils.getPunishments(null, false));
 			model.put("utils", new PunishUtils());
-			model.put("formatter", new DateFormatter());
+			model.put("formatter", new DateUtils());
 			return render("./source/modules/staff/index.jade", model, request, response);
 		} else {
 			Properties prop = new Properties();

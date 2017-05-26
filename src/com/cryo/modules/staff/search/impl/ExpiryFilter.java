@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 import com.cryo.modules.staff.search.Filter;
+import com.cryo.utils.DateSpan;
 
 import lombok.*;
 
@@ -14,7 +15,7 @@ import lombok.*;
  */
 public class ExpiryFilter extends Filter {
 	
-	private Timestamp from, to;
+	private DateSpan span;
 
 	public ExpiryFilter() {
 		super("expiry");
@@ -22,18 +23,17 @@ public class ExpiryFilter extends Filter {
 
 	@Override
 	public String getFilter(String mod) {
-		if(from == null || to == null)
+		if(span == null)
 			return "expiry IS NULL";
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		return "expiry >= '"+format.format(from)+"' AND expiry < '"+format.format(to)+"'";
+		return "expiry >= '"+format.format(span.getFrom())+"' AND expiry < '"+format.format(span.getTo())+"'";
 	}
 
 	@Override
 	public boolean setValue(String mod, String value) {
 		value = value.toLowerCase();
 		if(value.equals("never")) {
-			this.from = null;
-			this.to = null;
+			this.span = null;
 			return true;
 		}
 		String[] values = value.split("-");
@@ -41,9 +41,8 @@ public class ExpiryFilter extends Filter {
 			return false;
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			from = new Timestamp(format.parse(values[0]).getTime());
-			to = new Timestamp(format.parse(values[1]).getTime());
-			if(from.getTime() > to.getTime())
+			span = new DateSpan(new Timestamp(format.parse(values[0]).getTime()), new Timestamp(format.parse(values[1]).getTime()));
+			if(span.invalid())
 				return false;
 			this.value = null;
 		} catch(Exception e) {

@@ -11,7 +11,7 @@ import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;
 import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateFormatter;
+import com.cryo.utils.DateUtils;
 import com.cryo.utils.JadeIterator;
 import com.cryo.utils.Utilities;
 
@@ -42,7 +42,7 @@ public abstract class WebModule {
 		model.put("hsutils", new HSUtils());
 		model.put("utils", new Utilities());
 		model.put("baseurl", "http://localhost/");
-		model.put("formatter", new DateFormatter());
+		model.put("formatter", new DateUtils());
 		model.put("acutils", new AccountUtils());
 		model.put("online", Utilities.getOnlinePlayers());
 		AccountDAO account = CookieManager.getAccount(request);

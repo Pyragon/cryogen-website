@@ -18,7 +18,7 @@ import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.utils.CommentDAO;
 import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateFormatter;
+import com.cryo.utils.DateUtils;
 
 import lombok.*;
 import spark.Request;

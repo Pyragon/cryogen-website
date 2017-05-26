@@ -9,7 +9,7 @@ import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.highscores.HSUtils;
-import com.cryo.utils.DateFormatter;
+import com.cryo.utils.DateUtils;
 
 import de.neuland.jade4j.Jade4J;
 import lombok.Getter;
@@ -40,7 +40,7 @@ public class IndexModule extends WebModule {
 		PostList list = (PostList) connection.handleRequest("get-latest-threads")[0];
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("postList", list);
-		model.put("formatter", new DateFormatter());
+		model.put("formatter", new DateUtils());
 		model.put("hsusers", HSUtils.getList(10));
 		model.put("redirect", "/");
 		return render("./source/modules/index/index.jade", model, request, response);

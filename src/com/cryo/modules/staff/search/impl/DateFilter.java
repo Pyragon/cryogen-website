@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.cryo.modules.staff.search.Filter;
+import com.cryo.utils.DateSpan;
 
 import lombok.*;
 
@@ -15,8 +16,7 @@ import lombok.*;
  */
 public class DateFilter extends Filter {
 	
-	private Date from;
-	private Date to;
+	private DateSpan span;
 	
 	public DateFilter() {
 		super("date");
@@ -24,10 +24,14 @@ public class DateFilter extends Filter {
 
 	@Override
 	public String getFilter(String mod) {
-		if(from == null || to == null)
+		if(span == null)
 			return null;
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		return "time >= '"+format.format(from)+"' AND time < '"+format.format(to)+"'";
+		String col = mod.equals("appeal") ? "time" : "date";
+		StringBuilder builder = new StringBuilder();
+		return builder.append(col).append(" BETWEEN ").append(span.format("from"))
+				.append(" AND ").append(span.format("to")).toString();
+//		return builder.append(col).append(" >= ").append(span.format("from"))
+//				.append(" AND ").append(col).append(" < ").append(span.format("to")).toString();
 	}
 	
 	@Override
@@ -38,9 +42,8 @@ public class DateFilter extends Filter {
 			return false;
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			from = new Timestamp(format.parse(values[0]).getTime());
-			to = new Timestamp(format.parse(values[1]).getTime());
-			if(from.getTime() > to.getTime())
+			span = new DateSpan(new Timestamp(format.parse(values[0]).getTime()), new Timestamp(format.parse(values[1]).getTime()));
+			if(span.invalid())
 				return false;
 			this.value = null;
 		} catch(Exception e) {
@@ -52,7 +55,7 @@ public class DateFilter extends Filter {
 	
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("appeal");
+		return mod.equals("appeal") || mod.equals("punish");
 	}
 	
 }
