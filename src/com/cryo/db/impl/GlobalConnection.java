@@ -48,7 +48,7 @@ public class GlobalConnection extends DatabaseConnection {
 					String salt = BCrypt.generate_salt();
 					String hash = BCrypt.hashPassword(password, salt);
 					String sess_id = CookieManager.generateSessId(username, password, salt);
-					insert("player_data", "DEFAULT", username, password, salt, sess_id, 0, 0);
+					insert("player_data", "DEFAULT", username, hash, salt, sess_id, 0, 0);
 					DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
 					return new Object[] { true };
 				case "search":
