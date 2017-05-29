@@ -31,12 +31,12 @@ public class HighscoresModule extends WebModule {
 			if(type == RequestType.GET) {
 				if(request.queryParams().contains("user")) {
 					String user = request.queryParams("user");
-					HSData data = new HSUtils().getHSData(user);
+					HSData data = HSUtils.getHSData(user);
 					model.put("hsuser", data);
 					model.put("hsutils", new HSUtils());
 					return render("./source/modules/highscores/global/index.jade", model, request, response);
 				}
-				model.put("hsusers", HSUtils.getList(30));
+				model.put("hsusers", Website.instance().getCachingManager().get("hs-cache").getCachedData("global-list"));
 				model.put("skill_id", -1);
 				return render("./source/modules/highscores/global/index.jade", model, request, response);
 			} else if(type == RequestType.POST) {
@@ -51,7 +51,7 @@ public class HighscoresModule extends WebModule {
 				if(!request.queryParams().contains("display"))
 					return render("./source/modules/highscores/mini/global-mini.jade", model, request, response);
 				String name = request.queryParams("display");
-				HSData data = new HSUtils().getHSData(name);
+				HSData data = (HSData) Website.instance().getCachingManager().get("hs-cache").getCachedData("personal", name);
 				model.put("hsdata", data);
 				model.put("hsname", name);
 				return render("./source/modules/highscores/mini/personal-mini.jade", model, request, response);

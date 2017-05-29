@@ -43,10 +43,8 @@ public class HSUtils {
 		int[] rank = new int[25];
 		for(int i = 0; i < rank.length; i++) {
 			Object[] data = getConnection().handleRequest("get-rank", username, i);
-			if(data == null)
-				rank[i] = 0;
-			else
-				rank[i] = (int) data[0];
+			if(data == null) rank[i] = 0;
+			else rank[i] = (int) data[0];
 		}
 		return rank;
 	}

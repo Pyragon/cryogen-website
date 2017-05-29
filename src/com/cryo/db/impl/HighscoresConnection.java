@@ -74,7 +74,7 @@ public class HighscoresConnection extends DatabaseConnection {
 				String skill = "skill_"+((int) data[2]);
 				String query = "SELECT x.username, x.position FROM (SELECT t.username, t."+skill+", @rownum := @rownum + 1 AS position FROM `highscores` t JOIN (SELECT @rownum := 0) r ORDER BY total_level DESC, total_xp) x WHERE x.username = ?";
 				data = getResults(query, GET_RANK, username);
-				break;
+				return data == null ? null : new Object[] { (int) data[0] };
 			case "get-hs-data":
 				String name = (String) data[1];
 				data = select("highscores", "username=?", GET_HS_DATA, name);
