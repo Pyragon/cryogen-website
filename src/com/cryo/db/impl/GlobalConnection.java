@@ -47,7 +47,7 @@ public class GlobalConnection extends DatabaseConnection {
 					String password = (String) data[2];
 					String salt = BCrypt.generate_salt();
 					String hash = BCrypt.hashPassword(password, salt);
-					String sess_id = CookieManager.generateSessId(username, password, salt);
+					String sess_id = CookieManager.generateSessId(username, hash, salt);
 					insert("player_data", "DEFAULT", username, hash, salt, sess_id, 0, 0);
 					DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
 					return new Object[] { true };
@@ -95,8 +95,7 @@ public class GlobalConnection extends DatabaseConnection {
 				case "get-sess-id":
 					AccountDAO account = (AccountDAO) data[1];
 					data = select("player_data", "username=?", GET_HASH_PASS, account.getUsername());
-					if(data == null)
-						return null;
+					if(data == null) return null;
 					hash = (String) data[0];
 					salt = (String) data[1];
 					String toHash = String.format("%s%s%s", account.getUsername(), hash, salt);
