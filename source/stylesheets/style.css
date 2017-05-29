@@ -7,12 +7,22 @@ html, body {
   color: #888;
 }
 
-#p-online {
-  max-width: 130px;
+.header-right {
   position: absolute;
   z-index: 10;
   right: 10px;
+}
+
+#p-online {
+  max-width: 130px;
   top: 10px;
+}
+
+#shutdown-timer {
+  top: 30px;
+  z-index: 20;
+  max-width: 250px;
+  text-align: right;
 }
 
 #redeem-quant {

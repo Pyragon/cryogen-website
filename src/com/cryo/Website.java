@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import com.cryo.cache.CachingManager;
 import com.cryo.db.DBConnectionManager;
@@ -50,6 +51,7 @@ import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.Setter;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -64,6 +66,8 @@ public class Website {
 	public static String PATH = "http://cryogen-rsps.com/";
 
 	private static Website INSTANCE;
+	
+	public static @Getter @Setter int SHUTDOWN_TIME;
 
 	public static volatile boolean LOADED;
 
@@ -139,8 +143,24 @@ public class Website {
 			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/kill_web", (req, res) -> {
-			System.exit(0);
-			return "";
+			if(SHUTDOWN_TIME > 0)
+				return "Website already being shutdown. Please wait.";
+			String time = req.queryParams("delay");
+			int delay = 30;
+			if(time != null)
+				delay = Integer.parseInt(time);
+			SHUTDOWN_TIME = delay;
+			fastExecutor.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					Website.SHUTDOWN_TIME--;
+					if(Website.SHUTDOWN_TIME == 0)
+						System.exit(0);
+				}
+				
+			}, 0, 1000);
+			return "Shutting down website in "+delay+" seconds.";
 		});
 		get("/paypal_error", (req, res) -> {
 			return error("Error getting payment URL");

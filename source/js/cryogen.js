@@ -274,8 +274,84 @@ function clickSearchIcon(mod, archive, page) {
     return false;
 }
 
+//shutdown timer
+
+var shutdown = 0;
+
+var shutdown_timer = null;
+
+var reconnect_timer = null;
+
+function decreaseRestart() {
+    if(shutdown == 0) {
+        restarted();
+        return;
+    }
+    shutdown--;
+    $('#shutdown-timer').html('Website restarting in: '+shutdown+' seconds');
+}
+
+function reconnect() {
+    // ping('www.cryogen-rsps.com', function(status, e=null) {
+    //     console.log(status);
+    //     if(status === 'onload') {
+    //         $('#shutdown-timer').html('Website has restarted. Click here to refresh the page.');
+    //         $('#shutdown-timer').addClass('restart-page').css('cursor', 'pointer');
+    //     } else if(status === 'onerror') {
+    //         console.error(e);
+    //     } else {
+    //         if(status === 'timeout')
+    //             setTimeout(reconnect, 1000);
+    //     }
+    // });
+    $.ajax({
+        url: 'http://www.cryogen-rsps.com/',
+        error: function() {
+            setTimeout(reconnect, 1000);
+        },
+        success: function() {
+            $('#shutdown-timer').html('Website has restarted. Click here to refresh the page.');
+            $('#shutdown-timer').addClass('restart-page').css('cursor', 'pointer');
+        },
+        timeout: 900
+    });
+}
+
+function restarted() {
+    clearInterval(shutdown_timer);
+    $('#shutdown-value').html('');
+    $('#shutdown-timer').html('Website is being restarted. Attempting to reconnect.');
+    setTimeout(reconnect, 1000);
+}
+
+function ping(ip, callback) {
+
+    this.callback = callback;
+    this.ip = ip;
+
+    var _that = this;
+
+    this.img = new Image();
+
+    this.img.onload = function() {_that.callback('onload');};
+    this.img.onerror = function(e) {_that.callback('onerror', e);};
+
+    this.start = new Date().getTime();
+    this.img.src = 'http://' + ip;
+    this.timer = setTimeout(function() { _that.callback('timeout');}, 900);
+}
+
 //static
 
 $(document).ready(function() {
+
+    shutdown = $('#shutdown').val();
+    if(shutdown != 0) {
+        shutdown_timer = setInterval(decreaseRestart, 1000);
+    }
+
+    $(document).on('click', '.restart-page', function() {
+        location.reload();
+    });
 
 });

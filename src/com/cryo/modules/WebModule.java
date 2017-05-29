@@ -45,6 +45,7 @@ public abstract class WebModule {
 		model.put("formatter", new DateUtils());
 		model.put("acutils", new AccountUtils());
 		model.put("online", Utilities.getOnlinePlayers());
+		model.put("shutdown", Website.SHUTDOWN_TIME);
 		AccountDAO account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
 		if(account != null)

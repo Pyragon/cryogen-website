@@ -33,10 +33,8 @@ public class IndexModule extends WebModule {
 	
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		if(type != RequestType.GET) {
-			//Why are we posting to the index?
-			return "";
-		}
+		if(type != RequestType.GET)
+			return "Connected.";
 		ForumConnection connection = (ForumConnection) website.getConnectionManager().getConnection(Connection.FORUMS);
 		PostList list = (PostList) connection.handleRequest("get-latest-threads")[0];
 		HashMap<String, Object> model = new HashMap<>();
