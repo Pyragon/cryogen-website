@@ -107,7 +107,7 @@ public class ShopManager {
 				} catch(Exception e) {
 					e.printStackTrace();
 					prop.put("success", false);
-					prop.put("error", e.getMessage());
+					prop.put("error", "Error connecting to server. Please try again later.");
 					break;
 				}
 				model = new HashMap<>();
