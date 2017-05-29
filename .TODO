@@ -1,24 +1,19 @@
 It is recommended that you use atom-tasks to view TODO files.
 Bugs:
-  ☐ Bug reports via staff section only show 5/page <- no fucking clue. Just don't get it
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 General:
   ☐ Cache anything that can be for faster loading
   ☐ Reduce as many connections to database as possible
-  ☐ Find memory leak in website <- possibly done
   ☐ Add a 'Website update in: ' countdown to pages like in-game restart counter
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Switch all error blocks to use the sendAlert instead
 Shop:
   ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
 Staff Page:
-  ☐ Page for admins to to create announcements for the overview page
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
   ☐ Log all events
-  ☐ Finish searching for rest of staff page
   ☐ Reload data for all tabs when a punishment/appeal is acceped. Only refreshes appeal atm
   ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
-  ✔ Add too many results check when searching through pages in staff section - (Adding page support to search as well) @done(2017-05-21 08:03) @project(Staff Page)
 Account:
 Other:
   ☐ Page for players to view their own player/bug reports
@@ -36,6 +31,11 @@ Securiy:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Bug reports via staff section only show 5/page <- no fucking clue. Just don't get it @done(2017-05-29 03:25) @project(Bugs)
+  ✔ Find memory leak in website <- possibly done @done(2017-05-28 21:48) @project(General)
+  ✔ Page for admins to to create announcements for the overview page @done(2017-05-28 21:48) @project(Staff Page)
+  ✔ Finish searching for rest of staff page @done(2017-05-28 21:47) @project(Staff Page)
+  ✔ Add too many results check when searching through pages in staff section - (Adding page support to search as well) @done(2017-05-21 08:03) @project(Staff Page)
   ✔ Fix whatever the fuck is wrong with bug reports @done(2017-05-21 04:31) @project(Bugs)
   ✔ Archiving report should edit 'last action', as well as add a comment, same for appeals @done(2017-05-21 04:32) @project(Staff Page)
   ✔ Changing email is not refreshing acount overview @done(2017-05-19 09:39) @project(Account)
