@@ -305,7 +305,7 @@ function reconnect() {
     //     }
     // });
     $.ajax({
-        url: 'http://www.cryogen-rsps.com/',
+        url: '/',
         error: function() {
             setTimeout(reconnect, 1000);
         },
