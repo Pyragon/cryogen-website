@@ -20,6 +20,8 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.cryo.cache.CachingManager;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
@@ -39,6 +41,8 @@ import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.modules.staff.search.SearchManager;
 import com.cryo.paypal.PaypalManager;
+import com.cryo.server.ServerConnection;
+import com.cryo.server.ServerItem;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.Utilities;
@@ -168,6 +172,12 @@ public class Website {
 		get("/process_payment", (req, res) -> {
 			return new PaypalManager(this).decodeRequest(req, res, RequestType.GET);
 		});
+		post("/grab_data", (req, res) -> {
+			return grab_data(req, res);
+		});
+		get("/grab_data", (req, res) -> {
+			return grab_data(req, res);
+		});
 		get("/test", (req, res) -> {
 			return new TestModule(this).decodeRequest(req, res, RequestType.GET);
 		});
@@ -242,7 +252,29 @@ public class Website {
 		});
 		System.out.println("Listening on port: "+properties.getProperty("port"));
 	}
-
+	
+	public static String grab_data(Request req, Response res) {
+		Properties prop = new Properties();
+		String action = req.queryParams("action");
+		HashMap<String, Object> model = new HashMap<>();
+		switch(action) {
+			case "get-item-div":
+				String item = req.queryParams("item");
+				ServerItem server_item = ServerConnection.getServerItem(item);
+				model.put("item", server_item);
+				try {
+					prop.put("success", true);
+					prop.put("html", Jade4J.render("./source/forums/item_market.jade", model));
+				} catch (JadeCompilerException | IOException e) {
+					e.printStackTrace();
+					prop.put("success", false);
+					prop.put("error", "Error retrieving item-div, please contact Cody if this problem persists.");
+				}
+				break;
+		}
+		return new Gson().toJson(prop);
+	}
+	
 	public static void sendToServer(OutputStream stream) throws IOException {
 		InetSocketAddress address = new InetSocketAddress("localhost", 5555);
 		@Cleanup Socket socket = new Socket();
