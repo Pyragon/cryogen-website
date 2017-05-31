@@ -27,6 +27,7 @@ public class ServerItem {
 			if(data)
 				string += ", ";
 			string += req+" "+Utilities.SKILL_NAME[skill_id];
+			data = true;
 		}
 		return string;
 	}
