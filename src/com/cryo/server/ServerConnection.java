@@ -13,6 +13,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.cryo.Website;
 import com.google.gson.Gson;
 
 import lombok.*;
@@ -24,7 +25,7 @@ import lombok.*;
  */
 public class ServerConnection {
 	
-	public static String SERVER_URL = "http://localhost:5555"; //server.cryogen-rsps.com/";
+	public static String SERVER_URL = "http://"+Website.getProperties().getProperty("server-ip");
 	
 	public static ServerItem getServerItem(String item) {
 		item = StringEscapeUtils.escapeHtml4(item).replaceAll(" ", "%20");
