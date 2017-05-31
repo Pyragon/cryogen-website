@@ -259,10 +259,15 @@ public class Website {
 		String action = req.queryParams("action");
 		HashMap<String, Object> model = new HashMap<>();
 		switch(action) {
+			case "get-drops-feed":
+				Object data = INSTANCE.getCachingManager().get("drops-feed-cache").getCachedData();
+				if(data == null || !(data instanceof Properties))
+					return error("Unable to retrieve from drops-feed-cache.");
+				return new Gson().toJson((Properties) data);
 			case "get-online-users":
 				if(INSTANCE.getCachingManager().get("online-users-cache") == null)
 					return error("Unable to retrieve from online-users-cache.");
-				Object data  = INSTANCE.getCachingManager().get("online-users-cache").getCachedData();
+				data  = INSTANCE.getCachingManager().get("online-users-cache").getCachedData();
 				if(data == null || !(data instanceof String))
 					return error("Unable to retrieve from online-users-cache.");
 				return (String) data;

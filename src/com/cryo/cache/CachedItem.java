@@ -30,6 +30,7 @@ public abstract class CachedItem {
 			refreshTime();
 			fetchNewData(values);
 		}
+		System.out.println("hi");
 		return cachedData;
 	}
 	
