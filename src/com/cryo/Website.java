@@ -257,6 +257,10 @@ public class Website {
 		String action = req.queryParams("action");
 		HashMap<String, Object> model = new HashMap<>();
 		switch(action) {
+			case "get-online-users":
+				String url = ServerConnection.SERVER_URL+"/online-users";
+				String response = ServerConnection.getResponse(url);
+				return response;
 			case "get-item-div":
 				String item = req.queryParams("item");
 				Object data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(item);
