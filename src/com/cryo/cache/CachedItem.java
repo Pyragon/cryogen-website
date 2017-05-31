@@ -26,7 +26,7 @@ public abstract class CachedItem {
 	public abstract long getCacheTimeLimit();
 	
 	public Object getCachedData(Object... values) {
-		if(cacheTime >= System.currentTimeMillis()) {
+		if(hasExpired()) {
 			refreshTime();
 			fetchNewData(values);
 		}

@@ -15,17 +15,19 @@ import lombok.*;
 public class OnlineUserCache extends CachedItem {
 
 	public OnlineUserCache() {
-		super("online-user-cache");
+		super("online-users-cache");
 	}
 
 	@Override
 	public void fetchNewData(Object... values) {
 		String url = ServerConnection.SERVER_URL+"/online-users";
 		String response = ServerConnection.getResponse(url);
+		if(response.equals("")) {
+			this.cachedData =  "No one online at the moment.";
+			return;
+		}
 		String[] names = response.split(",");
 		String players = "";
-		if(response.equals(""))
-			this.cachedData =  "No one online at the moment.";
 		boolean sData = false;
 		for(String name : names) {
 			AccountDAO account = AccountUtils.getAccount(name);
