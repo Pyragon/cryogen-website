@@ -52,15 +52,8 @@ script.
 					buttons: [{
 						addClass: 'btn btn-primary', text: 'Confirm', onClick: function($noty) {
 							$.post('/account', { action:'redeem', id:id }, function(ret) {
-								var data = JSON.parse(ret);
-								if(data.success == null) {
-									sendAlert('Login session expired! Please reload the page.');
-									return;
-								}
-								if(!data.success) {
-									sendAlert(data.error);
-									return;
-								}
+								var data = getJSON(ret);
+								if(data == null) return false;
 								startRefresh();
 								sendAlert("We have attempted to claim this package on your in-game account for you. Check in-game for confirmation. Please wait while we refresh the page.");
 								$noty.close();

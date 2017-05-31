@@ -37,7 +37,8 @@ public class Utilities {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(new Utilities().isValidDisplay("cody $sd"));
+		String hash = CookieManager.generateSessId("brandon", "$2a$10$y4uaUQSW/ebu.ZP/TOGelObG7Ainrbpu6klJ30aE5KeL7ILBCq/9O", "$2a$10$y4uaUQSW/ebu.ZP/TOGelO");
+		System.out.println(hash);
 	}
 	
 	public static long roundUp(long num, long divisor) {

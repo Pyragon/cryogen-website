@@ -1,5 +1,9 @@
 package com.cryo.server;
 
+import java.util.HashMap;
+
+import com.cryo.utils.Utilities;
+
 import lombok.*;
 
 /**
@@ -13,6 +17,18 @@ public class ServerItem {
 	private final int id;
 	private final String name;
 	private final String description;
-	private final int[] reqs;
+	private final HashMap<Integer, Integer> reqs;
+	
+	public String getReqString() {
+		String string = "";
+		boolean data = false;
+		for(Integer skill_id : reqs.keySet()) {
+			Integer req = reqs.get(skill_id);
+			if(data)
+				string += ", ";
+			string += req+" "+Utilities.SKILL_NAME[skill_id];
+		}
+		return string;
+	}
 	
 }

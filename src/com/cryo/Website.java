@@ -26,7 +26,6 @@ import com.cryo.cache.CachingManager;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.GlobalConnection;
-import com.cryo.io.OutputStream;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.register.RegisterModule;
@@ -260,7 +259,13 @@ public class Website {
 		switch(action) {
 			case "get-item-div":
 				String item = req.queryParams("item");
-				ServerItem server_item = ServerConnection.getServerItem(item);
+				Object data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(item);
+				if(data == null || !(data instanceof ServerItem)) {
+					prop.put("success", false);
+					prop.put("error", "Unable to get server item.");
+					break;
+				}
+				ServerItem server_item = (ServerItem) data;
 				model.put("item", server_item);
 				try {
 					prop.put("success", true);
@@ -273,16 +278,6 @@ public class Website {
 				break;
 		}
 		return new Gson().toJson(prop);
-	}
-	
-	public static void sendToServer(OutputStream stream) throws IOException {
-		InetSocketAddress address = new InetSocketAddress("localhost", 5555);
-		@Cleanup Socket socket = new Socket();
-		socket.connect(address, 1500);
-		byte[] bytes = new byte[stream.offset()];
-		stream.setOffset(0);
-		stream.getBytes(bytes, 0, bytes.length);
-		socket.getOutputStream().write(bytes);
 	}
 
 	public static String render404(Request request, Response response) {

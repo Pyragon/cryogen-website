@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.io.OutputStream;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.shop.InvoiceDAO;
 import com.cryo.modules.account.shop.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.shop.ShopUtils;
+import com.cryo.server.ServerConnection;
 import com.paypal.api.payments.Item;
 import com.paypal.api.payments.ItemList;
 import com.paypal.api.payments.NameValuePair;
@@ -52,12 +54,9 @@ public class PaypalManager extends WebModule {
 	}
 	
 	public void sendRedeem(String username, int package_id) throws IOException {
-		OutputStream stream = new OutputStream();
-		stream.writeByte(0);
-		stream.writeString(username);
-		stream.writeByte(package_id);
-		stream.writeInt(1);
-		Website.sendToServer(stream);
+		username = StringEscapeUtils.escapeHtml4(username).replaceAll(" ", "%20");
+		String url = ServerConnection.SERVER_URL+"/redeem?username="+username+"&package="+package_id+"&quantity=1";
+		ServerConnection.getResponse(url);
 	}
 	
 	public String decodeRequest(Request request, Response response, RequestType type) {

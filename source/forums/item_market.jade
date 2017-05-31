@@ -4,6 +4,6 @@ html
 			div.item-pic
 				img(src='http://cryogen-rsps.com/images/shop/bond.png')
 			div.item-data
-				div.item-name Name: Membership Bond
-				div.item-desc Desc: A bond used to redeem membership in-game.
-				div.item-req Item Requirements: None
+				div.item-name= 'Name: '+item.getName()
+				div.item-desc= 'Desc: '+item.getDescription()
+				div.item-req= 'Item Reqs: '+item.getReqString()

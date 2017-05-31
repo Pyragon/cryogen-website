@@ -7,6 +7,13 @@ html, body {
   color: #888;
 }
 
+#item-back {
+  width: 200px;
+  height: 50px;
+  background: #222;
+  border: 1px solid #888;
+}
+
 .header-right {
   position: absolute;
   z-index: 10;
