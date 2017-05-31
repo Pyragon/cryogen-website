@@ -27,7 +27,9 @@ import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.TestModule;
+import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountOverviewModule;
+import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.register.RegisterModule;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.support.AccountSupportModule;
@@ -260,7 +262,20 @@ public class Website {
 			case "get-online-users":
 				String url = ServerConnection.SERVER_URL+"/online-users";
 				String response = ServerConnection.getResponse(url);
-				return response;
+				String[] names = response.split(",");
+				String players = "";
+				if(response.equals(""))
+					return "No one online at the moment.";
+				boolean sData = false;
+				for(String name : names) {
+					AccountDAO account = AccountUtils.getAccount(name);
+					if(account == null)
+						continue;
+					if(sData)
+						players += ", ";
+					players += AccountUtils.crownHTML(account);
+				}
+				return players;
 			case "get-item-div":
 				String item = req.queryParams("item");
 				Object data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(item);
