@@ -1,10 +1,12 @@
 It is recommended that you use atom-tasks to view TODO files.
+Forums:
+  ☐ Get new forum logo + read/unread buttons
+  ☐ Change 'go social' to an in-game drops feed
+  ☐ Table is messed up for market section due to displaying too many items? http://prntscr.com/fe7owu top is expected
 Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 General:
-  ☐ Cache anything that can be for faster loading
   ☐ Reduce as many connections to database as possible
-  ☐ Add a 'Website update in: ' countdown to pages like in-game restart counter
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Switch all error blocks to use the sendAlert instead
 Shop:
@@ -17,20 +19,22 @@ Staff Page:
 Account:
 Other:
   ☐ Page for players to view their own player/bug reports
-  ☐ Proper download page
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
-  ☐ Fix possible memory leak
   ☐ Make better discord avatar that matches background so it looks transparent
-  ☐ Reduce # of connections to database when loading page
   ☐ Create independant html pages to serve as error pages for nginx
 Securiy:
   ☐ Secure all requests to server (though should be secured through sessions already)
   ☐ Update sessions to be more secure. (Create random sess_id and add to database with sess_ids->usernames, allows more than one user to have it)
   ☐ Reset sess_ids when user changes the password
-  ✔ Investigate possibly issue in db sess_ids not being correct (find better way to get sess_ids) @done(2017-05-29 04:19) @project(Securiy)
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Add section below latest activity to view players online in-game @done(2017-05-31 04:37) @project(Forums)
+  ✔ Cache anything that can be for faster loading @done(2017-05-30 21:14) @project(General)
+  ✔ Add a 'Website update in: ' countdown to pages like in-game restart counter @done(2017-05-30 21:14) @project(General)
+  ✔ Proper download page @done(2017-05-30 21:14) @project(Other)
+  ✔ Fix possible memory leak @done(2017-05-30 21:14) @project(Other)
+  ✔ Investigate possibly issue in db sess_ids not being correct (find better way to get sess_ids) @done(2017-05-29 04:19) @project(Securiy)
   ✔ Bug reports via staff section only show 5/page <- no fucking clue. Just don't get it @done(2017-05-29 03:25) @project(Bugs)
   ✔ Find memory leak in website <- possibly done @done(2017-05-28 21:48) @project(General)
   ✔ Page for admins to to create announcements for the overview page @done(2017-05-28 21:48) @project(Staff Page)
