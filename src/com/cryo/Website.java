@@ -260,25 +260,13 @@ public class Website {
 		HashMap<String, Object> model = new HashMap<>();
 		switch(action) {
 			case "get-online-users":
-				String url = ServerConnection.SERVER_URL+"/online-users";
-				String response = ServerConnection.getResponse(url);
-				String[] names = response.split(",");
-				String players = "";
-				if(response.equals(""))
-					return "No one online at the moment.";
-				boolean sData = false;
-				for(String name : names) {
-					AccountDAO account = AccountUtils.getAccount(name);
-					if(account == null)
-						continue;
-					if(sData)
-						players += ", ";
-					players += AccountUtils.crownHTML(account);
-				}
-				return players;
+				Object data  = INSTANCE.getCachingManager().get("online-users-cache").getCachedData();
+				if(data == null || !(data instanceof String))
+					return error("Unable to retrieve from online-user-cache.");
+				return (String) data;
 			case "get-item-div":
 				String item = req.queryParams("item");
-				Object data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(item);
+				data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(item);
 				if(data == null || !(data instanceof ServerItem)) {
 					prop.put("success", false);
 					prop.put("error", "Unable to get server item.");
