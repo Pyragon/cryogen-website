@@ -46,6 +46,7 @@ import com.cryo.server.ServerConnection;
 import com.cryo.server.ServerItem;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
@@ -148,6 +149,9 @@ public class Website {
 			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/kill_web", (req, res) -> {
+			AccountDAO account = CookieManager.getAccount(req);
+			if(account == null || account.getRights() < 2)
+				return error("Insufficient permissions.");
 			if(SHUTDOWN_TIME > 0)
 				return "Website already being shutdown. Please wait.";
 			String time = req.queryParams("delay");
