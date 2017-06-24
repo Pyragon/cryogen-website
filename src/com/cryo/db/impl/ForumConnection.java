@@ -49,16 +49,25 @@ public class ForumConnection extends DatabaseConnection {
 	private final SQLQuery GET_POST = (set) -> {
 		if(empty(set))
 			return null;
+		int pid = getInt(set, "pid");
 		String subject = getString(set, "subject");
-		String message = getString(set, "message");
+		String message = getFormattedPost(pid);
 		message = Utilities.formatMessage(message);
 		String username = getString(set, "username");
 		long dateline = getLongInt(set, "dateline");
 		PostDAO post = new PostDAO(subject, message, username, dateline);
 		return new Object[] { post };
 	};
+	
+	public static String getFormattedPost(int pid) {
+		String url = "http://localhost/parse_message.php?pid="+pid;
+		String[] website = Utilities.getWebsite(url);
+		StringBuilder builder = new StringBuilder();
+		for(String s : website)
+			builder.append(s);
+		return builder.toString();
+	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] handleRequest(Object... data) {
 		String command = ((String) data[0]).toLowerCase();
@@ -76,10 +85,6 @@ public class ForumConnection extends DatabaseConnection {
 				return data == null ? null : new Object[] { (ForumUser) data[0] };
 			case "get-latest-threads":
 				data = select("mybb_threads", "(fid=4 OR fid=5) AND deletetime=0 ORDER BY dateline DESC LIMIT 5", GET_LATEST_THREADS);
-				if(data == null) {
-					System.out.println("null data");
-					return null;
-				}
 				return data == null ? null : new Object[] { (PostList) data[0] };
 			case "get-post":
 				int pid = (int) data[1];

@@ -12,7 +12,7 @@ for post in postList.getList()
 					span.glyphicon.glyphicon-minus
 			p.author= 'Posted '+formatter.format(dateline*1000, 'MMMMM dd, YYYY')+' by $forum-name='+username+'$end'
 		div.content(style='padding: 0px;')
-			div.wrapper(style='padding: 20px; font-size: 13px;')= message
+			div.wrapper(style='padding: 20px; font-size: 13px;', id='postid'+i)!= message
 script.
 	$('.news-post pre').niceScroll({cursorborder: "", cursorcolor: "#222", cursorwidth: "5px"})
 	$(".minimize").click(function() {
