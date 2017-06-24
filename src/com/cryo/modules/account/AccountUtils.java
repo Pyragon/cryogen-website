@@ -34,10 +34,10 @@ public class AccountUtils {
 		String display = "";
 		if(account.getRights() == 2) {
 			colour = "#FF0000";
-			img = "admin_ing.gif";
+			img = "admin_ing.png";
 		} else if(account.getRights() == 1) {
 			colour = "#0174DF";
-			img = "mod_ing.gif";
+			img = "mod_ing.png";
 		} else if(account.getDonator() == 3) {
 			colour = "#98C7F3";
 			img = "hroller_ing.png";
