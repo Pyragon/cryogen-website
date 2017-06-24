@@ -1,7 +1,11 @@
 package com.cryo.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -196,6 +200,38 @@ public class Utilities {
 		}
 		message = message.replace("{{/username}}", "{{username}}");
 		return message;
+	}
+	
+	public static String[] getWebsite(String[] url) {
+		try {
+			URI uri = new URI(url[0], url[1], url[2], url[3], null);
+			URL ur = uri.toURL();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ur.openStream()));
+			ArrayList<String> lines = new ArrayList<String>();
+			String line;
+			while ((line = reader.readLine()) != null)
+				lines.add(line);
+			return lines.toArray(new String[lines.size()]);
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String[] getWebsite(String url) {
+		try {
+			URI uri = new URI(url);
+			URL ur = uri.toURL();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ur.openStream()));
+			ArrayList<String> lines = new ArrayList<String>();
+			String line;
+			while ((line = reader.readLine()) != null)
+				lines.add(line);
+			return lines.toArray(new String[lines.size()]);
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }
