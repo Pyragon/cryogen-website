@@ -178,12 +178,9 @@ public class Utilities {
 		StringBuilder newName = new StringBuilder();
 		boolean wasSpace = true;
 		for (int i = 0; i < name.length(); i++) {
-			if (wasSpace) {
-				newName.append(("" + name.charAt(i)).toUpperCase());
-				wasSpace = false;
-			} else {
-				newName.append(name.charAt(i));
-			}
+			char c = name.charAt(i);
+			newName.append(wasSpace ? Character.toString(c).toUpperCase() : c);
+			if(wasSpace) wasSpace = false;
 			if (name.charAt(i) == ' ') {
 				wasSpace = true;
 			}
