@@ -34,7 +34,7 @@ public class IndexModule extends WebModule {
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		if(type != RequestType.GET)
-			return "Connected.";
+			return Website.render404(request, response);
 		ForumConnection connection = (ForumConnection) website.getConnectionManager().getConnection(Connection.FORUMS);
 		PostList list = (PostList) connection.handleRequest("get-latest-threads")[0];
 		HashMap<String, Object> model = new HashMap<>();
