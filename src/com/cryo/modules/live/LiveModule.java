@@ -64,8 +64,9 @@ public class LiveModule extends WebModule {
 				return Website.render404(request, response);
 			String name = "cryogen_live_r" + version+".jar";
 			File file = new File(path + "" + name);
-			if (!file.exists())
-				return Website.error("No file could be found.");
+			if (!file.exists()) {
+				return Website.error("No file could be found at ."+path+""+name);
+			}
 			System.out.println("Sending over file: "+file.getName()+"("+file.getTotalSpace()+")");
 			return Website.sendFile(file, response, MediaType.ZIP);
 		}
