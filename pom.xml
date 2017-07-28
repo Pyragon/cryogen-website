@@ -45,25 +45,22 @@
 			<version>2.8.0</version>
 		</dependency>
 		<dependency>
-			<groupId>lombok</groupId>
-			<artifactId>com.lombok</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/library/lombok.jar</systemPath>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.16</version>
+			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
-			<groupId>guava</groupId>
-			<artifactId>com.google.guava</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/library/guava-20.0.jar</systemPath>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.json/javax.json-api -->
 		<dependency>
-			<groupId>JSON</groupId>
-			<artifactId>com.jsonapi</artifactId>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/library/javax.json-api-1.0-javadoc.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
