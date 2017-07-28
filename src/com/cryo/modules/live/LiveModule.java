@@ -66,6 +66,7 @@ public class LiveModule extends WebModule {
 			File file = new File(path + "" + name);
 			if (!file.exists())
 				return Website.error("No file could be found.");
+			System.out.println("Sending over file: "+file.getName()+"("+file.getTotalSpace()+")");
 			return Website.sendFile(file, response, MediaType.ZIP);
 		}
 		return Website.render404(request, response);
