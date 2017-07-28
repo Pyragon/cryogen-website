@@ -220,25 +220,7 @@ public class Website {
 			return Jade4J.render("./source/modules/staff/punishments/create_punish.jade", new HashMap<String, Object>());
 		});
 		get("/favicon.ico", (req, res) -> {
-			try {
-				java.io.InputStream in = null;
-				java.io.OutputStream out = null;
-				try {
-					in = new BufferedInputStream(new FileInputStream(FAVICON));
-					out = new BufferedOutputStream(res.raw().getOutputStream());
-					res.raw().setContentType(MediaType.ICO.toString());
-					res.status(200);
-					ByteStreams.copy(in, out);
-					out.flush();
-					return "";
-				} finally {
-					in.close();
-					out.close();
-				}
-			} catch(Exception e) {
-				res.status(400);
-				return e.getMessage();
-			}
+			return sendFile(FAVICON, res, MediaType.ICO);
 		});
 		get("*", Website::render404);
 		after("*", (req, res) -> {
@@ -308,6 +290,28 @@ public class Website {
 			e.printStackTrace();
 		}
 		return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
+	}
+	
+	public static String sendFile(File file, Response res, MediaType type) {
+		try {
+			java.io.InputStream in = null;
+			java.io.OutputStream out = null;
+			try {
+				in = new BufferedInputStream(new FileInputStream(file));
+				out = new BufferedOutputStream(res.raw().getOutputStream());
+				res.raw().setContentType(type.toString());
+				res.status(200);
+				ByteStreams.copy(in, out);
+				out.flush();
+				return "";
+			} finally {
+				in.close();
+				out.close();
+			}
+		} catch(Exception e) {
+			res.status(400);
+			return e.getMessage();
+		}
 	}
 
 	public static String getRandomImageLink() {

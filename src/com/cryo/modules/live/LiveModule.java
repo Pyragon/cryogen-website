@@ -21,53 +21,54 @@ import spark.Response;
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
  *
- * Created on: Mar 8, 2017 at 10:45:02 AM
+ *         Created on: Mar 8, 2017 at 10:45:02 AM
  */
 public class LiveModule extends WebModule {
 	
-	public static String PATH = "/live/*";
+	public static int CLIENT_REVISION = 1;
 	
-	private static File ZIP_PATH = new File("D:/Cryogen Client.zip");
-	private static File JAR_PATH = new File("D:/Play Cryogen.jar");
-
+	public static int AUTO_REVISION = 1;
+	
+	public static String PATH = "/live";
+	
 	public LiveModule(Website website) {
 		super(website);
 	}
-
+	
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
-		String path = request.pathInfo().replace("/live/", "");
-		if(path.equals("")) {
-			return render("./source/modules/live/index.jade", new HashMap<String, Object>(), request, response);
-		}
-		if(!path.startsWith("download"))
+		String action = request.queryParams("action");
+		String path = Website.getProperties().getProperty("live-path");
+		if (action == null)
 			return Website.render404(request, response);
-		try {
-			InputStream in = null;
-			OutputStream out = null;
-			try {
-				File file = ZIP_PATH;
-				String fileType = request.queryParams("file_type");
-				String fileName = "Cryogen Client.zip";
-				if(fileType != null && fileType.equals("jar")) {
-					file = JAR_PATH;
-					fileName = "Play Cryogen.jar";
-				}
-				in = new BufferedInputStream(new FileInputStream(file));
-				out = new BufferedOutputStream(response.raw().getOutputStream());
-				response.raw().setContentType(MediaType.ZIP.toString());
-				response.raw().setHeader("Content-Disposition", "attachment; filename="+fileName);
-				response.status(200);
-				ByteStreams.copy(in, out);
-				out.flush();
-				return "";
-			} finally {
-				Closeables.close(in, true);
-			}
-		} catch(Exception e) {
-			response.status(400);
-			return e.getMessage();
+		if (action.equals("get-revision"))
+			return Integer.toString(CLIENT_REVISION);
+		else if(action.equals("get-auto-revision"))
+			return Integer.toString(AUTO_REVISION);
+		else if (action.equals("download-auto")) {
+			String method = request.queryParams("method");
+			if (method == null)
+				return Website.render404(request, response);
+			String name = "Cryogen Client";
+			if (method.equals("jar"))
+				name += ".jar";
+			else
+				name += ".zip";
+			File file = new File(path + "" + name);
+			if (!file.exists())
+				return Website.error("No file could be found.");
+			return Website.sendFile(file, response, MediaType.ZIP);
+		} else if (action.equals("download")) {
+			String version = request.queryParams("version");
+			if (version == null)
+				return Website.render404(request, response);
+			String name = "cryogen_live_r" + version+".jar";
+			File file = new File(path + "" + name);
+			if (!file.exists())
+				return Website.error("No file could be found.");
+			return Website.sendFile(file, response, MediaType.ZIP);
 		}
+		return Website.render404(request, response);
 	}
 	
 }
