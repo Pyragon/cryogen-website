@@ -197,7 +197,7 @@ public abstract class DatabaseConnection {
 				Object obj = objs[i];
 				if (obj instanceof String) {
 					String string = (String) obj;
-					if (string.equals("DEFAULT")) {
+					if (string.equals("DEFAULT") || string.equals("NULL")) {
 						insert.append(string);
 						if (i != inserts - 1)
 							insert.append(", ");
@@ -216,7 +216,7 @@ public abstract class DatabaseConnection {
 				index++;
 				if (obj instanceof String) {
 					String string = (String) obj;
-					if (string.equals("DEFAULT")) {
+					if (string.equals("DEFAULT") || string.equals("NULL")) {
 						index--;
 						continue;
 					}
