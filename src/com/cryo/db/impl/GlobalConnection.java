@@ -3,6 +3,7 @@ package com.cryo.db.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
@@ -48,7 +49,8 @@ public class GlobalConnection extends DatabaseConnection {
 					String salt = BCrypt.generate_salt();
 					String hash = BCrypt.hashPassword(password, salt);
 					String sess_id = CookieManager.generateSessId(username, hash, salt);
-					insert("player_data", "DEFAULT", username, hash, salt, sess_id, 0, 0);
+					Timestamp date = new Timestamp(Calendar.getInstance().getTimeInMillis());
+					insert("player_data", "DEFAULT", username, hash, salt, sess_id, 0, 0, date);
 					DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
 					return new Object[] { true };
 				case "search":
@@ -190,7 +192,8 @@ public class GlobalConnection extends DatabaseConnection {
 		int id = getInt(set, "id");
 		int rights = getInt(set, "rights");
 		int donator = getInt(set, "donator");
-		AccountDAO account = new AccountDAO(username, id, rights, donator);
+		Timestamp date = getTimestamp(set, "creation_date");
+		AccountDAO account = new AccountDAO(username, id, rights, donator, date);
 		return new Object[] { account };
 	};
 	

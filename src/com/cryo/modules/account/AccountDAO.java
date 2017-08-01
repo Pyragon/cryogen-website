@@ -1,5 +1,7 @@
 package com.cryo.modules.account;
 
+import java.sql.Timestamp;
+
 import com.cryo.db.impl.EmailConnection;
 
 import lombok.Getter;
@@ -17,6 +19,8 @@ public class AccountDAO {
 	private final @Getter String username;
 	
 	private final @Getter int id, rights, donator;
+	
+	private final @Getter Timestamp creationDate;
 	
 	public String getEmail() {
 		Object[] data = EmailConnection.connection().handleRequest("get-email", username);
