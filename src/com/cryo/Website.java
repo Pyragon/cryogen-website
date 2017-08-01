@@ -222,9 +222,29 @@ public class Website {
 		get("/create", (req, res) -> {
 			return Jade4J.render("./source/modules/staff/punishments/create_punish.jade", new HashMap<String, Object>());
 		});
-		get("/favicon.ico", (req, res) -> {
-			return sendFile(FAVICON, res, MediaType.ICO);
-		});
+		get("/favicon.ico", (req, response) -> {
+                try {
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+                        in = new BufferedInputStream(new FileInputStream(FAVICON));
+                        out = new BufferedOutputStream(response.raw().getOutputStream());
+                        response.raw().setContentType(MediaType.ICO.toString());
+                        response.status(200);
+                        ByteStreams.copy(in, out);
+                        out.flush();
+                        return "";
+                    } finally {
+                        in.close();
+                    }
+                } catch (FileNotFoundException ex) {
+                    response.status(404);
+                    return ex.getMessage();
+                } catch (IOException ex) {
+                    response.status(500);
+                    return ex.getMessage();
+                }
+        });
 		get("*", Website::render404);
 		after("*", (req, res) -> {
 
