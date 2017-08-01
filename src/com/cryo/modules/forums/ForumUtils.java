@@ -2,7 +2,7 @@ package com.cryo.modules.forums;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.MyBBConnection;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -12,7 +12,7 @@ import com.cryo.db.impl.ForumConnection;
 public class ForumUtils {
 	
 	public static ForumUser getUser(String username) {
-		ForumConnection connection = (ForumConnection) Website.instance().getConnectionManager().getConnection(Connection.FORUMS);
+		MyBBConnection connection = (MyBBConnection) Website.instance().getConnectionManager().getConnection(Connection.MY_BB);
 		Object[] data = connection.handleRequest("get-user", username);
 		if(data == null)
 			return null;

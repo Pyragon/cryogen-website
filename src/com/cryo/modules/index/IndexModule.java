@@ -7,7 +7,7 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.cache.CachedItem;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.MyBBConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.highscores.HSUtils;
 import com.cryo.utils.DateUtils;
@@ -35,7 +35,7 @@ public class IndexModule extends WebModule {
 	public String decodeRequest(Request request, Response response, RequestType type) {
 		if(type != RequestType.GET)
 			return Website.render404(request, response);
-		ForumConnection connection = (ForumConnection) website.getConnectionManager().getConnection(Connection.FORUMS);
+		MyBBConnection connection = (MyBBConnection) website.getConnectionManager().getConnection(Connection.MY_BB);
 		PostList list = (PostList) connection.handleRequest("get-latest-threads")[0];
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("postList", list);

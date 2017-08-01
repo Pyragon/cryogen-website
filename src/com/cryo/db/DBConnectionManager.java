@@ -7,6 +7,7 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.MyBBConnection;
 import com.cryo.db.impl.HighscoresConnection;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
@@ -42,7 +43,7 @@ public class DBConnectionManager {
 	
 	public void init() {
 		connections = new HashMap<>();
-		connections.put(Connection.FORUMS, new ForumConnection());
+		connections.put(Connection.MY_BB, new MyBBConnection());
 		connections.put(Connection.HIGHSCORES, new HighscoresConnection());
 		connections.put(Connection.GLOBAL, new GlobalConnection());
 		connections.put(Connection.DISPLAY, new DisplayConnection());
@@ -51,10 +52,11 @@ public class DBConnectionManager {
 		connections.put(Connection.SHOP, new ShopConnection());
 		connections.put(Connection.REPORTS, new ReportsConnection());
 		connections.put(Connection.PUNISH, new PunishmentConnection());
+		connections.put(Connection.FORUM, new ForumConnection());
 	}
 	
 	public static enum Connection {
-		FORUMS, HIGHSCORES, GLOBAL, DISPLAY, VOTING, EMAIL, SHOP, REPORTS, PUNISH
+		MY_BB, HIGHSCORES, GLOBAL, DISPLAY, VOTING, EMAIL, SHOP, REPORTS, PUNISH, PREVIOUS, RECOVERY, FORUM
 	}
 	
 }
