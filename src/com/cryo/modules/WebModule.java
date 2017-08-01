@@ -34,7 +34,7 @@ public abstract class WebModule {
 		this.website = website;
 	}
 	
-	public abstract String decodeRequest(Request request, Response response, RequestType type);
+	public abstract Object decodeRequest(Request request, Response response, RequestType type);
 	
 	@Synchronized
 	public String render(String file, HashMap<String, Object> model, Request request, Response response) {

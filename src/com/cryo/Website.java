@@ -20,6 +20,8 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.cryo.cache.CachingManager;
@@ -49,6 +51,7 @@ import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.paypal.api.payments.Payment;
@@ -292,26 +295,18 @@ public class Website {
 		return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
 	}
 	
-	public static String sendFile(File file, Response res, MediaType type) {
+	public static HttpServletResponse sendFile(File file, Response res, MediaType type) {
+		res.header("Content-Disposition", "attachment; filename="+file.getName());
+		res.type("application/force-download");
 		try {
-			java.io.InputStream in = null;
-			java.io.OutputStream out = null;
-			try {
-				in = new BufferedInputStream(new FileInputStream(file));
-				out = new BufferedOutputStream(res.raw().getOutputStream());
-				res.raw().setContentType(type.toString());
-				res.status(200);
-				ByteStreams.copy(in, out);
-				out.flush();
-				return "";
-			} finally {
-				in.close();
-				out.close();
-			}
-		} catch(Exception e) {
-			res.status(400);
-			return e.getMessage();
-		}
+			byte[] bytes = Files.toByteArray(file);
+			HttpServletResponse raw = res.raw();
+			raw.getOutputStream().write(bytes);
+			raw.getOutputStream().flush();
+			raw.getOutputStream().close();
+			return res.raw();
+		} catch(Exception e) { e.printStackTrace(); }
+		return null;
 	}
 
 	public static String getRandomImageLink() {

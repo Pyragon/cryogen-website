@@ -36,7 +36,7 @@ public class LiveModule extends WebModule {
 	}
 	
 	@Override
-	public String decodeRequest(Request request, Response response, RequestType type) {
+	public Object decodeRequest(Request request, Response response, RequestType type) {
 		String action = request.queryParams("action");
 		String path = Website.getProperties().getProperty("live-path");
 		if (action == null)
@@ -65,7 +65,7 @@ public class LiveModule extends WebModule {
 			String name = "cryogen_live_r" + version+".jar";
 			File file = new File(path + "" + name);
 			if (!file.exists()) {
-				return Website.error("No file could be found at ."+path+""+name);
+				return Website.error("No file could be found at "+path+""+name);
 			}
 			System.out.println("Sending over file: "+file.getName()+"("+file.getTotalSpace()+")");
 			return Website.sendFile(file, response, MediaType.ZIP);
