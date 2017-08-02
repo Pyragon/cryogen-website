@@ -24,6 +24,10 @@ script.
 			miniLogin();
 			return false;
 		});
+		$('.forgot').click(function() {
+			location.href='recover';
+			return false;
+		});
 		$('.user').keypress(function(e) {
 			if(e.which == 13) {
 				$('.pass').focus();
@@ -41,6 +45,6 @@ form(role='form')
 		input(type='password', name="password", placeholder='Enter Password', id='password', class='form-control pass')
 	div.row
 		div.col-xs-offset-1.col-xs-4.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-offset-1
-			button(class='btn btn-default login') Login
+			button.btn.btn-default.login Login
 		div.col-xs-offset-1.col-xs-4.col-md-offset-1.col-md-4.col-sm-offset-1.col-sm-offset-1
-			button.btn.btn-default.forgot(onclick="return false;") Forgot my Password
+			button.btn.btn-default.forgot Forgot my Password
