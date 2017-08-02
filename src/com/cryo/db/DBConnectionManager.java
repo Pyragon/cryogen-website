@@ -9,6 +9,7 @@ import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.MyBBConnection;
 import com.cryo.db.impl.HighscoresConnection;
+import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.db.impl.ShopConnection;
@@ -52,6 +53,7 @@ public class DBConnectionManager {
 		connections.put(Connection.SHOP, new ShopConnection());
 		connections.put(Connection.REPORTS, new ReportsConnection());
 		connections.put(Connection.PUNISH, new PunishmentConnection());
+		connections.put(Connection.PREVIOUS, new PreviousConnection());
 		connections.put(Connection.FORUM, new ForumConnection());
 	}
 	

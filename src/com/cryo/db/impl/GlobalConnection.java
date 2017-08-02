@@ -15,6 +15,7 @@ import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateSpan;
+import com.cryo.utils.Logger;
 import com.cryo.utils.Utilities;
 
 /**
@@ -78,7 +79,7 @@ public class GlobalConnection extends DatabaseConnection {
 						return null;
 					hash = (String) data[0];
 					salt = (String) data[1];
-					return new Object[] { BCrypt.hashPassword(password, salt).equals(hash) };
+					return new Object[] { BCrypt.hashPassword(password, salt).equals(hash), salt };
 				case "change-pass":
 					username = (String) data[1];
 					password = (String) data[2];
@@ -89,11 +90,34 @@ public class GlobalConnection extends DatabaseConnection {
 					boolean compare = (boolean) data[0];
 					if(!compare)
 						return new Object[] { false, "Invalid current password." };
-					salt = BCrypt.generate_salt();
+					salt = (String) data[1];
 					hash = BCrypt.hashPassword(password, salt);
 					sess_id = CookieManager.generateSessId(username, hash, salt);
-					set("player_data", "salt=?,password=?,sess_id=?", "username=?", salt, hash, sess_id, username);
+					set("player_data", "password=?,sess_id=?", "username=?", hash, sess_id, username);
+					Website.instance().getConnectionManager().getConnection(Connection.PREVIOUS).handleRequest("add-prev-hash", salt, hash);
 					return new Object[] { true };
+				case "add-prev-all":
+					data = select("player_data", null, GET_USERNAMES);
+					if(data == null) return null;
+					ArrayList<String> usernames = (ArrayList<String>) data[0];
+					for(String user : usernames) {
+						Logger.log(this.getClass(), "Adding previous password for: "+user);
+						handleRequest("add-prev", user);
+					}
+					break;
+				case "get-salt":
+					username = (String) data[1];
+					data = select("player_data", "username=?", GET_HASH_PASS, username);
+					if(data == null) return null;
+					return new Object[] { (String) data[1] };
+				case "add-prev":
+					username = (String) data[1];
+					data = select("player_data", "username=?", GET_HASH_PASS, username);
+					if(data == null) return null;
+					hash = (String) data[0];
+					salt = (String) data[1];
+					Website.instance().getConnectionManager().getConnection(Connection.PREVIOUS).handleRequest("add-prev-hash", salt, hash);
+					break;
 				case "get-sess-id":
 					AccountDAO account = (AccountDAO) data[1];
 					data = select("player_data", "username=?", GET_HASH_PASS, account.getUsername());
@@ -170,6 +194,15 @@ public class GlobalConnection extends DatabaseConnection {
 		Timestamp expiry = getTimestamp(set, "expiry");
 		return new AnnouncementDAO(id, username, title, announcement, AnnouncementUtils.fromString(read), date, expiry);
 	}
+	
+	private final SQLQuery GET_USERNAMES = (set) -> {
+		if(wasNull(set)) return null;
+		ArrayList<String> usernames = new ArrayList<>();
+		while(next(set)) {
+			usernames.add(getString(set, "username"));
+		}
+		return new Object[] { usernames };
+	};
 	
 	private final SQLQuery GET_MISC_DATA = (set) -> {
 		if(empty(set))
