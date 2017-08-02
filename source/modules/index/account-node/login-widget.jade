@@ -9,7 +9,7 @@ script.
 				return;
 			}
 			var log = 'true';
-			var redirect = "#{redirect}";
+			var redirect = "!{redirect}";
 			$.post('/login?mini-login=true', {username:user,password:pass,redirect:redirect}, function(data) {
 				if(data == 'failed') {
 					$(".mini-alert").css("display","block");
