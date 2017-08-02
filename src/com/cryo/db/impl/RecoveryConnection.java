@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
+import com.cryo.modules.account.recovery.InstantRecoveryDAO;
 import com.cryo.modules.account.recovery.RecoveryDAO;
 import com.cryo.modules.account.recovery.RecoveryModule;
 import com.cryo.db.DatabaseConnection;
@@ -38,8 +39,18 @@ public class RecoveryConnection extends DatabaseConnection {
 		int[] passes = new int[] { getInt(set, "pass0"), getInt(set, "pass1"), getInt(set, "pass2") };
 		int status = getInt(set, "status");
 		String new_pass = getString(set, "new_pass");
-		RecoveryDAO recovery = new RecoveryDAO(id, username, email, forum, creation == null ? 0L : creation.getTime(), cico, additional, passes, status, new_pass);
+		String reason = getString(set, "reason");
+		RecoveryDAO recovery = new RecoveryDAO(id, username, email, forum, creation == null ? 0L : creation.getTime(), cico, additional, passes, status, new_pass, reason);
 		return new Object[] { recovery };
+	};
+	
+	private final SQLQuery GET_INSTANT = (set) -> {
+		if(empty(set)) return null;
+		String id = getString(set, "id");
+		String rand = getString(set, "rand");
+		int method = getInt(set, "method");
+		int status = getInt(set, "status");
+		return new Object[] { new InstantRecoveryDAO(id, rand, method, status) };
 	};
 
 	@Override
@@ -53,11 +64,33 @@ public class RecoveryConnection extends DatabaseConnection {
 				RecoveryDAO recovery = (RecoveryDAO) data[1];
 				insert("recoveries", recovery.data());
 				break;
+			case "set-status":
+				id = (String) data[1];
+				int status = (int) data[2];
+				if(status == 2) {
+					String new_pass = (String) data[3];
+					set("recoveries", "status=?,new_pass=?", "id=?", status, new_pass, id);
+					break;
+				}
+				set("recoveries", "status=?,reason=?", "id=?", status, (String) data[3], id);
+				break;
+			case "has-email-rec":
+			case "has-forum-rec":
+				id = (String) data[1];
+				return select("instant", "id=? AND method=?", GET_INSTANT, id, opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM);
+			case "set-email-status":
+			case "set-forum-status":
+				id = (String) data[1];
+				status = (int) data[2];
+				data = handleRequest("has-"+(opcode.contains("email") ? "email" : "forum")+"-rec", id);
+				if(data == null) return null;
+				set("instant", "status=?", "id=? AND method=?", status, id, opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM);
+				break;
 			case "add-email-rec":
 			case "add-forum-rec":
 				id = (String) data[1];
 				String rand = (String) data[2];
-				insert("instant", id, rand, opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM);
+				insert("instant", id, rand, opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM, 0);
 				break;
 		}
 		return null;

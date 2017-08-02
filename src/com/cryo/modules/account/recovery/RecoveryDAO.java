@@ -24,10 +24,10 @@ public class RecoveryDAO {
 	
 	private final int status;
 	
-	private final String newPass;
+	private final String newPass, reason;
 	
 	public Object[] data() {
-		return new Object[] { id, username, email, forumId, creation == 0L ? "NULL" : new Timestamp(creation), cico, additional, passes[0], passes[1], passes[2], status, newPass };
+		return new Object[] { id, username, email, forumId, creation == 0L ? "NULL" : new Timestamp(creation), cico, additional, passes[0], passes[1], passes[2], status, newPass, reason };
 	}
 	
 	public int getPass(int index) {

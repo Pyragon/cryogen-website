@@ -84,13 +84,23 @@ public class GlobalConnection extends DatabaseConnection {
 					username = (String) data[1];
 					password = (String) data[2];
 					String current = (String) data[3];
-					data = handleRequest("compare", username, current);
-					if(data == null)
-						return new Object[] { false, "Invalid username." };
-					boolean compare = (boolean) data[0];
-					if(!compare)
-						return new Object[] { false, "Invalid current password." };
-					salt = (String) data[1];
+					boolean toCompare = true;
+					if(data.length == 5)
+						toCompare = (boolean) data[4];
+					if(toCompare) {
+						data = handleRequest("compare", username, current);
+						if(data == null)
+							return new Object[] { false, "Invalid username." };
+						boolean compare = (boolean) data[0];
+						if(!compare)
+							return new Object[] { false, "Invalid current password." };
+						salt = (String) data[1];
+					} else {
+						data = handleRequest("get-salt", username);
+						if(data == null)
+							return new Object[] { false, "Invalid username." };
+						salt = (String) data[0];
+					}
 					hash = BCrypt.hashPassword(password, salt);
 					sess_id = CookieManager.generateSessId(username, hash, salt);
 					set("player_data", "password=?,sess_id=?", "username=?", hash, sess_id, username);

@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.AccountDAO;
+import com.cryo.modules.account.AccountUtils;
 
 import lombok.*;
 import spark.Request;
@@ -30,6 +31,13 @@ public class CookieManager {
 			return (AccountDAO) data[0] != null;
 		}
 		return false;
+	}
+	
+	public static int getRights(Request request) {
+		if(!isLoggedIn(request)) return -1;
+		AccountDAO account = AccountUtils.getAccount(getUsername(request));
+		if(account == null) return -1;
+		return account.getRights();
 	}
 	
 	public static String getUsername(Request request) {

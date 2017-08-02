@@ -13,11 +13,13 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.RecoveryConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.utils.BCrypt;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.cryo.utils.EmailUtils;
@@ -65,7 +67,7 @@ public class RecoveryModule extends WebModule {
 						int status = recovery.getStatus();
 						model.put("status", status);
 						if(status == 2)
-							model.put("new_pass", recovery.getNewPass());
+							model.put("pass", recovery.getNewPass());
 					}
 				}
 				return render("./source/modules/account/recovery/view-status.jade", model, request, response);
@@ -130,6 +132,7 @@ public class RecoveryModule extends WebModule {
 									}
 									//CITY/COUNTRY
 									model.put("cico", recovery.getCico());
+									model.put("id", recovery.getId());
 									break;
 								}
 								return render("./source/modules/account/recovery/view-recovery.jade", model, request, response);
@@ -140,8 +143,93 @@ public class RecoveryModule extends WebModule {
 					return render("./source/modules/account/recovery/recover.jade", model, request, response);
 				} else {
 					switch (action) {
-						case "submit":
+						case "view-noty":
+							String html = render("./source/modules/account/recovery/recovery-noty.jade", new HashMap<>(), request, response);
 							Properties prop = new Properties();
+							prop.put("success", true);
+							prop.put("html", html);
+							return new Gson().toJson(prop);
+						case "respond":
+							prop = new Properties();
+							int login = CookieManager.getRights(request);
+							id = request.queryParams("id");
+							String answer = request.queryParams("answer");
+							String reason = request.queryParams("reason");
+							if(id == null) id = "";
+							if(login == -1) return showLoginPage("/recovery?action=view&id="+id, request, response);
+							while(true) {
+								if(login < 2) {
+									prop.put("success", false);
+									prop.put("error", "Insufficient permissions.");
+									break;
+								}
+								if(id.equals("")) {
+									prop.put("success", false);
+									prop.put("error", "Invalid ID.");
+									break;
+								}
+								if(answer == null || answer.equals("")) {
+									prop.put("success", false);
+									prop.put("error", "Invalid answer.");
+									break;
+								}
+								if(answer.equals("false") && (reason == null || reason.equals(""))) {
+									prop.put("success", false);
+									prop.put("error", "A reason is required if you are declining a recovery.");
+									break;
+								}
+								if(answer.equals("false") && reason.length() > 75) {
+									prop.put("success", false);
+									prop.put("error", "Your reason cannot exceed 75 characters.");
+									break;
+								}
+								Object[] data = RecoveryConnection.connection().handleRequest("get-recovery", id);
+								if(data == null) {
+									prop.put("success", false);
+									prop.put("error", "Invalid recovery. Please refresh the page.");
+									break;
+								}
+								RecoveryDAO recovery = (RecoveryDAO) data[0];
+								if(recovery.getStatus() != 0) {
+									prop.put("success", false);
+									prop.put("error", "This recovery has already been accepted/denied by other means. Please refresh the page.");
+									break;
+								}
+								boolean accept = answer.equals("true");
+								if(accept) { //reset forum/email recoveries. have 'status' on them. 0 = valid (linked to page to reset pass), 1 = invalid (get linked to view page)
+									String new_pass = RandomStringUtils.random(15, true, true);
+									String username = recovery.getUsername();
+									try {
+										RecoveryConnection.connection().handleRequest("set-status", id, 2, new_pass);
+										GlobalConnection.connection().handleRequest("change-pass", username, new_pass, null, false);
+									} catch(Exception e) {
+										e.printStackTrace();
+										prop.put("success", false);
+										prop.put("error", "Error occurred in setting statuses. Contact Cody with the ID: "+id+".");
+										break;
+									}
+								} else {
+									//if declining, check if their recovered via forum/email and double check. if true, have option to ban the email/forum recovery method?
+									try {
+										RecoveryConnection.connection().handleRequest("set-status", id, 1, reason);
+									} catch(Exception e) {
+										e.printStackTrace();
+										prop.put("success", false);
+										prop.put("error", "Error occurred in setting statuses. Contact Cody with the ID: "+id+".");
+										break;
+									}
+								}
+								RecoveryConnection.connection().handleRequest("set-email-status", id, 1);
+								RecoveryConnection.connection().handleRequest("set-forum-status", id, 1);
+								prop.put("success", true);
+								model = new HashMap<>();
+								model.put("resSuccess", true);
+								prop.put("html", render("./source/modules/account/recovery/view-recovery.jade", model, request, response));
+								break;
+							}
+							return new Gson().toJson(prop);
+						case "submit":
+							prop = new Properties();
 							String username = request.queryParams("username");
 							String email = request.queryParams("email");
 							String forum = request.queryParams("forum");
@@ -222,10 +310,10 @@ public class RecoveryModule extends WebModule {
 									Arrays.fill(res, -1);
 								else
 									res = (int[]) data[0];
-								RecoveryDAO recovery = new RecoveryDAO(recovery_id, username, email, forum, created, cico, additional, res, 0, "");
+								RecoveryDAO recovery = new RecoveryDAO(recovery_id, username, email, forum, created, cico, additional, res, 0, "", "");
 								RecoveryConnection.connection().handleRequest("add-recovery", recovery);
 								prop.put("success", true);
-								String html = redirect("/view-status?success=true&id="+recovery_id, 0, request, response);
+								html = redirect("/view-status?success=true&id="+recovery_id, 0, request, response);
 								prop.put("html", html);
 								break loop;
 							}

@@ -1,6 +1,61 @@
 extend ../../default
 
 block head
+	script.
+		$(document).ready(function() {
+
+			$('#respond').click(function() {
+				var id = '#{id}';
+				$.post('/recover', { action:'view-noty' }, function(ret) {
+					var data = getJSON(ret);
+					if(data == null) return false;
+					n = noty({
+						text: 'How would you like to respond to this recovery?',
+						type: 'confirm',
+						layout: 'center',
+						dismissQueue: false,
+						template: data.html,
+						theme: 'cryogen',
+						buttons: [{
+							addClass: 'btn btn-primary btn-green', text: 'Accept', onClick: function($noty) {
+								$.post('/recover', { action:'respond', id:id, answer:'true' }, function(ret) {
+									var data = getJSON(ret);
+									if(data == null) return false;
+									$noty.close();
+									document.write(data.html);
+									return false;
+								});
+								$noty.close();
+							}
+						},
+						{
+							addClass: 'btn btn-danger', text: 'Decline', onClick: function($noty) {
+								var response = $('#response').val();
+								if(response === '' || response.length > 75) {
+									sendAlert('Invalid reason. Reason must be supplied if you are declining, and cannot be more than 75 characters.');
+									return false;
+								}
+								$.post('/recover', { action:'respond', id:id, answer:'false', reason:response }, function(ret) {
+									var data = getJSON(ret);
+									if(data == null) return false;
+									$noty.close();
+									document.write(data.html);
+									return false;
+								});
+								$noty.close();
+							}
+						},
+						{
+							addClass: 'btn btn-primary', text: 'Cancel', onClick: function($noty) {
+								$noty.close();
+							}
+						}]
+					})
+				});
+				return false;
+			});
+
+		});
 
 block content
 	div.container
@@ -13,7 +68,9 @@ block content
 			div.content
 				div.row
 					div.box(style="padding: 20px;")
-						if success == false
+						if resSuccess == true
+							p.color-white.t-center Response successfully submitted. Click #[a(href='/') here] to go back to recoveries.	
+						else if success == false
 							p.color-white.t-center No recovery could be found for that ID. Please try again or contact Cody for help.
 						else if norights == true
 							p.color-white.t-center You must be an administrator to view recoveries.
@@ -92,4 +149,4 @@ block content
 									p.color-grey Nothing Entered
 								else
 									p.color-grey= recovery.getAdditional()
-							button.btn.btn-default(style='margin: 10px auto;') Respond
+							button.btn.btn-default#respond(style='margin: 10px auto;') Respond
