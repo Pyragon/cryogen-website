@@ -51,7 +51,6 @@ public class PreviousConnection extends DatabaseConnection {
 				String new_hash = (String) data[2]; 
 				ArrayList<String> hashes = getHashes(salt);
 				if(hashes == null) {
-					System.out.println("herro");
 					hashes = new ArrayList<String>();
 					hashes.add(new_hash);
 					String json = new Gson().toJson(hashes);
@@ -60,7 +59,6 @@ public class PreviousConnection extends DatabaseConnection {
 				}
 				if(!hashes.contains(new_hash)) {
 					hashes.add(new_hash);
-					System.out.println("adding");
 				}
 				String json = new Gson().toJson(hashes);
 				set("passwords", "hashes=?", "salt=?", json, salt);
