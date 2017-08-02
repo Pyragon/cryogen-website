@@ -11,6 +11,7 @@ import com.cryo.db.impl.MyBBConnection;
 import com.cryo.db.impl.HighscoresConnection;
 import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.PunishmentConnection;
+import com.cryo.db.impl.RecoveryConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.db.impl.VotingConnection;
@@ -54,6 +55,7 @@ public class DBConnectionManager {
 		connections.put(Connection.REPORTS, new ReportsConnection());
 		connections.put(Connection.PUNISH, new PunishmentConnection());
 		connections.put(Connection.PREVIOUS, new PreviousConnection());
+		connections.put(Connection.RECOVERY, new RecoveryConnection());
 		connections.put(Connection.FORUM, new ForumConnection());
 	}
 	

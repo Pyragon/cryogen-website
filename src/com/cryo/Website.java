@@ -35,6 +35,7 @@ import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.recovery.RecoveryModule;
 import com.cryo.modules.account.register.RegisterModule;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.support.AccountSupportModule;
@@ -202,6 +203,18 @@ public class Website {
 		});
 		get(LiveModule.PATH, (req, res) -> {
 			return new LiveModule(this).decodeRequest(req, res, RequestType.GET);
+		});
+		get("/recover", (req, res) -> {
+			return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.GET);
+		});
+		post("/recover", (req, res) -> {
+			return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.POST);
+		});
+		get("/view-status", (req, res) -> {
+			return new RecoveryModule(this, "view-status").decodeRequest(req, res, RequestType.GET);
+		});
+		post("/view-status", (req, res) -> {
+			return new RecoveryModule(this, "view-status").decodeRequest(req, res, RequestType.POST);
 		});
 		get(RegisterModule.PATH, (req, res) -> {
 			return new RegisterModule(this).decodeRequest(req, res, RequestType.GET);

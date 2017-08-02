@@ -185,7 +185,6 @@ html, body {
   height: 150px;
   background-color: #111;
   border: 1px solid #000;
-  margin: auto;
 }
 
 span {
@@ -359,6 +358,10 @@ h4.title {
 
 .color-green {
   color: #129a11 !important;
+}
+
+.color-yellow {
+  color: rgb(192, 205, 38) !important;
 }
 
 .close {
@@ -1056,7 +1059,7 @@ p.small {
 }
 
 .btn-default {
-  max-width: 200px;
+  max-width: 300px;
 }
 
 
@@ -1251,7 +1254,7 @@ Widget
   min-width: 120px;
 }
 
-.mini-login button:hover {
+.mini-login button:hover, .mini-login button:active {
   background: #181818;
   border-color: #000;
 }
