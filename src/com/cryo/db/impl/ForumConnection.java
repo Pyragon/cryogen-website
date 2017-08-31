@@ -46,7 +46,7 @@ public class ForumConnection extends DatabaseConnection {
 			username = (String) data[1];
 			forum_id = (int) data[2];
 			String[] webData = sendForumMessage(forum_id, "Forum Integration", "Your forum verification is nearly complete! Reply #yes to this message to finish, or #no to cancel.[br][br]"
-					+ "This message will expire in 24 hours and you will need to relink the account");
+					+ "This message will expire in 24 hours and you will need to relink the account", "Forum Verification");
 			if(webData == null)
 				return null;
 			String message = webData[0];
@@ -61,12 +61,17 @@ public class ForumConnection extends DatabaseConnection {
 		return null;
 	}
 	
-	public static String[] sendForumMessage(int id, String subject, String message) {
+	public static String[] sendForumMessage(int id, String subject, String message, String reason) {
 		subject = StringEscapeUtils.escapeHtml4(subject);
 		message = StringEscapeUtils.escapeHtml4(message);
+		message = message.replaceAll("&", "%26");
 		String path = Website.getProperties().getProperty("forum-path");
-		String[] url = new String[] { "http", path, "/send_message.php", "uid="+id+"&subject="+subject+"&message="+message };
+		String secret = Website.getProperties().getProperty("secret-key");
+		secret = StringEscapeUtils.escapeHtml4(secret);
+		reason = StringEscapeUtils.escapeHtml4(reason);
+		String[] url = new String[] { "http", path, "/send_message.php", "uid="+id+"&subject="+subject+"&message="+message+"&reason="+reason+"&secret="+secret };
 		String[] webData = Utilities.getWebsite(url);
+		System.out.println(Arrays.toString(webData));
 		return webData;
 	}
 	

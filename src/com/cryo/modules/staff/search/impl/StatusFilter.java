@@ -37,6 +37,8 @@ public class StatusFilter extends Filter {
 	public String getFilter(String mod) {
 		if(mod.equals("punish") || !(value instanceof Integer) || (int) value == -1)
 			return null;
+		if(mod.equals("recover"))
+			return "status=?";
 		return "active=?";
 	}
 	
@@ -60,7 +62,7 @@ public class StatusFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("punish") || mod.equals("appeal");
+		return mod.equals("punish") || mod.equals("appeal") || mod.equals("recover");
 	}
 	
 }

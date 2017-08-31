@@ -1,0 +1,20 @@
+extend ../../default
+
+block content
+  div.container
+    div.widget.register
+      div.header
+        h4.color-white Account Recovery
+        h5.color-grey Attempt to recover an account via forums or email.
+      div.content
+        div.row
+          div.box
+            if error == 'invalid'
+              p.color-red.t-center Unable to redeem your instant recovery. Please check the link is correct or contact an Admin.
+            else if error == 'no-recov'
+              p.color-red.t-center No recovery could be found with that ID.
+            else if success == true
+              p.color-green.t-center Your account has been successfully recovered. Your new password is below.
+              p.color-red.t-center PLEASE WRITE IT DOWN AND CHANGE IT IMMEDIATELY.
+              p.color-white.t-center Password: 
+                span.color-yellow= newPass

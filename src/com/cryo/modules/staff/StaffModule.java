@@ -22,6 +22,7 @@ import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.modules.staff.appeals.StaffAppealModule;
 import com.cryo.modules.staff.bugreports.BugReportsModule;
 import com.cryo.modules.staff.playerreports.PlayerReportsModule;
+import com.cryo.modules.staff.recoveries.RecoveriesModule;
 import com.cryo.modules.staff.search.Filter;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
@@ -88,7 +89,12 @@ public class StaffModule extends WebModule {
 			model.put("punishments", utils.getPunishments(null, false));
 			model.put("utils", new PunishUtils());
 			model.put("formatter", new DateUtils());
-			return render("./source/modules/staff/index.jade", model, request, response);
+			try {
+				return render("./source/modules/staff/index.jade", model, request, response);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			return Website.error("error rendering");
 		} else {
 			Properties prop = new Properties();
 			String module = request.queryParams("mod");
@@ -129,6 +135,9 @@ public class StaffModule extends WebModule {
 						break;
 					case "punish":
 						prop = PunishmentsModule.handleRequest(action, request, response, prop, this);
+						break;
+					case "recover":
+						prop = RecoveriesModule.handleRequest(action, request, response, prop, this);
 						break;
 				}
 				break;

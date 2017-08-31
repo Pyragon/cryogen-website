@@ -55,7 +55,7 @@ public class DateFilter extends Filter {
 	
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("appeal") || mod.equals("punish");
+		return mod.equals("appeal") || mod.equals("punish") || mod.equals("recover");
 	}
 	
 }

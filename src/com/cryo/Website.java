@@ -210,11 +210,11 @@ public class Website {
 		post("/recover", (req, res) -> {
 			return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.POST);
 		});
-		get("/view-status", (req, res) -> {
-			return new RecoveryModule(this, "view-status").decodeRequest(req, res, RequestType.GET);
+		get("/view_status", (req, res) -> {
+			return new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.GET);
 		});
-		post("/view-status", (req, res) -> {
-			return new RecoveryModule(this, "view-status").decodeRequest(req, res, RequestType.POST);
+		post("/view_status", (req, res) -> {
+			return new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.POST);
 		});
 		get(RegisterModule.PATH, (req, res) -> {
 			return new RegisterModule(this).decodeRequest(req, res, RequestType.GET);

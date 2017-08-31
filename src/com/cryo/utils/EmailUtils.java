@@ -42,7 +42,7 @@ public class EmailUtils {
 			return;
 		RecoveryConnection.connection().handleRequest("add-email-rec", id, random);
 		sendEmail(email, "Cryogen - Password Recovery!",
-				"Hello, "+AccountUtils.getDisplayName(account)+", a password recovery attempt has been made on your account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen-rsps.com/recover_final?method=email&id="+random);
+				"Hello, "+AccountUtils.getDisplayName(account)+", a password recovery attempt has been made on your account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen-rsps.com/recover?action=redeem_instant&method=email&recovery_id="+id+"&instant_id="+random+"\n\nThis link will expire in 24 hours.");
 	}
 	
 	public static void sendEmail(String email, String subject, String message) {

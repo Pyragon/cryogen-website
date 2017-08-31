@@ -1,0 +1,76 @@
+extend ../../default
+
+block head
+  script.
+    $(document).ready(function() {
+
+      $(document).on('click', '#view-status', function() {
+        var id = $('#recov-id').val();
+        if(id === '')
+          return false;
+        $.post('/recover', { action:'view', id:id }, function(ret) {
+          var data = getJSON(ret);
+          if(data == null) return false;
+          if(data.success === false) {
+            sendAlert('No recovery found for that ID.');
+            return false;
+          }
+          location.href = data.link;
+        });
+      });
+
+    });
+
+block content
+  div.container
+    if success
+      mixin complete
+    else
+      div.widget.register
+        div.header
+          h4.color-white Check Recovery Status
+          h5.color-grey Check the status on an existing recovery.
+          h5.color-grey If the recovery is completed via email or the forums, a password will be provided through that method, instead of here.
+        div.content
+          div.row
+            div.box
+              if error == 'no-id'
+                p.color-white(style="display: inline-block; padding: 5px;") Enter ID:
+                input.form-control#recov-id(type='text', placeholder='Enter recovery id', style="display: inline-block; padding: 5px; max-width: 200px;")
+                button.btn.btn-default#view-status(style="display: inline-block; padding: 5px; height: 30px; width: 100px; margin: auto 5px;") View Status
+              else if error == 'no-exist'
+                p.color-red.t-center No recovery could be found with that id. Please contact an Admin if you feel this is an error.
+              else
+                div
+                  p.color-white(style="display: inline-block; padding: 5px;") Recovery status:
+                  if status == 1
+                    p.color-green(style="display: inline-block; padding: 5px;") Accepted
+                  else if status == 2
+                    p.color-red(style="display: inline-block; padding: 5px;") Denied
+                  else if status == 0
+                    p.color-yellow(style="display: inline-block; padding: 5px;") Pending
+                  if status == 2
+                    p.color-white Reason: 
+                      span.color-red= reason
+                div
+                  if status == 1
+                    p.color-white(style="display: inline-block; padding: 5px;") New Password:
+                    if pass == ''
+                      p.color-red(style="display: inline-block; padding: 5px;") Password recovered through email or forums
+                    else
+                      p(style="display: inline-block; padding: 5px;")= pass
+                p.color-white.t-center Link to get back to this page: #[a(href='http://cryogen-rsps.com/view_status?id='+id) link]
+
+mixin complete
+
+  div.widget.register
+    div.header
+      h4.color-white Your account recovery has been submitted!
+      h5.color-grey Below will be a recovery ID that you should save in order to view the status of this recovery later on.
+      h5.color-grey If you provided the correct email, you will be emailed a recovery link, if you provided the correct forum id, you will be private messaged a link.
+    div.content
+      div.row
+        div.box
+          p.color-white.t-center(style="margin: auto;") Recovery ID: 
+            span.color-yellow= id
+          p.color-white.t-center View recovery status #[a(href='http://cryogen-rsps.com/view_status?id='+id) here]

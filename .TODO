@@ -1,14 +1,15 @@
 It is recommended that you use atom-tasks to view TODO files.
 Forums:
   ☐ Get new forum logo + read/unread buttons
-  ☐ Change 'go social' to an in-game drops feed
-  ☐ Table is messed up for market section due to displaying too many items? http://prntscr.com/fe7owu top is expected
+  ✔ Change 'go social' to an in-game drops feed @done(2017-08-25 04:11) @project(Forums)
+  ✔ Table is messed up for market section due to displaying too many items? http://prntscr.com/fe7owu top is expected @done(2017-08-25 04:11) @project(Forums)
 Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 General:
   ☐ Reduce as many connections to database as possible
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Switch all error blocks to use the sendAlert instead
+  ☐ Recode base to properly utilize 'module' structure
 Shop:
   ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
 Staff Page:
@@ -20,12 +21,21 @@ Account:
 Other:
   ☐ Page for players to view their own player/bug reports
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
-  ☐ Make better discord avatar that matches background so it looks transparent
+  ✔ Make better discord avatar that matches background so it looks transparent @done(2017-08-25 04:14) @project(Other)
   ☐ Create independant html pages to serve as error pages for nginx
 Securiy:
   ☐ Secure all requests to server (though should be secured through sessions already)
   ☐ Update sessions to be more secure. (Create random sess_id and add to database with sess_ids->usernames, allows more than one user to have it)
   ☐ Reset sess_ids when user changes the password
+API:
+  ☐ Create overall API for server + website that utilizes tokens
+Tracker:
+  ☐ Player 'tracker' page instead of highscores. Main page will display a regular highscores
+  ☐ 'Seasonal' highscores page. Different highscores goal each month, random things like nex kills, or chicken kills, bows fletched, etc
+  ☐ Banner on left, top option pulls out to reveal all skill icons (this is how highscores is navigated)
+  ☐ Main highscore page will have the search for player function
+  ☐ Adventurer's log button, showing all data about player, equipment, location, detailed stats, etc
+  ☐ 'self' tracker. Gives players ability to track up to 5 'random' things. (any npc kill, certain drops, etc)
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
