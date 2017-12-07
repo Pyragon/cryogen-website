@@ -120,7 +120,7 @@ public class PunishmentsModule {
 			case "extend":
 				id = Integer.parseInt(request.queryParams("id"));
 				expires = Integer.parseInt(request.queryParams("expiry"));
-				punish = new PunishUtils().getPunishment(id);
+				punish = PunishUtils.getPunishment(id);
 				if(punish.getExpiry() == null) {
 					prop.put("success", false);
 					prop.put("error", "This punishment is already permanent. It cannot be extended further.");
