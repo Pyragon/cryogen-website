@@ -7,6 +7,7 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;
@@ -18,6 +19,7 @@ import com.cryo.utils.Utilities;
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
 import lombok.Synchronized;
+import lombok.val;
 import spark.Request;
 import spark.Response;
 
@@ -50,6 +52,15 @@ public abstract class WebModule {
 		model.put("loggedIn", account != null);
 		if(account != null)
 			model.put("user", account);
+		if(account != null && account.getRights() > 0) {
+			PunishUtils utils = new PunishUtils();
+			int comp_total = 0;
+			val appeals = utils.getAppeals(account.getUsername(), false);
+			val preports = utils.getPlayerReports(account.getUsername(), false);
+			val breports = utils.getBugReports(account.getUsername(), false);
+			comp_total = appeals.size() + preports.size() + breports.size();
+			model.put("actions", comp_total);
+		}
 		model.put("isMobile", request.headers("User-Agent").toLowerCase().contains("Mobile"));
 		try {
 			String html = Jade4J.render(file, model);

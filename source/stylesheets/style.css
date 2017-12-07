@@ -20,6 +20,13 @@ html, body {
   right: 10px;
 }
 
+.header-left {
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  left: 10px;
+}
+
 #p-online {
   max-width: 130px;
   top: 10px;
