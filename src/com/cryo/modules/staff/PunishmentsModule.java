@@ -99,7 +99,7 @@ public class PunishmentsModule {
 				Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DAY_OF_MONTH, expires);
 				Timestamp expiry = new Timestamp(cal.getTimeInMillis());
-				punish = new PunishDAO(-1, player, (type == "mute" ? 0 : 1), null, expiry, username, reason, true, 0);
+				punish = new PunishDAO(-1, player, (type.equals("mute") ? 0 : 1), null, expiry, username, reason, true, 0);
 				Object[] data = PunishmentConnection.connection().handleRequest("create-punishment", punish);
 				if(data == null) {
 					prop.put("success", false);
