@@ -15,7 +15,7 @@ else
 				tr(data-id=announcement.getId())
 					td.b-right= '$for-name='+announcement.getUsername()+'$end'
 					td.b-right= announcement.getTitle()
-					td.b-right= formatter.formatTimestamp(announcement.getDate(), 'MMM dd, YYYY H:mm a')
-					td.b-right= formatter.formatTimestamp(announcement.getExpiry(), 'MMM dd, YYYY H:mm a')
+					td.b-right= formatter.formatTimestamp(announcement.getDate(), 'MMM dd, YYYY h:mm a')
+					td.b-right= formatter.formatTimestamp(announcement.getExpiry(), 'MMM dd, YYYY h:mm a')
 					td(class='b-right '+announcement.getColour(user.getUsername()))= announcement.getStatus(user.getUsername())
 					td.vis-link.read-announce Read
