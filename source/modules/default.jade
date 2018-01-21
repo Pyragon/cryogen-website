@@ -67,8 +67,9 @@ html
       input#shutdown(type='hidden', value=shutdown)
       div#page-container
         div.color-white.header-right#p-online= 'Players In-game: '+online
-        if user.getRights() > 0
-          div.color-white.header-left.vis-link#staff-actions= actions+' items requiring your action'
+        if loggedIn
+          if user.getRights() > 0
+            div.color-white.header-left.vis-link#staff-actions= actions+' items requiring your action'
         div.color-white.header-right#shutdown-timer
         div.color-grey.small#navbar-issue We are aware of the issue regarding the navbar on small screens and are working to fix it
         div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
