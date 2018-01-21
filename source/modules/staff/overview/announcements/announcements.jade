@@ -27,34 +27,52 @@ script.
 				n.close();
 			var tr = $(this).closest('tr');
 			var id = tr.data('id');
+			var read = tr.data('read');
 			$.post('/staff', { mod:'announce', action:'view-announce', id:id }, function(ret) {
 				var data = getJSON(ret);
 				if(data == null) return;
-				n = noty({
-					text: '',
-					type: 'confirm',
-					layout: 'center',
-					dismissQueue: false,
-					template: data.html,
-					theme: 'cryogen',
-					buttons: [
-					{
-						addClass: 'btn btn-primary btn-green', text: 'Mark Read', onClick: function($noty) {
-							$.post('staff', { mod:'announce', action:'mark-read', id:id, archived:archive, page:announce_page }, function(ret) {
-								var data = getJSON(ret);
-								if(data == null) return;
-								update(false, data.html, 'announce');
-								updatePage(data.pageTotal, page, 'announce');
-							});
-							$noty.close();
-						}
-					},
-					{
-						addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
-							$noty.close();
-						}
-					}]
-				})
+				if(read == 1) {
+					n = noty({
+						text: '',
+						type: 'confirm',
+						layout: 'center',
+						dismissQueue: false,
+						template: data.html,
+						theme: 'cryogen',
+						buttons: [
+						{
+							addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+								$noty.close();
+							}
+						}]
+					})
+				} else {
+					n = noty({
+						text: '',
+						type: 'confirm',
+						layout: 'center',
+						dismissQueue: false,
+						template: data.html,
+						theme: 'cryogen',
+						buttons: [
+						{
+							addClass: 'btn btn-primary btn-green', text: 'Mark Read', onClick: function($noty) {
+								$.post('staff', { mod:'announce', action:'mark-read', id:id, archived:archive, page:announce_page }, function(ret) {
+									var data = getJSON(ret);
+									if(data == null) return;
+									update(false, data.html, 'announce');
+									updatePage(data.pageTotal, page, 'announce');
+								});
+								$noty.close();
+							}
+						},
+						{
+							addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+								$noty.close();
+							}
+						}]
+					})
+				}
 			});
 			return false;
 		});

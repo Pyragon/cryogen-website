@@ -26,8 +26,8 @@ public class AnnouncementDAO {
 		return read.contains(username);
 	}
 	
-	public String getStatus(String username) {
-		return hasRead(username) ? "Read" : "Unread";
+	public String getStatus(String username, boolean numeric) {
+		return hasRead(username) ? numeric ? "1" : "Read" : numeric ? "0" : "Unread";
 	}
 	
 	public String getColour(String username) {

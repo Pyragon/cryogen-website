@@ -12,10 +12,10 @@ else
 				th.t-center Read
 		tbody
 			for announcement in announcements
-				tr(data-id=announcement.getId())
+				tr(data-id=announcement.getId(), data-read=announcement.getStatus(user.getUsername(), true))
 					td.b-right= '$for-name='+announcement.getUsername()+'$end'
 					td.b-right= announcement.getTitle()
 					td.b-right= formatter.formatTimestamp(announcement.getDate(), 'MMM dd, YYYY h:mm a')
 					td.b-right= formatter.formatTimestamp(announcement.getExpiry(), 'MMM dd, YYYY h:mm a')
-					td(class='b-right '+announcement.getColour(user.getUsername()))= announcement.getStatus(user.getUsername())
+					td(class='b-right '+announcement.getColour(user.getUsername()))= announcement.getStatus(user.getUsername(), false)
 					td.vis-link.read-announce Read
