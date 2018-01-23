@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
@@ -23,14 +24,22 @@ public class CookieManager {
 	//sess_id = username+password+salt
 	
 	public static boolean isLoggedIn(Request request) {
+		return getAccount(request) != null;
+	}
+	
+	public static AccountDAO getAccount(Request request) {
 		if(request.cookies().containsKey("cryo-sess")) {
 			String sess_id = request.cookie("cryo-sess");
-			Object[] data = GlobalConnection.connection().handleRequest("get-acc-from-sess", sess_id);
-			if(data == null)
-				return false;
-			return (AccountDAO) data[0] != null;
+			Object[] data = AccountConnection.connection().handleRequest("get-user", sess_id);
+			if(data == null) {
+				request.cookies().remove("cryo-sess");
+				return null;
+			}
+			String username = (String) data[0];
+			AccountDAO account = AccountUtils.getAccount(username);
+			return account;
 		}
-		return false;
+		return null;
 	}
 	
 	public static int getRights(Request request) {
@@ -45,35 +54,6 @@ public class CookieManager {
 		if(account == null)
 			return "";
 		return account.getUsername();
-	}
-	
-	public static AccountDAO getAccount(Request request) {
-		if(request.cookies().containsKey("cryo-sess")) {
-			String sess_id = request.cookie("cryo-sess");
-			Object[] data = GlobalConnection.connection().handleRequest("get-acc-from-sess", sess_id);
-			if(data == null)
-				return null;
-			return (AccountDAO) data[0];
-		}
-		return null;
-	}
-	
-	public static String hashSessId(String sess_id) {
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			md.update(sess_id.getBytes("UTF-8"));
-			return String.format("%064x", new BigInteger(1, md.digest()));
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return "invalid_sess_id";
-	}
-	
-	public static String generateSessId(String username, String hash, String salt) {
-		String toHash = username;
-		toHash += hash;
-		toHash += salt;
-		return hashSessId(toHash);
 	}
 	
 }

@@ -49,9 +49,8 @@ public class GlobalConnection extends DatabaseConnection {
 					String password = (String) data[2];
 					String salt = BCrypt.generate_salt();
 					String hash = BCrypt.hashPassword(password, salt);
-					String sess_id = CookieManager.generateSessId(username, hash, salt);
 					Timestamp date = new Timestamp(Calendar.getInstance().getTimeInMillis());
-					insert("player_data", "DEFAULT", username, hash, salt, sess_id, 0, 0, date);
+					insert("player_data", "DEFAULT", username, hash, salt, 0, 0, date);
 					DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
 					return new Object[] { true };
 				case "search":
@@ -67,10 +66,6 @@ public class GlobalConnection extends DatabaseConnection {
 						accounts.add((AccountDAO) data[0]);
 					}
 					return new Object[] { accounts };
-				case "get-acc-from-sess":
-					sess_id = (String) data[1];
-					data = select("player_data", "sess_id=?", GET_ACCOUNT, sess_id);
-					return data == null ? null : new Object[] { ((AccountDAO) data[0]) };
 				case "compare":
 					username = (String) data[1];
 					password = (String) data[2];
@@ -102,10 +97,11 @@ public class GlobalConnection extends DatabaseConnection {
 						salt = (String) data[0];
 					}
 					hash = BCrypt.hashPassword(password, salt);
-					sess_id = CookieManager.generateSessId(username, hash, salt);
-					set("player_data", "password=?,sess_id=?", "username=?", hash, sess_id, username);
+					set("player_data", "password=?", "username=?", hash, username);
+					AccountConnection.connection().handleRequest("remove-all-sess", username);
+					String sess = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
 					Website.instance().getConnectionManager().getConnection(Connection.PREVIOUS).handleRequest("add-prev-hash", salt, hash);
-					return new Object[] { true };
+					return new Object[] { true, sess };
 				case "add-prev-all":
 					data = select("player_data", null, GET_USERNAMES);
 					if(data == null) return null;
@@ -128,15 +124,6 @@ public class GlobalConnection extends DatabaseConnection {
 					salt = (String) data[1];
 					Website.instance().getConnectionManager().getConnection(Connection.PREVIOUS).handleRequest("add-prev-hash", salt, hash);
 					break;
-				case "get-sess-id":
-					AccountDAO account = (AccountDAO) data[1];
-					data = select("player_data", "username=?", GET_HASH_PASS, account.getUsername());
-					if(data == null) return null;
-					hash = (String) data[0];
-					salt = (String) data[1];
-					String toHash = String.format("%s%s%s", account.getUsername(), hash, salt);
-					sess_id = CookieManager.hashSessId(toHash);
-					return new Object[] { sess_id };
 				case "get-account":
 					username = (String) data[1];
 					data = select("player_data", "username=?", GET_ACCOUNT, username);

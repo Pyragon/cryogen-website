@@ -188,6 +188,10 @@ public class AccountOverviewModule extends WebModule {
 					prop.put("result", success);
 					if(!success)
 						prop.put("error", (String) data[1]);
+					else {
+						String sess_id = (String) data[1];
+						response.cookie("cryo-sess", sess_id);
+					}
 					return new Gson().toJson(prop);
 				case "change-display":
 					name = request.queryParams("name");

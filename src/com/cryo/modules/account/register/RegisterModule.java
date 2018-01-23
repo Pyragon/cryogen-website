@@ -6,6 +6,7 @@ import java.util.Properties;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountDAO;
@@ -66,7 +67,7 @@ public class RegisterModule extends WebModule {
 			if(data == null)
 				return redirect("/login", 0, request, response);
 			AccountDAO account = (AccountDAO) data[0];
-			String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
+			String sess_id = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
 			response.cookie("cryo-sess", sess_id);
 			return json(true, redirect("/register?success", 0, request, response));
 		}

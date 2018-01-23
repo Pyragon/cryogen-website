@@ -3,6 +3,7 @@ package com.cryo.modules.login;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.DBConnectionManager.Connection;
+import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountDAO;
@@ -48,8 +49,7 @@ public class LoginModule extends WebModule {
 				data = connection.handleRequest("get-account", username);
 				if(data == null)
 					return redirect("/login", 0, request, response);
-				AccountDAO account = (AccountDAO) data[0];
-				String sess_id = (String) connection.handleRequest("get-sess-id", account)[0];
+				String sess_id = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
 				response.cookie("cryo-sess", sess_id, 604_800);
 				return redirect(request.queryParams("redirect"), request, response);
 			}
