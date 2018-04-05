@@ -134,9 +134,6 @@ public class Website {
 		        });
 
 		before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
-		get(SamsungTVModule.PATH, (req, res) -> {
-			return new SamsungTVModule(this).decodeRequest(req, res, RequestType.GET);
-		});
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});
