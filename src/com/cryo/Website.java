@@ -50,9 +50,9 @@ import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.samsung.SamsungTVModule;
+import com.cryo.modules.search.SearchManager;
 import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
-import com.cryo.modules.staff.search.SearchManager;
 import com.cryo.paypal.PaypalManager;
 import com.cryo.server.ServerConnection;
 import com.cryo.server.ServerItem;
@@ -103,10 +103,10 @@ public class Website {
 	private @Getter final CachingManager cachingManager;
 	
 	private @Getter final CommentsManager commentsManager;
+	
+	private @Getter final SearchManager searchManager;
 
 	private final Timer fastExecutor;
-
-	private final @Getter SearchManager searchManager;
 
 	private static File FAVICON = null;
 	
@@ -118,13 +118,13 @@ public class Website {
 		FAVICON = new File(properties.getProperty("favico"));
 		connectionManager = new DBConnectionManager();
 		commentsManager = new CommentsManager();
-		searchManager = new SearchManager();
 		paypalManager = new PaypalManager(this);
 		cachingManager = new CachingManager();
-		searchManager.load();
 		cachingManager.loadCachedItems();
 		fastExecutor = new Timer();
+		searchManager = new SearchManager();
 		ShopManager.load(this);
+		searchManager.load();
 		port(Integer.parseInt(properties.getProperty("port")));
 		PaypalManager.createAPIContext();
 		staticFiles.externalLocation("source/");
@@ -132,6 +132,7 @@ public class Website {
 		staticFiles.header("Access-Control-Allow-Origin", "*");
 		CorsFilter.apply();
 		AccountModule.registerEndpoints(this);
+		SearchManager.registerEndpoints(this);
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});

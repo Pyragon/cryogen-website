@@ -10,6 +10,8 @@ String.prototype.replaceAll = function(search, replacement) {
 const CLOSE = 'Click to close search bar.';
 const OPEN = 'Click to open search bar.';
 
+var changed = false;
+
 function getPages(page_t, page) {
 	var pages = [];
 	//always show first page
@@ -219,62 +221,7 @@ function sendAlert(text) {
 //account search section
 
 //staff section search
-
-var search_filters = [];
 var searching = [];
-
-function updateFilters(mod, filters) {
-	search_filters[mod] = filters;
-	var elem = $('.search-filters-' + mod);
-	var search = '';
-	elem.empty();
-	for (var k in filters) {
-		if (filters.hasOwnProperty(k)) {
-			var name = k;
-			var value = filters[k];
-			var filter = $('<div></div>').addClass('search-filter').append(`${name}:${value}`);
-			filter.attr('data-name', name);
-			filter.attr('data-value', value);
-			filter.attr('data-mod', mod);
-			elem.append(filter);
-		}
-	}
-	addFilterRemoval();
-	return filtersToQuery(mod);
-}
-
-function filtersToQuery(mod) {
-	var search = '';
-	var filters = search_filters[mod];
-	var i = 0;
-	for (var k in filters) {
-		var name = k;
-		var value = filters[k];
-		if (filters.hasOwnProperty(k)) {
-			search += `${name}:${value}`;
-			if (i++ != filters.length - 1)
-				search += ', ';
-		}
-	}
-	return search;
-}
-
-function addFilterRemoval() {
-	$('.search-filter').append($('<i></i>').addClass('remove-filter fa fa-times-circle'));
-}
-
-function removeFilter(mod, name, archive) {
-	var filters = search_filters[mod];
-	delete filters[name];
-	var query = updateFilters(mod, filters);
-	search(mod, 1, archive, query);
-}
-
-function removeFilters(mod) {
-	delete search_filters[mod];
-	$('.search-filters-' + mod).empty();
-	updateSearchInput(mod, '');
-}
 
 function search(mod, page, archive, input = null) {
 	if (input === null)
@@ -300,43 +247,6 @@ function search(mod, page, archive, input = null) {
 		updateSearchInput(mod, updateFilters(mod, data.filters));
 		updatePage(data.pageTotal, page, mod);
 	});
-}
-
-function updateSearchInput(mod, input) {
-	$('#search-' + mod + '-pin').find('input').val(input);
-}
-
-function clickSearchIcon(mod, archive, page) {
-	var icon = $(this);
-	var search = $('#search-' + mod + '-pin');
-	var input = search.find('input');
-	var user = input.val();
-	var att = search.attr('display');
-	if (att === 'none') {
-		icon.attr('title', CLOSE);
-		search.attr('display', 'inline');
-		search.show('slide', {
-			direction: 'right'
-		}, 1000, function () {
-			input.focus();
-		});
-	} else {
-		if (user === '') {
-			search.hide('slide', {
-				direction: 'right'
-			}, 1000, function () {
-				search.attr('display', 'none');
-				icon.attr('title', OPEN);
-			});
-			if (changed) {
-				loadList(mod, archive, page);
-				changed = false;
-			}
-			return false;
-		}
-		this.search(mod, page, archive, user);
-	}
-	return false;
 }
 
 //shutdown timer

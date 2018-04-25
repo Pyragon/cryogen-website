@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
+import com.cryo.modules.search.Filter;
 import com.cryo.utils.Utilities;
 
 import lombok.*;

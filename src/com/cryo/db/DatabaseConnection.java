@@ -361,6 +361,7 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Long)
 					statement.setTimestamp(index, new Timestamp((long) obj));
 			}
+			System.out.println(statement);
 			ResultSet set = statement.executeQuery();
 			if (set != null)
 				return set;

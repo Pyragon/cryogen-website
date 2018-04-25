@@ -1,9 +1,9 @@
-package com.cryo.modules.staff.search.impl;
+package com.cryo.modules.search.impl;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-import com.cryo.modules.staff.search.Filter;
+import com.cryo.modules.search.Filter;
 import com.cryo.utils.DateSpan;
 
 import lombok.*;

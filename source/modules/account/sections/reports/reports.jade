@@ -19,6 +19,15 @@ script.
       });
     }
 
+    function loadListWPage(archive, page) {
+      $.post('/account/reports', { action:'load-list', archive:archive, type:reports_filter, page:page, filters:JSON.stringify(reports_filters) }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return;
+        $('#reports-main').html(data.html);
+        updatePage(data.pageTotal, page, 'reports');
+      });
+    }
+
     function switchFilter() {
       switch(reports_filter) {
         case "all":
@@ -32,6 +41,7 @@ script.
           break;
       }
       reports_page = 1;
+      removeFilters('reports')
       loadList();
 
       var title = reports_filter;
@@ -46,6 +56,7 @@ script.
     function switchArchive() {
       archived = !archived;
       reports_page = 1;
+      removeFilters('reports')
       $('#archive-reports').html(' View '+(archived ? 'Active' : 'Archive'))
       loadList();
     }
@@ -245,10 +256,26 @@ script.
     $('#reports-filter').click(switchFilter);
     $('#reports-archive-btn').click(switchArchive);
     $('#create-report').click(newReport);
+    $('#search-reports-icon').click(clickedSearchIcon);
 
     $(document).on('click', '#reports-pages span', changePage);
     $(document).on('click', '.view-report', clickReport);
     $(document).on('click', '#com-btn', submitComment);
+    $(document).on('click', '.remove-filter', clickedFilter);
+
+    //search function
+    $('#search-reports-icon').attr('title', OPEN);
+
+    function clickedSearchIcon() {
+      console.log(reports_filter)
+      type = reports_filter == 'all' ? '2' : reports_filter == 'bugs' ? '0' : '1'
+      console.log(type)
+      clickSearchIcon('reports', archived, reports_page, loadListWPage, { 'type': type })
+    }
+
+    function clickedFilter() {
+      clickRemoveFilter('reports', $(this), archived, loadListWPage, { 'type': type })
+    }
 
     $(document).click(function(e) {
       var target = e.target;
@@ -276,9 +303,9 @@ div.row
         div.col-xs-4
           p.color-grey.search-info Click the search icon to begin searching through reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
         div.col-xs-4
-          p.color-grey.search-info Filters: username: (name, must be exact username of user you reported), date:(first date)-(second date) (dates in dd/MM/yyyy), title: (string in title)
+          p.color-grey.search-info Filters: title: (title), date: start-end (dd/mm/yyyy), last_action: (last_action)
         div.col-xs-4
-          p.color-grey.search-info Example: username: cody, date:25/04/2017-05/05/2017
+          p.color-grey.search-info Example: title: test, last_action: archived
       div(style='float: right; margin: 33.5px 5px;')
         div.link#create-report
           i.fa.fa-plus-square

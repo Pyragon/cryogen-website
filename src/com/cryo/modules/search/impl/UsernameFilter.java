@@ -1,6 +1,6 @@
-package com.cryo.modules.staff.search.impl;
+package com.cryo.modules.search.impl;
 
-import com.cryo.modules.staff.search.Filter;
+import com.cryo.modules.search.Filter;
 
 import lombok.*;
 
@@ -28,7 +28,7 @@ public class UsernameFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return true;
+		return mod.equals("reports") ? false : true;
 	}
 	
 }

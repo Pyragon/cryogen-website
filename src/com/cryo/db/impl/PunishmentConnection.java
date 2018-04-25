@@ -15,7 +15,7 @@ import com.cryo.modules.account.support.punish.ACommentDAO;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
-import com.cryo.modules.staff.search.Filter;
+import com.cryo.modules.search.Filter;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 

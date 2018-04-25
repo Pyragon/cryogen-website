@@ -1,10 +1,10 @@
-package com.cryo.modules.staff.search.impl;
+package com.cryo.modules.search.impl;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.cryo.modules.staff.search.Filter;
+import com.cryo.modules.search.Filter;
 import com.cryo.utils.DateSpan;
 
 import lombok.*;
@@ -26,7 +26,7 @@ public class DateFilter extends Filter {
 	public String getFilter(String mod) {
 		if(span == null)
 			return null;
-		String col = mod.equals("appeal") ? "time" : "date";
+		String col = mod.equals("appeal") || mod.equals("reports") ? "time" : "date";
 		StringBuilder builder = new StringBuilder();
 		return builder.append(col).append(" BETWEEN ").append(span.format("from"))
 				.append(" AND ").append(span.format("to")).toString();
@@ -55,7 +55,7 @@ public class DateFilter extends Filter {
 	
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("appeal") || mod.equals("punish") || mod.equals("recover");
+		return mod.equals("appeal") || mod.equals("punish") || mod.equals("recover") || mod.equals("reports");
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.cryo.modules.staff.search;
+package com.cryo.modules.search;
 
 import java.util.ArrayList;
 import java.util.List;

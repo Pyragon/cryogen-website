@@ -20,7 +20,7 @@ import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
-import com.cryo.modules.staff.search.Filter;
+import com.cryo.modules.search.Filter;
 import com.cryo.utils.CookieManager;
 
 import lombok.*;

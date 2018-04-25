@@ -1,4 +1,4 @@
-package com.cryo.modules.staff.search.impl;
+package com.cryo.modules.search.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cryo.modules.account.support.punish.PunishDAO;
-import com.cryo.modules.staff.search.Filter;
+import com.cryo.modules.search.Filter;
 
 import lombok.*;
 
