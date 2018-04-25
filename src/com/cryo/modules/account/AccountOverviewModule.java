@@ -12,13 +12,14 @@ import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.shop.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.shop.ShopUtils;
-import com.cryo.modules.account.vote.VotingManager;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.EmailUtils;
 import com.cryo.utils.Utilities;
+import com.cryo.utils.VotingManager;
 import com.google.gson.Gson;
 import com.mysql.jdbc.StringUtils;
 
@@ -65,11 +66,11 @@ public class AccountOverviewModule extends WebModule {
 		switch(action) {
 			case "refresh":
 				Properties prop = new Properties();
-				VotingManager manager = new VotingManager(username);
-				model.put("voteManager", manager);
+				//VotingManager manager = new VotingManager(username);
+				//model.put("voteManager", manager);
 				prop.put("authlist", render("./source/modules/account/sections/vote/auth-list.jade", model, request, response));
 				for(int i = 0; i < 3; i++) {
-					prop.put("site"+i, manager.getTime(i));
+					//prop.put("site"+i, manager.getTime(i));
 				}
 				return new Gson().toJson(prop);
 			case "exchange":
@@ -114,7 +115,7 @@ public class AccountOverviewModule extends WebModule {
 			model.put("shopItems", ShopManager.cached);
 			model.put("shopManager", new ShopManager());
 			model.put("packages", ShopUtils.getItems(username));
-			model.put("voteManager", new VotingManager(username));
+			//model.put("voteManager", new VotingManager(username));
 			Object[] data = DisplayConnection.connection().handleRequest("get-time", username);
 			int seconds = 0;
 			if(data != null)
@@ -138,7 +139,7 @@ public class AccountOverviewModule extends WebModule {
 					String name = request.queryParams("name");
 					if(name == null || name == "")
 						return "ERROR";
-					Object[] data = DisplayConnection.connection().handleRequest("name-exists", name);
+					Object[] data = DisplayConnection.connection().handleRequest("name-exists", name, username);
 					if(data == null)
 						return "ERROR";
 					return Boolean.toString((boolean) data[0]);
@@ -195,7 +196,7 @@ public class AccountOverviewModule extends WebModule {
 					return new Gson().toJson(prop);
 				case "change-display":
 					name = request.queryParams("name");
-					AccountDAO account = AccountUtils.getAccount(username);
+					Account account = AccountUtils.getAccount(username);
 					String display = AccountUtils.getDisplayName(account);
 					if(name == null || name == "")
 						return "Error changing Display Name. Please contact an admin.";

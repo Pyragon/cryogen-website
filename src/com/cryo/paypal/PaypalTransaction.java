@@ -122,8 +122,8 @@ public class PaypalTransaction {
 	
 	public void createRedirectURLs() {
 		redirect = new RedirectUrls();
-		redirect.setCancelUrl("http://localhost/process_payment?action=cancel");
-		redirect.setReturnUrl("http://localhost/process_payment?action=process");
+		redirect.setCancelUrl("http://cryogen-rsps.com/process_payment?action=cancel");
+		redirect.setReturnUrl("http://cryogen-rsps.com/process_payment?action=process");
 	}
 	
 	public void createItemList() {

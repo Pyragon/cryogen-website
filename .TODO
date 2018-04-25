@@ -1,8 +1,6 @@
 It is recommended that you use atom-tasks to view TODO files.
 Forums:
   ☐ Get new forum logo + read/unread buttons
-  ✔ Change 'go social' to an in-game drops feed @done(2017-08-25 04:11) @project(Forums)
-  ✔ Table is messed up for market section due to displaying too many items? http://prntscr.com/fe7owu top is expected @done(2017-08-25 04:11) @project(Forums)
 Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 General:
@@ -10,31 +8,30 @@ General:
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Switch all error blocks to use the sendAlert instead
   ☐ Recode base to properly utilize a 'module' structure
-  ✔ Show 'alert' at all times to staff showing # of immediate actions required @done(2017-12-07 00:24) @project(General)
+  ✔ No navbar links work outside of the index page as they all link to current_url+/link, so will go to /account/login if on /account page @done(2018-02-26 13:57) @project(General)
 Shop:
   ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
 Staff Page:
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
   ☐ Log all events
-  ✔ Reload data for all tabs when a punishment/appeal is accepted. Only refreshes appeal atm @done(2017-12-07 00:07) @project(Staff Page)
-  ☐ Punishment reasons should be added to a 'hover' to avoid long table columns
+  ✔ Punishment reasons should be added to a 'hover' to avoid long table columns @done(2018-02-19 07:45) @project(Staff Page)
   ☐ Viewing player report needs to be updated
-  ✔ Viewing player report does not make pages disappear @done(2017-12-06 23:59) @project(Staff Page)
   ☐ Something is messed with bug reports....
   ☐ Viewing bug report needs to be updated
   ☐ Viewing appeal needs to be updated
-  ☐ Searching player's names to make punishment shows username and display name (atm searching for username brings up option for display ie search cody and 'anon' pops up)
+  ☐ Change create punishment to use noty instead of diff page
+  ✔ Searching player's names to make punishment shows username and display name (atm searching for username brings up option for display ie search cody and 'anon' pops up) @done(2018-02-20 02:22) @project(Staff Page)
 Account:
   ☐ Fix no black marks message on support#appeal page
+  ☐ Add min/max length requirement to password on account creation/pass changing on server/website
 Other:
   ☐ Page for players to view their own player/bug reports
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
-  ✔ Make better discord avatar that matches background so it looks transparent @done(2017-08-25 04:14) @project(Other)
   ☐ Create independant html pages to serve as error pages for nginx
+  ☐ Create html pages for emails
+  ☐ Create cryogen-rsps.com emails and change webmaster emails + recovery/verification from addresses
 Securiy:
   ☐ Secure all requests to server (though should be secured through sessions already)
-  ☐ Update sessions to be more secure. (Create random sess_id and add to database with sess_ids->usernames, allows more than one user to have it)
-  ☐ Reset sess_ids when user changes the password
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
 API:
   ☐ Create overall API for server + website that utilizes tokens
@@ -48,6 +45,14 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Change 'go social' to an in-game drops feed @done(2017-08-25 04:11) @project(Forums)
+  ✔ Table is messed up for market section due to displaying too many items? http://prntscr.com/fe7owu top is expected @done(2017-08-25 04:11) @project(Forums)
+  ✔ Show 'alert' at all times to staff showing # of immediate actions required @done(2017-12-07 00:24) @project(General)
+  ✔ Reload data for all tabs when a punishment/appeal is accepted. Only refreshes appeal atm @done(2017-12-07 00:07) @project(Staff Page)
+  ✔ Viewing player report does not make pages disappear @done(2017-12-06 23:59) @project(Staff Page)
+  ✔ Make better discord avatar that matches background so it looks transparent @done(2017-08-25 04:14) @project(Other)
+  ✔ Update sessions to be more secure. (Create random sess_id and add to database with sess_ids->usernames, allows more than one user to have it) @done(2018-01-24 05:42) @project(Securiy)
+  ✔ Reset sess_ids when user changes the password @done(2018-01-24 05:42) @project(Securiy)
   ✔ Add section below latest activity to view players online in-game @done(2017-05-31 04:37) @project(Forums)
   ✔ Cache anything that can be for faster loading @done(2017-05-30 21:14) @project(General)
   ✔ Add a 'Website update in: ' countdown to pages like in-game restart counter @done(2017-05-30 21:14) @project(General)

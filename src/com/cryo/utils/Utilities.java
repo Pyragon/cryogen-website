@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.impl.GlobalConnection;
 import com.google.gson.Gson;
+import com.mysql.jdbc.StringUtils;
 
 import spark.Request;
 
@@ -44,6 +46,10 @@ public class Utilities {
 		
 	}
 	
+	public static boolean isNullOrEmpty(String... values) {
+		return Arrays.stream(values).anyMatch(v -> StringUtils.isNullOrEmpty(v));
+	}
+	
 	public static long roundUp(long num, long divisor) {
 		return (num + divisor - 1) / divisor;
 	}
@@ -61,23 +67,69 @@ public class Utilities {
 			return -1;
 		return Integer.parseInt((String) data[0]);
 	}
+
+	public static final char[] VALID_CHARS = { '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+			'8', '9', ' ' };
 	
-	public String isValidDisplay(String name) {
-		if (!name.matches("[a-zA-Z0-9_ -]*"))
-			return "Display name contains invalid characters";
-		if (name.length() < 3 || name.length() > 12)
-			return "Display name must be between 3 and 12 characters";
-		if (name.replace(" ", "_").matches("\\w*(-{2}|_{2}|-_|_-)\\w*"))
-			return "Display name cannot contain two spaces, underscores, or hyphens in a row";
-		if (name.startsWith("-") || name.endsWith("-"))
-			return "Display name cannot start or end with a hyphen";
-		if (name.startsWith("_") || name.endsWith("_"))
-			return "Display name cannot start or end with an underscore";
-		if (name.startsWith(" ") || name.endsWith(" "))
-			return "Display name cannot start or end with a space";
-		if (name.toLowerCase().contains("mod") || name.toLowerCase().contains("admin"))
-			return "Display name contains invalid words";
-		return "";
+	public static final String[] INVALID_WORDS = { "admin", "mod" };
+	
+	public static String isValidDisplay(String name) {
+		if(name.length() < 3 || name.length() > 12)
+			return "Name must be between 3 and 12 characters.";
+		if(containsInvalidCharacter(name))
+			return "Name contains invalid character.";
+		if(containsTwo(name))
+			return "Name contains two spaces or hyphens in a row.";
+		if(startsOrEndsWith(name))
+			return "Name cannot start or end with a space or hyphen.";
+		if(containsInvalidWords(name))
+			return "Name contains invalid words.";
+		return null;
+	}
+	
+	public static boolean containsInvalidWords(String name) {
+		return Arrays.stream(INVALID_WORDS).anyMatch(s -> name.toLowerCase().contains(s));
+	}
+	
+	public static boolean startsOrEndsWith(String name) {
+		char[] chars = { ' ', '-', '_' };
+		for(char c : chars) {
+			if(name.charAt(0) == c || name.charAt(name.length()-1) == c)
+				return true;
+		}
+		return false;
+	}
+	
+	public static boolean containsTwo(String name) {
+		char last = 'a';
+		for(int i = 0; i < name.length(); i++) {
+			char cur = name.charAt(i);
+			if(cur == ' ' || cur == '-' || cur == '_') {
+				if(last == ' ' || last == '-' || last == '_')
+					return true;
+			}
+			last = cur;
+		}
+		return false;
+	}
+
+	public static boolean containsInvalidCharacter(char c) {
+		for (char vc : VALID_CHARS) {
+			if (vc == c)
+				return false;
+		}
+		return true;
+	}
+
+	public static boolean containsInvalidCharacter(String name) {
+		for (char c : name.toCharArray()) {
+			if (containsInvalidCharacter(c)) {
+				System.out.println("Invalid: "+c);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static String formatNameForProtocol(String name) {

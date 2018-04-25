@@ -1,0 +1,90 @@
+.vote-info {
+  padding: 0 10px !important;
+}
+
+.auths {
+  padding: 10px;
+  background: #111;
+  border: 1px solid #333;
+  color: #666;
+  margin: 10px 0;
+}
+
+.auths p {
+  margin: 5px 5px;
+}
+
+.site .enabled {
+  color: #167027;
+}
+
+.site .disabled {
+  color: #821515;
+}
+
+.site {
+  background: #111;
+  border: 1px solid #333;
+  text-align: center;
+  margin: 5px 15px;
+  padding: 10px 0;
+  transition: border-color .4s;
+}
+
+.site:hover {
+  cursor: pointer;
+  border-color: #888;
+}
+
+.auth-char {
+  background: #111;
+  border: 0;
+  color: #666;
+  font-size: 20px;
+  text-align: center;
+  padding: 5px 0;
+  text-indent: 10px;
+  text-transform: uppercase;
+}
+
+.claim-auth {
+  margin: 10px 0 20px 0;
+}
+
+.auth-options a {
+  padding: 0px 10px;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+.auth-options a .glyphicon {
+  font-size: 12px;
+  color: #FFF;
+}
+
+.auth {
+  transition: color .4s;
+}
+
+.auth:hover {
+  cursor: pointer;
+  color: #CCC;
+}
+
+.auth-options {
+  background: #0a0a0a;
+  margin: 0 1px;
+  border: 1px solid #222;
+  display: none;
+  border-radius: 3px;
+  font-size: 11px !important;
+}
+
+.auth-options .row {
+  margin: 0;
+}
+
+.auths .active {
+  color: #CCC;
+}

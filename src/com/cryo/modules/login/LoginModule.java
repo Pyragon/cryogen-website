@@ -6,7 +6,7 @@ import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.CookieManager;
 
 import static com.cryo.utils.Utilities.*;

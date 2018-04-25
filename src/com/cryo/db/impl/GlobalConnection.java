@@ -4,12 +4,13 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.modules.account.AccountDAO;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.announcements.AnnouncementDAO;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.utils.BCrypt;
@@ -40,10 +41,16 @@ public class GlobalConnection extends DatabaseConnection {
 		try {
 			switch(opcode) {
 				case "get-misc-data":
+					return select("misc_data", "name=?", GET_MISC_DATA, (String) data[1]);
+				case "set-misc-data":
 					String name = (String) data[1];
-					data = select("misc_data", "name=?", GET_MISC_DATA, name);
-					if(data == null) return null;
-					return new Object[] { data[0] };
+					String value = (String) data[2];
+					data = handleRequest("get-misc-data", name);
+					if(data == null)
+						insert("misc_data", name, value);
+					else
+						set("misc_data", "value=?", "name=?", value, name);
+					break;
 				case "register":
 					String username = (String) data[1];
 					String password = (String) data[2];
@@ -57,15 +64,29 @@ public class GlobalConnection extends DatabaseConnection {
 					String text = (String) data[1];
 					text = "%"+text+"%";
 					data = select("player_data", "username LIKE ?", SEARCH_ACCOUNTS, text);
-					if(data == null) return null;
-					ArrayList<String> list = (ArrayList<String>) data[0];
-					ArrayList<AccountDAO> accounts = new ArrayList<>();
-					for(String user : list) {
-						data = handleRequest("get-account", user);
-						if(data == null) continue;
-						accounts.add((AccountDAO) data[0]);
+					HashMap<String, Account> accounts = new HashMap<>();
+					if(data != null) {
+						ArrayList<String> list = (ArrayList<String>) data[0];
+						for(String user : list) {
+							data = handleRequest("get-account", user);
+							if(data == null) continue;
+							Account account = (Account) data[0];
+							if(!accounts.containsKey(account.getUsername()))
+								accounts.put(account.getUsername(), account);
+						}
 					}
-					return new Object[] { accounts };
+					data = DisplayConnection.connection().handleRequest("search", "%"+text+"%");
+					if(data != null) {
+						ArrayList<String> users = (ArrayList<String>) data[0];
+						for(String user : users) {
+							data = handleRequest("get-account", user);
+							if(data == null) continue;
+							Account account = (Account) data[0];
+							if(!accounts.containsKey(account.getUsername()))
+								accounts.put(account.getUsername(), account);
+						}
+					}
+					return new Object[] { accounts.values() };
 				case "compare":
 					username = (String) data[1];
 					password = (String) data[2];
@@ -127,7 +148,7 @@ public class GlobalConnection extends DatabaseConnection {
 				case "get-account":
 					username = (String) data[1];
 					data = select("player_data", "username=?", GET_ACCOUNT, username);
-					return data == null ? null : new Object[] { ((AccountDAO) data[0]) };
+					return data == null ? null : new Object[] { ((Account) data[0]) };
 				case "get-announcement":
 					int id = (int) data[1];
 					data = select("announcements", "id=?", GET_ANNOUNCEMENT, id);
@@ -223,7 +244,7 @@ public class GlobalConnection extends DatabaseConnection {
 		int rights = getInt(set, "rights");
 		int donator = getInt(set, "donator");
 		Timestamp date = getTimestamp(set, "creation_date");
-		AccountDAO account = new AccountDAO(username, id, rights, donator, date);
+		Account account = new Account(username, id, rights, donator, date);
 		return new Object[] { account };
 	};
 	

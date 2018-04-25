@@ -1,0 +1,18 @@
+div.header
+  h4.color-white.t-center Menu Items
+div.cnt
+  table.table.hs-table.table-condensed.table-responsive
+    thead
+      tr
+        th.t-center ID
+        th.t-center Name
+        th.t-center Recipe
+        th.t-center Edit
+    tbody
+      for item in menuItems
+        tr(data-id=item.getId())
+          td.b-right= item.getId()
+          td.b-right= item.getName()
+          td.b-right= item.getRecipeString()
+          td.link.editMenu
+            i.fa.fa-edit

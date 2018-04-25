@@ -18,8 +18,8 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.RecoveryConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.recoveries.RecoveryDAO;
 import com.cryo.modules.staff.recoveries.RecoveryUtils;
 import com.cryo.utils.BCrypt;
@@ -186,7 +186,7 @@ public class RecoveryModule extends WebModule {
 									prop.put("error", "At least one field must be filled out.");
 									break loop;
 								}
-								AccountDAO account = AccountUtils.getAccount(username);
+								Account account = AccountUtils.getAccount(username);
 								if (account == null) {
 									prop.put("success", false);
 									prop.put("error", "No account of this name exists.");

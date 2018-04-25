@@ -15,8 +15,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import com.cryo.Website;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.RecoveryConnection;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -27,7 +27,7 @@ public class EmailUtils {
 	
 	public static void sendVerificationEmail(String username, String email) {
 		final String random = RandomStringUtils.random(20, true, true);
-		final AccountDAO account = AccountUtils.getAccount(username);
+		final Account account = AccountUtils.getAccount(username);
 		if(account == null)
 			return;
 		EmailConnection.connection().handleRequest("add-verify", username, email, random);
@@ -37,7 +37,7 @@ public class EmailUtils {
 	
 	public static void sendRecoveryEmail(String username, String id, String email) {
 		final String random = RandomStringUtils.random(20, true, true);
-		final AccountDAO account = AccountUtils.getAccount(username);
+		final Account account = AccountUtils.getAccount(username);
 		if(account == null)
 			return;
 		RecoveryConnection.connection().handleRequest("add-email-rec", id, random);

@@ -6,8 +6,8 @@ import java.util.Properties;
 
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
 
@@ -49,7 +49,7 @@ public class AppealModule {
 						}
 					}
 				}
-				AccountDAO acc = AccountUtils.getAccount(username);
+				Account acc = AccountUtils.getAccount(username);
 				if(both && acc.getRights() == 0) {
 					prop.put("success", false);
 					prop.put("error", "Please wait for a staff member to respond before posting again.");

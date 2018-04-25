@@ -124,6 +124,24 @@ public abstract class DatabaseConnection {
 		}
 	}
 	
+	public Object[] select(String database, String condition, String orderClause, SQLQuery query, Object... values) {
+		try {
+			if(connection.isClosed() || !connection.isValid(5))
+				connect();
+			StringBuilder builder = new StringBuilder();
+			builder.append("SELECT * FROM "+database);
+			if(condition != null && !condition.equals(""))
+				builder.append(" WHERE ").append(condition);
+			if(orderClause != null && !orderClause.equals(""))
+				builder.append(" "+orderClause);
+			Object[] data = getResults(builder.toString(), query, values);
+			return data;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public Object[] select(String database, String condition, SQLQuery query, Object... values) {
 		try {
 			if(connection.isClosed() || !connection.isValid(5))
@@ -317,6 +335,32 @@ public abstract class DatabaseConnection {
 			if (connection.isClosed() || !connection.isValid(5))
 				connect();
 			PreparedStatement statement = connection.prepareStatement(query);
+			ResultSet set = statement.executeQuery();
+			if (set != null)
+				return set;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public ResultSet executeQuery(String query, Object...values) {
+		try {
+			if (connection.isClosed() || !connection.isValid(5))
+				connect();
+			PreparedStatement statement = connection.prepareStatement(query);
+			for(int i = 0; i < values.length; i++) {
+				Object obj = values[i];
+				int index = i+1;
+				if (obj instanceof String)
+					statement.setString(index, (String) obj);
+				else if (obj instanceof Integer)
+					statement.setInt(index, (int) obj);
+				else if(obj instanceof Double)
+					statement.setDouble(index, (double) obj);
+				else if(obj instanceof Long)
+					statement.setTimestamp(index, new Timestamp((long) obj));
+			}
 			ResultSet set = statement.executeQuery();
 			if (set != null)
 				return set;

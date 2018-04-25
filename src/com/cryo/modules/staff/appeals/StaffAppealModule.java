@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Properties;
 
 import com.cryo.Website;
+import com.cryo.comments.Comment;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.support.BugReportDAO;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
-import com.cryo.utils.CommentDAO;
+import com.cryo.modules.staff.BugReport;
 import com.cryo.utils.CookieManager;
 
 import lombok.*;
@@ -29,12 +29,12 @@ import spark.Response;
 public class StaffAppealModule {
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<CommentDAO> getComments(int id) {
-		ArrayList<CommentDAO> comments = new ArrayList<>();
+	public static ArrayList<Comment> getComments(int id) {
+		ArrayList<Comment> comments = new ArrayList<>();
 		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", id, 0);
 		if(data == null)
 			return comments;
-		return (ArrayList<CommentDAO>) data[0];
+		return (ArrayList<Comment>) data[0];
 	}
 	
 	@SuppressWarnings("unchecked")
