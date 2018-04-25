@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.cryo.Website;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.AccountConnection;
+import com.cryo.db.impl.CommentsConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
@@ -59,10 +60,11 @@ public class DBConnectionManager {
 		connections.put(Connection.RECOVERY, new RecoveryConnection());
 		connections.put(Connection.FORUM, new ForumConnection());
 		connections.put(Connection.ACCOUNT, new AccountConnection());
+		connections.put(Connection.COMMENTS, new CommentsConnection());
 	}
 	
 	public static enum Connection {
-		MY_BB, HIGHSCORES, GLOBAL, DISPLAY, VOTING, EMAIL, SHOP, REPORTS, PUNISH, PREVIOUS, RECOVERY, FORUM, ACCOUNT
+		MY_BB, HIGHSCORES, GLOBAL, DISPLAY, VOTING, EMAIL, SHOP, REPORTS, PUNISH, PREVIOUS, RECOVERY, FORUM, ACCOUNT, COMMENTS
 	}
 	
 }

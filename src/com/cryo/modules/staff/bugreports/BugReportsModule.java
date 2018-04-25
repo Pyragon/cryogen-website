@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Properties;
 
 import com.cryo.Website;
+import com.cryo.comments.Comment;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
-import com.cryo.modules.account.support.BugReportDAO;
-import com.cryo.modules.account.support.PlayerReportDAO;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
-import com.cryo.utils.CommentDAO;
+import com.cryo.modules.staff.BugReport;
+import com.cryo.modules.staff.PlayerReport;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
 
@@ -32,12 +32,12 @@ import spark.Response;
 public class BugReportsModule {
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<CommentDAO> getComments(int id) {
-		ArrayList<CommentDAO> comments = new ArrayList<>();
+	public static ArrayList<Comment> getComments(int id) {
+		ArrayList<Comment> comments = new ArrayList<>();
 		Object[] data = ReportsConnection.connection().handleRequest("get-comments", id, 1);
 		if(data == null)
 			return comments;
-		return (ArrayList<CommentDAO>) data[0];
+		return (ArrayList<Comment>) data[0];
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -55,7 +55,7 @@ public class BugReportsModule {
 					prop.put("error", search_results.get("error"));
 					break;
 				}
-				List<BugReportDAO> reports = (List<BugReportDAO>) search_results.get("results");
+				List<BugReport> reports = (List<BugReport>) search_results.get("results");
 				model.put("breports", reports);
 				String html = module.render("./source/modules/staff/bug_reports/report_list.jade", model, request, response);
 				prop.put("success", true);
@@ -129,7 +129,7 @@ public class BugReportsModule {
 			prop.put("error", "Invalid report ID. Please reload the page and contact an Admin if this persists.");
 			return prop;
 		}
-		BugReportDAO report = (BugReportDAO) data[0];
+		BugReport report = (BugReport) data[0];
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("report", report);
 		model.put("comments", getComments(report.getId()));

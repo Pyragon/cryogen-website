@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.staff.BugReport;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
 
@@ -33,7 +34,7 @@ public class ReportBugModule {
 			prop.put("success", false);
 			prop.put("error", "All fields must be filled out!");
 		} else {
-			BugReportDAO report = new BugReportDAO(0, username, title, replicated, date, info, null, null, null);
+			BugReport report = new BugReport(0, username, title, replicated, date, info, "", "", null, false);
 			ReportsConnection.connection().handleRequest("report_bug", report);
 			prop.put("success", true);
 		}

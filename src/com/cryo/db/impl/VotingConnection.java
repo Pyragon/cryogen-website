@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
+import com.cryo.modules.account.entities.Auth;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
-import com.cryo.modules.account.vote.AuthDAO;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -29,13 +29,13 @@ public class VotingConnection extends DatabaseConnection {
 	private final SQLQuery GET_AUTHS = (set) -> {
 		if(wasNull(set))
 			return null;
-		ArrayList<AuthDAO> auths = new ArrayList<>();
+		ArrayList<Auth> auths = new ArrayList<>();
 		while(next(set)) {
 			int id = getInt(set, "ID");
 			String username = getString(set, "username");
 			String auth = getString(set, "auth");
 			Timestamp timestamp = getTimestamp(set, "timestamp");
-			auths.add(new AuthDAO(id, username, auth, timestamp));
+			auths.add(new Auth(id, username, auth, timestamp));
 		}
 		return new Object[] { auths };
 	};
@@ -69,7 +69,7 @@ public class VotingConnection extends DatabaseConnection {
 			case "get-auths":
 				String username = (String) data[1];
 				data = select("auths", "username=?", GET_AUTHS, username);
-				return data == null ? null : new Object[] { (ArrayList<AuthDAO>) data[0] };
+				return data == null ? null : new Object[] { (ArrayList<Auth>) data[0] };
 			case "get-time":
 				username = (String) data[1];
 				String site = (String) data[2];

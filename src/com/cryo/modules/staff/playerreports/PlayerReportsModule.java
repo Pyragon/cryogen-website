@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Properties;
 
 import com.cryo.Website;
+import com.cryo.comments.Comment;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
-import com.cryo.modules.account.support.PlayerReportDAO;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
-import com.cryo.utils.CommentDAO;
+import com.cryo.modules.staff.PlayerReport;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.cryo.utils.Utilities;
@@ -32,12 +32,12 @@ import spark.Response;
 public class PlayerReportsModule {
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<CommentDAO> getComments(int id) {
-		ArrayList<CommentDAO> comments = new ArrayList<>();
+	public static ArrayList<Comment> getComments(int id) {
+		ArrayList<Comment> comments = new ArrayList<>();
 		Object[] data = ReportsConnection.connection().handleRequest("get-comments", id, 0);
 		if(data == null)
 			return comments;
-		comments = (ArrayList<CommentDAO>) data[0];
+		comments = (ArrayList<Comment>) data[0];
 		return comments;
 	}
 	
@@ -56,7 +56,7 @@ public class PlayerReportsModule {
 					prop.put("error", search_results.get("error"));
 					break;
 				}
-				List<PlayerReportDAO> reports = (List<PlayerReportDAO>) search_results.get("results");
+				List<PlayerReport> reports = (List<PlayerReport>) search_results.get("results");
 				model.put("preports", reports);
 				String html = module.render("./source/modules/staff/player_reports/report_list.jade", model, request, response);
 				prop.put("success", true);
@@ -137,13 +137,13 @@ public class PlayerReportsModule {
 		}
 		System.out.println("ID: "+id);
 		HashMap<String, Object> model = new HashMap<>();
-		PlayerReportDAO report = (PlayerReportDAO) data[0];
+		PlayerReport report = (PlayerReport) data[0];
 		model.put("report",  report);
-		ArrayList<CommentDAO> comments = getComments(report.getId());
+		ArrayList<Comment> comments = getComments(report.getId());
 		System.out.println("Comments: "+comments.size());
 		model.put("comments", comments);
 		String html = module.render("./source/modules/staff/player_reports/view_report.jade", model, request, response);
-		AccountDAO account = AccountUtils.getAccount(report.getUsername());
+		Account account = AccountUtils.getAccount(report.getUsername());
 		String name = AccountUtils.crownHTML(account);
 		prop.put("success", true);
 		prop.put("html", html);

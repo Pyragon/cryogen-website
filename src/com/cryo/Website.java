@@ -15,8 +15,10 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
@@ -28,15 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cryo.cache.CachingManager;
+import com.cryo.comments.CommentsManager;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
+import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.TestModule;
-import com.cryo.modules.account.AccountDAO;
+import com.cryo.modules.account.AccountModule;
 import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.RegisterModule;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.recovery.RecoveryModule;
-import com.cryo.modules.account.register.RegisterModule;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.support.AccountSupportModule;
 import com.cryo.modules.highscores.HighscoresModule;
@@ -44,20 +49,25 @@ import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
+import com.cryo.modules.samsung.SamsungTVModule;
 import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.modules.staff.search.SearchManager;
 import com.cryo.paypal.PaypalManager;
 import com.cryo.server.ServerConnection;
 import com.cryo.server.ServerItem;
+import com.cryo.server.item.ShopItem;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.CookieManager;
+import com.cryo.utils.CorsFilter;
 import com.cryo.utils.Utilities;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.paypal.api.payments.Payment;
 
 import de.neuland.jade4j.Jade4J;
@@ -76,7 +86,7 @@ import spark.Spark;
  */
 public class Website {
 
-	public static String PATH = "http://cryogen-rsps.com/";
+	public static String PATH = "http://cryogenrsps.com/";
 
 	private static Website INSTANCE;
 	
@@ -91,17 +101,23 @@ public class Website {
 	private @Getter final PaypalManager paypalManager;
 	
 	private @Getter final CachingManager cachingManager;
+	
+	private @Getter final CommentsManager commentsManager;
 
 	private final Timer fastExecutor;
 
 	private final @Getter SearchManager searchManager;
 
 	private static File FAVICON = null;
+	
+	private static Gson GSON;
 
 	public Website() {
 		loadProperties();
+		GSON = buildGson();
 		FAVICON = new File(properties.getProperty("favico"));
 		connectionManager = new DBConnectionManager();
+		commentsManager = new CommentsManager();
 		searchManager = new SearchManager();
 		paypalManager = new PaypalManager(this);
 		cachingManager = new CachingManager();
@@ -113,35 +129,11 @@ public class Website {
 		PaypalManager.createAPIContext();
 		staticFiles.externalLocation("source/");
 		staticFiles.expireTime(0); // ten minutes
-		options("/*",
-		        (request, response) -> {
-
-		            String accessControlRequestHeaders = request
-		                    .headers("Access-Control-Request-Headers");
-		            if (accessControlRequestHeaders != null) {
-		                response.header("Access-Control-Allow-Headers",
-		                        accessControlRequestHeaders);
-		            }
-
-		            String accessControlRequestMethod = request
-		                    .headers("Access-Control-Request-Method");
-		            if (accessControlRequestMethod != null) {
-		                response.header("Access-Control-Allow-Methods",
-		                        accessControlRequestMethod);
-		            }
-
-		            return "OK";
-		        });
-
-		before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
+		staticFiles.header("Access-Control-Allow-Origin", "*");
+		CorsFilter.apply();
+		AccountModule.registerEndpoints(this);
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		get(AccountOverviewModule.PATH, (req, res) -> {
-			return new AccountOverviewModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post(AccountOverviewModule.PATH, (req, res) -> {
-			return new AccountOverviewModule(this).decodeRequest(req, res, RequestType.POST);
 		});
 		get(AccountSupportModule.PATH, (req, res) -> {
 			return new AccountSupportModule(this).decodeRequest(req, res, RequestType.GET);
@@ -177,7 +169,7 @@ public class Website {
 			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/kill_web", (req, res) -> {
-			AccountDAO account = CookieManager.getAccount(req);
+			Account account = CookieManager.getAccount(req);
 			if(account == null || account.getRights() < 2)
 				return error("Insufficient permissions.");
 			if(SHUTDOWN_TIME > 0)
@@ -282,10 +274,31 @@ public class Website {
                     return ex.getMessage();
                 }
         });
-		get("*", Website::render404);
-		after("*", (req, res) -> {
-
+		get("/rsfont", (req, res) -> {
+			try {
+				res.header("Access-Control-Allow-Origin", "*");
+                InputStream in = null;
+                OutputStream out = null;
+                try {
+                    in = new BufferedInputStream(new FileInputStream(new File("runescape_chat.woff2")));
+                    out = new BufferedOutputStream(res.raw().getOutputStream());
+                    res.raw().setContentType(MediaType.ANY_TYPE.type());
+                    res.status(200);
+                    ByteStreams.copy(in, out);
+                    out.flush();
+                    return "";
+                } finally {
+                    in.close();
+                }
+            } catch (FileNotFoundException ex) {
+            	res.status(404);
+                return ex.getMessage();
+            } catch (IOException ex) {
+            	res.status(500);
+                return ex.getMessage();
+            }
 		});
+		get("*", Website::render404);
 		fastExecutor.schedule(new TaskManager(), 0, 1000);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 
@@ -298,6 +311,16 @@ public class Website {
 
 		});
 		System.out.println("Listening on port: "+properties.getProperty("port"));
+	}
+	
+	public static Gson buildGson() {
+		Gson gson = new GsonBuilder()
+				.serializeNulls()
+				.setVersion(1.0)
+				.disableHtmlEscaping()
+				.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+				.create();
+		return gson;
 	}
 	
 	public static String grab_data(Request req, Response res) {
@@ -336,6 +359,61 @@ public class Website {
 					prop.put("error", "Error retrieving item-div, please contact Cody if this problem persists.");
 				}
 				break;
+			case "get-shop-div":
+				int id = Integer.parseInt(req.queryParams("id"));
+				Object[] arr = ForumConnection.connection().handleRequest("get-username", id);
+				if(arr == null) {
+					prop.put("success", false);
+					prop.put("error", "Your forum account is not linked with your In-game account!");
+					break;
+				}
+				String username = (String) arr[0];
+				String url = ServerConnection.SERVER_URL+"/grab_data?action=get-shop-items&username="+username;
+				String strres = ServerConnection.getResponse(url);
+				Properties response = new Gson().fromJson(strres, Properties.class);
+				if(!response.getProperty("success").equals("true")) {
+					prop.put("success", false);
+					prop.put("error", "Error getting data from server.");
+					break;
+				}
+				List<String> list = GSON.fromJson(response.getProperty("list"), List.class);
+				ArrayList<ShopItem> items = new ArrayList<>();
+				for(String li : list) {
+					if(li.equals(""))
+						continue;
+					String[] values = li.split(":");
+					id = Integer.parseInt(values[0]);
+					int amount = Integer.parseInt(values[1]);
+					int price = Integer.parseInt(values[2]);
+					String name = values[3];
+					String examine = values[4];
+					ShopItem sItem = new ShopItem(id, amount, price);
+					sItem.setName(name);
+					sItem.setExamine(examine);
+					items.add(sItem);
+				}
+				model = new HashMap<>();
+				Account account = AccountUtils.getAccount(username);
+				if(account == null) {
+					prop.put("success", false);
+					prop.put("error", "Error loading account DAO");
+					break;
+				}
+				String crown = AccountUtils.crownHTML(account);
+				model.put("username", username);
+				model.put("crowned", crown);
+				model.put("items", items);
+				try {
+					String html = Jade4J.render("./source/forums/personal_shop.jade", model);
+					prop.put("success", true);
+					prop.put("html", html);
+					break;
+				} catch (JadeCompilerException | IOException e) {
+					e.printStackTrace();
+					prop.put("success", false);
+					prop.put("error", "Error compiling jade template");
+				}
+				break;
 		}
 		return new Gson().toJson(prop);
 	}
@@ -350,6 +428,13 @@ public class Website {
 			e.printStackTrace();
 		}
 		return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
+	}
+	
+	public static Properties getNotLoggedError() {
+		Properties prop = new Properties();
+		prop.put("success", false);
+		prop.put("error", "Session expired! Please reload the page to login again.");
+		return prop;
 	}
 	
 	public static HttpServletResponse sendFile(File file, Response res, MediaType type) {

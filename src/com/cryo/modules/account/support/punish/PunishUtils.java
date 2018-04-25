@@ -9,8 +9,8 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
-import com.cryo.modules.account.support.BugReportDAO;
-import com.cryo.modules.account.support.PlayerReportDAO;
+import com.cryo.modules.staff.BugReport;
+import com.cryo.modules.staff.PlayerReport;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
@@ -81,16 +81,16 @@ public class PunishUtils {
 		PunishmentConnection.connection().handleRequest("create-appeal", appeal);
 	}
 	
-	public ArrayList<PlayerReportDAO> getPlayerReports(String username, boolean archived) {
+	public ArrayList<PlayerReport> getPlayerReports(String username, boolean archived) {
 		return getPlayerReports(username, archived, 0);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<PlayerReportDAO> getPlayerReports(String username, boolean archived, int page) {
-		ArrayList<PlayerReportDAO> reports = new ArrayList<>();
+	public ArrayList<PlayerReport> getPlayerReports(String username, boolean archived, int page) {
+		ArrayList<PlayerReport> reports = new ArrayList<>();
 		Object[] data = ReportsConnection.connection().handleRequest("get-player-reports", archived, page);
 		if(data != null) {
-			for(PlayerReportDAO report : (ArrayList<PlayerReportDAO>) data[0]) {
+			for(PlayerReport report : (ArrayList<PlayerReport>) data[0]) {
 				if(username != null && report.userHasRead(username))
 					continue;
 				reports.add(report);
@@ -108,16 +108,16 @@ public class PunishUtils {
 		return total;
 	}
 	
-	public ArrayList<BugReportDAO> getBugReports(String username, boolean archived) {
+	public ArrayList<BugReport> getBugReports(String username, boolean archived) {
 		return getBugReports(username, archived, 0);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<BugReportDAO> getBugReports(String username, boolean archived, int page) {
-		ArrayList<BugReportDAO> reports = new ArrayList<>();
+	public ArrayList<BugReport> getBugReports(String username, boolean archived, int page) {
+		ArrayList<BugReport> reports = new ArrayList<>();
 		Object[] data = ReportsConnection.connection().handleRequest("get-bug-reports", archived, page);
 		if(data != null) {
-			for(BugReportDAO report : (ArrayList<BugReportDAO>) data[0]) {
+			for(BugReport report : (ArrayList<BugReport>) data[0]) {
 				if(username != null && report.userHasRead(username))
 					continue;
 				reports.add(report);

@@ -3,6 +3,7 @@ package com.cryo.modules.account;
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.db.impl.DisplayConnection;
 
 /**
@@ -12,15 +13,15 @@ import com.cryo.db.impl.DisplayConnection;
  */
 public class AccountUtils {
 	
-	public static AccountDAO getAccount(String username) {
+	public static Account getAccount(String username) {
 		GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
 		Object[] data = connection.handleRequest("get-account", username);
 		if(data == null)
 			return null;
-		return (AccountDAO) data[0];
+		return (Account) data[0];
 	}
 	
-	public static String getDisplayName(AccountDAO account) {
+	public static String getDisplayName(Account account) {
 		DisplayConnection connection = (DisplayConnection) Website.instance().getConnectionManager().getConnection(Connection.DISPLAY);
 		Object[] data = connection.handleRequest("get-display", account.getUsername());
 		if(data == null)
@@ -28,7 +29,7 @@ public class AccountUtils {
 		return (String) data[0];
 	}
 	
-	public static String crownHTML(AccountDAO account) {
+	public static String crownHTML(Account account) {
 		String colour = "";
 		String img = "";
 		String display = "";
@@ -49,7 +50,7 @@ public class AccountUtils {
 			img = "donator_ing.png";
 		}
 		if(colour != "")
-			display += "<span style=\"color: "+colour+";\"><strong><img src=\"images/crowns/"+img+"\"/> ";
+			display += "<span style=\"color: "+colour+";\"><strong><img src=\"http://cryogenrsps.com/images/crowns/"+img+"\"/> ";
 		display += getDisplayName(account);
 		if(colour != "")
 			display += "</span></strong>";

@@ -617,27 +617,27 @@ h4.title {
 
 .auth-refresh-spin {}
 
-.auths, .cart, .items, .packages {
+.cart, .items, .packages {
   padding: 10px;
   background: #111;
   border: 1px solid #333;
   color: #666;
 }
 
-.auths p, .cart p, .items p, .packages p {
+.cart p, .items p, .packages p {
   margin: 5px 5px;
 }
 
-.auth, .package {
+.package {
   transition: color .4s;
 }
 
-.auth:hover, .package:hover {
+.package:hover {
   cursor: pointer;
   color: #CCC;
 }
 
-.auth-options, .package-options {
+.package-options {
   background: #0a0a0a;
   margin: 0 1px;
   border: 1px solid #222;
@@ -646,66 +646,21 @@ h4.title {
   font-size: 11px !important;
 }
 
-.auth-options .row, .package-options .row {
+.package-options .row {
   margin: 0;
 }
 
-.auths .active, .packages .active {
+.packages .active {
   color: #CCC;
 }
 
 p.small {
   font-size: 10px;
-  padding: 5px 20px;
 }
 
-.auth-options a, .package-options a {
-  padding: 0px 10px;
-  text-align: center;
-  width: 100%;
-  display: block;
-}
-
-.auth-options a .glyphicon, .package-options a .glyphicon {
+.package-options a .glyphicon {
   font-size: 12px;
   color: #FFF;
-}
-
-.site {
-  background: #111;
-  border: 1px solid #333;
-  text-align: center;
-  margin: 5px 15px;
-  padding: 10px 0;
-  transition: border-color .4s;
-}
-
-.site:hover {
-  cursor: pointer;
-  border-color: #888;
-}
-
-.enabled {
-  color: #167027;
-}
-
-.disabled {
-  color: #821515;
-}
-
-.auth-char {
-  background: #111;
-  border: 0;
-  color: #666;
-  font-size: 20px;
-  text-align: center;
-  padding: 5px 0;
-  text-indent: 10px;
-  text-transform: uppercase;
-}
-
-.claim-auth {
-  margin: 10px 0 20px 0;
 }
 
 .cart {

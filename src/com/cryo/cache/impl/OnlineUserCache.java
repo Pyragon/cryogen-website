@@ -1,8 +1,8 @@
 package com.cryo.cache.impl;
 
 import com.cryo.cache.CachedItem;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.server.ServerConnection;
 
 import lombok.*;
@@ -30,7 +30,7 @@ public class OnlineUserCache extends CachedItem {
 		String players = "";
 		boolean sData = false;
 		for(String name : names) {
-			AccountDAO account = AccountUtils.getAccount(name);
+			Account account = AccountUtils.getAccount(name);
 			if(account == null)
 				continue;
 			if(sData)

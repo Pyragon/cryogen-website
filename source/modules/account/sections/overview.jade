@@ -1,0 +1,253 @@
+script.
+  var seconds = !{seconds};
+  var email = "!{user.getEmail()}"
+  var interval;
+  $(document).ready(function() {
+    
+    interval = setInterval(tickDisplay, 1000);
+    
+    setInterval(tickEmail, 2000);
+    
+    $('#overview-submit').click(function() {
+      var curr_pass = $('#cur-pass').val();
+      if(curr_pass === '') {
+        sendAlert('You must fill out your current password to change any account settings.');
+        return false;
+      }
+      var pass = $('#pass-change').val();
+      var verify = $('#pass-change-verify').val();
+      
+      var values = {}
+      
+      values['current'] = curr_pass
+      
+      if(pass != '' || verify != '') {
+        var resp = checkPasswords();
+        if(!resp.success) {
+          sendAlert(resp.error);
+          return false;
+        }
+        values['pass'] = pass;
+        values['verify'] = verify;
+      }
+      
+      var email = $("#email-in").val();
+      if(email !== '')
+        values['email'] = email;
+        
+      var display = $('#dchange').val();
+      if(display !== '') {
+        if("#{user.getDonator()}" < 1)
+          sendAlert('You must be a super donator in order to change your display name');
+        else {
+          var reason = validName(display.toLowerCase());
+          if(reason != null)
+            sendAlert(reason)
+          else
+            values['display'] = display
+        }
+      }
+      
+      $.post('/account/overview', { action:'submit', values:JSON.stringify(values) }, function(ret) {
+        $('#cur-pass').val('');
+        var data = getJSON(ret);
+        if(data == null)
+          return false;
+        resetData();
+        if(data.results == '')
+          return;
+        var results = JSON.parse(data.results);
+        for(var i = 0; i < results.length; i++) {
+          var result = results[i]
+          sendAlert(result)
+        }
+        if(data.seconds != '') {
+          seconds = data.seconds
+          interval = setInterval(tickDisplay, 1000);
+          tickDisplay();
+        }
+        if(data.displayname != '')
+          $('#disp-name').html(data.displayname)
+      });
+      return false;
+    });
+    
+    $('#email-in').focusout(function() {
+      console.log('test')
+      var email = $(this).val();
+      if(email === '') return;
+      $.post('/account/overview', { action:'check-email', email:email }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return null;
+        $('#email-in-alert').css('display', data.emailsuc == false ? '' : 'none')
+      });
+    });
+    
+    $('#dchange').focusout(function() {
+      var name = $(this).val();
+      var error = $('#in-use');
+      if(name == null || name == '') return;
+      var reason = validName(name.toLowerCase());
+      if(reason != null) {
+        resultDiv(error, 'Display name is invalid');
+        sendAlert(reason);
+        return;
+      }
+      $.post('/account/overview', { action:'check-display', name:name }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return;
+        if(data.invalid == true) {
+          resultDiv(error, 'Display name is invalid')
+          sendAlert(data.error);
+        } else if(data.used == false)
+          resultDiv(error, '', 'Display name is available!');
+        else 
+          resultDiv(error, 'Display name is in use!');
+      });
+    });
+    
+    $('#pass-change').focusout(checkPasswords);
+    $('#pass-change-verify').focusout(checkPasswords);
+    
+    function checkPasswords() {
+      var pass = $('#pass-change').val();
+      var verify = $('#pass-change-verify').val();
+      var error = $('#pass-error')
+      if(pass === '' || verify === '') {
+        resultDiv(error, '')
+        return {success:false, error:"Both fields must be filled out."};
+      }
+      if(pass != verify) {
+        resultDiv(error, 'Passwords do not match');
+        return {success:false, error:"Passwords do not match."};
+      }
+      if(pass.length < 6) {
+        resultDiv(error, 'Password must be at least 6 characters long.');
+        return {success:false, error:"Password must be at least 6 characters long."};
+      }
+      resultDiv(error, '');
+      return {success:true};
+    }
+    
+    function resultDiv(div, message, successMessage='') {
+      if(message == '') {
+        if(successMessage !== '') {
+          div.css('display', '');
+          div.css('color', '#129a11 !important');
+          div.html('&#x2714 '+successMessage);
+          return;
+        }
+        div.css('display', 'none');
+        return;
+      }
+      div.css('display', '');
+      div.css('color', '#FF0000 !important');
+      div.html('&#x2718 '+message);
+    }
+    
+    function resetData() {
+      $('#pass-change').val('');
+      $('#pass-change-verify').val('');
+      $('#email-in').val('')
+      $('#dchange').val('')
+    }
+    
+    function tickEmail() {
+      $.post('/account/overview', { action:'get-email' }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return false;
+        var result = data.email;
+        if(result != email) {
+          email = result;
+          sendAlert('Your email has been successfully changed!');
+          $('#email').html('Email: '+email)
+        }
+      });
+    }
+    
+    function tickDisplay() {
+      seconds--;
+      var el = $('.display-change');
+      if(seconds <= 0) {
+        el.attr({
+          title: '',
+          disabled: false
+        })
+        if(el.hasClass('display-disabled'))
+          el.removeClass('display-disabled');
+        clearInterval(interval);
+        return;
+      }
+      var time = seconds;
+      var hours = Math.floor(time / 3600);
+      time = time - hours * 3600;
+      var minutes = Math.floor(time / 60);
+      time = time - minutes * 60;
+      var days = Math.floor(hours / 24);
+      hours = hours - days * 24;
+      
+      var string = "";
+      if(days > 0)
+        string += days+" Day"+(days > 1 ? "s" : "");
+      if(hours > 0) {
+        if(string != '')
+          string += ", ";
+        string += hours+" Hour"+(hours > 1 ? "s" : "");
+      }
+      if(minutes > 0) {
+        if(string != '')
+          string += ", ";
+        string += minutes+" Minute"+(minutes > 1 ? "s" : "");
+      }
+      if(string != '')
+        string += ", ";
+      string += time+" Second"+(time > 1 ? "s" : "");
+      el.attr({
+        title: 'You can change your display name again in '+string,
+        disabled: true
+      })
+      if(!el.hasClass('display-disabled'))
+        el.addClass('display-disabled');
+    }
+    
+  });
+div.widget.register.overview
+  div.row
+    div.col-md-6.box
+      div.col-md-6.overview-info
+        label Display Name: 
+      div.col-md-6
+        p.color-grey#disp-name= '$for-name='+user.getUsername()+'$end'
+        p.color-grey This is the name you are seen by in-game. This does not affect your login name. 
+        p.color-grey Only Super Donators+ have the ability to change this name.
+        p#in-use
+        if user.getDonator() > 1 && seconds == 0
+          input.form-control.display-change#dchange(type='text', placeholder='New Display Name')
+        else
+          input.display-disabled.display-change.form-control#dchange(type='text', placeholder='New Display Name', disabled='disabled')
+    div.col-md-6.box
+      div.col-md-6
+        label Change Password:
+      div.col-md-6
+        p.color-grey Must be 6 or more characters of length and can contain any combination of symbols, numbers, and alpha characters. Passwords are case sensitive.
+        p.color-red#pass-error(style='display: none')
+        input.form-control#pass-change(type='password', placeholder='New Password')
+        input.form-control#pass-change-verify(type='password', placeholder='Verify New Password')
+  div.row
+    div.col-md-6.box
+      div.col-md-6
+        label Email Preferences:
+      div.col-md-6
+        if user.getEmail() != null
+          i.fa.fa-envelope
+          span.color-grey.overview#email= ':  '+user.getEmail()
+        p.color-grey.overview Enter a new email here. You will be emailed a link and asked to verify it afterwards
+        p.color-red#email-in-alert(style='display: none;') &#x2718 Invalid email
+        input.form-control#email-in(type='<strong>email</strong>', placeholder='Enter New Email')
+    div.col-md-6.box
+      div.col-md-6
+        label Enter your current password:
+      div.col-md-6
+        p.color-grey.overview Only needed if you are changing your password or email.
+        input.form-control#cur-pass(type='password', placeholder='Current Password')
+        button.btn.btn-normal#overview-submit(style='margin-bottom: 0px; margin-right: 0px;') Submit

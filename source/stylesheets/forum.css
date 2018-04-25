@@ -1,0 +1,114 @@
+/* @font-face {
+    font-family: rsfont;
+    src: url('http://localhost:8085/stylesheets/runescape_chat.woff2') format('woff2');
+} */
+
+.item-back {
+  width: 325px;
+  height: 150px;
+  background-color: #111;
+  border: 1px solid #000;
+  overflow: hidden;
+}
+
+.item-pic {
+  width: 80px;
+  height: 80px;
+  border: 0.1px solid #fff;
+  background-color: #222;
+  margin: 10px 0 0 10px;
+  float: left;
+}
+
+.item-data {
+  float: left;
+  margin: 10px 0 0 10px;
+}
+
+.item-data div:not(:first-of-type) {
+  padding-top: 8px;
+}
+
+.pos-items {
+  padding: 15px 0 0 60px;
+  width: 280px;
+  height: 150px;
+}
+
+.pos-item {
+  width: 40px;
+  height: 40px;
+  z-index: 10px;
+}
+
+.pos-item {
+  margin-left: 15px;
+  margin-top: 25px;
+}
+
+.personal-shop {
+  background-image: url("/images/shop.png");
+  width: 416px;
+  height: 278px;
+  cursor: url(http://test.cryogenrsps.com/images/cursors/default.png), auto;
+}
+
+.shop-title {
+  font-family: 'Runescape Chat';
+  color: #f5b241;
+  padding-top: 12px;
+  text-align: center;
+}
+
+.context-menu {
+  font-family: 'Runescape Chat';
+  background-color: #0a1d26;
+  border: 1px solid #fff;
+  border-radius: 2px;
+  width: 150px;
+  cursor: url(http://test.cryogenrsps.com/images/cursors/default.png), auto;
+  display: none;
+}
+
+.context-header {
+  font-family: 'Runescape Chat';
+  background-color: #19170f;
+  border: 1px solid #000;
+  border-bottom: 1px solid #223239;
+  color: #c6b895;
+  height: 20px;
+  text-align: left;
+  padding-left: 2px;
+}
+
+.context-item:hover {
+  background-color: #265469;
+}
+
+.context-item {
+  height: 18px;
+  font-family: 'Runescape Chat';
+  color: #c6b895;
+  padding-left: 2px;
+}
+
+.context-item-name:before {
+  content: ' ';
+}
+
+.context-item-name {
+  padding-left: 2px;
+  font-family: 'Runescape Chat';
+  color: #f5b241;
+}
+
+.pop-up-box {
+  border: 1px solid #fff;
+  background-color: rgba(0, 0, 0, .5);
+  font-family: 'Runescape Chat';
+  border-radius: 2px;
+  display: none;
+  height: 17px;
+  padding: 5px;
+  cursor: url(http://test.cryogenrsps.com/images/cursors/default.png), auto;
+}

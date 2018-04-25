@@ -18,8 +18,8 @@ import com.cryo.db.impl.PreviousConnection.PreviousIP;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.RecoveryConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.utils.CookieManager;
@@ -114,7 +114,7 @@ public class RecoveriesModule {
 			}
 			// CREATION DATE
 			long l = recovery.getCreation();
-			AccountDAO account = AccountUtils.getAccount(username);
+			Account account = AccountUtils.getAccount(username);
 			if (account == null) {
 				prop.put("success", false);
 				prop.put("error", "Error finding account associated.");

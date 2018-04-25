@@ -1,0 +1,28 @@
+::-moz-selection{
+  background-color:Transparent;
+  color:#999;
+}
+
+::selection {
+  background-color:Transparent;
+  color:#999;
+}
+
+.report_line label {
+  padding: 5px;
+  float: left;
+}
+
+.report_line input, .report_line textarea {
+  border-radius: 3px;
+  margin: 5px;
+  padding: 5px;
+  float: right;
+  min-width: 155px;
+}
+
+.report_line textarea {
+  background: #111;
+  border: 1px solid #000;
+  font-size: 11px;
+}

@@ -1,0 +1,231 @@
+extend ../default
+
+block head
+  link(rel='stylesheet', href='/stylesheets/excel/style.css')
+  script.
+
+    var filters = null;
+
+    $(document).ready(function() {
+
+      var n = null;
+
+      var loaded = false;
+
+      $(document).on('keydown', function(e) {
+        if(e.which == 13) {
+          if(n != null) {
+            $('.saveBtn').click();
+            return false;
+          }
+        }
+      });
+
+      $(document).on('click', '#menuItemBtn, #prepItemBtn, #prepSheetBtn', function() {
+        loadPage($(this).data('name'));
+      });
+
+      $(document).on('click', '.filter-check', function() {
+        var item = $(this).closest('.filter-item');
+        var name = item.data('name');
+        var checked = this.checked;
+        filters[name] = checked;
+        loadPage('prepItems')
+      })
+
+      $(document).on('click', '.remove', function() {
+        var recipe = $(this).closest('.ingredient');
+        recipe.remove();
+      });
+
+      $(document).on('click', '#add-prep-item', function() {
+        var div = $('<div></div>');
+        div.addClass('ingredient');
+
+        var name = $('<input></input>');
+        name.addClass('name');
+        name.attr('type', 'text');
+        name.attr('placeholder', 'Name');
+        name.css({
+          'text-align': 'center',
+          'float': 'left',
+          'max-width': '110px',
+          'margin-left': '10px'
+        });
+
+        var im = $('<i></i>');
+        im.addClass('remove fa fa-times-circle link')
+        im.css({
+          'float': 'right',
+          'margin-right': '10px'
+        })
+
+        var amount = $('<input></input>');
+        amount.addClass('amount');
+        amount.attr('type', 'text');
+        amount.attr('placeholder', 'Amount');
+        amount.css({
+          'text-align': 'center',
+          'float': 'right',
+          'max-width': '110px',
+          'margin-right': '10px'
+        });
+
+        div.append(name);
+        div.append(im);
+        div.append(amount);
+
+        $('.recipe').append(div);
+
+        //$('.recipe').after("<div class='ingredient'><input class='name', type='text', placeholder='Name', value='Name', style='text-align: center; float: left; max-width: 110px; margin-left: 10px;'/><i class='remove fa fa-times-circle link',style='float: right; margin-right: 10px;'></i><input class='amount', type='text', placeholder='Amount', value='Amount', style='text-align: center; float: right; max-width: 110px; margin-right: 10px;'/></div>");
+        return false;
+      });
+
+      $(document).on('click', '.editMenu', function() {
+        if(n != null) {
+          n.close();
+        }
+        var id = $(this).closest('tr').data('id');
+        $.post('/excel', { action:'edit-menu-noty', id:id }, function(ret) {
+          var data = getJSON(ret);
+          if(data == null) return;
+          n = noty({
+            text: 'Editing Menu Item',
+            type: 'confirm',
+            layout: 'center',
+            dismissQueue: false,
+            template: data.html,
+            theme: 'cryogen',
+            buttons: [{
+              addClass: 'btn btn-primary btn-green saveBtn', text: 'Save', onClick: function($noty) {
+                var ingredients = []
+                $('.ingredient').each(function(i, e) {
+                  var target = $(e)
+                  var name = target.find('.name').val()
+                  var amount = target.find('.amount').val()
+                  var ingredient = { "ingredient":name, "amount":amount };
+                  ingredients.push(ingredient);
+                });
+                if(ingredients.length == 0) {
+                  alert("No ingredients specified.");
+                  return;
+                }
+                var json = { "values": ingredients };
+                $.post('/excel', { action:'save-menu-item', id:id, recipe:JSON.stringify(json) }, function(ret) {
+                  var data = getJSON(ret)
+                  if(data == null) return false;
+                  $('.pageContent').html(data.html)
+                });
+                $noty.close();
+                n = null;
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                $noty.close();
+                n = null;
+              }
+            }]
+          })
+        });
+      });
+
+      $(document).on('click', '.trashPrep', function() {
+        var id = $(this).closest('tr').data('id');
+        var itemName = $(this).closest('tr').find('.display').html()
+        noty({
+          text: 'Are you sure you wish to delete '+itemName+'?',
+          type: 'confirm',
+          layout: 'center',
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: [{
+            addClass: 'btn btn-primary btn-green saveBtn', text: 'Save', onClick: function($noty) {
+              $.post('/excel', { action:'remove-prep-item', id:id, filters:JSON.stringify(filters) }, function(ret) {
+                var data = getJSON(ret);
+                if(data == null) return;
+                $('.pageContent').html(data.html);
+              });
+              $noty.close();
+              n = null;
+            }
+          },
+          {
+            addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+              $noty.close();
+              n = null;
+            }
+          }]
+        })
+      });
+
+      $(document).on('click', '.editPrep', function() {
+        if(n != null) {
+          n.close();
+        }
+        var id = $(this).closest('tr').data('id');
+        $.post('/excel', { action:'edit-prep-noty', id:id }, function(ret) {
+          var data = getJSON(ret);
+          if(data == null) return;
+          n = noty({
+            text: 'Editing Prep Item',
+            type: 'confirm',
+            layout: 'center',
+            dismissQueue: false,
+            template: data.html,
+            theme: 'cryogen',
+            buttons: [{
+              addClass: 'btn btn-primary btn-green saveBtn', text: 'Save', onClick: function($noty) {
+                var name = $('.name').val()
+                var unit = $('.unit').val()
+                var portion = $('.portion').val()
+                var shelflife = $('.shelflife').val()
+                var displayname = $('.displayname').val()
+                var sheetname = $('.sheetname').val()
+                var sheetpriority = $('.sheetpriority').val()
+                $.post('/excel', { action:'save-prep-item', id:id, name:name, unit:unit, portion:portion, shelflife:shelflife, displayname:displayname, sheetname:sheetname, sheetpriority:sheetpriority, filters:JSON.stringify(filters) }, function(ret) {
+                  var data = getJSON(ret)
+                  if(data == null) return;
+                  $('.pageContent').html(data.html)
+                });
+                $noty.close();
+                n = null;
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                $noty.close();
+                n = null;
+              }
+            }]
+          })
+        });
+      });
+
+      function loadPage(name) {
+        if(loaded == false) {
+          $.post('/excel', { action:'load-page', page:name }, function(ret) {
+            var data = getJSON(ret);
+            if(data == null) return;
+            $('.pageContent').html(data.html);
+            filters = JSON.parse(data.sheets);
+            loaded = true;
+          });
+        } else {
+          $.post('/excel', { action: 'load-page', page:name, filters:JSON.stringify(filters) }, function(ret) {
+            var data = getJSON(ret);
+            if(data == null) return;
+            $('.pageContent').html(data.html);
+          });
+        }
+      }
+
+    })
+
+block content
+  div.container(style='min-height:700px')
+    div.skills
+      button.btn.btn-normal#menuItemBtn(style='margin: 5px;', data-name='menuItems') Menu Items
+      button.btn.btn-normal#prepItemBtn(style='margin: 5px;', data-name='prepItems') Prepped Items
+      button.btn.btn-normal#prepSheetBtn(style='margin: 5px;', data-name='prepSheets') Prep Sheets
+    div.widget.highscores.pageContent

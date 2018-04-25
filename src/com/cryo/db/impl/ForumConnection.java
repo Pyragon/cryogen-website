@@ -33,7 +33,6 @@ public class ForumConnection extends DatabaseConnection {
 		switch (opcode) {
 		case "get-uid":
 			String username = (String) data[1];
-			System.out.println(username);
 			data = select("forum_linked", "username=?", GET_USER_DATA, username);
 			if(data == null) return null;
 			return new Object[] { ((UserData) data[0]).getUID() };

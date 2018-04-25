@@ -3,6 +3,7 @@ package com.cryo.modules.staff;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,16 +11,16 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import com.cryo.Website;
+import com.cryo.comments.Comment;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PunishmentConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.staff.search.Filter;
-import com.cryo.utils.CommentDAO;
 import com.cryo.utils.CookieManager;
 
 import lombok.*;
@@ -34,12 +35,12 @@ import spark.Response;
 public class PunishmentsModule {
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<CommentDAO> getComments(int id) {
-		ArrayList<CommentDAO> comments = new ArrayList<>();
+	public static ArrayList<Comment> getComments(int id) {
+		ArrayList<Comment> comments = new ArrayList<>();
 		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", id, 1);
 		if (data == null)
 			return comments;
-		return (ArrayList<CommentDAO>) data[0];
+		return (ArrayList<Comment>) data[0];
 	}
 	
 	public static String[][] FILTERS = { { "type" }, { "username" }, { "expired" }, { "status" } };
@@ -162,10 +163,10 @@ public class PunishmentsModule {
 					prop.put("success", false);
 					break;
 				}
-				ArrayList<AccountDAO> list = (ArrayList<AccountDAO>) data[0];
+				Collection<Account> list = (Collection<Account>) data[0];
 				Object[] array = new Object[list.size() * 2];
 				int index = 0;
-				for(AccountDAO account : list) {
+				for(Account account : list) {
 					array[index++] = account.getUsername();
 					array[index++] = AccountUtils.crownHTML(account);
 				}

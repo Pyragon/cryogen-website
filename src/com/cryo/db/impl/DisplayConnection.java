@@ -1,6 +1,7 @@
 package com.cryo.db.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -55,8 +56,9 @@ public class DisplayConnection extends DatabaseConnection {
 				if(data == null)
 					insert("delays", username, time);
 				else
-					set("delays", "timestamp=DEFAULT", "username='"+username+"'");
-				set("current_names", "display_name='"+next+"'", "username='"+username+"'");
+					set("delays", "timestamp=?", "username=?", time, username);
+				System.out.println("hi");
+				set("current_names", "display_name=?", "username=?", next, username);
 				break;
 			case "get-last-display":
 				username = (String) data[1];
@@ -65,11 +67,14 @@ public class DisplayConnection extends DatabaseConnection {
 				return new Object[] { (String) data[0] };
 			case "name-exists":
 				String name = (String) data[1];
+				username = (String) data[2];
 				name = name.toLowerCase().replaceAll(" ", "_");
 				data = select("current_names", "username=? OR display_name=?", GET_USER_DISPLAY, name, name);
 				if(data != null)
 					return new Object[] { true };
 				data = select("last_names", "username=? OR display_name=?", GET_USER_DISPLAY, name, name);
+				if(data != null)
+					return new Object[] { !username.equals((String) data[0]) };
 				return new Object[] { data != null };
 			case "get-username":
 				name = (String) data[1];
@@ -81,13 +86,22 @@ public class DisplayConnection extends DatabaseConnection {
 				data = select("current_names", "username=?", GET_USER_DISPLAY, name);
 				if(data == null) return null;
 				return new Object[] { (String) data[1] };
+			case "search":
+				return select("current_names", "display_name LIKE ?", GET_USERS, (String) data[1]);
 		}
 		return null;
 	}
 	
+	private final SQLQuery GET_USERS = (set) -> {
+		if(wasNull(set)) return null;
+		ArrayList<String> users = new ArrayList<>();
+		while(next(set))
+			users.add(getString(set, "username"));
+		return new Object[] { users };
+	};
+	
 	private final SQLQuery GET_TIME = (set) -> {
-		if(empty(set))
-			return new Object[] { 0 };
+		if(empty(set)) return null;
 		Timestamp stamp = getTimestamp(set, "timestamp");
 		Date date = new Date();
 		if(date.getTime() > stamp.getTime())

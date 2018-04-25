@@ -1,6 +1,7 @@
 package com.cryo.db.impl;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -9,82 +10,64 @@ import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
-import com.cryo.modules.account.support.BugReportDAO;
-import com.cryo.modules.account.support.PlayerReportDAO;
-import com.cryo.modules.account.support.punish.AppealDAO;
-import com.cryo.modules.account.support.punish.PunishDAO;
-import com.cryo.utils.CommentDAO;
+import com.cryo.modules.account.entities.BugReport;
+import com.cryo.modules.account.entities.PlayerReport;
+import com.cryo.modules.account.entities.Report;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
  *
- * Created on: March 20, 2017 at 1:43:27 PM
+ *         Created on: March 20, 2017 at 1:43:27 PM
  */
 public class ReportsConnection extends DatabaseConnection {
 
 	public ReportsConnection() {
 		super("cryogen_reports");
 	}
-	
+
 	public static ReportsConnection connection() {
-		return (ReportsConnection) Website.instance().getConnectionManager().getConnection(Connection.REPORTS);
+		return (ReportsConnection) Website	.instance()
+											.getConnectionManager()
+											.getConnection(Connection.REPORTS);
 	}
-	
-	private final SQLQuery GET_COMMENTS = (set) -> {
-		if(wasNull(set))
-			return null;
-		ArrayList<CommentDAO> comments = new ArrayList<>();
-		while(next(set)) {
-			int id = getInt(set, "id");
-			int report_id = getInt(set, "report_id");
-			int report_type = getInt(set, "report_type");
-			String username = getString(set, "username");
-			String comment = getString(set, "comment");
-			Timestamp time = getTimestamp(set, "time");
-			comments.add(new CommentDAO(id, report_id, report_type, username, comment, time));
-		}
-		return new Object[] { comments };
-	};
-	
+
 	private final SQLQuery GET_PLAYER_REPORT = (set) -> {
-		if(empty(set))
+		if (empty(set))
 			return null;
-		return new Object[] { loadPlayerReport(set, containsRow(set, "archived")) };
+		return new Object[] { loadPlayerReport(set) };
 	};
-	
+
 	private final SQLQuery GET_PLAYER_REPORTS = (set) -> {
-		if(wasNull(set))
+		if (wasNull(set))
 			return null;
-		ArrayList<PlayerReportDAO> players = new ArrayList<>();
-		boolean archived = containsRow(set, "archived");
-		while(next(set)) {
-			PlayerReportDAO report = loadPlayerReport(set, archived);
+		ArrayList<PlayerReport> players = new ArrayList<>();
+		while (next(set)) {
+			PlayerReport report = loadPlayerReport(set);
 			players.add(report);
 		}
 		return new Object[] { players };
 	};
-	
+
 	private final SQLQuery GET_BUG_REPORT = (set) -> {
-		if(empty(set)) return null;
-		return new Object[] { loadBugReport(set, containsRow(set, "archived")) };
-	};
-	
-	private final SQLQuery GET_BUG_REPORTS = (set) -> {
-		if(wasNull(set))
+		if (empty(set))
 			return null;
-		ArrayList<BugReportDAO> bugs = new ArrayList<>();
-		boolean archived = containsRow(set, "archived");
-		while(next(set)) {
-			BugReportDAO bug = loadBugReport(set, archived);
+		return new Object[] { loadBugReport(set) };
+	};
+
+	private final SQLQuery GET_BUG_REPORTS = (set) -> {
+		if (wasNull(set))
+			return null;
+		ArrayList<BugReport> bugs = new ArrayList<>();
+		while (next(set)) {
+			BugReport bug = loadBugReport(set);
 			bugs.add(bug);
 		}
 		return new Object[] { bugs };
 	};
-	
-	@SuppressWarnings("unchecked")
-	private final PlayerReportDAO loadPlayerReport(ResultSet set, boolean archived) {
+
+	private final PlayerReport loadPlayerReport(ResultSet set) {
 		int id = getInt(set, "id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
@@ -92,20 +75,16 @@ public class ReportsConnection extends DatabaseConnection {
 		String rule = getString(set, "rule");
 		String info = getString(set, "info");
 		String proof = getString(set, "proof");
+		int commentList = getInt(set, "comment_list");
 		String lastAction = getString(set, "last_action");
-		String comment = getString(set, "comment");
 		Timestamp time = getTimestamp(set, "time");
-		String read = getString(set, "read");
-		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
-		PlayerReportDAO report = new PlayerReportDAO(id, username, title, offender, rule, info, proof, lastAction, comment, time);
-		report.setUsersRead(list);
-		if(archived)
-			report.setArchived(getTimestamp(set, "archived"));
+		Timestamp archived = getTimestamp(set, "archived");
+		boolean active = getInt(set, "active") == 1;
+		PlayerReport report = new PlayerReport(id, username, title, offender, rule, info, proof, lastAction, commentList, time, archived, active);
 		return report;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private final BugReportDAO loadBugReport(ResultSet set, boolean archived) {
+
+	private final BugReport loadBugReport(ResultSet set) {
 		int id = getInt(set, "id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
@@ -113,125 +92,158 @@ public class ReportsConnection extends DatabaseConnection {
 		String date = getString(set, "seen");
 		String info = getString(set, "info");
 		String lastAction = getString(set, "last_action");
-		String comment = getString(set, "comment");
+		int commentList = getInt(set, "comment_list");
 		Timestamp time = getTimestamp(set, "time");
-		String read = getString(set, "read");
-		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
-		BugReportDAO bug = new BugReportDAO(id, username, title, replicated, date, info, lastAction, comment, time);
-		bug.setUsersRead(list);
-		if(archived)
-			bug.setArchived(getTimestamp(set, "archived"));
+		Timestamp archived = getTimestamp(set, "time");
+		boolean active = getInt(set, "active") == 1;
+		BugReport bug = new BugReport(id, username, title, replicated, date, info, lastAction, commentList, time, archived, active);
 		return bug;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] handleRequest(Object... data) {
 		String opcode = (String) data[0];
-		switch(opcode) {
-			case "search-breport":
-			case "search-preport":
-				boolean isBug = opcode.contains("breport");
-				Properties queryValues = (Properties) data[1];
-				int page = (int) data[2];
-				boolean isArchive = (boolean) data[3];
-				String query = (String) queryValues.get("query");
-				Object[] values = (Object[]) queryValues.get("values");
-				if(page == 0) page = 1;
-				int offset = (page - 1) * 10;
-				query += " LIMIT "+offset+",10";
-				String table = "";
-				if(isArchive)
-					table = isBug ? "b_archive" : "p_archive";
-				else
-					table = isBug ? "bug_reports" : "player_reports";
-				data = select(table, query, isBug ? GET_BUG_REPORTS : GET_PLAYER_REPORTS, values);
-				return data == null ? null : new Object[] { isBug ? (ArrayList<BugReportDAO>) data[0] : (ArrayList<PlayerReportDAO>) data[0] };
-			case "search-results-breport":
-			case "search-results-preport":
-				isBug = opcode.contains("breport");
-				queryValues = (Properties) data[1];
-				isArchive = (boolean) data[2];
-				query = (String) queryValues.get("query");
-				values = (Object[]) queryValues.get("values");
-				table = "";
-				if(isArchive)
-					table = isBug ? "b_archive" : "p_archive";
-				else
-					table = isBug ? "bug_reports" : "player_reports";
-				int total = selectCount(table, query, values);
-				return new Object[] { (int) Utilities.roundUp(total, 10) };
-			case "get-comments":
-				int report_id = (int) data[1];
-				int type = (int) data[2];
-				data = select("comments", "report_id=? AND report_type=?", GET_COMMENTS, report_id, type);
-				return data == null ? null : new Object[] { (ArrayList<CommentDAO>) data[0] };
-			case "submit-com":
-				int id = (int) data[1];
-				type = (int) data[2];
-				String username = (String) data[3];
-				String comment = (String) data[4];
-				insert("comments", "DEFAULT", id, type, username, comment, "DEFAULT");
-				String db = type == 0 ? "player_reports" : "bug_reports";
-				set(db, "last_action=?", "id=?", "Comment submitted by $for-name="+username+"$end", id);
-				return new Object[] { };
-			case "get-player-report":
-				id = (int) data[1];
-				boolean archived = (boolean) data[2];
-				data = select(archived ? "p_archive" : "player_reports", "id=?", GET_PLAYER_REPORT, id);
-				return data == null ? null : new Object[] { (PlayerReportDAO) data[0] };
-			case "get-player-reports":
-				archived = (boolean) data[1];
-				page = (int) data[2];
-				if(page == 0) page = 1;
-				offset = (page - 1) * 10;
-				StringBuilder builder = new StringBuilder();
-				builder.append(archived ? "p_archive" : "player_reports")
-						.append(" ORDER BY ").append(archived ? "archived" : "time")
-						.append(" DESC LIMIT "+offset+",10");
-				data = select(builder.toString(), null, GET_PLAYER_REPORTS);
-				return data == null ? null : new Object[] { (ArrayList<PlayerReportDAO>) data[0] };
-			case "get-total-results":
-				table = (String) data[1];
-				return new Object[] { selectCount(table, null) };
-			case "get-bug-reports":
-				archived = (boolean) data[1];
-				page = (int) data[2];
-				if(page == 0) page = 1;
-				offset = (page - 1) * 10;
-				builder = new StringBuilder();
-				builder.append(archived ? "b_archive" : "bug_reports")
-						.append(" ORDER BY ").append(archived ? "archived" : "time")
-						.append(" DESC LIMIT "+offset+",10");
-				data = select(builder.toString(), null, GET_BUG_REPORTS);
-				ArrayList<BugReportDAO> reports = (ArrayList<BugReportDAO>) data[0];
-				return data == null ? null : new Object[] { reports };
-			case "get-bug-report":
-				id = (int) data[1];
-				archived = (boolean) data[2];
-				data = select(archived ? "b_archive" : "bug_reports", "id=?", GET_BUG_REPORT, id);
-				return data == null ? null : new Object[] { (BugReportDAO) data[0] };
-			case "report_player":
-				PlayerReportDAO report = (PlayerReportDAO) data[1];
-				insert("player_reports", (Object[]) ((PlayerReportDAO) report).data());
-				break;
-			case "report_bug":
-				BugReportDAO breport = (BugReportDAO) data[1];
-				insert("bug_reports", (Object[]) ((BugReportDAO) breport).data());
-				break;
-			case "archive-report":
-				id = (int) data[1];
-				type = (int) data[2];
-				username = (String) data[3];
-				String archive = type == 1 ? "b_archive" : "p_archive";
-				table = type == 1 ? "bug_reports" : "player_reports";
-				execute("INSERT INTO "+archive+" SELECT *, NOW() AS archived FROM "+table+" WHERE id=?;", id);
-				handleRequest("submit-com", id, type, "cryobot", "Report has been archived by $for-name="+username+"$end.");
-				set(archive, "last_action=?", "id=?", "Report archived by $for-name="+username+"$end", id);
-				delete(table, "id=?", id);
-				break;
+		switch (opcode) {
+		case "search-reports":
+			String table = ""; // to remove
+			Properties queryValues = (Properties) data[2];
+			int page = (int) data[3];
+			boolean archived = (boolean) data[4]; 
+			String query = (String) queryValues.get("query");
+			Object[] values = (Object[]) queryValues.get("values");
+			if (page == 0)
+				page = 1;
+			int offset = (page - 1) * 10;
+			query += " LIMIT " + offset + ",10";
+			return select(table, query, table.contains("bug") ? GET_BUG_REPORTS : GET_PLAYER_REPORTS, values);
+		case "search-results":
+			table = (String) data[1];
+			queryValues = (Properties) data[2];
+			query = (String) queryValues.get("query");
+			values = (Object[]) queryValues.get("value");
+			int total = selectCount(table, query, values);
+			return new Object[] { (int) Utilities.roundUp(total, 10) };
+		case "get-player-report":
+			return select("player_reports", "id=?", GET_PLAYER_REPORT, (int) data[1]);
+		case "get-player-reports":
+			archived = (boolean) data[1];
+			page = (int) data[2];
+			if (page == 0)
+				page = 1;
+			offset = (page - 1) * 10;
+			StringBuilder builder = new StringBuilder();
+			builder	.append("player_reports")
+					.append(" WHERE active=")
+					.append(archived ? "0" : "1")
+					.append(" ORDER BY ")
+					.append(archived ? "archived" : "time")
+					.append(" DESC LIMIT " + offset + ",10");
+			return select(builder.toString(), null, GET_PLAYER_REPORTS);
+		case "get-reports":
+			String type = (String) data[1];
+			page = (int) data[2];
+			String username = (String) data[3];
+			archived = (boolean) data[4];
+			if(page == 0)
+				page = 1;
+			offset = (page - 1) * 10;
+			ArrayList<Report> reports = new ArrayList<Report>();
+			if(type.equals("all")) {
+				//ResultSet set = executeQuery("SELECT b.id, b.type, b.time, p.id, p.type, p.time FROM bug_reports b JOIN player_reports p WHERE b.username = '"+username+"' AND p.username = '"+username+"' AND p.active="+(archived ? "0" : "1")+" AND b.active="+(archived ? "0" : "1")+" ORDER BY p.time, b.time DESC LIMIT "+offset+",10");
+				ResultSet set = executeQuery("SELECT a.* FROM (SELECT id, type, time, username, active FROM player_reports UNION ALL SELECT id, type, time, username, active FROM bug_reports) a WHERE username = ? AND active=? ORDER BY time DESC LIMIT ?,10", username, archived ? "0" : "1", offset);
+				if(wasNull(set))
+					break;
+				while(next(set)) {
+					int reportType = getInt(set, "type");
+					int id = getInt(set, "id");
+					String comm = reportType == 0 ? "get-bug-report" : "get-player-report";
+					data = handleRequest(comm, id);
+					if(data == null)
+						continue;
+					Report report = (Report) data[0];
+					reports.add(report);
+				}
+			} else if(type.equals("bugs")) {
+				data = handleRequest("get-bug-reports", archived, page);
+				ArrayList<BugReport> brep = (ArrayList<BugReport>) data[0];
+				reports.addAll(brep);
+			} else {
+				data = handleRequest("get-player-reports", archived, page);
+				ArrayList<PlayerReport> prep = (ArrayList<PlayerReport>) data[0];
+				reports.addAll(prep);
+			}
+			return new Object[] { reports };
+		case "set-last-action":
+			int id = (int) data[1];
+			String lastAction = (String) data[2];
+			int reportType = (int) data[3];
+			data = handleRequest("get-"+(reportType == 0 ? "bug" : "player")+"-report", id);
+			if(data == null) return null;
+			set(reportType == 0 ? "bug_reports" : "player_reports", "last_action=?", "id=?", lastAction, id);
+			return new Object[] {};
+		case "get-total-results":
+			type = (String) data[1];
+			page = (int) data[2];
+			username = (String) data[3];
+			archived = (boolean) data[4];
+			int count = 0;
+			if(type.equals("all"))
+				count = selectCount("(SELECT id, type, time, username, active FROM player_reports UNION ALL SELECT id, type, time, username, active FROM bug_reports) a", "active=? AND username=?", archived ? "0" : "1", username);
+			else if(type.equals("bugs"))
+				count = selectCount("bug_reports", "active=? AND username=?", archived ? "0" : "1", username);
+			else
+				count = selectCount("player_reports", "active=? AND username=?", archived ? "0" : "1", username);
+			return new Object[] { (int) Utilities.roundUp(count, 10) };
+		case "get-bug-reports":
+			archived = (boolean) data[1];
+			page = (int) data[2];
+			if (page == 0)
+				page = 1;
+			offset = (page - 1) * 10;
+			builder = new StringBuilder();
+			builder	.append("bug_reports")
+					.append(" WHERE active=")
+					.append(archived ? "0" : "1")
+					.append(" ORDER BY ")
+					.append(archived ? "archived" : "time")
+					.append(" DESC LIMIT " + offset + ",10");
+			return select(builder.toString(), null, GET_BUG_REPORTS);
+		case "get-bug-report":
+			return select("bug_reports", "id=?", GET_BUG_REPORT, (int) data[1]);
+		case "report-player":
+			PlayerReport report = (PlayerReport) data[1];
+			insert("player_reports", report.getCreationData());
+			break;
+		case "report-bug":
+			BugReport breport = (BugReport) data[1];
+			insert("bug_reports", breport.getCreationData());
+			break;
+		case "archive-report":
+			id = (int) data[1];
+			table = (String) data[2];
+			username = (String) data[3];
+			Report rep = null;
+			data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
+			if(data == null) return null;
+			set(table, "active=0", "id=?", id);
+			rep = (Report) data[0];
+			Website.instance().getCommentsManager().addComment("cryobot", "Report has been archived by $for-name="+username+"$end", rep.getCommentList());
+			//submit comment
+			break;
 		}
 		return null;
 	}
 	
+	public enum Queries {
+		ALL("SELECT b.id, b.type, b.time, p.id, p.type, p.time FROM bug_reports b JOIN player_reports p ON b.username = p.username WHERE b.username = ? ORDER BY p.time, b.time DESC LIMIT ?,10"),
+		BUGS("SELECT "),
+		PLAYER("");
+		
+		private String query;
+		
+		Queries(String query) {
+			this.query = query;
+		}
+	}
+
 }

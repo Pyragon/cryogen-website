@@ -3,8 +3,8 @@ package com.cryo.modules.highscores;
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.HighscoresConnection;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.Utilities;
 
 import lombok.Getter;

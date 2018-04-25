@@ -2,6 +2,10 @@
 function reloadOverview() {
 
 }
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
 
 const CLOSE = 'Click to close search bar.';
 const OPEN = 'Click to open search bar.';
@@ -71,6 +75,15 @@ function getPages(page_t, page) {
 	return elem;
 }
 
+function isEmpty(...args) {
+	for(var i = 0; i < args.length; i++) {
+		var val = args[i].toString();
+		if(val.replace(/\s/g,"") == "")
+			return true;
+	}
+	return false;
+}
+
 function getJSON(ret) {
 	var data = JSON.parse(ret);
 	if (data.success == null) {
@@ -78,7 +91,8 @@ function getJSON(ret) {
 		return null;
 	}
 	if (!data.success) {
-		sendAlert(data.error);
+		if(data.error !== '')
+			sendAlert(data.error);
 		return null;
 	}
 	return data;
@@ -180,7 +194,6 @@ function update(info, data, mod) {
 }
 
 function hidePages(mod) {
-	console.log('hiding');
 	$('#' + mod + '-pages').closest('.pages').css('display', 'none');
 }
 
@@ -202,6 +215,8 @@ function sendAlert(text) {
 		theme: 'cryogen'
 	});
 }
+
+//account search section
 
 //staff section search
 
@@ -342,18 +357,6 @@ function decreaseRestart() {
 }
 
 function reconnect() {
-	// ping('www.cryogen-rsps.com', function(status, e=null) {
-	//     console.log(status);
-	//     if(status === 'onload') {
-	//         $('#shutdown-timer').html('Website has restarted. Click here to refresh the page.');
-	//         $('#shutdown-timer').addClass('restart-page').css('cursor', 'pointer');
-	//     } else if(status === 'onerror') {
-	//         console.error(e);
-	//     } else {
-	//         if(status === 'timeout')
-	//             setTimeout(reconnect, 1000);
-	//     }
-	// });
 	$.ajax({
 		url: '/',
 		error: function () {
@@ -395,6 +398,47 @@ function ping(ip, callback) {
 	this.timer = setTimeout(function () {
 		_that.callback('timeout');
 	}, 900);
+}
+
+var valid = [ '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
+			'8', '9', ' ' ];
+
+function containsInvalidChars(name) {
+	for(var i = 0; i < name.length; i++) {
+		var n = name.charAt(i);
+		if(!valid.includes(n)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function validName(name) {
+	name = name.toLowerCase()
+	if(containsInvalidChars(name))
+		return 'Display name contains invalid characters';
+	if(name.length < 3 || name.length > 12)
+		return 'Display name must be between 3 and 12 characters';
+	if(/"\w*(-{2}|_{2}|-_|_-)\w*"/.test(name))
+		return 'Name cannot contain two spaces, underscores, or hyphens in a row';
+	if(name.startsWith("-") || name.endsWith("-"))
+		return 'Name cannot start or end with a hyphen';
+	if(name.startsWith("_") || name.endsWith("_"))
+		return 'Display name cannot start or end with an underscore';
+	if(name.startsWith(" ") || name.endsWith(" "))
+		return 'Display name cannot start or end with a space';
+	if(name.toLowerCase().includes("mod") || name.toLowerCase().includes("admin"))
+		return 'Display name contains invalid words';
+	return null;
+}
+
+function post(link, options, callback) {
+	$.post(link, options, function(ret) {
+		callback(ret);
+	}).fail(function() {
+		sendAlert('Error connecting to website server. Please try again.');
+	});
 }
 
 //static

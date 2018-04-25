@@ -12,8 +12,8 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountDAO;
 import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.support.punish.AppealDAO;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
@@ -52,7 +52,7 @@ public class StaffModule extends WebModule {
 		if(!CookieManager.isLoggedIn(request))
 			return showLoginPage("/staff", request, response);
 		String username = CookieManager.getUsername(request);
-		AccountDAO account = AccountUtils.getAccount(username);
+		Account account = AccountUtils.getAccount(username);
 		if(account == null)
 			return showLoginPage("/staff", request, response);
 		if(account.getRights() == 0)

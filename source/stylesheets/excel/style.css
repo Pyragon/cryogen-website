@@ -1,0 +1,37 @@
+.dropdown {
+  position: relative;
+  display: inline-block;
+  float: right;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #222;
+  min-width: 160px;
+  border: 1px solid black;
+  border-radius: 3px;
+  z-index: 1;
+  right: 0;
+  left: auto;
+}
+
+.filter-item {
+  padding: 5px 5px 0 5px;
+}
+
+.filter-menu-title {
+  border-bottom-style: solid;
+  border-bottom-color: grey;
+  border-width: 0.1px;
+  font-size: 14px;
+  padding: 5px;
+}
+
+.sheet-name {
+  margin-right: 10px;
+}
+
+.show {
+  display: block;
+}

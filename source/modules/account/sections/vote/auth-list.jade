@@ -1,5 +1,0 @@
-if voteManager.getAuthList().isEmpty()
-  p No Auths Found!
-else
-  for auth in voteManager.getAuthList()
-    p.auth(data-authuid=''+auth.getId())= auth.getFormattedAuth()
