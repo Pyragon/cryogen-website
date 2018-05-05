@@ -1,75 +1,67 @@
 extend ../default
 
 block head
-	link(rel='stylesheet', href='/stylesheets/account/vote.css')
-	link(rel='stylesheet', href='/stylesheets/account/reports.css')
-	script.
-		var loaded = [];
-		function checkSection(section) {
-			if(section == 'reports') {
-				$('<link>').appendTo('head').attr({
-					type: 'text/css', 
-					rel: 'stylesheet',
-					href: '/stylesheets/account/reports.css'
-				});
-			} else {
-				$('link[href="/stylesheets/account/reports.css"]').remove();
-			}
-		}
-		function loadSection(section) {
-			checkSection(section);
-			$.post('/account/'+section, { action:'load' }, function(ret) {
-				var data = getJSON(ret);
-				if(data == null) return;
-				$('#'+section).html(data.html);
-			});
-		}
-		$(document).ready(function() {
+  link(rel='stylesheet', href='/stylesheets/account/vote.css')
+  link(rel='stylesheet', href='/stylesheets/account/reports.css')
+  link(rel='stylesheet', href='/stylesheets/account/punish.css')
+  script.
+    var loaded = [];
+    function loadSection(section) {
+      $.post('/account/'+section, { action:'load' }, function(ret) {
+        var data = getJSON(ret);
+        if(data == null) return false;
+        $('#'+section).html(data.html);
+        return true;
+      });
+    }
+    $(document).ready(function() {
 
-			var section = "!{section.getName()}";
+      var section = "!{section.getName()}";
 
-			history.pushState({}, "AccountSection", "/account/"+section)
+      history.pushState({}, "AccountSection", "/account/"+section)
 
-			loadSection(section);
+      loadSection(section);
 
-			loaded.push(section)
+      loaded.push(section)
 
-			$('.nav-tabs a[href="#'+section+'"]').tab('show')
+      $('.nav-tabs a[href="#'+section+'"]').tab('show')
 
-			$('.nav-tabs a').click(function() {
-				$(this).tab('show');
+      $('.nav-tabs a').click(function() {
+        $(this).tab('show');
 
-				var section = $(this).attr('href').replace("#", "")
-				if(!loaded.includes(section)) {
-					loadSection(section);
-					loaded.push(section)
-				}
-				checkSection(section);
-				history.pushState({}, "AcctionSection", "/account/"+section)
+        var section = $(this).attr('href').replace("#", "")
+        if(!loaded.includes(section)) {
+          if(loadSection(section))
+            loaded.push(section)
+        }
+        history.pushState({}, "AcctionSection", "/account/"+section)
 
-			})
-		});
+      })
+    });
 
 block content
-	div.container.account-area(style='min-height: 600px; padding: 20px 0;')
-		div.row
-			div.col-md-3
-				ul.nav.nav-tabs
-					li.nav.active.account-item
-						a(href='#overview', data-toggle='tab') Account overview
-					li.nav.account-item
-						a.vote(href='#vote', data-toggle='tab') Vote
-					li.nav.account-item
-						a.vote(href='#reports', data-toggle='tab') Reports
-					li.nav.account-item
-						a(href='#redeem', data-toggle='tab') Redeem
-					li.nav.account-item
-						a(href='#shop', data-toggle='tab') Cryogen shop
-			div.col-md-9
-				div.widget
-					div.tab-content.content
-						div.tab-pane.fade.in.active(id='overview')
-						div.tab-pane.fade.in.active(id='vote')
-						div.tab-pane.fade.in.active(id='reports')
-						div.tab-pane.fade.in.active(id='redeem')
-						div.tab-pane.fade.in.active(id='shop')
+  div.container.account-area(style='min-height: 600px; padding: 20px 0;')
+    div.row
+      div.col-md-3
+        ul.nav.nav-tabs
+          li.nav.active.account-item
+            a(href='#overview', data-toggle='tab') Account overview
+          li.nav.account-item
+            a.vote(href='#vote', data-toggle='tab') Vote
+          li.nav.account-item
+            a.vote(href='#reports', data-toggle='tab') Reports
+          li.nav.account-item
+            a.vote(href='#punishments', data-toggle='tab') Punishments
+          li.nav.account-item
+            a(href='#redeem', data-toggle='tab') Redeem
+          li.nav.account-item
+            a(href='#shop', data-toggle='tab') Cryogen shop
+      div.col-md-9
+        div.widget
+          div.tab-content.content
+            div.tab-pane.fade.in.active(id='overview')
+            div.tab-pane.fade.in.active(id='vote')
+            div.tab-pane.fade.in.active(id='reports')
+            div.tab-pane.fade.in.active(id='punishments')
+            div.tab-pane.fade.in.active(id='redeem')
+            div.tab-pane.fade.in.active(id='shop')
