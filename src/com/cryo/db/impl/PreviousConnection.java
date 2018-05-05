@@ -145,7 +145,6 @@ public class PreviousConnection extends DatabaseConnection {
 				}
 				hash = BCrypt.hashPassword(hash, salt);
 				results[i] = hashes.contains(hash) ? 1 : 0;
-				System.out.println("i: " + i + ": " + hashes.contains(hash));
 			}
 			return new Object[] { results };
 		}
