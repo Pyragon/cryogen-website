@@ -7,11 +7,11 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.comments.Comment;
-import com.cryo.db.impl.PunishmentConnection;
+import com.cryo.db.impl.PunishmentsConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.support.punish.AppealDAO;
-import com.cryo.modules.account.support.punish.PunishDAO;
+import com.cryo.modules.account.entities.Appeal;
+import com.cryo.modules.account.entities.Punishment;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.modules.staff.BugReport;
@@ -31,7 +31,7 @@ public class StaffAppealModule {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Comment> getComments(int id) {
 		ArrayList<Comment> comments = new ArrayList<>();
-		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", id, 0);
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-comments", id, 0);
 		if(data == null)
 			return comments;
 		return (ArrayList<Comment>) data[0];
@@ -45,13 +45,13 @@ public class StaffAppealModule {
 				HashMap<String, Object> model = new HashMap<>();
 				String text = request.queryParams("search");
 				int page = Integer.parseInt(request.queryParams("page"));
-				Properties search_results = Website.instance().getSearchManager().search("appeal", text, page, PunishmentConnection.connection());
+				Properties search_results = Website.instance().getSearchManager().search("appeal", text, page, PunishmentsConnection.connection());
 				prop.put("success", search_results.get("success"));
 				if(!(boolean) search_results.get("success")) {
 					prop.put("error", search_results.get("error"));
 					break;
 				}
-				List<AppealDAO> punishments = (List<AppealDAO>) search_results.get("results");
+				List<Appeal> punishments = (List<Appeal>) search_results.get("results");
 				model.put("appeals", punishments);
 				String html = module.render("./source/modules/staff/appeals/appeal_list.jade", model, request, response);
 				prop.put("success", true);
@@ -78,15 +78,15 @@ public class StaffAppealModule {
 					}
 				}
 				int new_status = closeA.equals("decline") ? 2 : closeA.equals("accept") ? 1 : 0;
-				PunishmentConnection.connection().handleRequest("close-appeal", id, new_status, username, reason);
+				PunishmentsConnection.connection().handleRequest("close-appeal", id, new_status, username, reason);
 				prop.put("success", true);
-				Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", id);
+				Object[] data = PunishmentsConnection.connection().handleRequest("get-appeal", id);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Invalid appeal ID. Please reload the page and contact an Admin if this persists.");
 					break;
 				}
-				AppealDAO appeal = (AppealDAO) data[0];
+				Appeal appeal = (Appeal) data[0];
 				
 				model = new HashMap<>();
 				model.put("appeal", appeal);
@@ -103,13 +103,13 @@ public class StaffAppealModule {
 				model.put("appeals", new PunishUtils().getAppeals(null, archived, page));
 				model.put("utils", new PunishUtils());
 				prop.put("success", true);
-				prop.put("pageTotal", PunishUtils.getTotalPages(PunishmentConnection.connection(), "appeals"+(archived ? "-a":"")));
+				prop.put("pageTotal", PunishUtils.getTotalPages(PunishmentsConnection.connection(), "appeals"+(archived ? "-a":"")));
 				prop.put("html", module.render("./source/modules/staff/appeals/appeal_list.jade", model, request, response));
 				break;
 			case "submit-com":
 				id = Integer.parseInt(request.queryParams("id"));
 				String comment = request.queryParams("comment");
-				PunishmentConnection.connection().handleRequest("add-comment", username, id, 0, comment);
+				PunishmentsConnection.connection().handleRequest("add-comment", username, id, 0, comment);
 				model = new HashMap<>();
 				model.put("comments", getComments(id));
 				html = module.render("./source/modules/utils/comments.jade", model, request, response);
@@ -139,13 +139,13 @@ public class StaffAppealModule {
 				break;
 			case "view-appeal":
 				id = Integer.parseInt(request.queryParams("id"));
-				data = PunishmentConnection.connection().handleRequest("get-appeal", id);
+				data = PunishmentsConnection.connection().handleRequest("get-appeal", id);
 				if(data == null) {
 					prop.put("success", false);
 					prop.put("error", "Invalid appeal ID. Please reload the page and contact an Admin if this persists.");
 					break;
 				}
-				appeal = (AppealDAO) data[0];
+				appeal = (Appeal) data[0];
 				model = new HashMap<>();
 				model.put("appeal", appeal);
 				model.put("comments", getComments(appeal.getId()));

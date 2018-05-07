@@ -14,7 +14,7 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.account.support.punish.AppealDAO;
+import com.cryo.modules.account.entities.Appeal;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
 import com.cryo.modules.search.Filter;

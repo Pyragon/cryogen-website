@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cryo.modules.account.support.punish.PunishDAO;
+import com.cryo.modules.account.entities.Punishment;
 import com.cryo.modules.search.Filter;
 
 import lombok.*;
@@ -45,15 +45,15 @@ public class StatusFilter extends Filter {
 	@SuppressWarnings("unchecked")
 	public List<?> filterList(List<?> list) {
 		if(list.size() == 0) return list;
-		if(!(list.get(0) instanceof PunishDAO))
+		if(!(list.get(0) instanceof Punishment))
 			return list;
-		List<PunishDAO> punishments = (List<PunishDAO>) list;
+		List<Punishment> punishments = (List<Punishment>) list;
 		return punishments.stream()
 				.filter(this::hasDesiredStatus)
 				.collect(Collectors.toList());
 	}
 	
-	public boolean hasDesiredStatus(PunishDAO punish) {
+	public boolean hasDesiredStatus(Punishment punish) {
 		int intVal = (this.value instanceof Integer) ? (int) this.value : 0;
 		if(punish.getAppeal() == null && intVal != 0)
 			return intVal == -1;

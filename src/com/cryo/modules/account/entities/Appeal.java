@@ -1,4 +1,4 @@
-package com.cryo.modules.account.support.punish;
+package com.cryo.modules.account.entities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -13,17 +13,16 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Data
-public class AppealDAO {
+public class Appeal {
 	
 	private final int id;
-	private final int type;
 	private final String username, title, message;
 	private String reason;
-	private String lastAction;
-	private String displayName;
+	private final String lastAction;
 	private final int active;
 	private final int punishId;
 	private final Timestamp time;
+	private Timestamp answered;
 	
 	private ArrayList<String> usersRead;
 	
@@ -31,16 +30,12 @@ public class AppealDAO {
 		return reason;
 	}
 	
-	public String type() {
-		return "APPEAL";
-	}
-	
 	public boolean isActive() {
 		return active == 0;
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", type, punishId, username, title, message, "", "DEFAULT", "", 0, "DEFAULT" };
+		return new Object[] { "DEFAULT", punishId, username, title, message, "", "DEFAULT", "", 0, "DEFAULT", "NULL" };
 	}
 	
 	public String getStatus() {
@@ -54,7 +49,7 @@ public class AppealDAO {
 	
 	public String getColour() {
 		switch(active) {
-			case 0: return "";
+			case 0: return "color-yellow";
 			case 1: return "color-green";
 			case 2: return "color-red";
 			default: return "color-red";

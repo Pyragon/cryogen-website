@@ -123,7 +123,7 @@ public class ReportsConnection extends DatabaseConnection {
 			else if(type == 1)
 				total = selectCount("player_repots", query, GET_PLAYER_REPORTS, values);
 			else if(type == 2) {
-				String realQuery = "SELECT COUNT(*) FROM (SELECT id, type, time, username, title, active FROM player_reports UNION ALL SELECT id, type, time, username, title, active FROM bug_reports) a WHERE "+query;
+				String realQuery = "SELECT COUNT(*) FROM (SELECT id, type, time, last_action, username, title, active FROM player_reports UNION ALL SELECT id, type, time, last_action, username, title, active FROM bug_reports) a WHERE "+query;
 				ResultSet set = executeQuery(realQuery, values);
 				try {
 				if(!next(set)) {
@@ -164,7 +164,7 @@ public class ReportsConnection extends DatabaseConnection {
 				if(data != null)
 					reports.addAll((ArrayList<PlayerReport>) data[0]);
 			} else if(type == 2) {
-				String realQuery = "SELECT a.* FROM (SELECT id, type, time, username, title, active FROM player_reports UNION ALL SELECT id, type, time, username, title, active FROM bug_reports) a WHERE "+query;
+				String realQuery = "SELECT a.* FROM (SELECT id, type, time, username, last_action, title, active FROM player_reports UNION ALL SELECT id, type, time, username, last_action, title, active FROM bug_reports) a WHERE "+query;
 				ResultSet set = executeQuery(realQuery, values);
 				if(wasNull(set))
 					break;
@@ -280,27 +280,19 @@ public class ReportsConnection extends DatabaseConnection {
 			String table = (String) data[2];
 			username = (String) data[3];
 			Report rep = null;
-			data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
-			if(data == null) return null;
-			set(table, "active=0", "id=?", id);
-			rep = (Report) data[0];
-			Website.instance().getCommentsManager().addComment("cryobot", "Report has been archived by $for-name="+username+"$end", rep.getCommentList());
+			try {
+				data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
+				if(data == null) return null;
+				rep = (Report) data[0];
+				Website.instance().getCommentsManager().addComment("cryobot", "Report has been archived by $for-name="+username+"$end", rep.getCommentList());
+				set(table, "active=0,last_action=?", "id=?", "Archived by $for-name="+username+"$end", id);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			//submit comment
 			break;
 		}
 		return null;
-	}
-	
-	public enum Queries {
-		ALL("SELECT b.id, b.type, b.time, p.id, p.type, p.time FROM bug_reports b JOIN player_reports p ON b.username = p.username WHERE b.username = ? ORDER BY p.time, b.time DESC LIMIT ?,10"),
-		BUGS("SELECT "),
-		PLAYER("");
-		
-		private String query;
-		
-		Queries(String query) {
-			this.query = query;
-		}
 	}
 
 }

@@ -53,7 +53,6 @@ public class ReportsSection implements AccountSection {
 			}
 			break;
 		case "load-list":
-			System.out.println("test");
 			String type = request.queryParams("type");
 			String filter = request.queryParams("filters");
 			int page = Integer.parseInt(request.queryParams("page"));
@@ -87,8 +86,6 @@ public class ReportsSection implements AccountSection {
 				}
 				break;
 			}
-			prop.put("success", false);
-			prop.put("error", "test");
 			break;
 		case "load-noty":
 			String name = request.queryParams("name");

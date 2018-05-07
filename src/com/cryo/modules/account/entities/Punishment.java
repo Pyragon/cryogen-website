@@ -1,4 +1,4 @@
-package com.cryo.modules.account.support.punish;
+package com.cryo.modules.account.entities;
 
 import java.sql.Timestamp;
 
@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Data
-public class PunishDAO {
+public class Punishment {
 	
 	private final int id;
 	private final String username;
@@ -23,15 +23,17 @@ public class PunishDAO {
 	private final String reason;
 	private final boolean active;
 	private final int appealId;
+	private final Timestamp archived;
+	private final String archiver;
 	
-	private AppealDAO appeal;
+	private Appeal appeal;
 	
 	public boolean isAppealable() {
 		return appealId == 0;
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", appealId, username, type, "DEFAULT", expiry, punisher, reason, (active ? 1 : 0) };
+		return new Object[] { "DEFAULT", appealId, username, type, "DEFAULT", expiry, punisher, reason, (active ? 1 : 0), archived, archiver };
 	}
 	
 }

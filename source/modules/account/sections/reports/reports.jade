@@ -20,12 +20,9 @@ script.
     }
 
     function loadListWPage(archive, page) {
-      $.post('/account/reports', { action:'load-list', archive:archive, type:reports_filter, page:page, filters:JSON.stringify(reports_filters) }, function(ret) {
-        var data = getJSON(ret);
-        if(data == null) return;
-        $('#reports-main').html(data.html);
-        updatePage(data.pageTotal, page, 'reports');
-      });
+      reports_page = page;
+      archived = archive;
+      loadList();
     }
 
     function switchFilter() {
@@ -267,9 +264,7 @@ script.
     $('#search-reports-icon').attr('title', OPEN);
 
     function clickedSearchIcon() {
-      console.log(reports_filter)
       type = reports_filter == 'all' ? '2' : reports_filter == 'bugs' ? '0' : '1'
-      console.log(type)
       clickSearchIcon('reports', archived, reports_page, loadListWPage, { 'type': type })
     }
 
@@ -303,7 +298,7 @@ div.row
         div.col-xs-4
           p.color-grey.search-info Click the search icon to begin searching through reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
         div.col-xs-4
-          p.color-grey.search-info Filters: title: (title), date: start-end (dd/mm/yyyy), last_action: (last_action)
+          p.color-grey.search-info Filters: type: (0 - bug, 1 - player, PAGE FILTER MUST BE SET TO ALL), title: (title), date: start-end (dd/mm/yyyy), last_action: (last_action)
         div.col-xs-4
           p.color-grey.search-info Example: title: test, last_action: archived
       div(style='float: right; margin: 33.5px 5px;')

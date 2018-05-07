@@ -1,0 +1,20 @@
+div.noty_message
+  span.noty_text
+  div.widget.register#view-appeal(style='margin-top: 5px', data-id=appeal.getId())
+    div(style="margin: auto; max-width: 400px; padding: 5px;")
+      div.row(style='clear: both;')
+        h4.color-white.t-center Title
+          h6.color-grey.t-center= appeal.getTitle()
+        h4.color-white.t-center Appeal
+          h6.color-grey.t-center(style='white-space: pre-wrap;')= appeal.getMessage()
+        h4.color-white.t-center Created On
+          h6.color-grey.t-center= formatter.formatTimestamp(appeal.getTime(), 'MMM dd, YYYY hh:mm a')
+        h4.color-white.t-center Status
+          h6.color-grey.t-center(class=''+appeal.getColour())= appeal.getStatus()
+        if appeal.getActive() == 2
+          h4.color-white.t-center Reason for Decline
+            h6.color-grey.t-center= appeal.getReason()
+        if appeal.getActive() != 0
+          h4.color-white.t-center Appeal answered on
+            h6.color-grey.t-center= appeal.getReason()
+  div.noty_close

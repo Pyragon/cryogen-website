@@ -162,13 +162,10 @@ public class SearchManager {
 	}
 	
 	public static Properties getQueryValue(String mod, ArrayList<Filter> filters) {
-		System.out.println("hai45");
 		if(filters.size() == 0) return null;
-		System.out.println("hai45");
 		List<Filter> applicable = filters.stream().filter(f -> {
 			return f.getFilter(mod) != null;
 		}).collect(Collectors.toList());
-		System.out.println("hai333");
 		StringBuilder builder = new StringBuilder();
 		for(int i = 0; i < applicable.size(); i++) {
 			Filter filter = applicable.get(i);

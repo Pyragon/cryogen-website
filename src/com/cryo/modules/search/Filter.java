@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cryo.db.DatabaseConnection;
-import com.cryo.modules.account.support.punish.PunishDAO;
+import com.cryo.modules.account.entities.Punishment;
 
 import lombok.*;
 

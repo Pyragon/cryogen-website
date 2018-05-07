@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import com.cryo.db.impl.PunishmentConnection;
+import com.cryo.db.impl.PunishmentsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
+import com.cryo.modules.account.entities.Appeal;
+import com.cryo.modules.account.entities.Punishment;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
 
@@ -55,14 +57,14 @@ public class AppealModule {
 					prop.put("error", "Please wait for a staff member to respond before posting again.");
 					break;
 				}
-				PunishmentConnection.connection().handleRequest("add-comment", username, appealId, 0, comment);
+				PunishmentsConnection.connection().handleRequest("add-comment", username, appealId, 0, comment);
 				prop.put("success", true);
 				model.put("comments", new PunishUtils().getComments(appealId, 0));
 				prop.put("html", module.render("./source/modules/utils/comments.jade", model, request, response));
 				break;
 			case "create-appeal":
 				int id = Integer.parseInt(request.queryParams("id"));
-				AppealDAO appeal = new PunishUtils().getAppealFromPunishment(id);
+				Appeal appeal = new PunishUtils().getAppealFromPunishment(id);
 				if(appeal != null) {
 					prop.put("success", false);
 					prop.put("error", "Appeal already exists for this punishment!");
@@ -105,7 +107,7 @@ public class AppealModule {
 					prop.put("html", module.render("./source/modules/support/sections/appeal/create_appeal.jade", model, request, response));
 					break;
 				}
-				PunishDAO punish = new PunishUtils().getPunishmentFromAppeal(appealId); //wasn't really needed.
+				Punishment punish = new PunishUtils().getPunishmentFromAppeal(appealId); //wasn't really needed.
 				model.put("appeal", appeal);
 				model.put("comments", new PunishUtils().getComments(appealId, 0));
 				prop.put("title", "Now viewing appeal for punishment type: "+(punish.getType() == 0 ? "Mute" : "Ban"));

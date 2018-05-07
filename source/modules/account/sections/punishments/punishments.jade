@@ -1,0 +1,213 @@
+script.
+  var punish_page = 1
+  var archived = false
+  var n = null
+  $(document).ready(function() {
+
+    loadList()
+
+    function loadList() {
+      $.post('/account/punishments', { action: 'load-list', page: punish_page, archived:archived}, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        $('#punishments-main').html(data.html)
+        updatePage(data.pageTotal, punish_page, 'punishments')
+      })
+    }
+
+    function loadListWPage(archive, page) {
+      archived = archive;
+      punish_page = page;
+      loadList();
+    }
+
+    function switchArchive() {
+      archived = !archived;
+      reports_page = 1;
+      removeFilters('punishments')
+      $('#archive-punishments').html(' View '+(archived ? 'Active' : 'Archive'))
+      loadList();
+    }
+
+    function viewPunishment() {
+      var id = $(this).closest('tr').data('id')
+      if(n != null)
+        n.close();
+      $.post('/account/punishments', { action: 'view-punishment', id:id }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false;
+        n = noty({
+          text: 'View punishment',
+          type: 'confirm',
+          layout: 'center',
+          template: data.html,
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                $noty.close();
+              }
+            }
+          ]
+        })
+      })
+    }
+
+    function viewAppealInfo() {
+      var id = $(this).closest('tr').data('id')
+      if(n != null) n.close();
+      $.post('/account/punishments', { action:'get-appeal-info', id:id }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false;
+        n = noty({
+          text: 'Read before creating an appeal',
+          type: 'confirm',
+          layout: 'center',
+          template: data.html,
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-primary btn-green', text: 'Continue', onClick: function($noty) {
+                $noty.close()
+                viewCreateAppeal(id);
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                $noty.close();
+              }
+            }
+          ]
+        })
+      })
+    }
+
+    function viewCreateAppeal(id) {
+      $.post('/account/punishments', { action: 'view-create-appeal', id:id }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false;
+        n = noty({
+          text: 'Create appeal',
+          type: 'confirm',
+          layout: 'center',
+          template: data.html,
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-primary btn-green', text: 'Create', onClick: function($noty) {
+                if(createAppeal(id))
+                  $noty.close()
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                $noty.close();
+              }
+            }
+          ]
+        })
+      })
+    }
+
+    function createAppeal(id) {
+      var title = $('#title').val();
+      var info = $('#info').val();
+      if(title == '' || info == '') {
+        sendAlert('All fields must be filled out.');
+        return false;
+      }
+      if(title.length > 40) {
+        sendAlert('Title cannot exceed 40 characters.');
+        return false;
+      }
+      if(info.length > 750) {
+        sendAlert('Appeal cannot exceed 750 characters.');
+        return false;
+      }
+      $.post('/account/punishments', { action:'create-appeal', id:id, title:title, info:info }, (ret) => {
+        var data = getJSON(ret);
+        if(data == null) return false;
+        loadList();
+        n.close();
+        n = null;
+        return true;
+      })
+    }
+
+    function viewAppeal() {
+      var id = $(this).closest('tr').data('id');
+      $.post('/account/punishments', { action:'view-appeal', id:id }, (ret) => {
+        var data = getJSON(ret);
+        if(data == null) return null;
+        if(n != null) n.close()
+        n = noty({
+          text: 'View appeal',
+          type: 'confirm',
+          layout: 'center',
+          template: data.html,
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-danger', text: 'Close', onClick: function($noty) {
+                $noty.close();
+              }
+            }
+          ]
+        })
+      })
+    }
+
+    function switchPage() {
+      var page = $(this).data('page')
+      if(page == punish_page)
+        return false;
+      punish_page = page;
+      loadList();
+    }
+
+    function clickedSearchIcon() {
+      clickSearchIcon('punishments', archived, punish_page, loadListWPage);
+    }
+
+    $('#archive-punishments').click(switchArchive);
+    $('#search-punishments-icon').click(clickedSearchIcon);
+    $(document).on('click', '#punish-link', viewPunishment);
+    $(document).on('click', '#appeal-link', viewAppeal);
+    $(document).on('click', '#create-appeal', viewAppealInfo);
+    $(document).on('click', '#punishments-pages span', switchPage);
+
+    $(document).click(function(e) {
+      var target = e.target;
+      if(n == null)
+        return;
+      var id = n.options.id;
+      if($(e.target).closest('#'+id).length) {
+
+      } else {
+        n.close();
+        n = null;
+      }
+    });
+
+  })
+
+h5 Punishments
+p.small.info The following are your punishments for this account.
+p.small.info You may view the punishment by clicking on it. The proof may not be displayed depending on the offence.
+p.small.info Inactive punishments may be viewed by clicking the 'View Archive' button
+div.row 
+  div.iactions
+    div
+      div(style='float: right; margin: 33.5px 5px;')
+        div.link#punishments-archive-btn
+          i.fa.fa-archive
+          span#archive-punishments  View Archive
+div.row(style='padding: 15px;')
+  div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+  div#punishments-main
+  div.pages
+    div#punishments-pages

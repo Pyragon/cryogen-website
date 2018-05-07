@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
-import com.cryo.db.impl.PunishmentConnection;
+import com.cryo.db.impl.PunishmentsConnection;
 import com.cryo.db.impl.ReportsConnection;
+import com.cryo.modules.account.entities.Appeal;
+import com.cryo.modules.account.entities.Punishment;
 import com.cryo.modules.staff.BugReport;
 import com.cryo.modules.staff.PlayerReport;
 import com.cryo.utils.Utilities;
@@ -21,64 +23,76 @@ import com.google.gson.Gson;
  */
 public class PunishUtils {
 	
-	public ArrayList<PunishDAO> getPunishments(String username, boolean archive) {
+	public ArrayList<Punishment> getPunishments(String username, boolean archive) {
 		return getPunishments(username, archive, 0);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<PunishDAO> getPunishments(String username, boolean archive, int page) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-punishments", username, archive, page);
+	public ArrayList<Punishment> getPunishments(String username, boolean archive, int page) {
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-punishments", username, archive, page);
 		if(data == null)
-			return new ArrayList<PunishDAO>();
-		return (ArrayList<PunishDAO>) data[0];
+			return new ArrayList<Punishment>();
+		return (ArrayList<Punishment>) data[0];
 	}
 	
-	public PunishDAO getPunishmentFromAppeal(int appealId) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment-from-appeal", appealId);
-		if(data == null)
-			return null;
-		return (PunishDAO) data[0];
+	public static int getTotalPunishmentPages(String username, boolean archived) {
+		 try {
+			 Object[] data = PunishmentsConnection.connection().handleRequest("get-total-punish-results", username, archived);
+			 if(data == null) return 1;
+			 int results = (int) data[0];
+			 return results;
+		 } catch(Exception e) {
+			 e.printStackTrace();
+		 }
+		 return 1;
 	}
 	
-	public static PunishDAO getPunishment(int pid) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment", pid);
+	public Punishment getPunishmentFromAppeal(int appealId) {
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-punishment-from-appeal", appealId);
 		if(data == null)
 			return null;
-		return (PunishDAO) data[0];
+		return (Punishment) data[0];
 	}
 	
-	public AppealDAO getAppealFromPunishment(int punishment) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-punishment", punishment);
+	public static Punishment getPunishment(int pid) {
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-punishment", pid);
 		if(data == null)
 			return null;
-		PunishDAO punish = (PunishDAO) data[0];
+		return (Punishment) data[0];
+	}
+	
+	public Appeal getAppealFromPunishment(int punishment) {
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-punishment", punishment);
+		if(data == null)
+			return null;
+		Punishment punish = (Punishment) data[0];
 		int appealId = punish.getAppealId();
-		data = PunishmentConnection.connection().handleRequest("get-appeal", appealId, false);
+		data = PunishmentsConnection.connection().handleRequest("get-appeal", appealId, false);
 		if(data == null)
 			return null;
-		return (AppealDAO) data[0];
+		return (Appeal) data[0];
 	}
 	
-	public AppealDAO getAppeal(int appealId) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-appeal", appealId, false);
+	public Appeal getAppeal(int appealId) {
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-appeal", appealId, false);
 		if(data == null)
 			return null;
-		return (AppealDAO) data[0];
+		return (Appeal) data[0];
 	}
 	
 	@SuppressWarnings("unchecked")
 	public ArrayList<ACommentDAO> getComments(int appealId, int type) {
-		Object[] data = PunishmentConnection.connection().handleRequest("get-comments", appealId, type);
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-comments", appealId, type);
 		if(data == null)
 			return null;
 		return (ArrayList<ACommentDAO>) data[0];
 	}
 	
 	public static void createAppeal(int punishId, String username, String title, String detailed) {
-		PunishDAO punish = getPunishment(punishId);
+		Punishment punish = getPunishment(punishId);
 		if(punish == null) return;
-		AppealDAO appeal = new AppealDAO(0, punish.getType(), username, title, detailed, 0, punishId, null);
-		PunishmentConnection.connection().handleRequest("create-appeal", appeal);
+		//Appeal appeal = new Appeal(0, username, title, detailed, 0, punishId, null);
+		//PunishmentConnection.connection().handleRequest("create-appeal", appeal);
 	}
 	
 	public ArrayList<PlayerReport> getPlayerReports(String username, boolean archived) {
@@ -126,16 +140,16 @@ public class PunishUtils {
 		return reports;
 	}
 	
-	public ArrayList<AppealDAO> getAppeals(String username, boolean archived) {
+	public ArrayList<Appeal> getAppeals(String username, boolean archived) {
 		return getAppeals(username, archived, 0);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<AppealDAO> getAppeals(String username, boolean archived, int page) {
-		ArrayList<AppealDAO> appeals = new ArrayList<>();
-		Object[] data = PunishmentConnection.connection().handleRequest("get-appeals", archived, page);
+	public ArrayList<Appeal> getAppeals(String username, boolean archived, int page) {
+		ArrayList<Appeal> appeals = new ArrayList<>();
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-appeals", archived, page);
 		if(data != null) {
-			for(AppealDAO appeal : (ArrayList<AppealDAO>) data[0]) {
+			for(Appeal appeal : (ArrayList<Appeal>) data[0]) {
 				if(username != null && appeal.userHasRead(username))
 					continue;
 				appeals.add(appeal);
@@ -158,7 +172,7 @@ public class PunishUtils {
 				table = "bug_reports";
 				break;
 		}
-		DatabaseConnection connection = type == ReportType.APPEAL ? PunishmentConnection.connection() : ReportsConnection.connection();
+		DatabaseConnection connection = type == ReportType.APPEAL ? PunishmentsConnection.connection() : ReportsConnection.connection();
 		Object[] data = connection.select(table, "id=?", connection.GET_READ, id);
 		if(data == null) return;
 		String read = (String) data[0];

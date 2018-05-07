@@ -7,10 +7,10 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
+import com.cryo.modules.account.entities.Appeal;
+import com.cryo.modules.account.entities.Punishment;
 import com.cryo.modules.account.recovery.InstantRecoveryDAO;
 import com.cryo.modules.account.recovery.RecoveryModule;
-import com.cryo.modules.account.support.punish.AppealDAO;
-import com.cryo.modules.account.support.punish.PunishDAO;
 import com.cryo.modules.staff.recoveries.RecoveryDAO;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
