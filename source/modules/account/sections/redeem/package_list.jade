@@ -1,0 +1,9 @@
+div.container(style='max-width: 702px;')
+  div.row(style='max-width: 600px;')
+    for package in packages
+      div.package-box.col-xs-6(data-id=package.getId())
+        img.package-img(src=package.getShopItem().getImageLink())
+        div.package-detail(style='top: 5px;')= 'Name: '+package.getShopItem().getName()
+        div.package-detail(style='top: 25px;')= 'Price: $'+package.getShopItem().getPrice()
+        div.package-detail(style='top: 45px; max-width: 205px; white-space: pre-wrap;')= 'Purchased: '+formatter.formatTimestamp(package.getDate(), 'MMM dd, yyyy')
+        p.redeem-info Click to Redeem

@@ -1,0 +1,117 @@
+script.
+  var n = null;
+  var refresh_timeout = null;
+  var archived = true;
+  $(document).ready(function() {
+
+    loadList();
+
+    function loadList() {
+      $.post('/account/redeem', { action: 'load-list', archived:archived }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        $('#redeem-main').html(data.html)
+      })
+    }
+
+    function clickPackage() {
+      if(n != null) {
+        n.close();
+        n = null;
+      }
+      var element = $(this);
+      var options = element.find('.package-options');
+      if(options.length) {
+        options.removeClass('active');
+        options.slideToggle(300);
+        return false;
+      }
+      if($('.package-options').length) {
+        $('.package-options').prev().removeClass('active');
+        $('.package-options').slideToggle(300, () => {
+          placeOptions(element);
+        })
+      } else
+        placeOptions(element);
+    }
+
+    function redeemPackage() {
+      var id = $(this).data('id')
+      $.post('/account/redeem', { action: 'view-redeem-noty', id:id }, (ret) => {
+        var data = getJSON(ret);
+        if(data == null) return false;
+        n = noty({
+          text: 'Are you sure you wish to redeem this?',
+          type: 'confirm',
+          layout: 'center',
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-primary', text: 'Confirm', onClick: function($noty) {
+              startRefresh();
+              $noty.close();
+              sendAlert("We have attempted to claim this package on your in-game account for you. Check wait for confirmation. Please wait while we refresh the page.");
+                $.post('/account/redeem', { action:'redeem-package', id:id }, function(ret) {
+                  var data = getJSON(ret);
+                  endRefresh();
+                  if(data == null)
+                    return false;
+                  sendAlert("Congratulations! This package was successfully claimed on your account. No need to use any commands in-game, the package will be automatically be redeemed now if you are in-game, or the next time you log in.");
+                });
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                $noty.close();
+              }
+            }
+          ]
+        })
+      })
+    }
+
+    function startRefresh() {
+      $('#redeem-main').css('display', 'none');
+      $('.package-spinner').css('display', '');
+      //this.refresh_timeout = setTimeout(endRefresh, 1500);
+    }
+
+    function endRefresh() {
+      $('#redeem-main').css('display', '');
+      $('.package-spinner').css('display', 'none');
+      clearTimeout(refresh_timeout);
+      this.refresh_timeout = null;
+      loadList();
+    }
+
+    function placeOptions(element) {
+      $('.package-options').remove();
+      element.append("<div class='package-options'><div class='row'><div class='col-xs-6 col-xs-offset-3'><a class='redeem' href='#'><span class='glyphicon glyphicon-transfer' aria-hidden='true'></span> Redeem and Claim in-game</a></div></div></div>");
+      $('.package-options').prev().addClass('active');
+      $('.package-options').slideToggle(300);
+    }
+
+    $(document).on('click', '.package', clickPackage);
+    $(document).on('click', '.package-box', redeemPackage);
+
+  })
+h5 Redeem Packages
+p.small.info The following page is used to redeem packages purchased on the Cryogen shop. \nIn the future this page will also be used to exchange them with other players.
+p.small.info Currently, the only way to trade packages is through in-game. When trading in Gamer's Grotto, you will be given an option to add a purchased package into the trade screen as an item.
+p.small.info Clicking on any of the purchased packages below will bring up a list of options for redeeming.
+div.row
+  div.iactions
+    div
+      div(style='float: right; margin: 33.5px 5px;')
+        div.link#redeem-archive-btn
+          i.fa.fa-archive
+          span#archive-redeem  View Archive
+div.row(style='padding: 15px;')
+  div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+  div.package-spinner(style='display: none;')
+    i.fa.fa-refresh.fa-spin
+  pre.packages
+    div#redeem-main
+  div.pages
+    div#redeem-pages

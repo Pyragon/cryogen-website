@@ -9,8 +9,8 @@ import java.util.Random;
 
 import com.cryo.Website;
 import com.cryo.db.impl.ShopConnection;
-import com.cryo.modules.account.shop.InvoiceDAO;
-import com.cryo.modules.account.shop.ShopItem;
+import com.cryo.modules.account.entities.Invoice;
+import com.cryo.modules.account.entities.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Details;
@@ -83,7 +83,7 @@ public class PaypalTransaction {
 	}
 	
 	public void createInvoice() {
-		InvoiceDAO invoice = new InvoiceDAO(invoice_id, username, items, true);
+		Invoice invoice = new Invoice(invoice_id, username, items, true, null);
 		ShopConnection.connection().handleRequest("set-invoice", invoice);
 	}
 	

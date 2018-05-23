@@ -21,7 +21,7 @@ public class OnlineUserCache extends CachedItem {
 	@Override
 	public void fetchNewData(Object... values) {
 		String url = ServerConnection.SERVER_URL+"/online-users";
-		String response = ServerConnection.getResponse(url);
+		String response = "";//ServerConnection.getResponse(url);
 		if(response.equals("")) {
 			this.cachedData =  "No one online at the moment.";
 			return;

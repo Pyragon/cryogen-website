@@ -3,6 +3,8 @@ package com.cryo.modules.account.shop;
 import java.util.HashMap;
 
 import com.cryo.db.impl.ShopConnection;
+import com.cryo.modules.account.entities.Invoice;
+import com.cryo.modules.account.entities.ShopItem;
 import com.google.gson.Gson;
 
 /**
@@ -48,36 +50,14 @@ public class ShopUtils {
 		return items;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static HashMap<ShopItem, Integer> getItems(String username) {
-		Object[] data = ShopConnection.connection().handleRequest("get-player-items", username);
-		if(data == null)
-			return new HashMap<>();
-		return (HashMap<ShopItem, Integer>) data[0];
-	}
-	
-	public static InvoiceDAO getInvoice(String invoice_id, boolean active, boolean set) {
+	public static Invoice getInvoice(String invoice_id, boolean active, boolean set) {
 		Object[] data = ShopConnection.connection().handleRequest("get-invoice", invoice_id, set);
 		if(data == null)
 			return null;
-		InvoiceDAO invoice = (InvoiceDAO) data[0];
+		Invoice invoice = (Invoice) data[0];
 		if(invoice == null || !(active == invoice.isActive()))
 			return null;
 		return invoice;
-	}
-	
-	public static void updateItems(String username, HashMap<ShopItem, Integer> items) {
-		HashMap<ShopItem, Integer> current = getItems(username);
-		for(ShopItem item : items.keySet()) {
-			int quantity = items.get(item);
-			if(!current.containsKey(item)) {
-				current.put(item, quantity);
-				continue;
-			}
-			quantity += current.get(item);
-			current.put(item, quantity);
-		}
-		ShopConnection.connection().handleRequest("set-player-items", username, current);
 	}
 	
 	public static String toString(HashMap<Integer, Integer> cart) {

@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import com.cryo.cache.CachedItem;
 import com.cryo.server.ServerConnection;
-import com.cryo.server.ServerItem;
+import com.cryo.server.item.ServerItem;
 import com.google.gson.Gson;
 
 import lombok.*;
@@ -24,7 +24,7 @@ public class DropsFeedCache extends CachedItem {
 	@Override
 	public void fetchNewData(Object... values) {
 		String url = ServerConnection.SERVER_URL+"/grab_data?action=get-drops-feed";
-		String response = ServerConnection.getResponse(url);
+		String response = "";//ServerConnection.getResponse(url);
 		if(response.equals("")) return;
 		this.cachedData = new Gson().fromJson(response, Properties.class);
 	}

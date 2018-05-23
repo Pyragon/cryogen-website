@@ -1,6 +1,7 @@
 package com.cryo.db.impl;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,11 +9,9 @@ import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
-import com.cryo.modules.account.shop.InvoiceDAO;
-import com.cryo.modules.account.shop.ShopItem;
+import com.cryo.modules.account.entities.Invoice;
+import com.cryo.modules.account.entities.ShopItem;
 import com.cryo.modules.account.shop.ShopUtils;
-import com.google.gson.Gson;
-import com.paypal.api.payments.Invoice;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -20,6 +19,23 @@ import com.paypal.api.payments.Invoice;
  * Created on: March 14, 2017 at 12:34:57 AM
  */
 public class ShopConnection extends DatabaseConnection {
+	
+	public static HashMap<Integer, ShopItem> cached;
+	
+	@SuppressWarnings("unchecked")
+	public static void load(Website website) {
+		Object[] data = connection(website).handleRequest("get-items");
+		if(data == null) {
+			cached = new HashMap<>();
+			System.out.println("nulll");
+			return;
+		}
+		cached = (HashMap<Integer, ShopItem>) data[0];
+	}
+	
+	public static ShopItem getShopItem(int id) {
+		return cached.get(id);
+	}
 
 	public ShopConnection() {
 		super("cryogen_shop");
@@ -51,16 +67,34 @@ public class ShopConnection extends DatabaseConnection {
 		String username = getString(set, "username");
 		HashMap<ShopItem, Integer> packages = ShopUtils.fromString(getString(set, "items"));
 		int active = getInt(set, "active");
-		InvoiceDAO invoice = new InvoiceDAO(id, username, packages, active == 1);
+		Timestamp date = getTimestamp(set, "date");
+		Invoice invoice = new Invoice(id, username, packages, active == 1, date);
 		return new Object[] { invoice };
 	};
 	
 	private final SQLQuery GET_PACKAGES = (set) -> {
-		if(empty(set)) return null;
-		String packages_string = getString(set, "items");
-		HashMap<ShopItem, Integer> packages = ShopUtils.fromString(packages_string);
-		return new Object[] { packages };
+		if(wasNull(set)) return new Object[] { new ArrayList<>() };
+		ArrayList<com.cryo.modules.account.entities.Package> list = new ArrayList<>();
+		while(next(set)) {
+			list.add(loadPackage(set));
+		}
+		return new Object[] { list };
 	};
+	
+	private final SQLQuery GET_PACKAGE = (set) -> {
+		if(empty(set)) return null;
+		return new Object[] { loadPackage(set) };
+	};
+	
+	private com.cryo.modules.account.entities.Package loadPackage(ResultSet set) {
+		int id = getInt(set, "id");
+		String username = getString(set, "username");
+		int packageId = getInt(set, "package_id");
+		String invoiceId = getString(set, "invoice_id");
+		boolean active = getInt(set, "active") == 1 ? true : false;
+		Timestamp date = getTimestamp(set, "date");
+		return new com.cryo.modules.account.entities.Package(id, username, packageId, invoiceId, active, date);
+	}
 	
 	private final SQLQuery GET_SHOP_ITEMS = (set) -> {
 		if(wasNull(set)) return null;
@@ -88,39 +122,32 @@ public class ShopConnection extends DatabaseConnection {
 				data = select("cart_data", "username=?", GET_CART, username);
 				return data == null ? null : new Object[] { (HashMap<Integer, Integer>) data[0] };
 			case "set-invoice":
-				InvoiceDAO invoice = (InvoiceDAO) data[1];;
+				Invoice invoice = (Invoice) data[1];;
 				String packages_string = ShopUtils.toJSON(invoice.getItems());
-				insert("invoices", invoice.getInvoiceId(), invoice.getUsername(), packages_string, 1);
+				insert("invoices", invoice.getInvoiceId(), invoice.getUsername(), packages_string, 1, "DEFAULT");
 				break;
 			case "get-invoice":
 				String invoice_id = (String) data[1];
 				boolean inactive = (Boolean) data[2];
 				data = select("invoices", "id=?", GET_INVOICE, invoice_id);
 				if(data == null) return null;
-				invoice = (InvoiceDAO) data[0];
+				invoice = (Invoice) data[0];
 				username = invoice.getUsername();
 				if(inactive) {
 					//We are claiming the invoice (finished paying)
 					set("invoices", "active=0", "id=?", invoice_id);
 					handleRequest("set-cart", username, new HashMap<Integer, Integer>());
 				}
-				HashMap<ShopItem, Integer> packages = invoice.getItems();
-				boolean active = invoice.isActive();
-				invoice = new InvoiceDAO(invoice_id, username, packages, active);
 				return new Object[] { invoice };
-			case "get-player-items":
+			case "get-package":
+				return select("packages", "username=? AND id=?", GET_PACKAGE, (String) data[1], (int) data[2]);
+			case "get-packages":
 				username = (String) data[1];
-				data = select("items", "username=?", GET_PACKAGES, username);
-				return data == null ? null : new Object[] { (HashMap<ShopItem, Integer>) data[0] };
-			case "set-player-items":
-				username = (String) data[1];
-				packages = (HashMap<ShopItem, Integer>) data[2];
-				packages_string = ShopUtils.toJSON(packages);
-				data = handleRequest("get-player-items", username);
-				if(data != null)
-					set("items", "items=?", "username=?", packages_string, username);
-				else
-					insert("items", username, packages_string);
+				boolean active = (boolean) data[2];
+				return select("packages", "username=? AND active=?", GET_PACKAGES, username, active == true ? 1 : 0);
+			case "add-package":
+				com.cryo.modules.account.entities.Package purchasedPackage = (com.cryo.modules.account.entities.Package) data[1];
+				insert("packages", purchasedPackage.data());
 				break;
 			case "set-cart":
 				username = (String) data[1];

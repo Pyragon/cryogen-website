@@ -1,4 +1,4 @@
-package com.cryo.server;
+package com.cryo.server.item;
 
 import java.util.HashMap;
 

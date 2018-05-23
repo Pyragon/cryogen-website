@@ -3,17 +3,23 @@ package com.cryo.paypal;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.shop.InvoiceDAO;
-import com.cryo.modules.account.shop.ShopItem;
+import com.cryo.modules.account.entities.Invoice;
+import com.cryo.modules.account.entities.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.shop.ShopUtils;
+import com.cryo.security.SessionIDGenerator;
 import com.cryo.server.ServerConnection;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.paypal.api.payments.Item;
 import com.paypal.api.payments.ItemList;
 import com.paypal.api.payments.NameValuePair;
@@ -36,8 +42,22 @@ import spark.Response;
  */
 public class PaypalManager extends WebModule {
 	
+	private Gson gson;
+	
 	public PaypalManager(Website website) {
 		super(website);
+		gson = buildGson();
+	}
+	
+	public Gson buildGson() {
+		Gson gson = new GsonBuilder()
+				.serializeNulls()
+				.setVersion(1.0)
+				.disableHtmlEscaping()
+				.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+				.setPrettyPrinting()
+				.create();
+		return gson;
 	}
 	
 	private static APIContext context;
@@ -53,10 +73,15 @@ public class PaypalManager extends WebModule {
 		return context;
 	}
 	
-	public void sendRedeem(String username, int package_id) throws IOException {
-		username = StringEscapeUtils.escapeHtml4(username).replaceAll(" ", "%20");
-		String url = ServerConnection.SERVER_URL+"/redeem?username="+username+"&package="+package_id+"&quantity=1";
-		ServerConnection.getResponse(url);
+	public String sendRedeem(String username, com.cryo.modules.account.entities.Package p) throws IOException {
+		Properties prop = new Properties();
+		prop.put("username", username);
+		prop.put("package_id", p.getId());
+		ServerConnection con = new ServerConnection("/redeem", prop);
+		con.fetchData();
+		if(con.failed())
+			return con.getError();
+		return null;
 	}
 	
 	public String decodeRequest(Request request, Response response, RequestType type) {
@@ -82,11 +107,17 @@ public class PaypalManager extends WebModule {
 			}
 			model.put("cancelled", false);
 			String invoice_id = transaction.getInvoiceNumber();
-			InvoiceDAO invoice = ShopUtils.getInvoice(invoice_id, true, true);
+			Invoice invoice = ShopUtils.getInvoice(invoice_id, true, true);
 			if(invoice == null)
 				model.put("error", true);
 			else {
-				ShopUtils.updateItems(invoice.getUsername(), invoice.getItems());
+				for(ShopItem item : invoice.getItems().keySet()) {
+					int quantity = invoice.getItems().get(item);
+					for(int i = 0; i < quantity; i++) {
+						com.cryo.modules.account.entities.Package packagee = new com.cryo.modules.account.entities.Package(-1, invoice.getUsername(), item.getId(), invoice.getInvoiceId(), true, null);
+						ShopConnection.connection().handleRequest("add-package", packagee);
+					}
+				}
 			}
 			return render("./source/modules/account/sections/shop/post_payment.jade", model, request, response);
 		} catch (PayPalRESTException e) {

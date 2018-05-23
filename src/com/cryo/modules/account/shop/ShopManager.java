@@ -11,6 +11,7 @@ import com.cryo.Website.RequestType;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
+import com.cryo.modules.account.entities.ShopItem;
 import com.cryo.paypal.PaypalTransaction;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
@@ -29,16 +30,6 @@ import spark.Response;
 public class ShopManager {
 	
 	public static HashMap<Integer, ShopItem> cached;
-	
-	@SuppressWarnings("unchecked")
-	public static void load(Website website) {
-		Object[] data = ShopConnection.connection(website).handleRequest("get-items");
-		if(data == null) {
-			cached = new HashMap<>();
-			return;
-		}
-		cached = (HashMap<Integer, ShopItem>) data[0];
-	}
 	
 	public ShopManager() {
 	}
@@ -88,30 +79,23 @@ public class ShopManager {
 			case "get-cart":
 				String ret = ShopUtils.toString(ShopUtils.getCart(username));
 				return ret;
-			case "view-packages":
-				HashMap<String, Object> model = new HashMap<>();
-				model.put("packages", ShopUtils.getItems(username));
-				String html = module.render("./source/modules/account/sections/redeem/packages.jade", model, request, response);
-				prop.put("success", true);
-				prop.put("html", html);
-				break;
 			case "redeem-noty":
-				html = module.render("./source/modules/account/sections/redeem/redeem_noty.jade", new HashMap<>(), request, response);
+				String html = module.render("./source/modules/account/sections/redeem/redeem_noty.jade", new HashMap<>(), request, response);
 				prop.put("success", true);
 				prop.put("html", html);
 				break;
 			case "redeem":
 				id = Integer.parseInt(request.queryParams("id"));
 				try {
-					Website.instance().getPaypalManager().sendRedeem(username, id);
+					//Website.instance().getPaypalManager().sendRedeem(username, id);
 				} catch(Exception e) {
 					e.printStackTrace();
 					prop.put("success", false);
 					prop.put("error", "Error connecting to server. Please try again later.");
 					break;
 				}
-				model = new HashMap<>();
-				model.put("packages", ShopUtils.getItems(username));
+				HashMap<String, Object> model = new HashMap<>();
+				//model.put("packages", ShopUtils.getItems(username));
 				html = module.render("./source/modules/account/sections/redeem/packages.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);

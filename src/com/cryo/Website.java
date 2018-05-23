@@ -35,6 +35,7 @@ import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountModule;
 import com.cryo.modules.account.AccountOverviewModule;
@@ -55,12 +56,13 @@ import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.paypal.PaypalManager;
 import com.cryo.server.ServerConnection;
-import com.cryo.server.ServerItem;
+import com.cryo.server.item.ServerItem;
 import com.cryo.server.item.ShopItem;
 import com.cryo.tasks.TaskManager;
 import com.cryo.tasks.impl.EmailVerifyTask;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.CorsFilter;
+import com.cryo.utils.Logger;
 import com.cryo.utils.Utilities;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -123,7 +125,7 @@ public class Website {
 		cachingManager.loadCachedItems();
 		fastExecutor = new Timer();
 		searchManager = new SearchManager();
-		ShopManager.load(this);
+		ShopConnection.load(this);
 		searchManager.load();
 		port(Integer.parseInt(properties.getProperty("port")));
 		PaypalManager.createAPIContext();
@@ -172,7 +174,7 @@ public class Website {
 		get("/kill_web", (req, res) -> {
 			Account account = CookieManager.getAccount(req);
 			if(account == null || account.getRights() < 2)
-				return error("Insufficient permissions.");
+				return error("Insufficient permissions.");;
 			if(SHUTDOWN_TIME > 0)
 				return "Website already being shutdown. Please wait.";
 			String time = req.queryParams("delay");
@@ -342,8 +344,8 @@ public class Website {
 					return error("Unable to retrieve from online-users-cache.");
 				return (String) data;
 			case "get-item-div":
-				String item = req.queryParams("item");
-				data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(item);
+				int itemId = Integer.parseInt(req.queryParams("item"));
+				data = INSTANCE.getCachingManager().get("server-item-cache").getCachedData(itemId);
 				if(data == null || !(data instanceof ServerItem)) {
 					prop.put("success", false);
 					prop.put("error", "Unable to get server item.");
@@ -370,7 +372,7 @@ public class Website {
 				}
 				String username = (String) arr[0];
 				String url = ServerConnection.SERVER_URL+"/grab_data?action=get-shop-items&username="+username;
-				String strres = ServerConnection.getResponse(url);
+				String strres = "";//ServerConnection.getResponse(url);
 				Properties response = new Gson().fromJson(strres, Properties.class);
 				if(!response.getProperty("success").equals("true")) {
 					prop.put("success", false);

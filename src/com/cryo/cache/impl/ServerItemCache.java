@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import com.cryo.cache.CachedItem;
 import com.cryo.server.ServerConnection;
-import com.cryo.server.ServerItem;
+import com.cryo.server.item.ServerItem;
 
 import lombok.*;
 
@@ -24,7 +24,8 @@ public class ServerItemCache extends CachedItem {
 	
 	@Override
 	public Object getCachedData(Object... data) {
-		String name = (String) data[0];
+		int id = (int) data[0];
+		String name = Integer.toString(id);
 		boolean expired = hasExpired(name);
 		if(expired) fetchNewData(data);
 		if(!cache.containsKey(name)) return null;
@@ -39,10 +40,10 @@ public class ServerItemCache extends CachedItem {
 
 	@Override
 	public void fetchNewData(Object... data) {
-		String name = (String) data[0];
-		ServerItem item = ServerConnection.getServerItem(name);
+		int id = (int) data[0];
+		ServerItem item = ServerConnection.getServerItem(id);
 		if(item == null) return;
-		cache.put(name, new Object[] { System.currentTimeMillis() + getCacheTimeLimit(), item });
+		cache.put(Integer.toString(id), new Object[] { System.currentTimeMillis() + getCacheTimeLimit(), item });
 	}
 
 	@Override

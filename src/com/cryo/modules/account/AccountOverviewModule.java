@@ -13,7 +13,7 @@ import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.VotingConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.account.shop.ShopItem;
+import com.cryo.modules.account.entities.ShopItem;
 import com.cryo.modules.account.shop.ShopManager;
 import com.cryo.modules.account.shop.ShopUtils;
 import com.cryo.utils.CookieManager;
@@ -114,7 +114,7 @@ public class AccountOverviewModule extends WebModule {
 				model.put("section", request.queryParams("section"));
 			model.put("shopItems", ShopManager.cached);
 			model.put("shopManager", new ShopManager());
-			model.put("packages", ShopUtils.getItems(username));
+			//model.put("packages", ShopUtils.getItems(username));
 			//model.put("voteManager", new VotingManager(username));
 			Object[] data = DisplayConnection.connection().handleRequest("get-time", username);
 			int seconds = 0;

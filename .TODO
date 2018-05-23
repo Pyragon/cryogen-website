@@ -10,6 +10,7 @@ General:
   ☐ Recode base to properly utilize a 'module' structure
 Shop:
   ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
+  ☐ Better space out packages in account/redeem section
 Staff Page:
   ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
   ☐ Log all events
@@ -20,10 +21,8 @@ Staff Page:
   ☐ Change create punishment to use noty instead of diff page
 Account:
   ☐ Restyle dropdown menu in header
-  ☐ Fix no black marks message on support#appeal page
   ☐ Add min/max length requirement to password on account creation/pass changing on server/website
 Other:
-  ✔ Page for players to view their own player/bug reports @done(2018-05-05 12:36) @project(Other)
   ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
   ☐ Create independant html pages to serve as error pages for nginx
   ☐ Create html pages for emails
@@ -32,7 +31,7 @@ Securiy:
   ☐ Secure all requests to server (though should be secured through sessions already)
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
 API:
-  ✔ Create overall API for server + website that utilizes tokens @done(2018-05-05 12:36) @project(API)
+  ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
 Tracker:
   ☐ Player 'tracker' page instead of highscores. Main page will display a regular highscores
   ☐ 'Seasonal' highscores page. Different highscores goal each month, random things like nex kills, or chicken kills, bows fletched, etc
@@ -43,6 +42,9 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Fix no black marks message on support#appeal page @done(2018-05-23 12:29) @project(Account)
+  ✔ Page for players to view their own player/bug reports @done(2018-05-05 12:36) @project(Other)
+  ✔ Create overall API for server + website that utilizes tokens @done(2018-05-05 12:36) @project(API)
   ✔ No navbar links work outside of the index page as they all link to current_url+/link, so will go to /account/login if on /account page @done(2018-02-26 13:57) @project(General)
   ✔ Punishment reasons should be added to a 'hover' to avoid long table columns @done(2018-02-19 07:45) @project(Staff Page)
   ✔ Searching player's names to make punishment shows username and display name (atm searching for username brings up option for display ie search cody and 'anon' pops up) @done(2018-02-20 02:22) @project(Staff Page)
