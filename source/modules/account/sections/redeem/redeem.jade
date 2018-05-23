@@ -1,13 +1,13 @@
 script.
   var n = null;
   var refresh_timeout = null;
-  var archived = true;
+  var archive = false;
   $(document).ready(function() {
 
     loadList();
 
     function loadList() {
-      $.post('/account/redeem', { action: 'load-list', archived:archived }, (ret) => {
+      $.post('/account/redeem', { action: 'load-list', archived:archive }, (ret) => {
         var data = getJSON(ret)
         if(data == null) return false
         $('#redeem-main').html(data.html)
@@ -70,6 +70,14 @@ script.
         })
       })
     }
+    
+    function switchArchive() {
+      archive = !archive;
+      redeem_page = 1;
+      removeFilters('redeem')
+      $('#archive-redeem').html(' View '+(archive ? 'Active' : 'Archive'))
+      loadList();
+    }
 
     function startRefresh() {
       $('#redeem-main').css('display', 'none');
@@ -94,6 +102,8 @@ script.
 
     $(document).on('click', '.package', clickPackage);
     $(document).on('click', '.package-box', redeemPackage);
+    
+    $('#archive-redeem').click(switchArchive);
 
   })
 h5 Redeem Packages

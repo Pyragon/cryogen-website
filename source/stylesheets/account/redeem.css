@@ -9,6 +9,17 @@
   cursor: pointer;
 }
 
+.package-box-archive {
+  border: 1px solid #FFF;
+  padding: 10px !important;
+  max-width: 300px;
+  min-height: 114px;
+  max-height: 114px;
+  background: #222;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .package-img {
   position: absolute;
   width: 80px;

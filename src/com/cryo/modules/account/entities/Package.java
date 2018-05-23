@@ -23,12 +23,14 @@ public class Package {
 	
 	private final Timestamp date;
 	
+	private final Timestamp redeemDate;
+	
 	public ShopItem getShopItem() {
 		return ShopConnection.getShopItem(packageId);
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", username, packageId, invoiceId, active, "DEFAULT" };
+		return new Object[] { "DEFAULT", username, packageId, invoiceId, active, "DEFAULT", "DEFAULT" };
 	}
 
 }

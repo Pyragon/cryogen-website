@@ -93,7 +93,8 @@ public class ShopConnection extends DatabaseConnection {
 		String invoiceId = getString(set, "invoice_id");
 		boolean active = getInt(set, "active") == 1 ? true : false;
 		Timestamp date = getTimestamp(set, "date");
-		return new com.cryo.modules.account.entities.Package(id, username, packageId, invoiceId, active, date);
+		Timestamp redeemDate = getTimestamp(set, "redeem_date");
+		return new com.cryo.modules.account.entities.Package(id, username, packageId, invoiceId, active, date, redeemDate);
 	}
 	
 	private final SQLQuery GET_SHOP_ITEMS = (set) -> {
@@ -143,8 +144,8 @@ public class ShopConnection extends DatabaseConnection {
 				return select("packages", "username=? AND id=?", GET_PACKAGE, (String) data[1], (int) data[2]);
 			case "get-packages":
 				username = (String) data[1];
-				boolean active = (boolean) data[2];
-				return select("packages", "username=? AND active=?", GET_PACKAGES, username, active == true ? 1 : 0);
+				boolean archive = (boolean) data[2];
+				return select("packages", "username=? AND active=?", GET_PACKAGES, username, archive == true ? 0 : 1);
 			case "add-package":
 				com.cryo.modules.account.entities.Package purchasedPackage = (com.cryo.modules.account.entities.Package) data[1];
 				insert("packages", purchasedPackage.data());

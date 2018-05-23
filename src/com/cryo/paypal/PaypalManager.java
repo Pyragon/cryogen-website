@@ -114,7 +114,7 @@ public class PaypalManager extends WebModule {
 				for(ShopItem item : invoice.getItems().keySet()) {
 					int quantity = invoice.getItems().get(item);
 					for(int i = 0; i < quantity; i++) {
-						com.cryo.modules.account.entities.Package packagee = new com.cryo.modules.account.entities.Package(-1, invoice.getUsername(), item.getId(), invoice.getInvoiceId(), true, null);
+						com.cryo.modules.account.entities.Package packagee = new com.cryo.modules.account.entities.Package(-1, invoice.getUsername(), item.getId(), invoice.getInvoiceId(), true, null, null);
 						ShopConnection.connection().handleRequest("add-package", packagee);
 					}
 				}
