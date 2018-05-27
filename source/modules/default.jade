@@ -146,8 +146,6 @@ html
                       li
                         a(href='/register') Register
                     li(class='divider')
-                    li
-                      a(href='/support') Support
                     if loggedIn
                       if user.getRights() > 0
                         li
@@ -181,8 +179,6 @@ html
                   if loggedIn
                     li
                       a(href='/account') Account
-                    li
-                      a(href='/support') Support
                     if user.getRights() > 0
                       li
                         a(href='/staff') Staff
