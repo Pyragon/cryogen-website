@@ -168,6 +168,7 @@ public abstract class DatabaseConnection {
 				builder.append(" WHERE ").append(condition);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
 			setParams(stmt, values);
+			System.out.println(stmt);
 			ResultSet set = stmt.executeQuery();
 			if(!set.next()) return 0;
 			int count = set.getInt(1);
@@ -188,8 +189,8 @@ public abstract class DatabaseConnection {
 			try {
 				stmt = connection.prepareStatement(builder.toString());
 				setParams(stmt, values);
+				System.out.println(stmt);
 				set = stmt.executeQuery();
-				//System.out.println(stmt);
 				result = query.handleResult(set);
 			} finally {
 				if(stmt != null)

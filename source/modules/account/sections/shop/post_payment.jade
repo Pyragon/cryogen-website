@@ -8,7 +8,8 @@ block content
           div.header(style='border-bottom: none;')
             if cancelled
               h4.color-white Payment cancelled
-              h5.color-grey Payment was cancelled by the user. Click here to be redirected back to the shop.
+              h5.color-grey Payment was cancelled by the user. Click #[a(href='/account/shop') here] to be redirected back to the shop.
             else
               h4.color-white Payment Successful
               h5.color-grey Payment was successful! Thank you for your purchase. You can redeem your purchase in-game with ::check or through the #[a(href='/account') Account] section on the website.
+              h5.color-grey Click #[a(href='/account/shop') here] to be redirected back to the shop.

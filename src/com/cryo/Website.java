@@ -115,6 +115,8 @@ public class Website {
 	private static Gson GSON;
 
 	public Website() {
+		if(System.getProperty("os.name").equals("Windows 10"))
+			PATH = "http://localhost:8085/";
 		loadProperties();
 		GSON = buildGson();
 		FAVICON = new File(properties.getProperty("favico"));

@@ -52,8 +52,8 @@ public class PaypalTransaction {
 	
 	public PaypalTransaction(String username, HashMap<Integer, Integer> items) {
 		this.items = new HashMap<ShopItem, Integer>();
-		for(int id : items.keySet()) {
-			ShopItem item = ShopManager.getShopItem(id);
+		for(Integer id : items.keySet()) {
+			ShopItem item = ShopConnection.getShopItem(id);
 			this.items.put(item, items.get(id));
 		}
 		this.username = username;
@@ -121,9 +121,11 @@ public class PaypalTransaction {
 	}
 	
 	public void createRedirectURLs() {
+		//figure something out as these are GET requests, and I only use GET request to load index pages.
+		//Will have to have special case for these 2 endpoints, or just leave the ones already in place.
 		redirect = new RedirectUrls();
-		redirect.setCancelUrl("http://cryogen-rsps.com/process_payment?action=cancel");
-		redirect.setReturnUrl("http://cryogen-rsps.com/process_payment?action=process");
+		redirect.setCancelUrl(Website.PATH+"process_payment?action=cancel");
+		redirect.setReturnUrl(Website.PATH+"process_payment?action=process");
 	}
 	
 	public void createItemList() {

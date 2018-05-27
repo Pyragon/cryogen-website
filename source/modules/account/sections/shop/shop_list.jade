@@ -1,0 +1,19 @@
+div.items(style='clear: both;')
+  div.row
+    for item in shopItems
+      div.col-xs-4.item(data-id=item.getId())
+        h3.white= item.getName()
+        img.img-responsive(src=item.getImageLink())
+        p.info.color-white= 'Type: '+item.getType()
+        p.info.price.color-white= '$'+item.getPrice()
+        p.info.small.color-grey= item.getDescription()
+        button.btn.btn-ok.add-to-cart Add to Cart
+        div.item-quantity(hidden=true)
+          div.input-group.chgquant
+            div.input-group-btn
+              button.quantity-left-minus.btn.btn-danger.btn-number(type='button', data-type='minus', data-field='')
+                span.fa.fa-minus
+            input.test.form-control.input-number.shop-item-quantity(type='text', value='1', min='1', max='10')
+            div.input-group-btn
+              button.quantity-right-plus.btn.btn-success.btn-number(type='button', data-type='plus', data-field='')
+                span.fa.fa-plus

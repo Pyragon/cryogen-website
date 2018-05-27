@@ -54,6 +54,10 @@ public class Utilities {
 		return (num + divisor - 1) / divisor;
 	}
 	
+	public int parseInt(String str) {
+		return Integer.parseInt(str);
+	}
+	
 	public static boolean matches(String name) {
 		CharSequence seq = name;
 		Pattern pattern = Pattern.compile("[a-zA-Z0-9_ -]*", Pattern.CASE_INSENSITIVE);

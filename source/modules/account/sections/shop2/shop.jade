@@ -1,0 +1,236 @@
+script.
+  $(document).ready(function() {
+
+    loadCartData();
+
+    function loadCartData() {
+      $.post('/account', { action:'get-cart' }, function(data) {
+        loadCart(data);
+      });
+    }
+
+    function loadCart(ret, reviewD = null) {
+      var data = JSON.parse(ret);
+      var totalI = 0;
+      var totalP = 0;
+      for(var id in data) {
+        if(data.hasOwnProperty(id)) {
+          var quantity = data[id];
+          var item_elem = $('.items').find('[data-id='+id+']');
+          var price = item_elem.data('price');
+          var but = item_elem.find('.but');
+          var quant = item_elem.find('.quant');
+          if(quantity <= 0) {
+            quant.attr('hidden', true);
+            but.attr('hidden', false);
+          } else {
+            totalI += parseInt(quantity);
+            totalP += (price*quantity);
+            quant.attr('hidden', false);
+            but.attr('hidden', true);
+            var quantT = item_elem.find('.input-number');
+            quantT.val(quantity);
+          }
+          if(reviewD != null) {
+            var rID = reviewD.data('id');
+            if(rID == id) {
+              var info = reviewD.find('#item-info');
+              var s = info.html();
+              s = s.substring(s.indexOf('x'));
+              s = quantity+' '+s;
+              info.html(s);
+            }
+          }
+        }
+      }
+      updateTotal(totalI, totalP);
+    }
+
+    function loadCart2(data, reviewD = null) {
+      var sdata = data.split(",");
+      var totalI = 0;
+      var totalP = 0;
+      for(var i = 0; i < sdata.length; i++) {
+        var items = sdata[i].split(":");
+        if(items == "")
+          continue;
+        var id = items[0];
+        var amount = items[1];
+        var price = items[2];
+        var itemd = $('.items').find('[data-id='+id+']');
+        var but = itemd.find('.but');
+        var quant = itemd.find('.quant');
+        if(amount <= 0) {
+          quant.css('display', 'none');
+          but.css('display', '');
+        } else {
+          totalI += parseInt(amount);
+          totalP += (price*amount);
+          quant.css('display', '');
+          but.css('display', 'none');
+          var quantT = itemd.find('.input-number');
+          quantT.val(amount);
+        }
+        if(reviewD != null) {
+          var rID = reviewD.data('id');
+          if(rID == id) {
+            var info = reviewD.find('#item-info');
+            var s = info.html();
+            s = s.substring(s.indexOf('x'));
+            s = amount+' '+s;
+            info.html(s);
+          }
+        }
+      }
+      updateTotal(totalI, totalP);
+    }
+
+    $('.btn-ok').click(function() {
+      var item = $(this).closest('.item');
+      increaseQuantity(item);
+    });
+
+    $('.btn-success').click(function() {
+      var item = $(this).closest('.item');
+      increaseQuantity(item);
+    });
+
+    $('.btn-danger').click(function() {
+      var item = $(this).closest('.item');
+      decreaseQuantity(item);
+    });
+
+    $(document).on('click', '#review-minus', function() {
+      var item = $(this).closest('#cart-item');
+      var id = item.data('id');
+      $.post('/account', { action:'chg-quant', id:id, quant:-1}, function(ret) {
+        var data = JSON.parse(ret);
+        loadCart(data.cart, item);
+      });
+    });
+
+    $(document).on('click', '#review-plus', function() {
+      var item = $(this).closest('#cart-item');
+      var id = item.data('id');
+      $.post('/account', { action:'chg-quant', id:id, quant:1}, function(ret) {
+        var data = JSON.parse(ret);
+        loadCart(data.cart, item);
+      });
+    });
+
+    function increaseQuantity(item) {
+      var id = item.data('id');
+      $.post('/account', { action:'chg-quant', id:id, quant:1}, function(ret) {
+        var data = JSON.parse(ret);
+        loadCart(data.cart);
+      });
+    }
+
+    function decreaseQuantity(item) {
+      var id = item.data('id');
+      $.post('/account', { action:'chg-quant', id:id, quant:-1}, function(ret) {
+        var data = JSON.parse(ret);
+        loadCart(data.cart);
+      });
+    }
+
+    $('.checkout').click(function() {
+      if($('.cart-price').html().includes('(0)')) {
+        sendAlert('You have no items in your cart!');
+        return;
+      }
+      $.post('/account', { action:'get-checkout-conf' }, function(ret) {
+        var data = JSON.parse(ret);
+        if(data.success == null) {
+          sendAlert('Login session expired! Please reload the page.');
+          return;
+        }
+        var n = noty({
+          text: 'Please review and confirm your cart.',
+          type: 'confirm',
+          layout: 'center',
+          dismissQueue: false,
+          template: data.html,
+          theme: 'cryogen',
+          buttons: [{
+            addClass: 'btn btn-primary', text: 'Confirm', onClick: function($noty) {
+              $.post('/account', { action:'confirm' }, function(ret) {
+                var data = JSON.parse(ret);
+                if(!data.link) {
+                  sendAlert('Login session expired! Please reload the page.');
+                  return;
+                }
+                window.location.replace(data.link);
+              });
+            }
+          },
+          {
+            addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+              $noty.close();
+            }
+          }]
+        })
+      });
+    });
+
+    function sendAlert(text) {
+      var n = noty({
+        text: text,
+        layout: 'topRight',
+        timeout: 5000,
+        theme: 'cryogen'
+      });
+    }
+
+    function updateTotal(items, price) {
+      $('.cart-price').html('Cart ('+items+') - $'+price);
+    }
+
+  });
+div.tab-pane.fade(id='shop')
+  h5 Cryogen Shop:
+  p.small The Cryogen Shop allows you to purchase items/features to be used in-game and/or on the website. All items on this page are subject to change without notice. Please also keep in mind that there are NO refunds except in a case of valid reason.
+  p.small All prices are in USD. Only Paypal is accepted at this time.
+  div.cart
+    div.row
+      div.col-md-3
+        p
+          span.color-white Total: 
+          span.cart-price Cart (0) - $0
+      div.col-md-6
+        p
+          span.color-white Cryogen Shop
+      div.col-md-3
+        button.checkout Checkout
+  div.items
+    div.row
+      for item in shopItems
+        div.col-sm-4.item-container
+          div.item(data-id=item.getId(), data-price=item.getPrice())
+            h3.white= item.getName()
+            img.img-responsive(src=item.getImageLink())
+            div.row
+              div.col-sm-10.col-sm-offset-1
+                p.info
+                  span.color-white Type: 
+                  span.color-white= item.getType()
+              div.col-sm-10.col-sm-offset-1
+                p.info 
+                  span.color-white= '$'+item.getPrice()
+                p.small.color-grey.info= item.getDescription()
+            div.row
+              div.but(style='text-align: center;')
+                div.col-sm-10.col-sm-offset-1
+                  button.btn.btn-ok.addCart Add to Cart
+              div.quant(hidden=true)
+                div.col-xs-8.col-xs-offset-2(style='padding-bottom: 15px;')
+                  div.input-group.chgquant
+                    span.input-group-btn
+                      button.quantity-left-minus.btn.btn-danger.btn-number(type='button', data-type='minus', data-field='')
+                        span.glyphicon.glyphicon-minus
+                    input.test.form-control.input-number(type='text', id='quantity', value='1', min='1', max='10')
+                    span.input-group-btn
+                      button.quantity-right-plus.btn.btn-success.btn-number(type='button', data-type='plus', data-field='')
+                        span.glyphicon.glyphicon-plus
+  form(id='finish', action='/paypal', method='post', style='display: none;')
+    input(type='hidden', id='data', name='data', value='null')

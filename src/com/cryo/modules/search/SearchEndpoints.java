@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.db.impl.PunishmentsConnection;
+import com.cryo.db.impl.ShopConnection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,8 @@ import lombok.Getter;
 public enum SearchEndpoints {
 	
 	ACCOUNT_REPORTS("reports", "reports", ReportsConnection.connection(), "./source/modules/account/sections/reports/reports_list.jade"),
-	ACCOUNT_PUNISHMENTS("punishments", "punishments", PunishmentsConnection.connection(), "./source/modules/account/sections/punishments/punishments_list.jade");
+	ACCOUNT_PUNISHMENTS("punishments", "punishments", PunishmentsConnection.connection(), "./source/modules/account/sections/punishments/punishments_list.jade"),
+	ACCOUNT_SHOP("shop", "shopItems", ShopConnection.connection(), "./source/modules/account/sections/shop/shop_list.jade");
 	
 	private @Getter String name, key;
 	private @Getter DatabaseConnection connection;

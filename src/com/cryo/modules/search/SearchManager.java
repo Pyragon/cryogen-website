@@ -117,6 +117,8 @@ public class SearchManager {
 					incorrect = true;
 					continue;
 				}
+				if(value.startsWith(" "))
+					value = value.replaceFirst(" ", "");
 				if(!filter.setValue(module, value)) {
 					incorrect = true;
 					continue;

@@ -41,7 +41,7 @@ public class RedeemSection implements AccountSection {
 			} catch(Exception e) {
 				e.printStackTrace();
 				prop.put("success", false);
-				prop.put("error", "Error loading redeem section");
+				prop.put("error", "Error loading redeem section.");
 			}
 			break;
 		case "load-list":

@@ -269,6 +269,7 @@ script.
     }
 
     function clickedFilter() {
+      type = reports_filter == 'all' ? '2' : reports_filter == 'bugs' ? '0' : '1'
       clickRemoveFilter('reports', $(this), archived, loadListWPage, { 'type': type })
     }
 
