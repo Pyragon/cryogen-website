@@ -9,6 +9,7 @@ block head
   link(rel='stylesheet', href='/stylesheets/account/shop.css')
   script.
     var loaded = [];
+    var section = "";
     function loadSection(section) {
       $.post('/account/'+section, { action:'load' }, function(ret) {
         var data = getJSON(ret);
@@ -19,7 +20,7 @@ block head
     }
     $(document).ready(function() {
 
-      var section = "!{section.getName()}";
+      section = "!{section.getName()}";
 
       history.pushState({}, "AccountSection", "/account/"+section)
 
@@ -32,7 +33,7 @@ block head
       $('.nav-tabs a').click(function() {
         $(this).tab('show');
 
-        var section = $(this).attr('href').replace("#", "")
+        section = $(this).attr('href').replace("#", "")
         if(!loaded.includes(section)) {
           if(loadSection(section))
             loaded.push(section)

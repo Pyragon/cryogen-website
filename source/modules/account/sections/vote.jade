@@ -1,9 +1,9 @@
 script.
   var times = {};
   $(document).ready(function() {
-    
+
     setInterval(refreshTime, 1000);
-    
+
     $('.site').click(function() {
       var id = $(this).data('id');
       if(times[id] > 0) {
@@ -13,8 +13,10 @@ script.
       var url = getURL(id)
     //  sendAlert(url)
     });
-    
+
     function refreshTime() {
+      if(this.section != 'vote')
+        return;
         $.post('/account/vote', { action:'get-time' }, function(ret) {
           var data = getJSON(ret);
           if(data == null) return;
@@ -34,18 +36,18 @@ script.
           }
         });
     }
-    
+
     function getURL(id) {
       if(id == 0)
         return "!{manager.buildURL(user.getUsername(), 0)}";
       else if(id == 1)
         return "!{manager.buildURL(user.getUsername(), 1)}";
     else if(id == 2)
-        return "!{manager.buildURL(user.getUsername(), 2)}";
+      return "!{manager.buildURL(user.getUsername(), 2)}";
     }
-    
+
   });
-  
+
 h5 About Auths:
 p.small.vote-info Collect auth codes by voting on the sites below.
 p.small.vote-info You can then redeem those auth codes by clicking 'Exchange' underneath the code, or by trading to other players
