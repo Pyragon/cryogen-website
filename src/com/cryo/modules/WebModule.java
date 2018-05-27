@@ -7,7 +7,6 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;

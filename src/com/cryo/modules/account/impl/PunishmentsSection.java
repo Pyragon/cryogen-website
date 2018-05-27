@@ -10,7 +10,6 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
 import com.cryo.modules.account.entities.Appeal;
 import com.cryo.modules.account.entities.Punishment;
-import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
@@ -48,10 +47,13 @@ public class PunishmentsSection implements AccountSection {
 		case "load-list":
 			boolean archived = Boolean.parseBoolean(request.queryParams("archived"));
 			int page = Integer.parseInt(request.queryParams("page"));
-			ArrayList<Punishment> punishments = new PunishUtils().getPunishments(account.getUsername(), archived, page);
+			Object[] data = PunishmentsConnection.connection().handleRequest("get-punishments", account.getUsername(), archived, page);
+			ArrayList<Punishment> punishments = new ArrayList<>();
+			if(data != null)
+				punishments = (ArrayList<Punishment>) data[0];
 			model.put("punishments", punishments);
 			String html = WebModule.render("./source/modules/account/sections/punishments/punishments_list.jade", model, request, response);
-			Object[] data = PunishmentsConnection.connection().handleRequest("get-total-punish-results", account.getUsername(), archived);
+			data = PunishmentsConnection.connection().handleRequest("get-total-punish-results", account.getUsername(), archived);
 			if(data == null) {
 				prop.put("success", false);
 				prop.put("error", "Error obtaining full pagetotal");

@@ -83,6 +83,8 @@ public class AccountModule extends WebModule {
 			sections = new HashMap<>();
 			for(Class<?> c : Utilities.getClasses("com.cryo.modules.account.impl")) {
 				if(c.isAnonymousClass()) continue;
+				if(AccountSection.class.isAssignableFrom(c))
+					continue;
 				Object o = c.newInstance();
 				if(!(o instanceof AccountSection))
 					continue;

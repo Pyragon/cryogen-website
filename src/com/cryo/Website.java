@@ -38,13 +38,10 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.account.AccountModule;
-import com.cryo.modules.account.AccountOverviewModule;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.RegisterModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.recovery.RecoveryModule;
-import com.cryo.modules.account.shop.ShopManager;
-import com.cryo.modules.account.support.AccountSupportModule;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
@@ -52,7 +49,7 @@ import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.samsung.SamsungTVModule;
 import com.cryo.modules.search.SearchManager;
-import com.cryo.modules.staff.StaffModule;
+import com.cryo.modules.staff.StaffModule2;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.paypal.PaypalManager;
 import com.cryo.server.ServerConnection;
@@ -112,13 +109,13 @@ public class Website {
 
 	private static File FAVICON = null;
 	
-	private static Gson GSON;
+	private static @Getter Gson Gson;
 
 	public Website() {
 		if(System.getProperty("os.name").equals("Windows 10"))
 			PATH = "http://localhost:8085/";
 		loadProperties();
-		GSON = buildGson();
+		Gson = buildGson();
 		FAVICON = new File(properties.getProperty("favico"));
 		connectionManager = new DBConnectionManager();
 		commentsManager = new CommentsManager();
@@ -140,15 +137,6 @@ public class Website {
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});
-		get(AccountSupportModule.PATH, (req, res) -> {
-			return new AccountSupportModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post(AccountSupportModule.PATH, (req, res) -> {
-			return new AccountSupportModule(this).decodeRequest(req, res, RequestType.POST);
-		});
-		post("/vote", (req, res) -> {
-			return new AccountOverviewModule(this).decodeVotePost(req, res);
-		});
 		get(LoginModule.PATH, (req, res) -> {
 			return new LoginModule(this).decodeRequest(req, res, RequestType.GET);
 		});
@@ -167,11 +155,11 @@ public class Website {
 		get(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.GET);
 		});
-		post(StaffModule.PATH, (req, res) -> {
-			return new StaffModule(this).decodeRequest(req, res, RequestType.POST);
+		post(StaffModule2.PATH, (req, res) -> {
+			return new StaffModule2(this).decodeRequest(req, res, RequestType.POST);
 		});
-		get(StaffModule.PATH, (req, res) -> {
-			return new StaffModule(this).decodeRequest(req, res, RequestType.GET);
+		get(StaffModule2.PATH, (req, res) -> {
+			return new StaffModule2(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/kill_web", (req, res) -> {
 			Account account = CookieManager.getAccount(req);
@@ -381,7 +369,7 @@ public class Website {
 					prop.put("error", "Error getting data from server.");
 					break;
 				}
-				List<String> list = GSON.fromJson(response.getProperty("list"), List.class);
+				List<String> list = Gson.fromJson(response.getProperty("list"), List.class);
 				ArrayList<ShopItem> items = new ArrayList<>();
 				for(String li : list) {
 					if(li.equals(""))

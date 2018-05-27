@@ -13,8 +13,6 @@ import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Invoice;
 import com.cryo.modules.account.entities.ShopItem;
-import com.cryo.modules.account.shop.ShopManager;
-import com.cryo.modules.account.shop.ShopUtils;
 import com.cryo.security.SessionIDGenerator;
 import com.cryo.server.ServerConnection;
 import com.google.gson.FieldNamingPolicy;
@@ -107,7 +105,9 @@ public class PaypalManager extends WebModule {
 			}
 			model.put("cancelled", false);
 			String invoice_id = transaction.getInvoiceNumber();
-			Invoice invoice = ShopUtils.getInvoice(invoice_id, true, true);
+			Object[] data = ShopConnection.connection().handleRequest("get-invoice", invoice_id, true);
+			if(data == null) return null;
+			Invoice invoice = (Invoice) data[0];
 			if(invoice == null)
 				model.put("error", true);
 			else {

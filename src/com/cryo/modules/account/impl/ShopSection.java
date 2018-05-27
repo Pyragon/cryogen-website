@@ -10,7 +10,6 @@ import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
 import com.cryo.modules.account.entities.ShopItem;
-import com.cryo.modules.account.shop.ShopUtils;
 import com.cryo.paypal.PaypalTransaction;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;

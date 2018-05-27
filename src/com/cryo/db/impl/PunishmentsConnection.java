@@ -14,8 +14,6 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.modules.account.entities.Appeal;
 import com.cryo.modules.account.entities.Punishment;
-import com.cryo.modules.account.support.punish.ACommentDAO;
-import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.search.Filter;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
@@ -63,21 +61,6 @@ public class PunishmentsConnection extends DatabaseConnection {
 	private final SQLQuery GET_APPEAL = (set) -> {
 		if(empty(set)) return null;
 		return new Object[] { loadAppeal(set) };
-	};
-	
-	private final SQLQuery GET_COMMENTS = (set) -> {
-		ArrayList<ACommentDAO> cList = new ArrayList<>();
-		if(wasNull(set))
-			return new Object[] { cList };
-		while(next(set)) {
-			int id = getInt(set, "id");
-			int appeal_id = getInt(set, "fid");
-			String username = getString(set, "username");
-			String comment = getString(set, "comment");
-			Timestamp time = getTimestamp(set, "time");
-			cList.add(new ACommentDAO(id, appeal_id, username, comment, time));
-		}
-		return new Object[] { cList };
 	};
 
 	@SuppressWarnings("unchecked")
@@ -231,25 +214,14 @@ public class PunishmentsConnection extends DatabaseConnection {
 				if(status == 1) //accept, need to set punishment to inactive
 					set("punishments", "active=0", "appeal_id=?", id);
 				break;
-			case "add-comment":
-				username = (String) data[1];
-				appealId = (int) data[2];
-				int type = (int) data[3];
-				String comment = (String) data[4];
-				insert("comments", "DEFAULT", appealId, type, username, comment, "DEFAULT");
-				if(type == 0)
-					set("appeals", "action=?", "id=?", "Comment submitted by $for-name="+username+"$end", appealId);
-				break;
-			case "get-comments":
-				appeal_id = (int) data[1];
-				type = (int) data[2];
-				ArrayList<ACommentDAO> cList = new ArrayList<>();
-				if(appeal_id == 0)
-					return new Object[] { cList };
-				data = select("comments", "fid=? AND type=? ORDER BY time DESC", GET_COMMENTS, appeal_id, type);
-				return data == null ? null : new Object[] { (ArrayList<ACommentDAO>) data[0] };
 		}
 		return null;
+	}
+	
+	public static Appeal getAppeal(int id) {
+		Object[] data = connection().handleRequest("get-appeal", id);
+		if(data == null) return null;
+		return (Appeal) data[0];
 	}
 	
 	public Punishment loadPunishment(ResultSet set) {
@@ -265,7 +237,7 @@ public class PunishmentsConnection extends DatabaseConnection {
 		Timestamp archived = getTimestamp(set, "archived");
 		String archiver = getString(set, "archiver");
 		Punishment punish = new Punishment(id, username, type, date, expiry, punisher, reason, active, appealId, archived, archiver);
-		Appeal appeal = new PunishUtils().getAppeal(appealId);
+		Appeal appeal = getAppeal(appealId);
 		if(appeal != null)
 			punish.setAppeal(appeal);
 		return punish;

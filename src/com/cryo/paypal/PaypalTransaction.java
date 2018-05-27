@@ -11,7 +11,6 @@ import com.cryo.Website;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.account.entities.Invoice;
 import com.cryo.modules.account.entities.ShopItem;
-import com.cryo.modules.account.shop.ShopManager;
 import com.paypal.api.payments.Amount;
 import com.paypal.api.payments.Details;
 import com.paypal.api.payments.Item;
@@ -34,7 +33,7 @@ public class PaypalTransaction {
 	
 	private HashMap<ShopItem, Integer> items;
 	
-	private static String ERROR_LINK = "http://cryogen-rsps.com/paypal_error";
+	private static String ERROR_LINK = Website.PATH+"paypal_error";
 
 	private String link;
 	

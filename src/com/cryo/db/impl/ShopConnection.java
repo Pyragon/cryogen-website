@@ -19,7 +19,6 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.modules.account.entities.Invoice;
 import com.cryo.modules.account.entities.ShopItem;
-import com.cryo.modules.account.shop.ShopUtils;
 import com.google.gson.Gson;
 
 import lombok.Getter;
@@ -92,7 +91,16 @@ public class ShopConnection extends DatabaseConnection {
 			return null;
 		String id = getString(set, "id");
 		String username = getString(set, "username");
-		HashMap<ShopItem, Integer> packages = ShopUtils.fromString(getString(set, "items"));
+		String cart_data = getString(set, "items");
+		HashMap<Integer, Integer> cart = Website.buildGson().fromJson(cart_data, HashMap.class);
+		HashMap<ShopItem, Integer> packages = new HashMap<>();
+		for(Integer shopItemId : cart.keySet()) {
+			Integer quantity = cart.get(shopItemId);
+			ShopItem item = getShopItem(shopItemId);
+			if(item == null)
+				continue;
+			packages.put(item, quantity);
+		}
 		int active = getInt(set, "active");
 		Timestamp date = getTimestamp(set, "date");
 		Invoice invoice = new Invoice(id, username, packages, active == 1, date);
@@ -187,9 +195,13 @@ public class ShopConnection extends DatabaseConnection {
 				insert("cart_data", username, new Gson().toJson((HashMap<String, String>) data[2]));
 				break;
 			case "set-invoice":
-				Invoice invoice = (Invoice) data[1];;
-				String packages_string = ShopUtils.toJSON(invoice.getItems());
-				insert("invoices", invoice.getInvoiceId(), invoice.getUsername(), packages_string, 1, "DEFAULT");
+				Invoice invoice = (Invoice) data[1];
+				HashMap<Integer, Integer> cartData = new HashMap<>();
+				for(ShopItem item : invoice.getItems().keySet()) {
+					Integer quant = invoice.getItems().get(item);
+					cartData.put(item.getId(), quant);
+				}
+				insert("invoices", invoice.getInvoiceId(), invoice.getUsername(), Website.getGson().toJson(cartData), 1, "DEFAULT");
 				break;
 			case "get-invoice":
 				String invoice_id = (String) data[1];
