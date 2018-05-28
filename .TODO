@@ -6,29 +6,22 @@ Bugs:
 General:
   ☐ Reduce as many connections to database as possible
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
-  ☐ Switch all error blocks to use the sendAlert instead
   ☐ Recode base to properly utilize a 'module' structure
 Shop:
-  ☐ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc)
-  ☐ Better space out packages in account/redeem section
 Staff Page:
-  ☐ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all)
+  Remake TODO:
+    Announcements:
+      ☐ Searching, finish pagination
+      ☐ Moderation to show staff members that have not read currently active announcements
   ☐ Log all events
-  ☐ Viewing player report needs to be updated
-  ☐ Something is messed with bug reports....
-  ☐ Viewing bug report needs to be updated
-  ☐ Viewing appeal needs to be updated
-  ☐ Change create punishment to use noty instead of diff page
 Account:
   ☐ Restyle dropdown menu in header
   ☐ Add min/max length requirement to password on account creation/pass changing on server/website
 Other:
-  ☐ Better organize all pages (Most pages have different style layouts, as I learned more :p)
   ☐ Create independant html pages to serve as error pages for nginx
   ☐ Create html pages for emails
   ☐ Create cryogen-rsps.com emails and change webmaster emails + recovery/verification from addresses
 Securiy:
-  ☐ Secure all requests to server (though should be secured through sessions already)
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
 API:
   ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
@@ -42,6 +35,17 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Better organize all pages (Most pages have different style layouts, as I learned more :p) @done(2018-05-28 03:21) @project(Other)
+  ✔ Secure all requests to server (though should be secured through sessions already) @done(2018-05-28 03:21) @project(Securiy)
+  ✔ Switch all error blocks to use the sendAlert instead @done(2018-05-28 03:21) @project(General)
+  ✔ Add 'sort by' option for when there are multiple types of packages (Membership, cosmetic, etc) @done(2018-05-28 03:21) @project(Shop)
+  ✔ Better space out packages in account/redeem section @done(2018-05-28 03:21) @project(Shop)
+  ✔ Possibly limit searching to either archived/active based on what you were viewing (currently searches through all) @done(2018-05-28 03:20) @project(Staff Page)
+  ✔ Viewing player report needs to be updated @done(2018-05-28 03:20) @project(Staff Page)
+  ✔ Something is messed with bug reports.... @done(2018-05-28 03:20) @project(Staff Page)
+  ✔ Viewing bug report needs to be updated @done(2018-05-28 03:20) @project(Staff Page)
+  ✔ Viewing appeal needs to be updated @done(2018-05-28 03:20) @project(Staff Page)
+  ✔ Change create punishment to use noty instead of diff page @done(2018-05-28 03:20) @project(Staff Page)
   ✔ Fix no black marks message on support#appeal page @done(2018-05-23 12:29) @project(Account)
   ✔ Page for players to view their own player/bug reports @done(2018-05-05 12:36) @project(Other)
   ✔ Create overall API for server + website that utilizes tokens @done(2018-05-05 12:36) @project(API)
