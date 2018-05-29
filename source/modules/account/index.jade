@@ -49,13 +49,13 @@ block content
       div.col-md-3
         ul.nav.nav-tabs
           li.nav.active.account-item
-            a(href='#overview', data-toggle='tab') Account overview
+            a(href='#overview', data-toggle='tab') Overview
           li.nav.account-item
-            a.vote(href='#vote', data-toggle='tab') Vote
+            a(href='#vote', data-toggle='tab') Vote
           li.nav.account-item
-            a.vote(href='#reports', data-toggle='tab') Reports
+            a(href='#reports', data-toggle='tab') Reports
           li.nav.account-item
-            a.vote(href='#punishments', data-toggle='tab') Punishments
+            a(href='#punishments', data-toggle='tab') Punishments
           li.nav.account-item
             a(href='#redeem', data-toggle='tab') Redeem
           li.nav.account-item
@@ -64,8 +64,8 @@ block content
         div.widget
           div.tab-content.content
             div.tab-pane.fade.in.active(id='overview')
-            div.tab-pane.fade.in.active(id='vote')
-            div.tab-pane.fade.in.active(id='reports')
-            div.tab-pane.fade.in.active(id='punishments')
-            div.tab-pane.fade.in.active(id='redeem')
-            div.tab-pane.fade.in.active(id='shop')
+            div.tab-pane.fade.in(id='vote')
+            div.tab-pane.fade.in(id='reports')
+            div.tab-pane.fade.in(id='punishments')
+            div.tab-pane.fade.in(id='redeem')
+            div.tab-pane.fade.in(id='shop')

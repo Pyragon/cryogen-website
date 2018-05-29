@@ -8,6 +8,9 @@ General:
   ☐ Reduce as many connections to database as possible
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Recode base to properly utilize a 'module' structure
+  ☐ Cleanup github to only include required files
+  ☐ Cleanup stylesheets to be dependent on section
+  ☐ Possibly allow users to create their own stylesheets
 Shop:
 Staff Page:
   Remake TODO:
@@ -26,13 +29,19 @@ Securiy:
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
 API:
   ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
-Tracker:
-  ☐ Player 'tracker' page instead of highscores. Main page will display a regular highscores
+Highscores:
   ☐ 'Seasonal' highscores page. Different highscores goal each month, random things like nex kills, or chicken kills, bows fletched, etc
   ☐ Banner on left, top option pulls out to reveal all skill icons (this is how highscores is navigated)
   ☐ Main highscore page will have the search for player function
-  ☐ Adventurer's log button, showing all data about player, equipment, location, detailed stats, etc
-  ☐ 'self' tracker. Gives players ability to track up to 5 'random' things. (any npc kill, certain drops, etc)
+Tracker:
+  Full account tracker and basically an online view of your account
+  ☐ View quest points, skills, etc
+  ☐ Have rendered version of your version in-game
+  ☐ Have full adventurer's log hopefully logging as much as you can from in-game. Log can then sort through them, or provide filters to see certain
+  ☐ Allow saving of above filters for people who want it to stick throughout sessions/page refreshes
+  ☐ Add ability to 'track' up to 5 things, show daily/weekly/monthly stats on said things (quests complete, kills on certain NPC, etc, give stats showing average kills, average quest time, etc)
+  ☐ View/Rearrange bank from website (Ponder this for a bit, it'd be kinda insecure in-case of admin account's being hacked, perhaps ONLY players can view, not even staff?)
+
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:

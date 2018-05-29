@@ -49,6 +49,7 @@ import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.samsung.SamsungTVModule;
 import com.cryo.modules.search.SearchManager;
+import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.StaffModule2;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.paypal.PaypalManager;
@@ -134,6 +135,7 @@ public class Website {
 		CorsFilter.apply();
 		AccountModule.registerEndpoints(this);
 		SearchManager.registerEndpoints(this);
+		StaffModule.registerEndpoints(this);
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});
@@ -154,12 +156,6 @@ public class Website {
 		});
 		get(LogoutModule.PATH, (req, res) -> {
 			return new LogoutModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post(StaffModule2.PATH, (req, res) -> {
-			return new StaffModule2(this).decodeRequest(req, res, RequestType.POST);
-		});
-		get(StaffModule2.PATH, (req, res) -> {
-			return new StaffModule2(this).decodeRequest(req, res, RequestType.GET);
 		});
 		get("/kill_web", (req, res) -> {
 			Account account = CookieManager.getAccount(req);

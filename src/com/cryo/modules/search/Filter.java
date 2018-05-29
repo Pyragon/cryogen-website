@@ -1,6 +1,7 @@
 package com.cryo.modules.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.cryo.db.DatabaseConnection;
@@ -27,6 +28,10 @@ public abstract class Filter {
 	
 	public List<?> filterList(List<?> list) {
 		return list;
+	}
+	
+	public boolean isMod(String mod, String... mods) {
+		return Arrays.stream(mods).anyMatch(mod::equals);
 	}
 	
 }

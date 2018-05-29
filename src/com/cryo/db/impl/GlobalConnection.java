@@ -3,15 +3,17 @@ package com.cryo.db.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.staff.announcements.AnnouncementDAO;
+import com.cryo.modules.staff.announcements.Announcement;
 import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.CookieManager;
@@ -40,6 +42,27 @@ public class GlobalConnection extends DatabaseConnection {
 		String opcode = ((String) data[0]).toLowerCase();
 		try {
 			switch(opcode) {
+			case "search":
+				Properties queryValues = (Properties) data[1];
+				int page = (int) data[2];
+				boolean archive = (boolean) data[3];
+				HashMap<String, String> params = (HashMap<String, String>) data[4];
+				String query = (String) queryValues.getProperty("query");
+				Object[] values = (Object[]) queryValues.get("values");
+				if(page == 0) page = 1;
+				int offset = (page - 1) * 10;
+				query += " AND expiry "+(archive ? "<" : ">")+" NOW()";
+				query += " ORDER by date DESC";
+				query += " LIMIT "+offset+",10";
+				return select("announcements", query, GET_ANNOUNCEMENTS, values);
+			case "search-results":
+				queryValues = (Properties) data[1];
+				archive = (boolean) data[2];
+				params = (HashMap<String, String>) data[3];
+				query = (String) queryValues.getProperty("query");
+				values = (Object[]) queryValues.get("values");
+				query += " AND expiry "+(archive ? "<" : ">")+" NOW()";
+				return new Object[] { selectCount("announcements", query, values) };
 				case "get-misc-data":
 					return select("misc_data", "name=?", GET_MISC_DATA, (String) data[1]);
 				case "set-misc-data":
@@ -60,7 +83,7 @@ public class GlobalConnection extends DatabaseConnection {
 					insert("player_data", "DEFAULT", username, hash, salt, 0, 0, date);
 					DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
 					return new Object[] { true };
-				case "search":
+				case "search-players":
 					String text = (String) data[1];
 					text = "%"+text+"%";
 					data = select("player_data", "username LIKE ?", SEARCH_ACCOUNTS, text);
@@ -152,33 +175,25 @@ public class GlobalConnection extends DatabaseConnection {
 				case "get-announcement":
 					int id = (int) data[1];
 					data = select("announcements", "id=?", GET_ANNOUNCEMENT, id);
-					return data == null ? null : new Object[] { (AnnouncementDAO) data[0] };
+					return data == null ? null : new Object[] { (Announcement) data[0] };
 				case "get-announcement-count":
-					boolean archive = (boolean) data[1];
+					archive = (boolean) data[1];
 					String clause = "expiry "+(archive ? "<" : ">")+" NOW()";
-					return new Object[] { selectCount("announcements", clause) };
+					return new Object[] { (int) Utilities.roundUp(selectCount("announcements", clause), 10) };
 				case "get-announcements":
-					DateSpan span = (DateSpan) data[1];
-					archive = (boolean) data[2];
-					int page = (int) data[3];
+					archive = (boolean) data[1];
+					page = (int) data[2];
 					if(page == 0) page = 1;
-					int offset = (page - 1) * 10;
-					clause = "";
-					if(span != null)
-						clause = "date >= "+span.format("from")+" AND date <= "+span.format("to");
-					else {
-						clause = "expiry "+(archive ? "<" : ">")+" NOW()";
-					}
-					clause += " ORDER BY date DESC LIMIT "+offset+",10";
-					data = select("announcements", clause, GET_ANNOUNCEMENTS);
-					return data == null ? null : new Object[] { (ArrayList<AnnouncementDAO>) data[0] };
-				case "read-announce":
-					AnnouncementDAO announce = (AnnouncementDAO) data[1];
-					String json = AnnouncementUtils.toString(announce.getRead());
+					offset = (page - 1) * 10;
+					data = select("announcements", "expiry "+(archive ? "<" : ">")+" NOW() ORDER BY date DESC LIMIT "+offset+",10", GET_ANNOUNCEMENTS);
+					return data == null ? null : new Object[] { (ArrayList<Announcement>) data[0] };
+				case "save-announce":
+					Announcement announce = (Announcement) data[1];
+					String json = Website.getGson().toJson(announce.getRead());
 					set("announcements", "`read`=?", "id=?", json, announce.getId());
 					break;
 				case "create-announce":
-					announce = (AnnouncementDAO) data[1];
+					announce = (Announcement) data[1];
 					insert("announcements", announce.data());
 					return new Object[] { };
 			}
@@ -194,7 +209,7 @@ public class GlobalConnection extends DatabaseConnection {
 	};
 	
 	private final SQLQuery GET_ANNOUNCEMENTS = (set) -> {
-		ArrayList<AnnouncementDAO> announcements = new ArrayList<>();
+		ArrayList<Announcement> announcements = new ArrayList<>();
 		if(wasNull(set)) return null;
 		while(next(set)) {
 			announcements.add(loadAnnouncement(set));
@@ -202,15 +217,18 @@ public class GlobalConnection extends DatabaseConnection {
 		return new Object[] { announcements };
 	};
 	
-	private AnnouncementDAO loadAnnouncement(ResultSet set) {
+	private Announcement loadAnnouncement(ResultSet set) {
 		int id = getInt(set, "id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
 		String announcement = getString(set, "announcement");
 		String read = getString(set, "read");
+		ArrayList<String> list = new ArrayList<>();
+		if(read != null && !read.equals(""))
+			list = Website.getGson().fromJson(read, ArrayList.class);
 		Timestamp date = getTimestamp(set, "date");
 		Timestamp expiry = getTimestamp(set, "expiry");
-		return new AnnouncementDAO(id, username, title, announcement, AnnouncementUtils.fromString(read), date, expiry);
+		return new Announcement(id, username, title, announcement, list, date, expiry);
 	}
 	
 	private final SQLQuery GET_USERNAMES = (set) -> {

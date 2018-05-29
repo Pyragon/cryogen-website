@@ -36,7 +36,7 @@ public class ExpiredFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("punish");
+		return isMod(mod, "punish");
 	}
 	
 }

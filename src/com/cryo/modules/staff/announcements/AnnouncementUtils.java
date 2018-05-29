@@ -25,11 +25,11 @@ public class AnnouncementUtils {
 	private static Gson GSON = new Gson();
 	
 	@SuppressWarnings("unchecked")
-	public static ArrayList<AnnouncementDAO> getAnnouncements(DateSpan span, boolean archive, int page) {
+	public static ArrayList<Announcement> getAnnouncements(DateSpan span, boolean archive, int page) {
 		Object[] data = GlobalConnection.connection().handleRequest("get-announcements", span, archive, page);
 		if(data == null)
 			return new ArrayList<>();
-		return (ArrayList<AnnouncementDAO>) data[0];
+		return (ArrayList<Announcement>) data[0];
 	}
 	
 	public static String getAnnouncementList(boolean archive, int page, Request request, Response response, WebModule module) {
@@ -38,14 +38,14 @@ public class AnnouncementUtils {
 		return module.render("./source/modules/staff/overview/announcements/announcement_list.jade", model, request, response);
 	}
 	
-	public static AnnouncementDAO getAnnouncement(int id) {
+	public static Announcement getAnnouncement(int id) {
 		Object[] data = GlobalConnection.connection().handleRequest("get-announcement", id);
 		if(data == null) return null;
-		return (AnnouncementDAO) data[0];
+		return (Announcement) data[0];
 	}
 	
 	public static void setRead(int id, String username) {
-		AnnouncementDAO announce = getAnnouncement(id);
+		Announcement announce = getAnnouncement(id);
 		if(!announce.getRead().contains(username))
 			announce.getRead().add(username);
 		GlobalConnection.connection().handleRequest("read-announce", announce);

@@ -30,8 +30,6 @@ public class DateFilter extends Filter {
 		StringBuilder builder = new StringBuilder();
 		return builder.append(col).append(" BETWEEN ").append(span.format("from"))
 				.append(" AND ").append(span.format("to")).toString();
-//		return builder.append(col).append(" >= ").append(span.format("from"))
-//				.append(" AND ").append(col).append(" < ").append(span.format("to")).toString();
 	}
 	
 	@Override
@@ -55,7 +53,7 @@ public class DateFilter extends Filter {
 	
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("appeal") || mod.equals("punish") || mod.equals("recover") || mod.equals("reports");
+		return isMod(mod, "appeal", "punish", "recover", "reports", "announcements");
 	}
 	
 }

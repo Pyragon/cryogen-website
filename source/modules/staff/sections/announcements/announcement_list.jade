@@ -1,0 +1,22 @@
+table.table.hs-table.table-condensed.table-responsive.announcements-table.widget(style='font-size: 12px;')
+  thead
+    tr
+      th.t-center Created By
+      th.t-center Title
+      th.t-center Date Created
+      th.t-center Expires
+      th.t-center Status
+      th.t-center View
+  tbody
+    if announcements.size() == 0
+      tr
+        td.color-red(align='center', colspan='6')= 'Currently no '+(archive ? 'expired' : 'active')+' announcements.'
+    else
+      for announcement in announcements
+        tr(data-id=announcement.getId(), data-read=announcement.getStatus(user.getUsername(), true))
+          td.b-right= '$for-name='+announcement.getUsername()+'$end'
+          td.b-right= announcement.getTitle()
+          td.b-right= formatter.formatTimestamp(announcement.getDate(), 'MMM dd, YYYY h:mm a')
+          td.b-right= formatter.formatTimestamp(announcement.getExpiry(), 'MMM dd, YYYY h:mm a')
+          td(class='b-right '+announcement.getColour(user.getUsername()))= announcement.getStatus(user.getUsername(), false)
+          td.vis-link.read-announce View

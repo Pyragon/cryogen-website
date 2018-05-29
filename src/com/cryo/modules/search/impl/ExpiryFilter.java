@@ -54,7 +54,7 @@ public class ExpiryFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("punish");
+		return isMod(mod, "punish", "announcements");
 	}
 	
 }

@@ -21,7 +21,7 @@ public class TitleFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("reports");
+		return isMod(mod, "reports", "announcements");
 	}
 
 }

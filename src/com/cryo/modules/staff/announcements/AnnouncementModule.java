@@ -35,7 +35,7 @@ public class AnnouncementModule {
 			case "view-announce":
 				int id = Integer.parseInt(request.queryParams("id"));
 				model = new HashMap<>();
-				AnnouncementDAO announcement = AnnouncementUtils.getAnnouncement(id);
+				Announcement announcement = AnnouncementUtils.getAnnouncement(id);
 				if(announcement == null) {
 					prop.put("success", false);
 					prop.put("error", "Invalid announcement id. Please reload the page and try again.");
@@ -87,7 +87,7 @@ public class AnnouncementModule {
 					prop.put("error", "Announcements must not expire for at least 7 days.");
 					break;
 				}
-				AnnouncementDAO announce = new AnnouncementDAO(0, username, title, text, null, null, new Timestamp(date.getTime()));
+				Announcement announce = new Announcement(0, username, title, text, null, null, new Timestamp(date.getTime()));
 				Object[] data = GlobalConnection.connection().handleRequest("create-announce", announce);
 				if(data == null) {
 					prop.put("success", false);
