@@ -151,9 +151,9 @@ div.row
         div.col-xs-4
           p.color-grey.search-info Click the search icon to begin searching through announcements. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
         div.col-xs-4
-          p.color-grey.search-info Filters:
+          p.color-grey.search-info Filters: createdby: (name), title: (name), date: (span-span, in dd/mm/yyyy), expiry(span-span, in dd/mm/yyyy)
         div.col-xs-4
-          p.color-grey.search-info Example:
+          p.color-grey.search-info Example: createdby: cody, title: first
       div(style='float: right; margin: 33.5px 5px;')
         if user.getRights() == 2
           div.link#announcements-create
