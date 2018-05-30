@@ -204,11 +204,6 @@ function updatePage(page_t, page, mod) {
 	$('#' + mod + '-pages').html('Pages: ' + getPages(page_t, page).html());
 }
 
-function getDescription(archive, mod) {
-	var mods = mod === 'preport' ? 'player reports' : mod === 'breport' ? 'bug reports' : 'appeals';
-	return archive ? 'Currently viewing all archived ' + mods : 'Currently viewing all active ' + mods;
-}
-
 function sendAlert(text) {
 	var n = noty({
 		text: text,

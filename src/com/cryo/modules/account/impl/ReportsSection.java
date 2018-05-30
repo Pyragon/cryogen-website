@@ -110,11 +110,6 @@ public class ReportsSection implements AccountSection {
 				break;
 			}
 			Report report = (Report) data[0];
-			if(!report.isActive()) {
-				prop.put("success", false);
-				prop.put("error", "Cannot comment on an inactive report!");
-				break;
-			}
 			if(comment.length() < 5) {
 				prop.put("success", false);
 				prop.put("error", "Your comment must be at least 5 characters long.");
@@ -162,6 +157,11 @@ public class ReportsSection implements AccountSection {
 				break;
 			}
 			report = (Report) data[0];
+			if(!report.getUsername().equals(account.getUsername())) {
+				prop.put("success", false);
+				prop.put("error", "You can only view your own reports!");
+				break;
+			}
 			model = new HashMap<>();
 			model.put("report", report);
 			model.put("comments", report.getComments());

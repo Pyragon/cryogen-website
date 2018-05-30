@@ -129,6 +129,8 @@ public class AnnouncementsSection implements StaffSection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			prop.put("success", false);
+			prop.put("error", "Error in announcements section.");
 		}
 		return gson.toJson(prop);
 	}

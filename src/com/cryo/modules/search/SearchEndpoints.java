@@ -15,12 +15,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SearchEndpoints {
 	
-	ACCOUNT_REPORTS("reports", "reports", ReportsConnection.connection(), "./source/modules/account/sections/reports/reports_list.jade"),
-	ACCOUNT_PUNISHMENTS("punishments", "punishments", PunishmentsConnection.connection(), "./source/modules/account/sections/punishments/punishments_list.jade"),
-	ACCOUNT_SHOP("shop", "shopItems", ShopConnection.connection(), "./source/modules/account/sections/shop/shop_list.jade"),
-	STAFF_ANNOUNCEMENTS("announcements", "announcements", GlobalConnection.connection(), "./source/modules/staff/sections/announcements/announcement_list.jade");
+	ACCOUNT_REPORTS("reports", "reports", 0, ReportsConnection.connection(), "./source/modules/account/sections/reports/reports_list.jade"),
+	ACCOUNT_PUNISHMENTS("punishments", "punishments", 0, PunishmentsConnection.connection(), "./source/modules/account/sections/punishments/punishments_list.jade"),
+	ACCOUNT_SHOP("shop", "shopItems", 0, ShopConnection.connection(), "./source/modules/account/sections/shop/shop_list.jade"),
+	STAFF_ANNOUNCEMENTS("announcements", "announcements", 1, GlobalConnection.connection(), "./source/modules/staff/sections/announcements/announcement_list.jade"),
+	STAFF_REPORTS("staff-reports", "reports", 2, ReportsConnection.connection(), "./source/modules/account/sections/reports/reports_list.jade");
 	
 	private @Getter String name, key;
+	private @Getter int rights;
 	private @Getter DatabaseConnection connection;
 	private @Getter String jadeFile;
 	

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -111,20 +112,26 @@ public class ReportsConnection extends DatabaseConnection {
 			Properties queryValues = (Properties) data[1];
 			boolean archived = (boolean) data[2];
 			HashMap<String, String> params = (HashMap<String, String>) data[3];
+			String username = (String) data[4];
 			if(params == null) System.out.println("null");
 			int type = Integer.parseInt(params.get("type"));
 			String query = (String) queryValues.get("query");
 			Object[] values = (Object[]) queryValues.get("values");
 			query += " AND active="+(archived ? 0 : 1);
+			if(username != null)
+				query += " AND username LIKE ?";
 			query += " ORDER BY time DESC";
+			ArrayList<Object> vals = new ArrayList<Object>(Arrays.asList(values));
+			if(username != null)
+				vals.add(username);
 			int total = 0;
 			if(type == 0)
-				total = selectCount("bug_reports", query, GET_BUG_REPORTS, values);
+				total = selectCount("bug_reports", query, GET_BUG_REPORTS, vals.toArray());
 			else if(type == 1)
-				total = selectCount("player_repots", query, GET_PLAYER_REPORTS, values);
+				total = selectCount("player_repots", query, GET_PLAYER_REPORTS, vals.toArray());
 			else if(type == 2) {
 				String realQuery = "SELECT COUNT(*) FROM (SELECT id, type, time, last_action, username, title, active FROM player_reports UNION ALL SELECT id, type, time, last_action, username, title, active FROM bug_reports) a WHERE "+query;
-				ResultSet set = executeQuery(realQuery, values);
+				ResultSet set = executeQuery(realQuery, vals.toArray());
 				try {
 				if(!next(set)) {
 					set.close();
@@ -144,6 +151,7 @@ public class ReportsConnection extends DatabaseConnection {
 			int page = (int) data[2];
 			archived = (boolean) data[3];
 			params = (HashMap<String, String>) data[4];
+			username = (String) data[5];
 			if(params == null) System.out.println("null");
 			type = Integer.parseInt(params.get("type"));
 			query = (String) queryValues.get("query");
@@ -152,20 +160,25 @@ public class ReportsConnection extends DatabaseConnection {
 				page = 1;
 			int offset = (page - 1) * 10;
 			query += " AND active="+(archived ? 0 : 1);
+			if(username != null)
+				query += " AND username LIKE ?";
 			query += " ORDER BY time DESC";
 			query += " LIMIT "+ offset + ",10";
+			vals = new ArrayList<Object>(Arrays.asList(values));
+			if(username != null)
+				vals.add(username);
 			ArrayList<Report> reports = new ArrayList<Report>();
 			if(type == 0) {
-				data = select("bug_reports", query, GET_BUG_REPORTS, values);
+				data = select("bug_reports", query, GET_BUG_REPORTS, vals.toArray());
 				if(data != null)
 					reports.addAll((ArrayList<BugReport>) data[0]);
 			} else if(type == 1) {
-				data = select("player_reports", query, GET_PLAYER_REPORTS, values);
+				data = select("player_reports", query, GET_PLAYER_REPORTS, vals.toArray());
 				if(data != null)
 					reports.addAll((ArrayList<PlayerReport>) data[0]);
 			} else if(type == 2) {
 				String realQuery = "SELECT a.* FROM (SELECT id, type, time, username, last_action, title, active FROM player_reports UNION ALL SELECT id, type, time, username, last_action, title, active FROM bug_reports) a WHERE "+query;
-				ResultSet set = executeQuery(realQuery, values);
+				ResultSet set = executeQuery(realQuery, vals.toArray());
 				if(wasNull(set))
 					break;
 				while(next(set)) {
@@ -185,6 +198,7 @@ public class ReportsConnection extends DatabaseConnection {
 		case "get-player-reports":
 			archived = (boolean) data[1];
 			page = (int) data[2];
+			username = (String) data[3];
 			if (page == 0)
 				page = 1;
 			offset = (page - 1) * 10;
@@ -192,22 +206,31 @@ public class ReportsConnection extends DatabaseConnection {
 			builder	.append("player_reports")
 					.append(" WHERE active=")
 					.append(archived ? "0" : "1")
+					.append(username != null ? " AND username LIKE ?" : "")
 					.append(" ORDER BY ")
 					.append(archived ? "archived" : "time")
 					.append(" DESC LIMIT " + offset + ",10");
-			return select(builder.toString(), null, GET_PLAYER_REPORTS);
+			values = new Object[username == null ? 0 : 1];
+			if(username != null)
+				values[0] = username;
+			return select(builder.toString(), null, GET_PLAYER_REPORTS, values);
 		case "get-reports":
 			String typeName = (String) data[1];
 			page = (int) data[2];
-			String username = (String) data[3];
+			username = (String) data[3];
 			archived = (boolean) data[4];
 			if(page == 0)
 				page = 1;
 			offset = (page - 1) * 10;
 			reports = new ArrayList<Report>();
-			if(typeName.equals("all")) {
+			if(typeName.equalsIgnoreCase("all")) {
 				//ResultSet set = executeQuery("SELECT b.id, b.type, b.time, p.id, p.type, p.time FROM bug_reports b JOIN player_reports p WHERE b.username = '"+username+"' AND p.username = '"+username+"' AND p.active="+(archived ? "0" : "1")+" AND b.active="+(archived ? "0" : "1")+" ORDER BY p.time, b.time DESC LIMIT "+offset+",10");
-				ResultSet set = executeQuery("SELECT a.* FROM (SELECT id, type, time, username, title, active FROM player_reports UNION ALL SELECT id, type, time, username, title, active FROM bug_reports) a WHERE username = ? AND active=? ORDER BY time DESC LIMIT ?,10", username, archived ? "0" : "1", offset);
+				values = new Object[username == null ? 2 : 3];
+				values[0] = username == null ? archived ? 0 : 1 : username;
+				values[1] = username == null ? offset : archived ? 0 : 1;
+				if(username != null)
+					values[2] = offset;
+				ResultSet set = executeQuery("SELECT a.* FROM (SELECT id, type, time, username, title, active FROM player_reports UNION ALL SELECT id, type, time, username, title, active FROM bug_reports) a WHERE "+(username != null ? "username = ? AND " : "")+"active=? ORDER BY time DESC LIMIT ?,10", values);
 				if(wasNull(set))
 					break;
 				while(next(set)) {
@@ -220,12 +243,12 @@ public class ReportsConnection extends DatabaseConnection {
 					Report report = (Report) data[0];
 					reports.add(report);
 				}
-			} else if(typeName.equals("bugs")) {
-				data = handleRequest("get-bug-reports", archived, page);
+			} else if(typeName.equalsIgnoreCase("bugs")) {
+				data = handleRequest("get-bug-reports", archived, page, username);
 				ArrayList<BugReport> brep = (ArrayList<BugReport>) data[0];
 				reports.addAll(brep);
 			} else {
-				data = handleRequest("get-player-reports", archived, page);
+				data = handleRequest("get-player-reports", archived, page, username);
 				ArrayList<PlayerReport> prep = (ArrayList<PlayerReport>) data[0];
 				reports.addAll(prep);
 			}
@@ -244,16 +267,22 @@ public class ReportsConnection extends DatabaseConnection {
 			username = (String) data[3];
 			archived = (boolean) data[4];
 			int count = 0;
+			query = username == null ? "active=?" : "active=? AND username=?";
+			values = new Object[username == null ? 1 : 2];
+			values[0] = archived ? 0 : 1;
+			if(username != null)
+				values[1] = username;
 			if(typeName.equals("all"))
-				count = selectCount("(SELECT id, type, time, username, active FROM player_reports UNION ALL SELECT id, type, time, username, active FROM bug_reports) a", "active=? AND username=?", archived ? "0" : "1", username);
+				count = selectCount("(SELECT id, type, time, username, active FROM player_reports UNION ALL SELECT id, type, time, username, active FROM bug_reports) a", query, values);
 			else if(typeName.equals("bugs"))
-				count = selectCount("bug_reports", "active=? AND username=?", archived ? "0" : "1", username);
+				count = selectCount("bug_reports", query, values);
 			else
-				count = selectCount("player_reports", "active=? AND username=?", archived ? "0" : "1", username);
+				count = selectCount("player_reports", query, values);
 			return new Object[] { (int) Utilities.roundUp(count, 10) };
 		case "get-bug-reports":
 			archived = (boolean) data[1];
 			page = (int) data[2];
+			username = (String) data[3];
 			if (page == 0)
 				page = 1;
 			offset = (page - 1) * 10;
@@ -261,10 +290,14 @@ public class ReportsConnection extends DatabaseConnection {
 			builder	.append("bug_reports")
 					.append(" WHERE active=")
 					.append(archived ? "0" : "1")
+					.append(username != null ? " AND username LIKE ?" : "")
 					.append(" ORDER BY ")
 					.append(archived ? "archived" : "time")
 					.append(" DESC LIMIT " + offset + ",10");
-			return select(builder.toString(), null, GET_BUG_REPORTS);
+			values = new Object[username == null ? 0 : 1];
+			if(username != null)
+				values[0] = username;
+			return select(builder.toString(), null, GET_BUG_REPORTS, values);
 		case "get-bug-report":
 			return select("bug_reports", "id=?", GET_BUG_REPORT, (int) data[1]);
 		case "report-player":

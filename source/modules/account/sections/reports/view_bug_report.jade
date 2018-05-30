@@ -7,6 +7,9 @@ div.noty_message
       div.row(style='clear: both;')
         h4.color-white.t-center Title
           h6.color-grey.t-center= report.getTitle()
+        if staff
+          h4.color-white.t-center Reported By
+            h6.color-grey.t-center= '$for-name='+report.getUsername()+'$end'
         h4.color-white.t-center Date Seen
           h6.color-grey.t-center= report.getSeen()
         h4.color-white.t-center Can be Replicated?
@@ -16,12 +19,12 @@ div.noty_message
         h4.color-white.t-center Last Action
           h6.color-grey.t-center= report.getLastAction()
         h4.color-white.t-center Comments
-          p.t-center.color-grey.fs-10 Comments are only seen by staff and are used to include info other staff may need to know. Such as ongoing information about an investigation into the report.
+          p.t-center.color-grey.fs-10 
+            p.t-center.color-grey.fs-10 Comments can be made by both staff and players and are used to relay additional information needed for the report
         div#comments
           include ../../../utils/comments
         div#com-sub
           p.com-error(style='display: none;')
-          if report.isActive()
-            textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
-            a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
+          textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
+          a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
   div.noty_close

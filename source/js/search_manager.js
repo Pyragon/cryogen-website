@@ -72,12 +72,14 @@ function removeFilters(mod) {
 
 //search icon
 
-function clickSearchIcon(mod, archive, page, loadListFunc, params) {
+function clickSearchIcon(mod, archive, page, loadListFunc, params, searchname=null) {
 	var icon = $(this);
 	var search = $('#search-' + mod + '-pin');
 	var input = search.find('input');
 	var user = input.val();
 	var att = search.attr('display');
+	if(searchname == null)
+		searchname = mod
 	if (att === 'none') {
 		icon.attr('title', CLOSE);
 		search.attr('display', 'inline');
@@ -101,7 +103,7 @@ function clickSearchIcon(mod, archive, page, loadListFunc, params) {
 			return false;
 		}
     console.log('searching for: '+user)
-		this.search(mod, page, archive, user, params, loadListFunc);
+		this.search(mod, page, archive, user, params, loadListFunc, searchname);
 	}
 	return false;
 }
@@ -114,7 +116,7 @@ function updateSearchInput(mod, input) {
 
 var searching = [];
 
-function search(mod, page, archive, input=null, params=null, loadListFunc=null) {
+function search(mod, page, archive, input=null, params=null, loadListFunc=null, searchname=null) {
   if(input === null)
     input = filtersToQuery(mod);
   if(input === '' || input === ',' || input === ', ') {
@@ -126,7 +128,7 @@ function search(mod, page, archive, input=null, params=null, loadListFunc=null) 
   searching[mod] = true;
   changed = true;
   paramStr = params === null ? '' : JSON.stringify(params)
-  $.post('/search/'+mod, { query:input, page:page, archived:archive,params:paramStr}, (ret) => {
+  $.post('/search/'+mod, { query:input, page:page, archived:archive,params:paramStr,searchname:searchname}, (ret) => {
     var data = getJSON(ret)
     if(data == null) return null;
     update(false, data.html, mod)

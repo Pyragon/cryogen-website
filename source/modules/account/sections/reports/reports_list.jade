@@ -3,6 +3,8 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
     tr
       th.t-center Type
       th.t-center Title
+      if staff
+        th.t-center Username
       th.t-center Date Reported
       th.t-center Last Action
       th.t-center Comment Count
@@ -18,9 +20,11 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
             span.fa.fa-user
           span= '  '+report.type() == 0 ? ' Bug' : ' Player'
         td.b-right= report.getTitle()
+        if staff
+          td.b-right= '$for-name='+report.getUsername()+'$end'
         td.b-right= formatter.formatTimestamp(report.getTime(), 'MMM dd, YYYY H:mm a')
         td.b-right= report.getLastAction()
         td.b-right= report.getComments().size()
         -var replied = report.hasStaffReplied()
         td(class='b-right '+(replied ? 'color-green' : 'color-red'))= replied ? 'Yes' : 'No'
-        td.link.view-report View
+        td.vis-link.view-report View

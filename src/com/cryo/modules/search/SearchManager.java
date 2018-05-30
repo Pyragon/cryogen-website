@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import com.cryo.Website;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.entities.Account;
+import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
@@ -61,19 +63,24 @@ public class SearchManager {
 		String pageStr = request.queryParams("page");
 		String archivedStr = request.queryParams("archived");
 		String paramStr = request.queryParams("params");
+		String searchName = request.queryParams("searchname");
 		Properties prop = new Properties();
 		if(Utilities.isNullOrEmpty(query, pageStr, archivedStr)) {
 			prop.put("success", false);
 			prop.put("error", "Missing some parameters required for searching.");
 			return prop;
 		}
-		prop = search(module, query, Integer.parseInt(pageStr), Boolean.parseBoolean(archivedStr), request, response, paramStr == null ? new HashMap<String, String>() : new Gson().fromJson(paramStr, HashMap.class));
+		prop = search(module, query, Integer.parseInt(pageStr), Boolean.parseBoolean(archivedStr), request, response, paramStr == null ? new HashMap<String, String>() : new Gson().fromJson(paramStr, HashMap.class), searchName);
 		return prop;
 	}
 	
-	public static Properties search(String module, String text, int page, boolean archived, Request request, Response response, HashMap<String, String> params) {
-		Optional<SearchEndpoints> optional = SearchEndpoints.getEndpoint(module);
+	public static Properties search(String module, String text, int page, boolean archived, Request request, Response response, HashMap<String, String> params, String searchName) {
+		Optional<SearchEndpoints> optional = SearchEndpoints.getEndpoint(searchName);
+		System.out.println(searchName+" ssss");
+		Account account = CookieManager.getAccount(request);
 		Properties prop = new Properties();
+		if(account == null)
+			return prop;
 		while(true) {
 			if(!optional.isPresent()) {
 				prop.put("success", false);
@@ -81,6 +88,13 @@ public class SearchManager {
 				break;
 			}
 			SearchEndpoints endpoint = optional.get();
+			if(endpoint.getRights() > 0) {
+				if(account.getRights() < endpoint.getRights()) {
+					prop.put("success", false);
+					prop.put("error", "Insuficcient permissions");
+					break;
+				}
+			}
 			HashMap<String, Object> model = new HashMap<>();
 			text = text.replaceAll(", ", ",");
 			String[] queries = text.split(",");
@@ -133,8 +147,10 @@ public class SearchManager {
 			}
 			ArrayList<Filter> filterA = new ArrayList<>();
 			filterA.addAll(filters.values());
-			Object[] data = endpoint.getConnection().handleRequest("search", getQueryValue(module, filterA), page, archived, params);
-			Object[] countData = endpoint.getConnection().handleRequest("search-results", getQueryValue(module, filterA), archived, params);
+			System.out.println(endpoint.getRights()+" "+endpoint.getName());
+			String username = endpoint.getRights() == 0 ? account.getUsername() : null;
+			Object[] data = endpoint.getConnection().handleRequest("search", getQueryValue(module, filterA), page, archived, params, username);
+			Object[] countData = endpoint.getConnection().handleRequest("search-results", getQueryValue(module, filterA), archived, params, username);
 			if(data == null || countData == null) {
 				prop.put("success", false);
 				String results = "No search results found.";
@@ -153,6 +169,7 @@ public class SearchManager {
 				results = filter.filterList(results);
 			int resultSize = (int) countData[0];
 			model.put(endpoint.getKey(), results);
+			model.put("staff", endpoint.getRights() > 0);
 			String html = WebModule.render(endpoint.getJadeFile(), model, request, response);
 			prop.put("success", true);
 			prop.put("html", html);

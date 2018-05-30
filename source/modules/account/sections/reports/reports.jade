@@ -286,6 +286,11 @@ script.
       }
     });
 
+    $(document).keydown((e) => {
+      if(e.which == 13)
+        clickedSearchIcon();
+    })
+
   });
 
 h5 Reports
@@ -299,7 +304,7 @@ div.row
         div.col-xs-4
           p.color-grey.search-info Click the search icon to begin searching through reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
         div.col-xs-4
-          p.color-grey.search-info Filters: type: (0 - bug, 1 - player, PAGE FILTER MUST BE SET TO ALL), title: (title), date: start-end (dd/mm/yyyy), last_action: (last_action)
+          p.color-grey.search-info Filters: title: (title), date: start-end (dd/mm/yyyy), last_action: (last_action)
         div.col-xs-4
           p.color-grey.search-info Example: title: test, last_action: archived
       div(style='float: right; margin: 33.5px 5px;')

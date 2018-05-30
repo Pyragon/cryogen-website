@@ -168,7 +168,6 @@ public abstract class DatabaseConnection {
 				builder.append(" WHERE ").append(condition);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
 			setParams(stmt, values);
-			System.out.println(stmt);
 			ResultSet set = stmt.executeQuery();
 			if(!set.next()) return 0;
 			int count = set.getInt(1);
@@ -189,7 +188,6 @@ public abstract class DatabaseConnection {
 			try {
 				stmt = connection.prepareStatement(builder.toString());
 				setParams(stmt, values);
-				System.out.println(stmt);
 				set = stmt.executeQuery();
 				result = query.handleResult(set);
 			} finally {
@@ -362,6 +360,7 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Long)
 					statement.setTimestamp(index, new Timestamp((long) obj));
 			}
+			System.out.println(statement);
 			ResultSet set = statement.executeQuery();
 			if (set != null)
 				return set;

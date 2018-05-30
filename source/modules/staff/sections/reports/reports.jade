@@ -1,0 +1,229 @@
+script.
+  var reports_filter = 'all'
+  var reports_page = 1
+  var archived = false
+  var n = null
+  var last_id;
+  var last_type;
+  $(document).ready(() => {
+
+    loadList()
+
+    function loadList() {
+      $.post('/staff/reports', { action:'load-list', archive:archived, filter:reports_filter, page:reports_page }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false;
+        $('#reports-main').html(data.html)
+        updatePage(data.pageTotal, reports_page, 'reports')
+      })
+    }
+
+    function loadListWPage(archive, page) {
+      reports_page = page;
+      archived = archive;
+      loadList();
+    }
+
+    function viewReport() {
+      var type = $(this).closest('tr').data('type')
+      var id = $(this).closest('tr').data('id')
+      last_type = type
+      last_id = id
+      $.post('/staff/reports', { action:'view-report', id:id, type:type }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        var buttons = []
+        if(data.active)
+          buttons.push({
+            addClass: 'btn btn-primary', text: 'Archive', onClick: function($noty) {
+              $noty.close()
+              archiveReport()
+            }
+          })
+        buttons.push({
+          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+            $noty.close();
+          }
+        })
+        if(n != null)
+          n.close();
+        n = noty({
+          text: 'View report',
+          type: 'confirm',
+          layout: 'center',
+          template: data.html,
+          dismissQueue: false,
+          theme: 'cryogen',
+          buttons: buttons
+        })
+      })
+    }
+
+    function switchFilter() {
+      switch(reports_filter) {
+        case "all":
+          reports_filter = "bugs";
+          break;
+        case "bugs":
+          reports_filter = "player";
+          break;
+        case "player":
+          reports_filter = "all";
+          break;
+      }
+      reports_page = 1;
+      removeFilters('reports')
+      loadList();
+
+      var title = reports_filter;
+      var n_title = "";
+      for(var i = 0; i < title.length; i++) {
+        if(i == 0) n_title += title.charAt(i).toUpperCase();
+        else n_title += title.charAt(i);
+      }
+      $('#reports-filter').find('span').html(' '+n_title);
+    }
+
+    function submitComment() {
+      var element = $(this).closest('#view-report')
+      var com_elem = element.find('textarea')
+      var comment = com_elem.val()
+      if(!comment || comment.length < 5) {
+        sendAlert('Your comment must have at least 5 valid characters')
+        return false
+      }
+      var id = element.data('id')
+      var type = element.data('type')
+      $.post('/staff/reports', { action: 'comment', id:id, type:type, comment:comment }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        $('#comments').html(data.html)
+      })
+      com_elem.val('')
+      loadList()
+    }
+
+    function archiveReport() {
+      noty({
+        text: 'Are you sure you wish to archive this report?',
+        type: 'confirm',
+        layout: 'center',
+        dismissQueue: true,
+        theme: 'cryogen',
+        buttons: [{
+          addClass: 'btn btn-primary btn-green', text: 'Confirm', onClick: function($noty) {
+            $noty.close();
+            n = null;
+            $.post('/staff/reports', { action: 'archive-report', id:last_id, type:last_type}, (ret) => {
+              var data = getJSON(ret)
+              if(data == null) return false;
+              sendAlert('Report has been successfully archived!')
+              loadList()
+            })
+          }
+        },
+        {
+          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+            $noty.close();
+            viewReport(last_type, last_id)
+          }
+        }]
+      })
+    }
+
+    function switchArchive() {
+      archived = !archived;
+      reports_page = 1;
+      removeFilters('reports')
+      $('#archive-reports').html(' View '+(archived ? 'Active' : 'Archive'))
+      loadList();
+    }
+
+    function changePage() {
+      var page = $(this).data('page')
+      if(page == reports_page)
+        return false;
+      reports_page = page;
+      loadList();
+    }
+
+    $('#reports-archive-btn').click(switchArchive)
+    $('#reports-filter').click(switchFilter)
+    $('#search-reports-icon').click(clickedSearchIcon);
+
+    $(document).on('click', '#reports-pages span', changePage)
+    $(document).on('click', '.remove-filter', clickedFilter);
+    $(document).on('click', '.view-report', viewReport);
+    $(document).on('click', '#com-btn', submitComment);
+
+    $('#search-reports-icon').attr('title', OPEN);
+
+    function clickedSearchIcon() {
+      type = reports_filter == 'all' ? '2' : reports_filter == 'bugs' ? '0' : '1'
+      clickSearchIcon('reports', archived, reports_page, loadListWPage, { 'type': type }, 'staff-reports')
+    }
+
+    function clickedFilter() {
+      type = reports_filter == 'all' ? '2' : reports_filter == 'bugs' ? '0' : '1'
+      clickRemoveFilter('reports', $(this), archived, loadListWPage, { 'type': type }, 'staff-reports')
+    }
+
+    $(document).keydown((e) => {
+      var element = document.activeElement
+      var focused = $(element)
+      if(e.which == 13) {
+        var text = focused.find('#view-report')
+        if(text.length) {
+          submitComment()
+          return false
+        }
+        clickedSearchIcon();
+      }
+    })
+
+
+      $(document).click(function(e) {
+        var target = e.target;
+        if(n == null)
+          return;
+        var id = n.options.id;
+        if($(e.target).closest('#'+id).length) {
+
+        } else {
+          n.close();
+          n = null;
+        }
+      });
+  })
+h5 Reports
+p.small.info The following are the bug and player reports for the game.
+p.small.info You can filter between reports using the buttons on the right, or the search bar below
+p.small.info You can view the report using the View button next to it, and follow the buttons on the report.
+div.row 
+  div.iactions
+    div
+      div(style='float: left; margin: 10px 10px;')
+        div.col-xs-4
+          p.color-grey.search-info Click the search icon to begin searching through reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+        div.col-xs-4
+          p.color-grey.search-info Filters: title: (title), date: start-end (dd/mm/yyyy), last_action: (last_action)
+        div.col-xs-4
+          p.color-grey.search-info Example: title: test, last_action: archived
+      div(style='float: right; margin: 33.5px 5px;')
+        div.link#reports-filter
+          i.fa.fa-filter
+          span  All
+        div.link#reports-archive-btn
+          i.fa.fa-archive
+          span#archive-reports  View Archive
+div.row(style='padding: 15px;')
+  div#search-reports(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+    div
+      span.fa.fa-search.link#search-reports-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+      div#search-reports-pin(style='float: right; display: none;', display='none')
+        input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+  div.search-filters-reports(style='clear: both; float: right;')
+  div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+  div#reports-main
+  div.pages
+    div#reports-pages
