@@ -1,4 +1,4 @@
-package com.cryo.modules.staff.announcements;
+package com.cryo.modules.staff.entities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

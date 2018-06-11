@@ -13,8 +13,7 @@ import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.staff.announcements.Announcement;
-import com.cryo.modules.staff.announcements.AnnouncementUtils;
+import com.cryo.modules.staff.entities.Announcement;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateSpan;
@@ -24,16 +23,18 @@ import com.cryo.utils.Utilities;
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
  *
- * Created on: Mar 7, 2017 at 9:54:51 PM
+ *         Created on: Mar 7, 2017 at 9:54:51 PM
  */
 public class GlobalConnection extends DatabaseConnection {
-	
+
 	public GlobalConnection() {
 		super("cryogen_global");
 	}
-	
+
 	public static GlobalConnection connection() {
-		return (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
+		return (GlobalConnection) Website	.instance()
+											.getConnectionManager()
+											.getConnection(Connection.GLOBAL);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -41,7 +42,7 @@ public class GlobalConnection extends DatabaseConnection {
 	public Object[] handleRequest(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		try {
-			switch(opcode) {
+			switch (opcode) {
 			case "search":
 				Properties queryValues = (Properties) data[1];
 				int page = (int) data[2];
@@ -49,11 +50,12 @@ public class GlobalConnection extends DatabaseConnection {
 				HashMap<String, String> params = (HashMap<String, String>) data[4];
 				String query = (String) queryValues.getProperty("query");
 				Object[] values = (Object[]) queryValues.get("values");
-				if(page == 0) page = 1;
+				if (page == 0)
+					page = 1;
 				int offset = (page - 1) * 10;
-				query += " AND expiry "+(archive ? "<" : ">")+" NOW()";
+				query += " AND expiry " + (archive ? "<" : ">") + " NOW()";
 				query += " ORDER by date DESC";
-				query += " LIMIT "+offset+",10";
+				query += " LIMIT " + offset + ",10";
 				return select("announcements", query, GET_ANNOUNCEMENTS, values);
 			case "search-results":
 				queryValues = (Properties) data[1];
@@ -61,162 +63,183 @@ public class GlobalConnection extends DatabaseConnection {
 				params = (HashMap<String, String>) data[3];
 				query = (String) queryValues.getProperty("query");
 				values = (Object[]) queryValues.get("values");
-				query += " AND expiry "+(archive ? "<" : ">")+" NOW()";
+				query += " AND expiry " + (archive ? "<" : ">") + " NOW()";
 				return new Object[] { selectCount("announcements", query, values) };
-				case "get-misc-data":
-					return select("misc_data", "name=?", GET_MISC_DATA, (String) data[1]);
-				case "set-misc-data":
-					String name = (String) data[1];
-					String value = (String) data[2];
-					data = handleRequest("get-misc-data", name);
-					if(data == null)
-						insert("misc_data", name, value);
-					else
-						set("misc_data", "value=?", "name=?", value, name);
-					break;
-				case "register":
-					String username = (String) data[1];
-					String password = (String) data[2];
-					String salt = BCrypt.generate_salt();
-					String hash = BCrypt.hashPassword(password, salt);
-					Timestamp date = new Timestamp(Calendar.getInstance().getTimeInMillis());
-					insert("player_data", "DEFAULT", username, hash, salt, 0, 0, date);
-					DisplayConnection.connection().handleRequest("create", username, Utilities.formatName(username));
-					return new Object[] { true };
-				case "search-players":
-					String text = (String) data[1];
-					text = "%"+text+"%";
-					data = select("player_data", "username LIKE ?", SEARCH_ACCOUNTS, text);
-					HashMap<String, Account> accounts = new HashMap<>();
-					if(data != null) {
-						ArrayList<String> list = (ArrayList<String>) data[0];
-						for(String user : list) {
-							data = handleRequest("get-account", user);
-							if(data == null) continue;
-							Account account = (Account) data[0];
-							if(!accounts.containsKey(account.getUsername()))
-								accounts.put(account.getUsername(), account);
-						}
+			case "get-misc-data":
+				return select("misc_data", "name=?", GET_MISC_DATA, (String) data[1]);
+			case "set-misc-data":
+				String name = (String) data[1];
+				String value = (String) data[2];
+				data = handleRequest("get-misc-data", name);
+				if (data == null)
+					insert("misc_data", name, value);
+				else
+					set("misc_data", "value=?", "name=?", value, name);
+				break;
+			case "register":
+				String username = (String) data[1];
+				String password = (String) data[2];
+				String salt = BCrypt.generate_salt();
+				String hash = BCrypt.hashPassword(password, salt);
+				Timestamp date = new Timestamp(Calendar	.getInstance()
+														.getTimeInMillis());
+				insert("player_data", "DEFAULT", username, hash, salt, 0, 0, date);
+				DisplayConnection	.connection()
+									.handleRequest("create", username, Utilities.formatName(username));
+				return new Object[] { true };
+			case "search-players":
+				String text = (String) data[1];
+				text = "%" + text + "%";
+				data = select("player_data", "username LIKE ? LIMIT 6", SEARCH_ACCOUNTS, text);
+				HashMap<String, Account> accounts = new HashMap<>();
+				if (data != null) {
+					ArrayList<String> list = (ArrayList<String>) data[0];
+					for (String user : list) {
+						data = handleRequest("get-account", user);
+						if (data == null)
+							continue;
+						Account account = (Account) data[0];
+						if (!accounts.containsKey(account.getUsername()))
+							accounts.put(account.getUsername(), account);
 					}
-					data = DisplayConnection.connection().handleRequest("search", "%"+text+"%");
-					if(data != null) {
-						ArrayList<String> users = (ArrayList<String>) data[0];
-						for(String user : users) {
-							data = handleRequest("get-account", user);
-							if(data == null) continue;
-							Account account = (Account) data[0];
-							if(!accounts.containsKey(account.getUsername()))
-								accounts.put(account.getUsername(), account);
-						}
+				}
+				data = DisplayConnection.connection()
+										.handleRequest("search", "%" + text + "%");
+				if (data != null) {
+					ArrayList<String> users = (ArrayList<String>) data[0];
+					for (String user : users) {
+						data = handleRequest("get-account", user);
+						if (data == null)
+							continue;
+						Account account = (Account) data[0];
+						if (!accounts.containsKey(account.getUsername()))
+							accounts.put(account.getUsername(), account);
 					}
-					return new Object[] { accounts.values() };
-				case "compare":
-					username = (String) data[1];
-					password = (String) data[2];
-					data = select("player_data", "username=?", GET_HASH_PASS, username);
-					if(data == null)
-						return null;
-					hash = (String) data[0];
+				}
+				return new Object[] { accounts.values() };
+			case "compare":
+				username = (String) data[1];
+				password = (String) data[2];
+				data = select("player_data", "username=?", GET_HASH_PASS, username);
+				if (data == null)
+					return null;
+				hash = (String) data[0];
+				salt = (String) data[1];
+				return new Object[] { BCrypt.hashPassword(password, salt)
+											.equals(hash), salt };
+			case "change-pass":
+				username = (String) data[1];
+				password = (String) data[2];
+				String current = (String) data[3];
+				boolean toCompare = true;
+				if (data.length == 5)
+					toCompare = (boolean) data[4];
+				if (toCompare) {
+					data = handleRequest("compare", username, current);
+					if (data == null)
+						return new Object[] { false, "Invalid username." };
+					boolean compare = (boolean) data[0];
+					if (!compare)
+						return new Object[] { false, "Invalid current password." };
 					salt = (String) data[1];
-					return new Object[] { BCrypt.hashPassword(password, salt).equals(hash), salt };
-				case "change-pass":
-					username = (String) data[1];
-					password = (String) data[2];
-					String current = (String) data[3];
-					boolean toCompare = true;
-					if(data.length == 5)
-						toCompare = (boolean) data[4];
-					if(toCompare) {
-						data = handleRequest("compare", username, current);
-						if(data == null)
-							return new Object[] { false, "Invalid username." };
-						boolean compare = (boolean) data[0];
-						if(!compare)
-							return new Object[] { false, "Invalid current password." };
-						salt = (String) data[1];
-					} else {
-						data = handleRequest("get-salt", username);
-						if(data == null)
-							return new Object[] { false, "Invalid username." };
-						salt = (String) data[0];
-					}
-					hash = BCrypt.hashPassword(password, salt);
-					set("player_data", "password=?", "username=?", hash, username);
-					AccountConnection.connection().handleRequest("remove-all-sess", username);
-					String sess = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
-					Website.instance().getConnectionManager().getConnection(Connection.PREVIOUS).handleRequest("add-prev-hash", salt, hash);
-					return new Object[] { true, sess };
-				case "add-prev-all":
-					data = select("player_data", null, GET_USERNAMES);
-					if(data == null) return null;
-					ArrayList<String> usernames = (ArrayList<String>) data[0];
-					for(String user : usernames) {
-						Logger.log(this.getClass(), "Adding previous password for: "+user);
-						handleRequest("add-prev", user);
-					}
-					break;
-				case "get-salt":
-					username = (String) data[1];
-					data = select("player_data", "username=?", GET_HASH_PASS, username);
-					if(data == null) return null;
-					return new Object[] { (String) data[1] };
-				case "add-prev":
-					username = (String) data[1];
-					data = select("player_data", "username=?", GET_HASH_PASS, username);
-					if(data == null) return null;
-					hash = (String) data[0];
-					salt = (String) data[1];
-					Website.instance().getConnectionManager().getConnection(Connection.PREVIOUS).handleRequest("add-prev-hash", salt, hash);
-					break;
-				case "get-account":
-					username = (String) data[1];
-					data = select("player_data", "username=?", GET_ACCOUNT, username);
-					return data == null ? null : new Object[] { ((Account) data[0]) };
-				case "get-announcement":
-					int id = (int) data[1];
-					data = select("announcements", "id=?", GET_ANNOUNCEMENT, id);
-					return data == null ? null : new Object[] { (Announcement) data[0] };
-				case "get-announcement-count":
-					archive = (boolean) data[1];
-					String clause = "expiry "+(archive ? "<" : ">")+" NOW()";
-					return new Object[] { (int) Utilities.roundUp(selectCount("announcements", clause), 10) };
-				case "get-announcements":
-					archive = (boolean) data[1];
-					page = (int) data[2];
-					if(page == 0) page = 1;
-					offset = (page - 1) * 10;
-					data = select("announcements", "expiry "+(archive ? "<" : ">")+" NOW() ORDER BY date DESC LIMIT "+offset+",10", GET_ANNOUNCEMENTS);
-					return data == null ? null : new Object[] { (ArrayList<Announcement>) data[0] };
-				case "save-announce":
-					Announcement announce = (Announcement) data[1];
-					String json = Website.getGson().toJson(announce.getRead());
-					set("announcements", "`read`=?", "id=?", json, announce.getId());
-					break;
-				case "create-announce":
-					announce = (Announcement) data[1];
-					insert("announcements", announce.data());
-					return new Object[] { };
+				} else {
+					data = handleRequest("get-salt", username);
+					if (data == null)
+						return new Object[] { false, "Invalid username." };
+					salt = (String) data[0];
+				}
+				hash = BCrypt.hashPassword(password, salt);
+				set("player_data", "password=?", "username=?", hash, username);
+				AccountConnection	.connection()
+									.handleRequest("remove-all-sess", username);
+				String sess = (String) AccountConnection.connection()
+														.handleRequest("add-sess", username)[0];
+				Website	.instance()
+						.getConnectionManager()
+						.getConnection(Connection.PREVIOUS)
+						.handleRequest("add-prev-hash", salt, hash);
+				return new Object[] { true, sess };
+			case "add-prev-all":
+				data = select("player_data", null, GET_USERNAMES);
+				if (data == null)
+					return null;
+				ArrayList<String> usernames = (ArrayList<String>) data[0];
+				for (String user : usernames) {
+					Logger.log(this.getClass(), "Adding previous password for: " + user);
+					handleRequest("add-prev", user);
+				}
+				break;
+			case "get-salt":
+				username = (String) data[1];
+				data = select("player_data", "username=?", GET_HASH_PASS, username);
+				if (data == null)
+					return null;
+				return new Object[] { (String) data[1] };
+			case "add-prev":
+				username = (String) data[1];
+				data = select("player_data", "username=?", GET_HASH_PASS, username);
+				if (data == null)
+					return null;
+				hash = (String) data[0];
+				salt = (String) data[1];
+				Website	.instance()
+						.getConnectionManager()
+						.getConnection(Connection.PREVIOUS)
+						.handleRequest("add-prev-hash", salt, hash);
+				break;
+			case "get-account":
+				username = (String) data[1];
+				data = select("player_data", "username=?", GET_ACCOUNT, username);
+				return data == null ? null : new Object[] { ((Account) data[0]) };
+			case "get-announcement":
+				int id = (int) data[1];
+				data = select("announcements", "id=?", GET_ANNOUNCEMENT, id);
+				return data == null ? null : new Object[] { (Announcement) data[0] };
+			case "get-announcement-count":
+				archive = (boolean) data[1];
+				String clause = "expiry " + (archive ? "<" : ">") + " NOW()";
+				return new Object[] { (int) Utilities.roundUp(selectCount("announcements", clause), 10) };
+			case "get-announcements":
+				archive = (boolean) data[1];
+				page = (int) data[2];
+				if (page == 0)
+					page = 1;
+				offset = (page - 1) * 10;
+				data = select("announcements", "expiry " + (archive ? "<" : ">") + " NOW() ORDER BY date DESC LIMIT " + offset + ",10", GET_ANNOUNCEMENTS);
+				return data == null ? null : new Object[] { (ArrayList<Announcement>) data[0] };
+			case "save-announce":
+				Announcement announce = (Announcement) data[1];
+				String json = Website	.getGson()
+										.toJson(announce.getRead());
+				set("announcements", "`read`=?", "id=?", json, announce.getId());
+				break;
+			case "create-announce":
+				announce = (Announcement) data[1];
+				insert("announcements", announce.data());
+				return new Object[] {};
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	private final SQLQuery GET_ANNOUNCEMENT = (set) -> {
-		if(empty(set)) return null;
+		if (empty(set))
+			return null;
 		return new Object[] { loadAnnouncement(set) };
 	};
-	
+
 	private final SQLQuery GET_ANNOUNCEMENTS = (set) -> {
 		ArrayList<Announcement> announcements = new ArrayList<>();
-		if(wasNull(set)) return null;
-		while(next(set)) {
+		if (wasNull(set))
+			return null;
+		while (next(set)) {
 			announcements.add(loadAnnouncement(set));
 		}
 		return new Object[] { announcements };
 	};
-	
+
 	private Announcement loadAnnouncement(ResultSet set) {
 		int id = getInt(set, "id");
 		String username = getString(set, "username");
@@ -224,38 +247,40 @@ public class GlobalConnection extends DatabaseConnection {
 		String announcement = getString(set, "announcement");
 		String read = getString(set, "read");
 		ArrayList<String> list = new ArrayList<>();
-		if(read != null && !read.equals(""))
-			list = Website.getGson().fromJson(read, ArrayList.class);
+		if (read != null && !read.equals(""))
+			list = Website	.getGson()
+							.fromJson(read, ArrayList.class);
 		Timestamp date = getTimestamp(set, "date");
 		Timestamp expiry = getTimestamp(set, "expiry");
 		return new Announcement(id, username, title, announcement, list, date, expiry);
 	}
-	
+
 	private final SQLQuery GET_USERNAMES = (set) -> {
-		if(wasNull(set)) return null;
+		if (wasNull(set))
+			return null;
 		ArrayList<String> usernames = new ArrayList<>();
-		while(next(set)) {
+		while (next(set)) {
 			usernames.add(getString(set, "username"));
 		}
 		return new Object[] { usernames };
 	};
-	
+
 	private final SQLQuery GET_MISC_DATA = (set) -> {
-		if(empty(set))
+		if (empty(set))
 			return null;
 		return new Object[] { getString(set, "value") };
 	};
-	
+
 	private final SQLQuery GET_HASH_PASS = (set) -> {
-		if(empty(set))
+		if (empty(set))
 			return null;
 		String hash = getString(set, "password");
 		String salt = getString(set, "salt");
 		return new Object[] { hash, salt };
 	};
-	
+
 	private final SQLQuery GET_ACCOUNT = (set) -> {
-		if(empty(set))
+		if (empty(set))
 			return null;
 		String username = getString(set, "username");
 		int id = getInt(set, "id");
@@ -265,16 +290,16 @@ public class GlobalConnection extends DatabaseConnection {
 		Account account = new Account(username, id, rights, donator, date);
 		return new Object[] { account };
 	};
-	
+
 	private final SQLQuery SEARCH_ACCOUNTS = (set) -> {
 		ArrayList<String> accounts = new ArrayList<String>();
-		if(wasNull(set))
+		if (wasNull(set))
 			return null;
-		while(next(set)) {
+		while (next(set)) {
 			String username = getString(set, "username");
 			accounts.add(username);
 		}
 		return new Object[] { accounts };
 	};
-	
+
 }

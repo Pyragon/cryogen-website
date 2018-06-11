@@ -105,6 +105,14 @@ script.
       loadList()
     }
 
+    function changePage() {
+      var page = $(this).data('page')
+      if(page == announce_page)
+        return false;
+      announce_page = page;
+      loadList();
+    }
+
     $(document).click(function(e) {
       var target = e.target;
       if(n == null)
@@ -136,6 +144,7 @@ script.
     $('#search-announcements-icon').attr('title', OPEN)
     $('#search-announcements-icon').click(clickedSearchIcon)
 
+    $(document).on('click', '#announcements-pages span', changePage)
     $(document).on('click', '.remove-filter', clickedFilter)
     $(document).on('click', '.read-announce', viewAnnouncement)
 

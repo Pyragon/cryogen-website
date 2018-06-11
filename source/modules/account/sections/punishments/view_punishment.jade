@@ -3,6 +3,10 @@ div.noty_message
   if !punishment.isActive()
     if punishment.getArchived() != null
       p.t-center.color-grey= 'Punishment ended by $for-name='+punishment.getArchiver()+'$end on: '+formatter.formatTimestamp(punishment.getArchived(), 'MMM dd, YYYY hh:mm a')+'.'
+    else if punishment.getAppeal().getAnswerer() != null
+      p.t-center.color-grey= 'Punishment ended on: '+formatter.formatTimestamp(punishment.getExpiry(), 'MMM dd, YYYY hh:mm a')+' as appeal was '
+        span(class=punishment.getAppeal().getColour())= punishment.getAppeal().getActive() == 1 ? 'accepted' : 'denied' 
+        span= ' by $for-name='+punishment.getAppeal().getAnswerer()+'$end.'
     else
       p.t-center.color-grey= 'Punishment ended on: '+formatter.formatTimestamp(punishment.getExpiry(), 'MMM dd, YYYY hh:mm a')+'.'
   div.widget.register#view-punishment(style='margin-top: 5px', data-id=punishment.getId())
@@ -12,8 +16,7 @@ div.noty_message
           h6.color-grey.t-center
             span
               if punishment.getType() == 1
-                svg.icon.icon-hammer2
-                  use(xlink:href='#icon-hammer2')
+                span.fa.fa-gavel
               else
                 span.fa.fa-microphone-slash
             span= ' '+(punishment.getType() == 0 ? 'Mute' : 'Ban')
@@ -25,4 +28,8 @@ div.noty_message
           h6.color-grey.t-center= '$for-name='+punishment.getPunisher()+'$end'
         h4.color-white.t-center Reason for Punishment
           h6.color-grey.t-center= punishment.getReason()
+        if staff
+          h4.color-white.t-center Comments
+            p.t-center.color-grey.fs-10 Comments on this page can only be seen by staff and should be used to inform other staff about additional information about this punishment. Such as a suggested time to be exonerated.
+          include ../../../utils/comments
   div.noty_close

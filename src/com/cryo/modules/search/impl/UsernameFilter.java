@@ -22,13 +22,13 @@ public class UsernameFilter extends Filter {
 
 	@Override
 	public boolean setValue(String mod, String value) {
-		this.value = value;
+		this.value = "%"+value+"%";
 		return true;
 	}
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return mod.equals("reports") ? false : true;
+		return isMod(mod, "staff-reports", "staff-punishments");
 	}
 	
 }

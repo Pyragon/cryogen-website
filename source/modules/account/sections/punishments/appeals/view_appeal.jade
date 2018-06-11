@@ -16,5 +16,11 @@ div.noty_message
             h6.color-grey.t-center= appeal.getReason()
         if appeal.getActive() != 0
           h4.color-white.t-center Appeal answered on
-            h6.color-grey.t-center= appeal.getReason()
+            h6.color-grey.t-center= formatter.formatTimestamp(appeal.getAnswered(), 'MMM dd, YYYY hh:mm a')
+          if user.getRights() > 0
+            h4.color-white.t-center Appeal answered by
+              h6.color-grey.t-center= '$for-name='+appeal.getAnswerer()+'$end'
+        h4.color-white.t-center Comments
+          p.t-center.color-grey.fs-10 Comments on this page can be seen by staff and players and are used to relay additional information required for appeals.
+          include ../../../../utils/comments
   div.noty_close

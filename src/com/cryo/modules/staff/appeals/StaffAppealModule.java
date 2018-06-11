@@ -14,7 +14,7 @@ import com.cryo.modules.account.entities.Appeal;
 import com.cryo.modules.account.entities.Punishment;
 import com.cryo.modules.account.support.punish.PunishUtils;
 import com.cryo.modules.account.support.punish.PunishUtils.ReportType;
-import com.cryo.modules.staff.BugReport;
+import com.cryo.modules.staff.entities.BugReport;
 import com.cryo.utils.CookieManager;
 
 import lombok.*;

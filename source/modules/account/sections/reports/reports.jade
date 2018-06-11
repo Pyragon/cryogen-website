@@ -236,7 +236,7 @@ script.
       $.post('/account/reports', { action: 'comment', id:id, type:type, comment:val}, (ret) => {
         var data = getJSON(ret)
         if(data == null) return false
-        $('#comments').html(data.html)
+        $('#view-report').find('#comments').html(data.html)
       })
       com.val('')
       loadList()

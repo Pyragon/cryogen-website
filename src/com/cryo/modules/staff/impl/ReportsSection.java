@@ -35,7 +35,7 @@ public class ReportsSection implements StaffSection {
 		try {
 			switch(action) {
 			case "load":
-				String html = WebModule.render("./source/modules/staff/sections/reports/reports.jade", model, request, response);
+				String html = WebModule.render("./source/modules/staff/sections/reports.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);
 				break;

@@ -1,3 +1,30 @@
+.extend-punishment, .decline-appeal {
+  margin: auto;
+  text-align: center;
+}
+
+.extend-punishment {
+  margin: auto auto 5px 5px;
+  border-radius: 2px;
+  background: #151515;
+  border: 1px solid #010101;
+  text-align: left;
+  padding: 3px;
+}
+
+#decline-reason {
+  background: #151515;
+  border: 1px solid #010101;
+  min-height: 20px;
+  min-width: 80%;
+  text-align: left;
+  padding: 3px;
+}
+
+#create-punish .box{
+  padding: 25px;
+}
+
 .reason-title {
     padding: 5px;
     border-bottom-style: solid;
@@ -10,6 +37,7 @@
   position: relative;
   display: inline-block;
   border-top: none !important;
+  border-bottom: none !important;
 }
 
 .hover-content {

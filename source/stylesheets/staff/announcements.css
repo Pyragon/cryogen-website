@@ -1,0 +1,13 @@
+.create-announcement {
+  margin: auto;
+  text-align: center;
+}
+
+.create-announcement input {
+  margin: auto auto 5px 5px;
+  border-radius: 2px;
+  background: #151515;
+  border: 1px solid #010101;
+  text-align: left;
+  padding: 3px;
+}

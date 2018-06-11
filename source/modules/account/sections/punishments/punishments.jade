@@ -131,6 +131,7 @@ script.
         var data = getJSON(ret);
         if(data == null) return false;
         loadList();
+        sendAlert('Your appeal has been successfully submitted!')
         n.close();
         n = null;
         return true;

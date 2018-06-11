@@ -3,6 +3,9 @@ package com.cryo.modules.account.entities;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import com.cryo.Website;
+import com.cryo.comments.CommentList;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +24,10 @@ public class Appeal {
 	private final String lastAction;
 	private final int active;
 	private final int punishId;
+	private final int commentList;
 	private final Timestamp time;
 	private Timestamp answered;
+	private String answerer;
 	
 	private ArrayList<String> usersRead;
 	
@@ -35,7 +40,7 @@ public class Appeal {
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", punishId, username, title, message, "", "DEFAULT", "", 0, "DEFAULT", "NULL" };
+		return new Object[] { "DEFAULT", punishId, commentList, username, title, message, "", "DEFAULT", "", 0, "DEFAULT", "NULL", "NULL" };
 	}
 	
 	public String getStatus() {
@@ -66,6 +71,10 @@ public class Appeal {
 		if(usersRead == null)
 			usersRead = new ArrayList<>();
 		usersRead.add(username);
+	}
+	
+	public CommentList getCommentList() {
+		return Website.instance().getCommentsManager().getCommentList(commentList);
 	}
 	
 }

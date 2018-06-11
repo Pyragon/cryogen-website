@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.cryo.Website;
 import com.cryo.db.impl.PunishmentsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
@@ -143,8 +144,9 @@ public class PunishmentsSection implements AccountSection {
 				prop.put("error", "Appeal cannot exceed 750 characters.");
 				break;
 			}
+			int listId = Website.instance().getCommentsManager().createCommentList(0);
 			try {
-				Appeal appeal = new Appeal(0, account.getUsername(), title, info, "Created", 1, id, null);
+				Appeal appeal = new Appeal(0, account.getUsername(), title, info, "Created", 1, id, listId, null);
 				data = PunishmentsConnection.connection().handleRequest("create-appeal", appeal);
 			} catch(Exception e) {
 				prop.put("success", false);
@@ -169,7 +171,15 @@ public class PunishmentsSection implements AccountSection {
 				break;
 			}
 			model.put("appeal", punish.getAppeal());
-			html = WebModule.render("./source/modules/account/sections/punishments/appeals/view_appeal.jade", model, request, response);
+			model.put("list", punish.getAppeal().getCommentList());
+			html = null;
+			try {
+				html = WebModule.render("./source/modules/account/sections/punishments/appeals/view_appeal.jade", model, request, response);
+			} catch(Exception e) {
+				e.printStackTrace();
+				prop.put("success", false);
+				prop.put("error", "Error");
+			}
 			prop.put("success", true);
 			prop.put("html", html);
 			break;

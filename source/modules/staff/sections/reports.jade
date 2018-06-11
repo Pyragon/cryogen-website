@@ -84,25 +84,6 @@ script.
       $('#reports-filter').find('span').html(' '+n_title);
     }
 
-    function submitComment() {
-      var element = $(this).closest('#view-report')
-      var com_elem = element.find('textarea')
-      var comment = com_elem.val()
-      if(!comment || comment.length < 5) {
-        sendAlert('Your comment must have at least 5 valid characters')
-        return false
-      }
-      var id = element.data('id')
-      var type = element.data('type')
-      $.post('/staff/reports', { action: 'comment', id:id, type:type, comment:comment }, (ret) => {
-        var data = getJSON(ret)
-        if(data == null) return false
-        $('#comments').html(data.html)
-      })
-      com_elem.val('')
-      loadList()
-    }
-
     function archiveReport() {
       noty({
         text: 'Are you sure you wish to archive this report?',
@@ -154,7 +135,6 @@ script.
     $(document).on('click', '#reports-pages span', changePage)
     $(document).on('click', '.remove-filter', clickedFilter);
     $(document).on('click', '.view-report', viewReport);
-    $(document).on('click', '#com-btn', submitComment);
 
     $('#search-reports-icon').attr('title', OPEN);
 
@@ -172,11 +152,6 @@ script.
       var element = document.activeElement
       var focused = $(element)
       if(e.which == 13) {
-        var text = focused.find('#view-report')
-        if(text.length) {
-          submitComment()
-          return false
-        }
         clickedSearchIcon();
       }
     })

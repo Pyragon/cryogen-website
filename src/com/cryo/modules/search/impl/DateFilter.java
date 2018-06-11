@@ -53,7 +53,7 @@ public class DateFilter extends Filter {
 	
 	@Override
 	public boolean appliesTo(String mod) {
-		return isMod(mod, "appeal", "punish", "recover", "reports", "announcements");
+		return isMod(mod, "punishments", "reports", "announcements", "staff-punishments", "staff-reports");
 	}
 	
 }

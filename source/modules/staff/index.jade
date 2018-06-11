@@ -3,6 +3,7 @@ extend ../default
 block head
   link(rel='stylesheet', href='/stylesheets/staff/staff.css')
   link(rel='stylesheet', href='/stylesheets/staff/announcements.css')
+  link(rel='stylesheet', href='/stylesheets/staff/punishments.css')
   script.
     var loaded = []
     var section = ''
@@ -59,6 +60,7 @@ block content
           div.tab-content.content
             div.tab-pane.fade.in.active(id='announcements')
             div.tab-pane.fade.in(id='reports')
+            div.tab-pane.fade.in(id='punishments')
             div.tab-pane.fade.in(id='announcements')
             div.tab-pane.fade.in(id='appeals')
             div.tab-pane.fade.in(id='recover')

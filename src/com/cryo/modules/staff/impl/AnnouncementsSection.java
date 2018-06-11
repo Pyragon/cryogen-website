@@ -11,7 +11,7 @@ import com.cryo.Website;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.staff.announcements.Announcement;
+import com.cryo.modules.staff.entities.Announcement;
 import com.cryo.modules.staff.entities.StaffSection;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;

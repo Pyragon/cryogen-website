@@ -19,7 +19,8 @@ public enum SearchEndpoints {
 	ACCOUNT_PUNISHMENTS("punishments", "punishments", 0, PunishmentsConnection.connection(), "./source/modules/account/sections/punishments/punishments_list.jade"),
 	ACCOUNT_SHOP("shop", "shopItems", 0, ShopConnection.connection(), "./source/modules/account/sections/shop/shop_list.jade"),
 	STAFF_ANNOUNCEMENTS("announcements", "announcements", 1, GlobalConnection.connection(), "./source/modules/staff/sections/announcements/announcement_list.jade"),
-	STAFF_REPORTS("staff-reports", "reports", 2, ReportsConnection.connection(), "./source/modules/account/sections/reports/reports_list.jade");
+	STAFF_REPORTS("staff-reports", "reports", 2, ReportsConnection.connection(), "./source/modules/account/sections/reports/reports_list.jade"),
+	STAFF_PUNISHMENTS("staff-punishments", "punishments", 2, PunishmentsConnection.connection(), "./source/modules/staff/sections/punishments/punishments_list.jade");
 	
 	private @Getter String name, key;
 	private @Getter int rights;

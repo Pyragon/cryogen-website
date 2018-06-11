@@ -1,6 +1,12 @@
 package com.cryo.modules.account.entities;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+
+import com.cryo.Website;
+import com.cryo.comments.Comment;
+import com.cryo.comments.CommentList;
+import com.cryo.db.impl.CommentsConnection;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +31,7 @@ public class Punishment {
 	private final int appealId;
 	private final Timestamp archived;
 	private final String archiver;
+	private final int commentList;
 	
 	private Appeal appeal;
 	
@@ -33,7 +40,11 @@ public class Punishment {
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", appealId, username, type, "DEFAULT", expiry, punisher, reason, (active ? 1 : 0), archived, archiver };
+		return new Object[] { "DEFAULT", appealId, username, type, "DEFAULT", expiry, punisher, reason, (active ? 1 : 0), archived, archiver, commentList };
+	}
+	
+	public CommentList getCommentList() {
+		return Website.instance().getCommentsManager().getCommentList(commentList);
 	}
 	
 }

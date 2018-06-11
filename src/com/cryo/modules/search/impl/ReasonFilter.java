@@ -2,15 +2,15 @@ package com.cryo.modules.search.impl;
 
 import com.cryo.modules.search.Filter;
 
-public class LastActionFilter extends Filter {
+public class ReasonFilter extends Filter {
 
-	public LastActionFilter() {
-		super("last_action");
+	public ReasonFilter() {
+		super("reason");
 	}
 
 	@Override
 	public String getFilter(String mod) {
-		return "last_action LIKE ?";
+		return "reason LIKE ?";
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class LastActionFilter extends Filter {
 
 	@Override
 	public boolean appliesTo(String mod) {
-		return isMod(mod, "reports", "staff-reports");
+		return isMod(mod, "staff-punishments");
 	}
 
 }

@@ -87,7 +87,7 @@ public class DisplayConnection extends DatabaseConnection {
 				if(data == null) return null;
 				return new Object[] { (String) data[1] };
 			case "search":
-				return select("current_names", "display_name LIKE ?", GET_USERS, (String) data[1]);
+				return select("current_names", "display_name LIKE ? LIMIT 6", GET_USERS, (String) data[1]);
 		}
 		return null;
 	}
