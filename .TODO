@@ -11,16 +11,42 @@ General:
   ☐ Cleanup github to only include required files
   ☐ Cleanup stylesheets to be dependent on section
   ☐ Possibly allow users to create their own stylesheets
+  ☐ Add message for users accepting use of cookies by using site
+  ☐ Add message for mobile users explaining navbar glitch and that site is not data-optimized
+  ☐ Add ability for customized cursors
+  ☐ Add admin panel for website functions. (reset cache, reset comments cache, etc)
+Comments:
+  ✔ Remake comments to only need to include utils/comments.jade and send a commentlist id @done(2018-06-11 03:06) @project(Comments)
+  ✔ comments.jade will have commentlist id, and each comment box will have commentid @done(2018-06-11 03:07) @project(Comments)
+  ✔ comments.js will have all code to submit comment via separate /comments endpoint @done(2018-06-11 03:07) @project(Comments)
+  ✔ Add delete button in top-right of comment boxes @done(2018-06-11 03:07) @project(Comments)
+  ☐ Add username to commentlist so we can add check for players only being able to comment on their own comment lists (if someone gets hacky)
+  ☐ Investigate differences in style because of different stylesheets across sections
 Shop:
 Staff Page:
   Remake TODO:
-    Announcements:
-      ☐ Searching, finish pagination
-      ☐ Moderation to show staff members that have not read currently active announcements
-  ☐ Log all events
+    Overall:
+      ☐ Ensure security with sessions
+      ☐ Change 'username' in lists to 'name' cause we actually show display name :p
+      ☐ Log all events
+    Punishments:
+      ✔ End/Extend punishment from viewing (auto accepts/denies appeal if exists) @done(2018-06-09 01:35) @project(Staff Page / Remake TODO / Punishments)
+      ✔ View appeal @done(2018-06-09 01:35) @project(Staff Page / Remake TODO / Punishments)
+      ✔ Accept/deny appeal from viewing @done(2018-06-11 03:07) @project(Staff Page / Remake TODO / Punishments)
+      ☐ Option to give players ability to create second appeal if first is denied (must be requsted, TODO later on)
+      ✔ Comment on appeals (viewable by both staff and player) @done(2018-06-11 03:23) @project(Staff Page / Remake TODO / Punishments)
+      ✔ Add instructions for searching @done(2018-06-11 03:07) @project(Staff Page / Remake TODO / Punishments)
+    Appeals:
+      ☐ Load list
+      ☐ Searching
+      ☐ Filtering through mute/ban/all
+      ☐ View archive
+      ☐ View punishment from appeal
+      ☐ Accept/Deny appeal
 Account:
   ☐ Restyle dropdown menu in header
   ☐ Add min/max length requirement to password on account creation/pass changing on server/website
+  ☐ Add failsafes in viewings to ensure player can only view their own reports, punishments, etc
 Other:
   ☐ Create independant html pages to serve as error pages for nginx
   ☐ Create html pages for emails
@@ -36,7 +62,7 @@ Highscores:
 Tracker:
   Full account tracker and basically an online view of your account
   ☐ View quest points, skills, etc
-  ☐ Have rendered version of your version in-game
+  ☐ Have rendered version of your player in-game
   ☐ Have full adventurer's log hopefully logging as much as you can from in-game. Log can then sort through them, or provide filters to see certain
   ☐ Allow saving of above filters for people who want it to stick throughout sessions/page refreshes
   ☐ Add ability to 'track' up to 5 things, show daily/weekly/monthly stats on said things (quests complete, kills on certain NPC, etc, give stats showing average kills, average quest time, etc)
@@ -45,6 +71,22 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Searching, finish pagination @done(2018-05-31 10:50) @project(Staff Page / Remake TODO / ☐ Announcements)
+  ✔ Moderation to show staff members that have not read currently active announcements @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Announcements)
+  ✔ Load list @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ Searching @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ Filtering through bug/player/all @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ Archive reports @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ View archive @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ Comment on reports @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ Pagination @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
+  ✔ Load list @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Searching @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Filtering through mute/ban/all @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / Punishments)
+  ✔ View archive @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Create punishments @done(2018-05-31 11:05) @project(Staff Page / Remake TODO / Punishments)
+  ✔ View punishment @done(2018-05-31 11:29) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Comment on punishments (only viewable by staff) @done(2018-05-31 12:32) @project(Staff Page / Remake TODO / Punishments)
   ✔ Better organize all pages (Most pages have different style layouts, as I learned more :p) @done(2018-05-28 03:21) @project(Other)
   ✔ Secure all requests to server (though should be secured through sessions already) @done(2018-05-28 03:21) @project(Securiy)
   ✔ Switch all error blocks to use the sendAlert instead @done(2018-05-28 03:21) @project(General)
