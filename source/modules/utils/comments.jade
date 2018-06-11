@@ -1,9 +1,4 @@
-div(style='margin-bottom: 10px; padding: 5px; border: 1px solid #000; border-radius: 5px; background: #151515; max-height: 220px; overflow: auto;')
-  if comments.isEmpty()
-    h6.t-center No comments have been made yet.
-  else
-    for comment in comments
-      div(style="white-space: pre-wrap; margin: 5px auto; max-width: 250px; border: 1px solid #000; padding: 10px; border-radius: 5px; background: #151515;")
-        div(style='font-size: 12px; text-align: left;')= '$for-name='+comment.getUsername()+'$end Said:'
-        div(style='font-size: 12px; text-align: left;')= formatter.formatTimestamp(comment.getTime(), 'MMMMM dd, YYYY hh:mm a')
-        div.t-center(style='padding: 10px;')= comment.getComment()
+div#comments(data-listid=list.getListId(), data-rights=list.getRightsReq())
+  include comment_list
+textarea.form-control.text-input#comment-input(rows='4', cols='50', placeholder='Enter comment')
+a.btn.btn-default.btn-comment#comment-btn(style='margin: 15px auto;') Comment

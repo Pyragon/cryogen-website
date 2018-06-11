@@ -47,20 +47,6 @@ html, body {
   padding: 6px 12px;
 }
 
-.create-a {
-  margin: auto;
-  text-align: center;
-}
-
-.create-a input {
-  margin: auto auto 5px 5px;
-  border-radius: 2px;
-  background: #151515;
-  border: 1px solid #010101;
-  text-align: left;
-  padding: 3px;
-}
-
 .package-spinner {
   margin: 20px auto;
   width: 16px;

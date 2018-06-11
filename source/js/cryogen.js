@@ -12,6 +12,9 @@ const OPEN = 'Click to open search bar.';
 
 var changed = false;
 
+var n = null
+var comment_n = null
+
 function getPages(page_t, page) {
 	var pages = [];
 	//always show first page
@@ -98,6 +101,14 @@ function getJSON(ret) {
 		return null;
 	}
 	return data;
+}
+
+function closeNoty(noty) {
+  n = null
+  noty.close();
+  if(comment_n != null)
+    comment_n.close()
+  comment_n = null
 }
 
 function loadPunishment(id, appeal, mod) {

@@ -46,6 +46,29 @@ public class Utilities {
 		
 	}
 	
+	public static String formatMillisToTimeString(long millis) {
+		long seconds = millis / 1000;
+		long minutes = seconds / 60;
+		long hours = minutes / 60;
+		long days = hours / 24;
+		StringBuilder builder = new StringBuilder();
+		if(days > 0)
+			builder.append(days+" Days, ");
+		if(hours % 24 > 0)
+			builder.append(hours % 24+" Hours, ");
+		builder.append(minutes % 60+" Minutes, ");
+		builder.append(seconds % 60+" Seconds");
+		return builder.toString();
+	}
+
+	public static long timePassed(long time) {
+		return System.currentTimeMillis() - time;
+	}
+
+	public static long timeRemaining(long time) {
+		return time - System.currentTimeMillis();
+	}
+	
 	public static boolean isNullOrEmpty(String... values) {
 		return Arrays.stream(values).anyMatch(v -> StringUtils.isNullOrEmpty(v));
 	}

@@ -212,7 +212,12 @@ public abstract class DatabaseConnection {
 			StringBuilder insert = new StringBuilder();
 			for (int i = 0; i < inserts; i++) {
 				Object obj = objs[i];
-				if (obj instanceof String) {
+				if(obj == null) {
+					insert.append("NULL");
+					if (i != inserts - 1)
+						insert.append(", ");
+					continue;
+				} else if (obj instanceof String) {
 					String string = (String) obj;
 					if (string.equals("DEFAULT") || string.equals("NULL")) {
 						insert.append(string);
@@ -230,6 +235,7 @@ public abstract class DatabaseConnection {
 			int index = 0;
 			for (int i = 0; i < inserts; i++) {
 				Object obj = objs[i];
+				if(obj == null) continue;
 				index++;
 				if (obj instanceof String) {
 					String string = (String) obj;
@@ -360,7 +366,6 @@ public abstract class DatabaseConnection {
 				else if(obj instanceof Long)
 					statement.setTimestamp(index, new Timestamp((long) obj));
 			}
-			System.out.println(statement);
 			ResultSet set = statement.executeQuery();
 			if (set != null)
 				return set;

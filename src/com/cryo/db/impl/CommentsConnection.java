@@ -3,9 +3,11 @@ package com.cryo.db.impl;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.cryo.Website;
 import com.cryo.comments.Comment;
+import com.cryo.comments.CommentList;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
@@ -13,7 +15,7 @@ import com.cryo.db.SQLQuery;
 public class CommentsConnection extends DatabaseConnection {
 
 	public CommentsConnection() {
-		super("cryogen_global");
+		super("cryogen_comments");
 	}
 	
 	public static CommentsConnection connection() {
@@ -25,19 +27,31 @@ public class CommentsConnection extends DatabaseConnection {
 		String opcode = ((String) data[0]).toLowerCase();
 		switch(opcode) {
 		case "get-list":
-			return select("comments", "list_id=?", GET_COMMENT_LIST, (int) data[1]);
+			int listId = (int) data[1];
+			data = select("lists", "list_id=?", GET_COMMENT_LIST, listId);
+			if(data == null) return null;
+			int rights = (int) data[1];
+			data = select("comments", "list_id=?", GET_COMMENTS, listId);
+			if(data == null) return null;
+			return new Object[] { new CommentList(listId, rights, (HashMap<Integer, Comment>) data[0]) };
 		case "get-comment":
 			return select("comments", "id=?", GET_COMMENT, (int) data[1]);
 		case "add-comment":
 			Comment comment = (Comment) data[1];
-			insert("comments", comment.getData());
+			int id = insert("comments", comment.getData());
+			return new Object[] { id };
+		case "remove-comment":
+			id = (int) data[1];
+			delete("comments", "id=?", id);
 			break;
 		case "add-comment-list":
+			int rightsReq = (int) data[1];
 			data = GlobalConnection.connection().handleRequest("get-misc-data", "comment_list_increment");
 			int commentList = -1;
 			if(data != null)
 				commentList = Integer.parseInt((String) data[0]);
 			commentList++;
+			insert("lists", commentList, rightsReq);
 			GlobalConnection.connection().handleRequest("set-misc-data", "comment_list_increment", Integer.toString(commentList));
 			return new Object[] { commentList };
 		}
@@ -49,21 +63,31 @@ public class CommentsConnection extends DatabaseConnection {
 		return new Object[] { loadComment(set) };
 	};
 	
-	private final SQLQuery GET_COMMENT_LIST = (set) -> {
+	private final SQLQuery GET_COMMENTS = (set) -> {
 		if(wasNull(set)) return null;
-		ArrayList<Comment> list = new ArrayList<>();
-		while(next(set))
-			list.add(loadComment(set));
-		return new Object[] { list };
+		HashMap<Integer, Comment> comments = new HashMap<Integer, Comment>();
+		while(next(set)) {
+			Comment comment = loadComment(set);
+			if(comment == null) continue;
+			comments.put(comment.getId(), comment);
+		}
+		return new Object[] { comments };
+	};
+	
+	private final SQLQuery GET_COMMENT_LIST = (set) -> {
+		if(empty(set)) return null;
+		int listId = getInt(set, "list_id");
+		int rights = getInt(set, "rights");
+		return new Object[] { listId, rights };
 	};
 	
 	private Comment loadComment(ResultSet set) {
 		int id = getInt(set, "id");
 		int listId = getInt(set, "list_id");
 		String username = getString(set, "username");
-		String message = getString(set, "message");
-		Timestamp time = getTimestamp(set, "time");
-		return new Comment(id, listId, username, message, time);
+		String message = getString(set, "comment");
+		Timestamp date = getTimestamp(set, "date");
+		return new Comment(id, listId, username, message, date);
 	}
 
 }
