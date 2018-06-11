@@ -128,6 +128,8 @@ function search(mod, page, archive, input=null, params=null, loadListFunc=null, 
   searching[mod] = true;
   changed = true;
   paramStr = params === null ? '' : JSON.stringify(params)
+	if((typeof search_filters[mod] == 'undefined') || search_filters[mod].length == 0)
+		page = 1
   $.post('/search/'+mod, { query:input, page:page, archived:archive,params:paramStr,searchname:searchname}, (ret) => {
     var data = getJSON(ret)
     if(data == null) return null;
