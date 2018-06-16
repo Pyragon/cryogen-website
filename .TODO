@@ -16,10 +16,6 @@ General:
   ☐ Add ability for customized cursors
   ☐ Add admin panel for website functions. (reset cache, reset comments cache, etc)
 Comments:
-  ✔ Remake comments to only need to include utils/comments.jade and send a commentlist id @done(2018-06-11 03:06) @project(Comments)
-  ✔ comments.jade will have commentlist id, and each comment box will have commentid @done(2018-06-11 03:07) @project(Comments)
-  ✔ comments.js will have all code to submit comment via separate /comments endpoint @done(2018-06-11 03:07) @project(Comments)
-  ✔ Add delete button in top-right of comment boxes @done(2018-06-11 03:07) @project(Comments)
   ☐ Add username to commentlist so we can add check for players only being able to comment on their own comment lists (if someone gets hacky)
   ☐ Investigate differences in style because of different stylesheets across sections
 Shop:
@@ -29,21 +25,28 @@ Staff Page:
       ☐ Ensure security with sessions
       ☐ Change 'username' in lists to 'name' cause we actually show display name :p
       ☐ Log all events
+      ☐ Same method name on multipe pages is messing with lists on staff page (open all of Reports/Appeals/Punishments, and click View on one of them)
+      ☐ Add ability to reload just list from a section, not entire section
     Punishments:
-      ✔ End/Extend punishment from viewing (auto accepts/denies appeal if exists) @done(2018-06-09 01:35) @project(Staff Page / Remake TODO / Punishments)
-      ✔ View appeal @done(2018-06-09 01:35) @project(Staff Page / Remake TODO / Punishments)
-      ✔ Accept/deny appeal from viewing @done(2018-06-11 03:07) @project(Staff Page / Remake TODO / Punishments)
       ☐ Option to give players ability to create second appeal if first is denied (must be requsted, TODO later on)
-      ✔ Comment on appeals (viewable by both staff and player) @done(2018-06-11 03:23) @project(Staff Page / Remake TODO / Punishments)
-      ✔ Add instructions for searching @done(2018-06-11 03:07) @project(Staff Page / Remake TODO / Punishments)
     Appeals:
-      ☐ Load list
+      ✔ Searching @done(2018-06-16 01:55) @project(Staff Page / Remake TODO / Appeals)
+    Reports:
+      ☐ Add 'archiver' message to viewing reports
+      ☐ Check why 'archived' is default to 'null' in mysql. Should default to current_timestamp, and source should just have DEFAULT as value to set
+    Recoveries:
+      ✔ Load list @done(2018-06-16 02:44) @project(Staff Page / Remake TODO / Recoveries)
+      ✔ Filter between archive @done(2018-06-16 02:44) @project(Staff Page / Remake TODO / Recoveries)
       ☐ Searching
-      ☐ Filtering through mute/ban/all
-      ☐ View archive
-      ☐ View punishment from appeal
-      ☐ Accept/Deny appeal
+      ☐ Viewing recovery
+      ☐ Viewing all the recovery stats
+      ☐ Add stat to see # of times recovered lately
+      ☐ Add option to 'lock' account if admin finds recovery suspcious and frequent
+      ☐ Add option to send recovery pass/link to discord, forums, pm in-game, or just as a sendAlert on page
+      ☐ Include 'sendAlert' example on said page
+      ☐ Create filters for recoveie
 Account:
+  ☐ Add recovery sub-section to account section
   ☐ Restyle dropdown menu in header
   ☐ Add min/max length requirement to password on account creation/pass changing on server/website
   ☐ Add failsafes in viewings to ensure player can only view their own reports, punishments, etc
@@ -53,6 +56,7 @@ Other:
   ☐ Create cryogen-rsps.com emails and change webmaster emails + recovery/verification from addresses
 Securiy:
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
+  ☐ Change session ids to use local storage instead of cookies
 API:
   ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
 Highscores:
@@ -71,6 +75,21 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Remake comments to only need to include utils/comments.jade and send a commentlist id @done(2018-06-11 03:06) @project(Comments)
+  ✔ comments.jade will have commentlist id, and each comment box will have commentid @done(2018-06-11 03:07) @project(Comments)
+  ✔ comments.js will have all code to submit comment via separate /comments endpoint @done(2018-06-11 03:07) @project(Comments)
+  ✔ Add delete button in top-right of comment boxes @done(2018-06-11 03:07) @project(Comments)
+  ✔ End/Extend punishment from viewing (auto accepts/denies appeal if exists) @done(2018-06-09 01:35) @project(Staff Page / Remake TODO / Punishments)
+  ✔ View appeal @done(2018-06-09 01:35) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Accept/deny appeal from viewing @done(2018-06-11 03:07) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Comment on appeals (viewable by both staff and player) @done(2018-06-11 03:23) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Add instructions for searching @done(2018-06-11 03:07) @project(Staff Page / Remake TODO / Punishments)
+  ✔ Load list @done(2018-06-15 21:12) @project(Staff Page / Remake TODO / Appeals)
+  ✔ Filtering through mute/ban/all @done(2018-06-15 21:30) @project(Staff Page / Remake TODO / Appeals)
+  ✔ View archive @done(2018-06-15 21:30) @project(Staff Page / Remake TODO / Appeals)
+  ✔ View punishment from appeal @done(2018-06-15 22:11) @project(Staff Page / Remake TODO / Appeals)
+  ✔ End/Extend punishment from appeal @done(2018-06-15 22:11) @project(Staff Page / Remake TODO / Appeals)
+  ✔ Accept/Deny appeal @done(2018-06-15 21:30) @project(Staff Page / Remake TODO / Appeals)
   ✔ Searching, finish pagination @done(2018-05-31 10:50) @project(Staff Page / Remake TODO / ☐ Announcements)
   ✔ Moderation to show staff members that have not read currently active announcements @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Announcements)
   ✔ Load list @done(2018-05-31 10:51) @project(Staff Page / Remake TODO / ☐ Reports)
