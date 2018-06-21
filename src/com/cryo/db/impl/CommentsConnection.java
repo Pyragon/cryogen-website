@@ -45,7 +45,9 @@ public class CommentsConnection extends DatabaseConnection {
 			delete("comments", "id=?", id);
 			break;
 		case "add-comment-list":
-			int rightsReq = (int) data[1];
+			int rightsReq = 0;
+			if(data.length > 1)
+				rightsReq = (int) data[1];
 			data = GlobalConnection.connection().handleRequest("get-misc-data", "comment_list_increment");
 			int commentList = -1;
 			if(data != null)
