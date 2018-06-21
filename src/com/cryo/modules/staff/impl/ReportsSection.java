@@ -59,6 +59,7 @@ public class ReportsSection implements StaffSection {
 				int count = (int) data[0];
 				model.put("staff", true);
 				model.put("reports", reports);
+				model.put("archived", archive);
 				html = WebModule.render("./source/modules/account/sections/reports/reports_list.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);

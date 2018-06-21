@@ -1,4 +1,4 @@
-var rights = '!{user.getRights()}'
+var rights = "!{user.getRights()}"
 $(document).ready(() => {
 
   function submitComment() {
@@ -6,10 +6,6 @@ $(document).ready(() => {
     var comment = input.val()
     var listId = $('#comments').data('listid')
     var rightsReq = $('#comments').data('rights')
-    if(rights < rightsReq) {
-      sendAlert('You do not have sufficient permissions to comment on this.')
-      return false
-    }
     $.post('/comments', { action:'submit', comment:comment, id:listId }, (ret) => {
       var data = getJSON(ret)
       if(data == null) return false
@@ -20,10 +16,6 @@ $(document).ready(() => {
   }
 
   function viewRemoveComment() {
-    if(rights != 2) {
-      sendAlert('Only Admins can remove comments.')
-      return false
-    }
     var id = $(this).closest('.comment-box').data('id')
     var listId = $('#comments').data('listid')
     comment_n = noty({
