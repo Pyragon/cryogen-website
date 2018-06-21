@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.cryo.cache.CachingManager;
 import com.cryo.comments.CommentsManager;
+import com.cryo.comments.CommentsModule;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.ForumConnection;
@@ -47,11 +48,9 @@ import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
 import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
-import com.cryo.modules.samsung.SamsungTVModule;
 import com.cryo.modules.search.SearchManager;
 import com.cryo.modules.staff.StaffModule;
 import com.cryo.modules.staff.StaffModule2;
-import com.cryo.modules.staff.announcements.AnnouncementUtils;
 import com.cryo.paypal.PaypalManager;
 import com.cryo.server.ServerConnection;
 import com.cryo.server.item.ServerItem;
@@ -136,6 +135,7 @@ public class Website {
 		AccountModule.registerEndpoints(this);
 		SearchManager.registerEndpoints(this);
 		StaffModule.registerEndpoints(this);
+		CommentsModule.registerEndpoints(this);
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});

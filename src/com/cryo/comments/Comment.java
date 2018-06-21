@@ -9,13 +9,13 @@ import lombok.*;
  *
  * Created on: April 06, 2017 at 11:57:39 PM
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Data
 public class Comment {
 	
-	private final int id, listId;
+	private @Setter int id, listId;
 	private final String username, comment;
-	private final Timestamp time;
+	private final Timestamp date;
 	
 	public Object[] getData() {
 		return new Object[] { "DEFAULT", listId, username, comment, "DEFAULT" };
