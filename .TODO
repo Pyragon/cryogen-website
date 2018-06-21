@@ -1,5 +1,14 @@
 It is recommended that you use the atom-tasks package to view TODO files.
 https://atom.io/packages/tasks
+Before release:
+  ☐ Ensure recoveries can be sent, viewed by the sender, and responded to properly
+  ☐ Ensure reports can be sent, viewed and responded to
+  ☐ Ensure appeals can be sent, viewed and responded to
+  ☐ Enxure votes can be claimed
+  ☐ Fix comments for rest of staff/account section
+  ☐ Ensure Forum Integration/Discord Integration is working
+  ☐ Finish forums section of TODO
+  ☐ Make auto updating client with option to sit in background and listen for events, then print them.
 Forums:
   ☐ Get new forum logo + read/unread buttons
 Bugs:
