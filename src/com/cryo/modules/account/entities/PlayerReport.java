@@ -16,7 +16,7 @@ public class PlayerReport extends Report {
 	}
 	
 	public Object[] getCreationData() {
-		return new Object[] { "DEFAULT", username, title, offender, rule, info, proof, lastAction, commentList, "DEFAULT", "NULL", "DEFAULT", "DEFAULT" };
+		return new Object[] { "DEFAULT", username, title, offender, rule, info, proof, lastAction, commentList, "DEFAULT", archived, archiver, "DEFAULT", "DEFAULT" };
 	}
 	
 	public int type() {

@@ -18,7 +18,7 @@ public class BugReport extends Report {
 	}
 	
 	public Object[] getCreationData() {
-		return new Object[] { "DEFAULT", username, title, replicated, seen, info, lastAction, commentList, "DEFAULT", "NULL", "DEFAULT", "DEFAULT" };
+		return new Object[] { "DEFAULT", username, title, replicated, seen, info, lastAction, commentList, "DEFAULT", archived, archiver, "DEFAULT", "DEFAULT" };
 	}
 	
 	public int type() {

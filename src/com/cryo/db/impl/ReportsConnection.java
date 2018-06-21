@@ -86,7 +86,7 @@ public class ReportsConnection extends DatabaseConnection {
 		String archiver = getString(set, "archiver");
 		boolean active = getInt(set, "active") == 1;
 		PlayerReport report = new PlayerReport(id, username, title, offender, rule, info, proof, lastAction, commentList, date, archived, active);
-		if(!archiver.equals(""))
+		if(archiver != null)
 			report.setArchiver(archiver);
 		return report;
 	}
@@ -105,7 +105,7 @@ public class ReportsConnection extends DatabaseConnection {
 		String archiver = getString(set, "archiver");
 		boolean active = getInt(set, "active") == 1;
 		BugReport report = new BugReport(id, username, title, replicated, dateSeen, info, lastAction, commentList, date, archived, active);
-		if(!archiver.equals(""))
+		if(archiver != null)
 			report.setArchiver(archiver);
 		return report;
 	}
@@ -321,7 +321,7 @@ public class ReportsConnection extends DatabaseConnection {
 			try {
 				data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
 				if(data == null) return null;
-				set(table, "active=0,last_action=?,archiver=?", "id=?", "Archived by $for-name="+username+"$end", id, username);
+				set(table, "active=0,last_action=?,archiver=?,archived=DEFAULT", "id=?", "Archived by $for-name="+username+"$end", username, id);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

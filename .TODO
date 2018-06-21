@@ -29,22 +29,10 @@ Staff Page:
       ☐ Add ability to reload just list from a section, not entire section
     Punishments:
       ☐ Option to give players ability to create second appeal if first is denied (must be requsted, TODO later on)
-    Appeals:
-      ✔ Searching @done(2018-06-16 01:55) @project(Staff Page / Remake TODO / Appeals)
-    Reports:
-      ☐ Add 'archiver' message to viewing reports
-      ☐ Check why 'archived' is default to 'null' in mysql. Should default to current_timestamp, and source should just have DEFAULT as value to set
     Recoveries:
-      ✔ Load list @done(2018-06-16 02:44) @project(Staff Page / Remake TODO / Recoveries)
-      ✔ Filter between archive @done(2018-06-16 02:44) @project(Staff Page / Remake TODO / Recoveries)
-      ☐ Searching
-      ☐ Viewing recovery
-      ☐ Viewing all the recovery stats
       ☐ Add stat to see # of times recovered lately
       ☐ Add option to 'lock' account if admin finds recovery suspcious and frequent
       ☐ Add option to send recovery pass/link to discord, forums, pm in-game, or just as a sendAlert on page
-      ☐ Include 'sendAlert' example on said page
-      ☐ Create filters for recoveie
 Account:
   ☐ Add recovery sub-section to account section
   ☐ Restyle dropdown menu in header
@@ -75,6 +63,15 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Searching @done(2018-06-16 01:55) @project(Staff Page / Remake TODO / Appeals)
+  ✔ Add 'archiver' message to viewing reports @done(2018-06-21 03:55) @project(Staff Page / Remake TODO / Reports)
+  ✔ Check why 'archived' is default to 'null' in mysql. Should default to current_timestamp, and source should just have DEFAULT as value to set @done(2018-06-21 04:07) @project(Staff Page / Remake TODO / Reports)
+  ✔ Load list @done(2018-06-16 02:44) @project(Staff Page / Remake TODO / Recoveries)
+  ✔ Filter between archive @done(2018-06-16 02:44) @project(Staff Page / Remake TODO / Recoveries)
+  ✔ Searching @done(2018-06-21 04:07) @project(Staff Page / Remake TODO / Recoveries)
+  ✔ Viewing recovery @done(2018-06-21 04:07) @project(Staff Page / Remake TODO / Recoveries)
+  ✔ Viewing all the recovery stats @done(2018-06-21 04:07) @project(Staff Page / Remake TODO / Recoveries)
+  ✔ Create filters for recoveries @done(2018-06-21 04:07) @project(Staff Page / Remake TODO / Recoveries)
   ✔ Remake comments to only need to include utils/comments.jade and send a commentlist id @done(2018-06-11 03:06) @project(Comments)
   ✔ comments.jade will have commentlist id, and each comment box will have commentid @done(2018-06-11 03:07) @project(Comments)
   ✔ comments.js will have all code to submit comment via separate /comments endpoint @done(2018-06-11 03:07) @project(Comments)
