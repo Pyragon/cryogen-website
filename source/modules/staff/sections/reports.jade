@@ -155,20 +155,6 @@ script.
         clickedSearchIcon();
       }
     })
-
-
-      $(document).click(function(e) {
-        var target = e.target;
-        if(n == null)
-          return;
-        var id = n.options.id;
-        if($(e.target).closest('#'+id).length) {
-
-        } else {
-          n.close();
-          n = null;
-        }
-      });
   })
 h5 Reports
 p.small.info The following are the bug and player reports for the game.

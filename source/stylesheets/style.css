@@ -5,6 +5,53 @@ html, body {
   color: #888;
 }
 
+.main-login-wrapper p {
+  margin-left: 10px;
+  color: white;
+  text-align: left;
+  padding: 5px;
+  margin-bottom: 0px;
+}
+
+.main-login-wrapper input {
+  min-width: 90%;
+  min-height: 30px;
+  margin-left: 10px;
+  border-radius: 3px;
+  background: #111;
+  border: 1px solid #000;
+  padding: 5px;
+}
+
+::-moz-selection{
+  background-color:Transparent;
+  color:#999;
+}
+
+::selection {
+  background-color:Transparent;
+  color:#999;
+}
+
+.login_line label {
+  padding: 5px;
+  float: left;
+}
+
+.login_line input, .login_line textarea {
+  border-radius: 3px;
+  margin: 5px;
+  padding: 5px;
+  float: right;
+  min-width: 155px;
+}
+
+.login_line textarea {
+  background: #111;
+  border: 1px solid #000;
+  font-size: 11px;
+}
+
 #item-back {
   width: 200px;
   height: 50px;
@@ -1130,7 +1177,6 @@ Widget
   color: #666;
   font-size: 10px;
   width: 100%;
-  min-width: 120px;
 }
 
 .mini-login button:hover, .mini-login button:active {

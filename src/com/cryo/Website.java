@@ -84,7 +84,7 @@ import spark.Spark;
  */
 public class Website {
 
-	public static String PATH = "http://cryogenrsps.com/";
+	public static String PATH = "http://cryogen.live/";
 
 	private static Website INSTANCE;
 	

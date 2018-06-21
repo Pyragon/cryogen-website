@@ -68,6 +68,85 @@ html
             $('#navbar-collapse-1').removeClass('small-bar');
           clearTimeout(timeout);
         }
+        
+        $(document).on('click', '.signin', openLogin)
+        $(document).on('click', '.login', login)
+        
+        $(document).on('keypress', '.username', (e) => {
+          if(e.which == 13) {
+            if($('.login-wrapper').length > 0)
+              $('.login-wrapper').find('.password').focus()
+            else
+              $('.main-login-wrapper').find('.password').focus()
+          }
+        })
+        
+        $(document).on('keypress', '.password', (e) => {
+          if($('.login-wrapper').length > 0)
+            username = $('.login-wrapper').find('.username')
+          else
+            username = $('.main-login-wrapper').find('.username')
+          if(e.which == 13) {
+            if($(this).length == 0)
+              username.focus()
+            else 
+              login()
+          }
+        })
+        
+        function openLogin() {
+          $.post('/login', { action:'view-login' }, (ret) => {
+            var data = getJSON(ret)
+            if(data == null) return false
+            n = noty({
+              text: 'Login to Cryogen',
+              type: 'confirm',
+              layout: 'center',
+              dismissQueue: false,
+              template: data.html,
+              theme: 'cryogen',
+              buttons: [{
+                  addClass: 'btn btn-success', text: 'Sign In', onClick: function($noty) {
+                    login()
+                    closeNoty($noty)
+                  }
+                },
+                {
+                  addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                    closeNoty($noty)
+                  }
+                }
+              ]
+            })
+          })
+          return false
+        }
+        
+        function login() {
+          var element = $('.login-wrapper').length > 0 ? $('.login-wrapper') : $('.main-login-wrapper')
+          var username = element.find('.username').val()
+          var password = element.find('.password').val()
+          $.post('/login', { action:'login', username:username, password:password, redirect:'/' }, (ret) => {
+            var data = getJSON(ret)
+            if(data == null) return false
+            document.write(data.html)
+            document.close()
+          })
+          return false
+        }
+
+        $(document).click(function(e) {
+          var target = e.target;
+          if(n == null)
+            return;
+          var id = n.options.id;
+          if($(e.target).closest('#'+id).length) {
+
+          } else {
+            n.close();
+            n = null;
+          }
+        });
 
       });
 
@@ -80,28 +159,6 @@ html
             div.color-white.header-left.vis-link#staff-actions= actions+' items requiring your action'
         div.color-white.header-right#shutdown-timer
         div.color-grey.small#navbar-issue We are aware of the issue regarding the navbar on small screens and are working to fix it
-        div(class='modal fade', id='sign-in', tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
-          div(class='modal-dialog')
-            div(class='modal-content')
-              div(class='modal-header')
-                button(type='button', class='close', data-dismiss='modal')
-                  span(aria-hidden='true') &times;
-                  span(class='sr-only') Close
-                h4(class='modal-title color-white') Sign In
-                  img(src='/images/icon.png', class='modal-icon')
-              div(class='modal-body')
-                div(class='alert alert-custom modal-alert', role='alert')
-                form(class='sign-in', action='/login', method='POST', role='form')
-                  div(class='form-group')
-                    label(for='username') Account Username:
-                    input(type='text', class='form-control login-username', name='username', id='username', placeholder='Enter Username')
-                  div(class='form-group')
-                    label(for='password') Password
-                    input(type='password', class='form-control login-password', name='password', id='password', placeholder='Enter Password')
-              div(class='modal-footer')
-                button(type='button', class='btn btn-default', data-dismiss='modal') Close
-                button.reg-btn(type='button', class='btn btn-danger register-btn') Register
-                button(type='button', class='btn btn-primary login-btn') Sign In
         nav(class='navbar navbar-default cryogen-nav', role='navigation')
           div(class='navbar-header')
             button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar-collapse-1')
@@ -142,7 +199,7 @@ html
                         a(href='/account/shop') Shop
                     else
                       li
-                        a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
+                        a.signin(href='#') Sign In
                       li
                         a(href='/recover') Forgot my Password
                       li
@@ -190,7 +247,7 @@ html
                     li
                       a(href='/support') Support
                     li
-                      a(href='#', data-dismiss='modal', data-toggle='modal', data-target='#sign-in') Sign In
+                      a.signin(href='#') Sign In
                     li
                       a(href="/register") Register
                     li
