@@ -83,8 +83,11 @@ public class ReportsConnection extends DatabaseConnection {
 		String lastAction = getString(set, "last_action");
 		Timestamp date = getTimestamp(set, "date");
 		Timestamp archived = getTimestamp(set, "archived");
+		String archiver = getString(set, "archiver");
 		boolean active = getInt(set, "active") == 1;
 		PlayerReport report = new PlayerReport(id, username, title, offender, rule, info, proof, lastAction, commentList, date, archived, active);
+		if(!archiver.equals(""))
+			report.setArchiver(archiver);
 		return report;
 	}
 
@@ -99,9 +102,12 @@ public class ReportsConnection extends DatabaseConnection {
 		int commentList = getInt(set, "comment_list");
 		Timestamp date = getTimestamp(set, "date");
 		Timestamp archived = getTimestamp(set, "archived");
+		String archiver = getString(set, "archiver");
 		boolean active = getInt(set, "active") == 1;
-		BugReport bug = new BugReport(id, username, title, replicated, dateSeen, info, lastAction, commentList, date, archived, active);
-		return bug;
+		BugReport report = new BugReport(id, username, title, replicated, dateSeen, info, lastAction, commentList, date, archived, active);
+		if(!archiver.equals(""))
+			report.setArchiver(archiver);
+		return report;
 	}
 
 	@Override
@@ -312,13 +318,10 @@ public class ReportsConnection extends DatabaseConnection {
 			id = (int) data[1];
 			String table = (String) data[2];
 			username = (String) data[3];
-			Report rep = null;
 			try {
 				data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
 				if(data == null) return null;
-				rep = (Report) data[0];
-				Website.instance().getCommentsManager().addComment("cryobot", "Report has been archived by $for-name="+username+"$end", rep.getCommentList().getListId());
-				set(table, "active=0,last_action=?", "id=?", "Archived by $for-name="+username+"$end", id);
+				set(table, "active=0,last_action=?,archiver=?", "id=?", "Archived by $for-name="+username+"$end", id, username);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

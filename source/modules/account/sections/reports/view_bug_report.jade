@@ -1,7 +1,7 @@
 div.noty_message
   span.noty_text
   if !report.isActive()
-    p.t-center.color-grey= 'Report archived on: '+formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY hh:mm a')+'.'
+    p.t-center.color-grey= 'Report archived on: '+formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY hh:mm a')+' by $for-name='+report.getArchiver()+'$end.'
   div.widget.register#view-report(style='margin-top: 5px', data-id=report.getId(), data-type=report.type())
     div(style="margin: auto; max-width: 400px; padding: 5px;")
       div.row(style='clear: both;')

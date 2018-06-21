@@ -24,6 +24,8 @@ public abstract class Report {
 	
 	protected final Timestamp date, archived;
 	
+	protected String archiver;
+	
 	protected final boolean active;
 	
 	public abstract Object[] getCreationData();
