@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
@@ -20,8 +21,7 @@ import com.cryo.db.impl.RecoveryConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.staff.recoveries.RecoveryDAO;
-import com.cryo.modules.staff.recoveries.RecoveryUtils;
+import com.cryo.modules.staff.entities.Recovery;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
@@ -67,7 +67,7 @@ public class RecoveryModule extends WebModule {
 					if(data == null)
 						model.put("error", "no-exist");
 					else {
-						RecoveryDAO recovery = (RecoveryDAO) data[0];
+						Recovery recovery = (Recovery) data[0];
 						int status = recovery.getActive();
 						model.put("status", status);
 						model.put("id", recovery.getId());
@@ -91,12 +91,13 @@ public class RecoveryModule extends WebModule {
 							model.put("error", "invalid");
 							return render("./source/modules/account/recovery/redeem_instant.jade", model, request, response);
 						}
-						RecoveryDAO recovery = RecoveryUtils.getRecovery(recov_id);
-						if(recovery == null) {
+						Object[] data = RecoveryConnection.connection().handleRequest("get-recovery", recov_id);
+						if(data == null) {
 							model.put("error", "no-recov");
 							return render("./source/modules/account/recovery/redeem_instant.jade", model, request, response);
 						}
-						Object[] data = RecoveryConnection.connection().handleRequest("has-"+method+"-rec", recov_id);
+						Recovery recovery = (Recovery) data[0];
+						data = RecoveryConnection.connection().handleRequest("has-"+method+"-rec", recov_id);
 						if(data == null) {
 							model.put("error", "invalid");
 							return render("./source/modules/account/recovery/redeem_instant.jade", model, request, response);
@@ -138,7 +139,7 @@ public class RecoveryModule extends WebModule {
 								model.put("error", "invalid");
 								break;
 							}
-							RecoveryDAO recovery = (RecoveryDAO) data[0];
+							Recovery recovery = (Recovery) data[0];
 							data = RecoveryConnection.connection().handleRequest("has-"+method+"-rec", recovery.getId());
 							if(data == null) {
 								model.put("success", false);
@@ -223,11 +224,18 @@ public class RecoveryModule extends WebModule {
 										}
 									}
 								}
+								int forumId = -1;
 								if (!forum.equals("")) { // forum verification
+									if(!NumberUtils.isNumber(forum)) {
+										prop.put("success", false);
+										prop.put("error", "Forum ID must be a number!");
+										break loop;
+									}
+									forumId = Integer.parseInt(forum);
 									Object[] data = ForumConnection.connection().handleRequest("get-uid", username);
 									if (data != null) {
 										int real_id = (int) data[0];
-										if (forum.equals(Integer.toString(real_id))) {
+										if (forumId == real_id) {
 											// WE HAVE CORRECT FORUM ID. LET'S SEND A
 											// PMED
 											// RECOVERY
@@ -246,8 +254,7 @@ public class RecoveryModule extends WebModule {
 								else
 									res = (int[]) data[0];
 								String ip = request.ip();
-								System.out.println(ip);
-								RecoveryDAO recovery = new RecoveryDAO(recovery_id, username, email, forum, created, cico, additional, res, 0, "", "", request.ip(), new Timestamp(new Date().getTime()));
+								Recovery recovery = new Recovery(recovery_id, username, email, forumId, created, cico, additional, res, 0, "", "", request.ip(), new Timestamp(new Date().getTime()));
 								RecoveryConnection.connection().handleRequest("add-recovery", recovery);
 								prop.put("success", true);
 								prop.put("id", recovery_id);

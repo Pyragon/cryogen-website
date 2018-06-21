@@ -3,7 +3,7 @@ div.noty_message
   if !punishment.isActive()
     if punishment.getArchived() != null
       p.t-center.color-grey= 'Punishment ended by $for-name='+punishment.getArchiver()+'$end on: '+formatter.formatTimestamp(punishment.getArchived(), 'MMM dd, YYYY hh:mm a')+'.'
-    else if punishment.getAppeal().getAnswerer() != null
+    else if punishment.getAppeal() != null && punishment.getAppeal().getAnswerer() != null
       p.t-center.color-grey= 'Punishment ended on: '+formatter.formatTimestamp(punishment.getExpiry(), 'MMM dd, YYYY hh:mm a')+' as appeal was '
         span(class=punishment.getAppeal().getColour())= punishment.getAppeal().getActive() == 1 ? 'accepted' : 'denied' 
         span= ' by $for-name='+punishment.getAppeal().getAnswerer()+'$end.'

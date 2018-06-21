@@ -20,8 +20,8 @@ public class LastActionFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
-		return isMod(mod, "reports", "staff-reports");
+	public boolean appliesTo(String mod, boolean archived) {
+		return isMod(mod, "reports", "staff-reports", "staff-appeals");
 	}
 
 }

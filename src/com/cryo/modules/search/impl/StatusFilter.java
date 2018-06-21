@@ -18,7 +18,7 @@ import lombok.*;
 public class StatusFilter extends Filter {
 
 	public StatusFilter() {
-		super("appeal-status");
+		super("status");
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class StatusFilter extends Filter {
 	public String getFilter(String mod) {
 		if(mod.equals("punishments") || !(value instanceof Integer) || (int) value == -1)
 			return null;
-		return "active=?";
+		return mod.equals("recoveries") ? "status=?" : "active=?";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -59,8 +59,10 @@ public class StatusFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
-		return isMod(mod, "punishments", "staff-punishments");
+	public boolean appliesTo(String mod, boolean archive) {
+		if(mod.equals("staff-recoveries"))
+			return archive;
+		return isMod(mod, "staff-appeals", "staff-recoveries");
 	}
 	
 }

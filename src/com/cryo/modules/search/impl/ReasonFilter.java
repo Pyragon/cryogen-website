@@ -20,8 +20,10 @@ public class ReasonFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
-		return isMod(mod, "staff-punishments");
+	public boolean appliesTo(String mod, boolean archived) {
+		if(mod.equals("staff-recoveries"))
+			return !archived;
+		return isMod(mod, "staff-punishments", "staff-recoveries");
 	}
 
 }

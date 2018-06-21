@@ -81,10 +81,10 @@ public class ReportsConnection extends DatabaseConnection {
 		String proof = getString(set, "proof");
 		int commentList = getInt(set, "comment_list");
 		String lastAction = getString(set, "last_action");
-		Timestamp time = getTimestamp(set, "time");
+		Timestamp date = getTimestamp(set, "date");
 		Timestamp archived = getTimestamp(set, "archived");
 		boolean active = getInt(set, "active") == 1;
-		PlayerReport report = new PlayerReport(id, username, title, offender, rule, info, proof, lastAction, commentList, time, archived, active);
+		PlayerReport report = new PlayerReport(id, username, title, offender, rule, info, proof, lastAction, commentList, date, archived, active);
 		return report;
 	}
 
@@ -93,14 +93,14 @@ public class ReportsConnection extends DatabaseConnection {
 		String username = getString(set, "username");
 		String title = getString(set, "title");
 		String replicated = getString(set, "replicated");
-		String date = getString(set, "seen");
+		String dateSeen = getString(set, "seen");
 		String info = getString(set, "info");
 		String lastAction = getString(set, "last_action");
 		int commentList = getInt(set, "comment_list");
-		Timestamp time = getTimestamp(set, "time");
-		Timestamp archived = getTimestamp(set, "time");
+		Timestamp date = getTimestamp(set, "date");
+		Timestamp archived = getTimestamp(set, "archived");
 		boolean active = getInt(set, "active") == 1;
-		BugReport bug = new BugReport(id, username, title, replicated, date, info, lastAction, commentList, time, archived, active);
+		BugReport bug = new BugReport(id, username, title, replicated, dateSeen, info, lastAction, commentList, date, archived, active);
 		return bug;
 	}
 
@@ -208,7 +208,7 @@ public class ReportsConnection extends DatabaseConnection {
 					.append(archived ? "0" : "1")
 					.append(username != null ? " AND username LIKE ?" : "")
 					.append(" ORDER BY ")
-					.append(archived ? "archived" : "time")
+					.append(archived ? "archived" : "date")
 					.append(" DESC LIMIT " + offset + ",10");
 			values = new Object[username == null ? 0 : 1];
 			if(username != null)
@@ -230,7 +230,7 @@ public class ReportsConnection extends DatabaseConnection {
 				values[1] = username == null ? offset : archived ? 0 : 1;
 				if(username != null)
 					values[2] = offset;
-				ResultSet set = executeQuery("SELECT a.* FROM (SELECT id, type, time, username, title, active FROM player_reports UNION ALL SELECT id, type, time, username, title, active FROM bug_reports) a WHERE "+(username != null ? "username = ? AND " : "")+"active=? ORDER BY time DESC LIMIT ?,10", values);
+				ResultSet set = executeQuery("SELECT a.* FROM (SELECT id, type, date, username, title, active FROM player_reports UNION ALL SELECT id, type, date, username, title, active FROM bug_reports) a WHERE "+(username != null ? "username = ? AND " : "")+"active=? ORDER BY date DESC LIMIT ?,10", values);
 				if(wasNull(set))
 					break;
 				while(next(set)) {
@@ -273,7 +273,7 @@ public class ReportsConnection extends DatabaseConnection {
 			if(username != null)
 				values[1] = username;
 			if(typeName.equals("all"))
-				count = selectCount("(SELECT id, type, time, username, active FROM player_reports UNION ALL SELECT id, type, time, username, active FROM bug_reports) a", query, values);
+				count = selectCount("(SELECT id, type, date, username, active FROM player_reports UNION ALL SELECT id, type, date, username, active FROM bug_reports) a", query, values);
 			else if(typeName.equals("bugs"))
 				count = selectCount("bug_reports", query, values);
 			else
@@ -292,7 +292,7 @@ public class ReportsConnection extends DatabaseConnection {
 					.append(archived ? "0" : "1")
 					.append(username != null ? " AND username LIKE ?" : "")
 					.append(" ORDER BY ")
-					.append(archived ? "archived" : "time")
+					.append(archived ? "archived" : "date")
 					.append(" DESC LIMIT " + offset + ",10");
 			values = new Object[username == null ? 0 : 1];
 			if(username != null)
@@ -317,7 +317,7 @@ public class ReportsConnection extends DatabaseConnection {
 				data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
 				if(data == null) return null;
 				rep = (Report) data[0];
-				Website.instance().getCommentsManager().addComment("cryobot", "Report has been archived by $for-name="+username+"$end", rep.getCommentList());
+				Website.instance().getCommentsManager().addComment("cryobot", "Report has been archived by $for-name="+username+"$end", rep.getCommentList().getListId());
 				set(table, "active=0,last_action=?", "id=?", "Archived by $for-name="+username+"$end", id);
 			} catch(Exception e) {
 				e.printStackTrace();

@@ -8,8 +8,6 @@
 .reason {
   cursor: default;
   position: relative;
-  display: inline-block;
-  border-top: none !important;
 }
 
 .hover-content {

@@ -51,9 +51,9 @@ public class PunishmentsConnection extends DatabaseConnection {
 	};
 
 	private final SQLQuery GET_APPEALS = (set) -> {
-		if (wasNull(set))
-			return null;
 		ArrayList<Appeal> appeals = new ArrayList<>();
+		if (wasNull(set))
+			return new Object[] { appeals };
 		while (next(set)) {
 			Appeal appeal = loadAppeal(set);
 			appeals.add(appeal);
@@ -87,25 +87,35 @@ public class PunishmentsConnection extends DatabaseConnection {
 			Properties queryValues = (Properties) data[1];
 			archived = (boolean) data[2];
 			HashMap<String, String> params = (HashMap<String, String>) data[3];
+			username = (String) data[4];
+			String module = (String) data[5];
 			int type = -1;
 			if(params.containsKey("type"))
 				type = Integer.parseInt(params.get("type"));
 			String query = (String) queryValues.get("query");
 			Object[] values = (Object[]) queryValues.get("values");
-			query += " AND active="+(archived ? 0 : 1);
-			if(archived)
-				query += " AND expiry < NOW()";
-			else
-				query += " AND (expiry IS NULL OR expiry > NOW())";
+			if(module.equals("punishments")) {
+				if(archived)
+					query += " AND (expiry < NOW() OR active!=0)";
+				else
+					query += " AND (expiry IS NULL OR expiry > NOW()) AND active=0";
+			} else {
+				if(archived)
+					query += " AND active!=0";
+				else
+					query += " AND active=0";
+			}
 			if(type != -1 && type != 2)
 				query += " AND type="+type;
 			query += " ORDER BY date DESC";
-			return new Object[] { (int) Utilities.roundUp(selectCount("punishments", query, values), 10) };
+			return new Object[] { (int) Utilities.roundUp(selectCount(module, query, values), 10) };
 		case "search":
 			queryValues = (Properties) data[1];
 			int page = (int) data[2];
 			archived = (boolean) data[3];
 			params = (HashMap<String, String>) data[4];
+			username = (String) data[5];
+			module = (String) data[6];
 			type = -1;
 			if(params.containsKey("type"))
 				type = Integer.parseInt(params.get("type"));
@@ -114,16 +124,22 @@ public class PunishmentsConnection extends DatabaseConnection {
 			if (page == 0)
 				page = 1;
 			int offset = (page - 1) * 10;
-			query += " AND active="+(archived ? 0 : 1);
-			if(archived)
-				query += " AND expiry < NOW()";
-			else
-				query += " AND (expiry IS NULL OR expiry > NOW())";
+			if(module.equals("punishments")) {
+				if(archived)
+					query += " AND (expiry < NOW() OR active!=0)";
+				else
+					query += " AND (expiry IS NULL OR expiry > NOW()) AND active=0";
+			} else {
+				if(archived)
+					query += " AND active!=0";
+				else
+					query += " AND active=0";
+			}
 			if(type != -1 && type != 2)
 				query += " AND type="+type;
 			query += " ORDER BY date DESC";
 			query += " LIMIT "+offset+",10";
-			return select("punishments", query, GET_PUNISHMENTS, values);
+			return select(module, query, module.equals("punishments") ? GET_PUNISHMENTS : GET_APPEALS, values);
 		case "search-appeal":
 		case "search-punish":
 			boolean isAppeal = opcode.contains("appeal");
@@ -175,7 +191,54 @@ public class PunishmentsConnection extends DatabaseConnection {
 					values[0] = type;
 			}
 			return select("punishments", builder.toString(), GET_PUNISHMENTS, values);
-		case "get-total-results":
+		case "get-appeals":
+			username = (String) data[1];
+			archived = (boolean) data[2];
+			page = (int) data[3];
+			type = 2;
+			if(data.length > 4)
+				type = (int) data[4];
+			if (page == 0)
+				page = 1;
+			offset = (page - 1) * 10;
+			builder = new StringBuilder();
+			if(username != null)
+				builder.append("username=? AND ");
+			if(type != 2)
+				builder.append(" type=? AND ");
+			if(archived)
+				builder.append(" active!=0");
+			else
+				builder.append(" active=0");
+			builder.append(" ORDER BY date DESC LIMIT " + offset + ",10");
+			values = new Object[0];
+			if(username != null)
+				values = ArrayUtils.add(values, username);
+			if(type != 2)
+				values = ArrayUtils.add(values, type);
+			return select("appeals", builder.toString(), GET_APPEALS, values);
+		case "get-total-appeals-results":
+			username = (String) data[1];
+			archived = (boolean) data[2];
+			type = 2;
+			if (data.length > 4)
+				type = (int) data[4];
+			builder = new StringBuilder();
+			if (username != null)
+				builder.append("username=? AND ");
+			if (type != 2)
+				builder.append(" type=? AND");
+			if(archived)
+				builder.append(" active!=0");
+			else
+				builder.append(" active=0");
+			values = new Object[0];
+			if(username != null)
+				values = ArrayUtils.add(values, username);
+			if(type != 2)
+				values = ArrayUtils.add(values, type);
+			return new Object[] { (int) Utilities.roundUp(selectCount("appeals", builder.toString(), values), 10) };
+		case "get-total-punishments-results":
 			username = (String) data[1];
 			archived = (boolean) data[2];
 			type = 2;
@@ -240,15 +303,6 @@ public class PunishmentsConnection extends DatabaseConnection {
 			int appeal_id = insert("appeals", appeal.data());
 			set("punishments", "appeal_id=?", "id=?", appeal_id, appeal.getPunishId());
 			break;
-		case "get-appeals":
-			archived = (boolean) data[1];
-			page = (int) data[2];
-			if (page == 0)
-				page = 1;
-			offset = (page - 1) * 10;
-			ArrayList<Appeal> appeals = new ArrayList<>();
-			data = select("appeals", (archived ? "active!=?" : "active=?") + " ORDER BY time DESC LIMIT " + offset + ",10", GET_APPEALS, 0);
-			return new Object[] { data == null ? appeals : (ArrayList<Appeal>) data[0] };
 		case "get-appeal":
 			id = (int) data[1];
 			if (id == 0)
@@ -301,6 +355,7 @@ public class PunishmentsConnection extends DatabaseConnection {
 	@SuppressWarnings("unchecked")
 	public Appeal loadAppeal(ResultSet set) {
 		int id = getInt(set, "id");
+		int type = getInt(set, "type");
 		int punishId = getInt(set, "punish_id");
 		String username = getString(set, "username");
 		String title = getString(set, "title");
@@ -309,10 +364,10 @@ public class PunishmentsConnection extends DatabaseConnection {
 		String lastAction = getString(set, "action");
 		int activei = getInt(set, "active");
 		int listId = getInt(set, "comment_list");
-		Timestamp time = getTimestamp(set, "time");
+		Timestamp date = getTimestamp(set, "date");
 		Timestamp answered = getTimestamp(set, "answered");
 		String answerer = getString(set, "answerer");
-		Appeal appeal = new Appeal(id, username, title, message, lastAction, activei, punishId, listId, time);
+		Appeal appeal = new Appeal(id, type, username, title, message, lastAction, activei, punishId, listId, date);
 		String read = getString(set, "read");
 		ArrayList<String> list = read.equals("") ? new ArrayList<String>() : (ArrayList<String>) new Gson().fromJson(read, ArrayList.class);
 		if (!reason.equals(""))

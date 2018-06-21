@@ -10,29 +10,33 @@ table.table.hs-table.table-condensed.table-responsive.preports-table.widget(styl
       th.t-center View
       th.t-center Appeal
   tbody
-    for punishment in punishments
-      tr(data-id=punishment.getId())
-        td.b-right
-          if punishment.getType() == 1
-            span.fa.fa-gavel
+    if punishments.size() == 0
+      tr
+        td.color-red(align='center', colspan='8')= 'Currently no '+(archive ? 'expired' : 'active')+' punishments.'
+    else
+      for punishment in punishments
+        tr(data-id=punishment.getId())
+          td.b-right
+            if punishment.getType() == 1
+              span.fa.fa-gavel
+            else
+              span.fa.fa-microphone-slash
+            span= ' '+(punishment.getType() == 0 ? 'Mute' : 'Ban')
+          td.b-right= '$for-name='+punishment.getUsername()+'$end'
+          td.b-right.reason Hover
+            div.hover-content
+              div.bubble
+                p.reason-title.color-white Reason
+                p.t-center(style='padding: 5px;')= punishment.getReason()
+          td.b-right= formatter.formatTimestamp(punishment.getDate(), "MMMMM dd, YYYY")
+          td.b-right= punishment.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punishment.getExpiry(), "MMMMM dd, YYYY")
+          td.b-right
+            if punishment.getAppeal() == null
+              span  No appeal
+            else
+              span(class=''+punishment.getAppeal().getColour())= punishment.getAppeal().getStatus()
+          td.b-right.link.vis-link#punish-link View
+          if punishment.getAppealId() != -1
+            td.vis-link#appeal-link View
           else
-            span.fa.fa-microphone-slash
-          span= ' '+(punishment.getType() == 0 ? 'Mute' : 'Ban')
-        td.b-right= '$for-name='+punishment.getUsername()+'$end'
-        td.b-right.reason Hover
-          div.hover-content
-            div.bubble
-              p.reason-title.color-white Reason
-              p.t-center(style='padding: 5px;')= punishment.getReason()
-        td.b-right= formatter.formatTimestamp(punishment.getDate(), "MMMMM dd, YYYY")
-        td.b-right= punishment.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punishment.getExpiry(), "MMMMM dd, YYYY")
-        td.b-right
-          if punishment.getAppeal() == null
-            span  No appeal
-          else
-            span(class=''+punishment.getAppeal().getColour())= punishment.getAppeal().getStatus()
-        td.b-right.link.vis-link#punish-link View
-        if punishment.getAppealId() != -1
-          td.vis-link#appeal-link View
-        else
-          td N/A
+            td N/A

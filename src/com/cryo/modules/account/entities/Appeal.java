@@ -2,9 +2,11 @@ package com.cryo.modules.account.entities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.cryo.Website;
 import com.cryo.comments.CommentList;
+import com.cryo.db.impl.PunishmentsConnection;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +21,14 @@ import lombok.RequiredArgsConstructor;
 public class Appeal {
 	
 	private final int id;
+	private final int type;
 	private final String username, title, message;
 	private String reason;
 	private final String lastAction;
 	private final int active;
 	private final int punishId;
 	private final int commentList;
-	private final Timestamp time;
+	private final Timestamp date;
 	private Timestamp answered;
 	private String answerer;
 	
@@ -40,10 +43,19 @@ public class Appeal {
 	}
 	
 	public Object[] data() {
-		return new Object[] { "DEFAULT", punishId, commentList, username, title, message, "", "DEFAULT", "", 0, "DEFAULT", "NULL", "NULL" };
+		return new Object[] { "DEFAULT", type, punishId, commentList, username, title, message, "", "DEFAULT", "", 0, "DEFAULT", "NULL", "NULL" };
+	}
+	
+	public Punishment getPunishment() {
+		Object[] data = PunishmentsConnection.connection().handleRequest("get-punishment", punishId);
+		if(data == null) return null;
+		return (Punishment) data[0];
 	}
 	
 	public String getStatus() {
+		Punishment punishment = getPunishment();
+		if(punishment.getExpiry().getTime() < new Date().getTime())
+			return "Expired";
 		switch(active) {
 			case 0: return "Pending";
 			case 1: return "Accepted";
@@ -53,6 +65,9 @@ public class Appeal {
 	}
 	
 	public String getColour() {
+		Punishment punishment = getPunishment();
+		if(punishment.getExpiry().getTime() < new Date().getTime())
+			return "color-red";
 		switch(active) {
 			case 0: return "color-yellow";
 			case 1: return "color-green";

@@ -24,7 +24,7 @@ public abstract class Filter {
 	
 	public abstract boolean setValue(String mod, String value);
 	
-	public abstract boolean appliesTo(String mod);
+	public abstract boolean appliesTo(String mod, boolean archived);
 	
 	public List<?> filterList(List<?> list) {
 		return list;

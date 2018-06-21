@@ -50,7 +50,6 @@ import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.search.SearchManager;
 import com.cryo.modules.staff.StaffModule;
-import com.cryo.modules.staff.StaffModule2;
 import com.cryo.paypal.PaypalManager;
 import com.cryo.server.ServerConnection;
 import com.cryo.server.item.ServerItem;

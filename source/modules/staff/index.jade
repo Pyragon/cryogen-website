@@ -4,6 +4,7 @@ block head
   link(rel='stylesheet', href='/stylesheets/staff/staff.css')
   link(rel='stylesheet', href='/stylesheets/staff/announcements.css')
   link(rel='stylesheet', href='/stylesheets/staff/punishments.css')
+  link(rel='stylesheet', href='/stylesheets/staff/recoveries.css')
   script.
     var loaded = []
     var section = ''
@@ -54,7 +55,7 @@ block content
             a(href='#appeals', data-toggle='tab') Appeals
           if user.getRights() == 2
             li.nav.account-item
-              a(href='#recover', data-toggle='tab') Recoveries
+              a(href='#recoveries', data-toggle='tab') Recoveries
       div.col-md-9
         div.widget
           div.tab-content.content
@@ -63,4 +64,4 @@ block content
             div.tab-pane.fade.in(id='punishments')
             div.tab-pane.fade.in(id='announcements')
             div.tab-pane.fade.in(id='appeals')
-            div.tab-pane.fade.in(id='recover')
+            div.tab-pane.fade.in(id='recoveries')

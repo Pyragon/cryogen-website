@@ -21,7 +21,7 @@ public class NameFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
+	public boolean appliesTo(String mod, boolean archived) {
 		return mod.equals("shop");
 	}
 

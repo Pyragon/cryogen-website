@@ -8,7 +8,7 @@ div.noty_message
         h4.color-white.t-center Appeal
           h6.color-grey.t-center(style='white-space: pre-wrap;')= appeal.getMessage()
         h4.color-white.t-center Created On
-          h6.color-grey.t-center= formatter.formatTimestamp(appeal.getTime(), 'MMM dd, YYYY hh:mm a')
+          h6.color-grey.t-center= formatter.formatTimestamp(appeal.getDate(), 'MMM dd, YYYY hh:mm a')
         h4.color-white.t-center Status
           h6.color-grey.t-center(class=''+appeal.getColour())= appeal.getStatus()
         if appeal.getActive() == 2

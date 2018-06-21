@@ -26,10 +26,7 @@ public class DateFilter extends Filter {
 	public String getFilter(String mod) {
 		if(span == null)
 			return null;
-		String col = mod.equals("appeal") || mod.equals("reports") ? "time" : "date";
-		StringBuilder builder = new StringBuilder();
-		return builder.append(col).append(" BETWEEN ").append(span.format("from"))
-				.append(" AND ").append(span.format("to")).toString();
+		return "date BETWEEN "+span.format("from")+" AND "+span.format("to");
 	}
 	
 	@Override
@@ -52,8 +49,8 @@ public class DateFilter extends Filter {
 	}
 	
 	@Override
-	public boolean appliesTo(String mod) {
-		return isMod(mod, "punishments", "reports", "announcements", "staff-punishments", "staff-reports");
+	public boolean appliesTo(String mod, boolean archive) {
+		return isMod(mod, "punishments", "reports", "announcements", "staff-punishments", "staff-reports", "staff-appeals", "staff-recoveries");
 	}
 	
 }

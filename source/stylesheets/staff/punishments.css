@@ -3,7 +3,22 @@
   text-align: center;
 }
 
-.extend-punishment {
+.extend-punishment input {
+  border-radius: 2px;
+  background: #151515;
+  border: 1px solid #010101;
+  text-align: left;
+  padding: 3px;
+  max-width: 60%;
+  margin: auto auto 10px auto;
+}
+
+create-announcement {
+  margin: auto;
+  text-align: center;
+}
+
+.create-announcement input {
   margin: auto auto 5px 5px;
   border-radius: 2px;
   background: #151515;
@@ -35,16 +50,13 @@
 .reason {
   cursor: default;
   position: relative;
-  display: inline-block;
-  border-top: none !important;
-  border-bottom: none !important;
 }
 
 .hover-content {
   display: none;
   position: absolute;
   z-index: 1;
-  left: -52px;
+  left: -35px;
   right: auto;
   bottom: 35px;
 }

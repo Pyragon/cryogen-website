@@ -126,7 +126,7 @@ public class SearchManager {
 					prop.put("error", "You cannot have two of the same filters.");
 					return prop;
 				}
-				if(!filter.appliesTo(searchName)) {
+				if(!filter.appliesTo(searchName, archived)) {
 					incorrect = true;
 					continue;
 				}
@@ -147,8 +147,8 @@ public class SearchManager {
 			ArrayList<Filter> filterA = new ArrayList<>();
 			filterA.addAll(filters.values());
 			String username = endpoint.getRights() == 0 ? account.getUsername() : null;
-			Object[] data = endpoint.getConnection().handleRequest("search", getQueryValue(module, filterA), page, archived, params, username);
-			Object[] countData = endpoint.getConnection().handleRequest("search-results", getQueryValue(module, filterA), archived, params, username);
+			Object[] data = endpoint.getConnection().handleRequest("search", getQueryValue(module, filterA), page, archived, params, username, module);
+			Object[] countData = endpoint.getConnection().handleRequest("search-results", getQueryValue(module, filterA), archived, params, username, module);
 			if(data == null || countData == null) {
 				prop.put("success", false);
 				String results = "No search results found.";
@@ -158,22 +158,17 @@ public class SearchManager {
 				return prop;
 			}
 			List<?> results = (List<?>) data[0];
-			System.out.println("here2");
 			if(results.size() == 0) {
 				prop.put("success", false);
 				prop.put("error", "No search results found.");
 				return prop;
 			}
-			System.out.println("here");
 			for(Filter filter : filterA)
 				results = filter.filterList(results);
-			System.out.println("here");
 			int resultSize = (int) countData[0];
-			System.out.println("here");
 			model.put(endpoint.getKey(), results);
 			model.put("staff", endpoint.getRights() > 0);
 			String html = null;
-			System.out.println("here");
 			try {
 				html = WebModule.render(endpoint.getJadeFile(), model, request, response);
 			} catch(Exception e) {
@@ -182,7 +177,6 @@ public class SearchManager {
 				prop.put("error", "Error loading search list.");
 				return prop;
 			}
-			System.out.println("here");
 			prop.put("success", true);
 			prop.put("html", html);
 			prop.put("pageTotal", resultSize);

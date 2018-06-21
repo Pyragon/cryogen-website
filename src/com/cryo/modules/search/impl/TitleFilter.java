@@ -20,8 +20,8 @@ public class TitleFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
-		return isMod(mod, "reports", "announcements");
+	public boolean appliesTo(String mod, boolean archived) {
+		return isMod(mod, "reports", "announcements", "staff-appeals");
 	}
 
 }

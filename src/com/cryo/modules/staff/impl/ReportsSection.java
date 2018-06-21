@@ -75,7 +75,7 @@ public class ReportsSection implements StaffSection {
 				}
 				Report report = (Report) data[0];
 				model.put("report", report);
-				model.put("comments", report.getComments());
+				model.put("list", report.getCommentList());
 				model.put("staff", true);
 				Optional<Noty> optional = Noty.get("view_"+typeName+"_report");
 				if(!optional.isPresent()) {
@@ -88,36 +88,6 @@ public class ReportsSection implements StaffSection {
 				prop.put("success", true);
 				prop.put("html", html);
 				prop.put("active", report.isActive());
-				break;
-			case "comment":
-				id = Integer.parseInt(request.queryParams("id"));
-				typeName = Integer.parseInt(request.queryParams("type")) == 0 ? "bug" : "player";
-				String comment = request.queryParams("comment");
-				data = ReportsConnection.connection().handleRequest("get-"+typeName+"-report", id);
-				if(data == null) {
-					prop.put("success", false);
-					prop.put("error", "Unable to find report with that ID.");
-					break;
-				}
-				report = (Report) data[0];
-				if(comment.length() < 5) {
-					prop.put("success", false);
-					prop.put("error", "Your comment must be at least 5 characters long.");
-					break;
-				}
-				if(StringUtils.isNullOrEmpty(comment)) {
-					prop.put("success", false);
-					prop.put("error", "Your comment is empty.");
-					break;
-				}
-				int listId = report.getCommentList();
-				Website.instance().getCommentsManager().addComment(account.getUsername(), comment, listId);
-				ReportsConnection.connection().handleRequest("set-last-action", report.getId(), "Comment submitted by $for-name="+account.getUsername()+"$end", report.type());
-				model = new HashMap<>();
-				model.put("comments", report.getComments());
-				html = WebModule.render("./source/modules/utils/comments.jade", model, request, response);
-				prop.put("success", true);
-				prop.put("html", html);
 				break;
 			case "archive-report":
 				id = Integer.parseInt(request.queryParams("id"));

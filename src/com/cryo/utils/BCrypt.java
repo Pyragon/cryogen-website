@@ -97,13 +97,6 @@ public class BCrypt {
 	private int P[];
 	private int S[];
 
-	public static void main(String[] args) {
-		String salt = BCrypt.generate_salt();
-		String pass = "test";
-		String password = BCrypt.hashPassword(pass, salt);
-		System.out.println(salt + "        " + password);
-	}
-
 	/**
 	 * Encode a byte array using bcrypt's slightly-modified base64 encoding
 	 * scheme. Note that this is *not* compatible with the standard MIME-base64

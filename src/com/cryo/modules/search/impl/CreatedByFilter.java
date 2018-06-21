@@ -21,7 +21,7 @@ public class CreatedByFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
+	public boolean appliesTo(String mod, boolean archived) {
 		return isMod(mod, "announcements");
 	}
 

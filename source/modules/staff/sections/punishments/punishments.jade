@@ -84,7 +84,6 @@ script.
     $(document).on('click', '#punishments-pages span', changePage)
     $(document).on('click', '#punish-link', viewPunishment)
     $(document).on('click', '#appeal-link', viewAppeal)
-    $(document).on('click', '#punishment-com-btn', comment)
     $(document).on('click', '.ptype', switchType)
     $(document).on('click', '.pseverity', switchSeverity)
     $(document).on('click', '.plength', switchLength)
@@ -96,13 +95,11 @@ script.
     $('search-punishments-icon').attr('title', OPEN)
 
     function clickedSearchIcon() {
-      type = punishments_filter == 'all' ? '2' : punishments_filter == 'mutes' ? '0' : '1'
-      clickSearchIcon('punishments', archived, punishments_page, loadListWPage, { 'type': type }, 'staff-punishments')
+      clickSearchIcon('punishments', archived, punishments_page, loadListWPage, { 'type': getType() }, 'staff-punishments')
     }
 
     function clickedFilter() {
-      type = punishments_filter == 'all' ? '2' : punishments_filter == 'mutes' ? '0' : '1'
-      clickRemoveFilter('punishments', $(this), archived, loadListWPage, { 'type': type }, 'staff-punishments')
+      clickRemoveFilter('punishments', $(this), archived, loadListWPage, { 'type': getType() }, 'staff-punishments')
     }
 
     $(document).keydown((e) => {
@@ -125,7 +122,7 @@ script.
         var data = getJSON(ret)
         if(data == null) return false
         var buttons = []
-        if(rights == 2 && data.status == 0) {
+        if((rights > 1 || (rights == 1 && data.type == 0)) && data.status == 0) {
           buttons.push({
             addClass: 'btn btn-success', text: 'Accept', onClick: function($noty) {
               closeNoty($noty)
@@ -207,6 +204,7 @@ script.
         if(data == null) return false
         sendAlert('Appeal has been successfully accepted.')
         loadList()
+        loadSection('appeals') //reload appeals section
         return true
       })
       return true
@@ -219,6 +217,7 @@ script.
         if(data == null) return false
         sendAlert('Appeal has been successfully declined.')
         loadList()
+        loadSection('appeals') //reload appeals section
         return true
       })
       return true
@@ -262,6 +261,7 @@ script.
         if(data == null) return false
         sendAlert('Punishment expiration has been successfully changed.')
         loadList()
+        loadSection('appeals') //reload appeals section
         return true
       })
       return true
@@ -297,6 +297,7 @@ script.
           alert += ' and the appeal that was placed has been automatically accepted'
         sendAlert(alert+'.')
         loadList()
+        loadSection('appeals') //reload appeals section
       })
     }
 

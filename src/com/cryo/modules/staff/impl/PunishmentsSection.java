@@ -65,7 +65,7 @@ public class PunishmentsSection implements StaffSection {
 				}
 				ArrayList<Punishment> punishments = (ArrayList<Punishment>) data[0];
 				data = PunishmentsConnection.connection()
-											.handleRequest("get-total-results", null, archive, page, type);
+											.handleRequest("get-total-punishments-results", null, archive, page, type);
 				if (data == null) {
 					prop.put("success", false);
 					prop.put("error", "Error loading punishment results total.");
@@ -153,6 +153,7 @@ public class PunishmentsSection implements StaffSection {
 				int status = appeal.getActive();
 				if(!punishment.isActive()) status = 1;
 				prop.put("status", status);
+				prop.put("type", punishment.getType());
 				break;
 			case "end-punishment":
 				if(account.getRights() < 2) {
@@ -177,11 +178,6 @@ public class PunishmentsSection implements StaffSection {
 				break;
 			case "accept-appeal":
 			case "decline-appeal":
-				if(account.getRights() < 2) {
-					prop.put("success", false);
-					prop.put("error", "Only Admins can accept or decline appeals.");
-					break;
-				}
 				id = Integer.parseInt(request.queryParams("id"));
 				data = PunishmentsConnection.connection().handleRequest("get-punishment", id);
 				if(data == null) {
@@ -193,6 +189,11 @@ public class PunishmentsSection implements StaffSection {
 				if(punishment.getAppeal() == null) {
 					prop.put("success", false);
 					prop.put("error", "No appeal found for this punishment!");
+					break;
+				}
+				if(account.getRights() < 2 && punishment.getType() == 1) {
+					prop.put("success", false);
+					prop.put("error", "Only Admins can accept or decline ban appeals.");
 					break;
 				}
 				String reason = "";

@@ -20,9 +20,5 @@ div.noty_message
           h6.color-grey.t-center(style='white-space: pre-wrap;')= report.getProof()
         h4.color-white.t-center Comments
           p.t-center.color-grey.fs-10 Comments can be made by both staff and players and are used to relay additional information needed for the report.
-        div#comments
-          include ../../../utils/comments
-        p.com-error(style='display: none;')
-        textarea.form-control.report-comment.text-input(rows='4', cols='50', placeholder='Enter comment')
-        a.btn.btn-default.btn-comment#com-btn(style='margin: 15px auto;') Comment
+        include ../../../utils/comments
   div.noty_close

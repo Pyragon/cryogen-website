@@ -27,8 +27,8 @@ public class UsernameFilter extends Filter {
 	}
 
 	@Override
-	public boolean appliesTo(String mod) {
-		return isMod(mod, "staff-reports", "staff-punishments");
+	public boolean appliesTo(String mod, boolean archive) {
+		return isMod(mod, "staff-reports", "staff-punishments", "staff-appeals", "staff-recoveries");
 	}
 	
 }
