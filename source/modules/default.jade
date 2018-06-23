@@ -52,11 +52,6 @@ html
           return false;
         });
 
-        $(document).on('click', '.testend', function() {
-          history.pushState({}, "URL Rewrite example", "http://localhost:8085/account/test")
-          return false;
-        });
-
         function checkIssue() {
           var width = $(window).width();
           $('.nav-items').css('margin-top', width < 751 ? '5px' : '105px');
@@ -181,7 +176,7 @@ html
                     li
                       a(href='/live?action=download-auto&method=jar') Download as JAR
                 li#spacer(class='spacer')
-                  a(href='http://forums.cryogen-rsps.com/') Community
+                  a(href='http://forums.cryogen.live/') Community
                 li
                   a(href='/highscores') Highscores
                 li
