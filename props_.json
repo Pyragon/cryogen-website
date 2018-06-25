@@ -1,1 +1,1 @@
-{"port":"","db-host":"","db-pass": "","db-user": "","server-ip":"localhost:5555","emailpass": "","extsource": "D:/workspace/cryogen-website/source/","favico": "D:/workspace/cryogen-website/source/images/favicon.ico", "paypal-secret":"", "paypal-client":""}
+{"extsource":"","secret-key":"","paypal-client":"","paypal-secret":"","port":"","db-pass":"","emailpass":"","db-host":"","cryobot-user":"","forum-path":"","server-ip":"","favico":"","email":"","db-user":"","cryobot-pass":"","live-path":""}

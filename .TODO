@@ -2,7 +2,7 @@ It is recommended that you use the atom-tasks package to view TODO files.
 https://atom.io/packages/tasks
 Before release:
   ☐ Ensure recoveries can be sent, viewed by the sender, and responded to properly
-  ☐ Ensure reports can be sent, viewed and responded to
+  ✔ Ensure reports can be sent, viewed and responded to @done(2018-06-21 08:08) @project(Before release)
   ☐ Ensure appeals can be sent, viewed and responded to
   ☐ Enxure votes can be claimed
   ☐ Fix comments for rest of staff/account section
@@ -13,6 +13,12 @@ Forums:
   ☐ Get new forum logo + read/unread buttons
 Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
+Restart Message:
+  ☐ Add timer to check website restart time (rather than only when page is loaded)
+  ☐ Check 'Website is now online' receiving false-positive because of cloudflare
+Layout fixes:
+  ☐ Sign-In/Forgot buttons on login widget
+  ☐ Account buttons on Index
 General:
   ☐ Reduce as many connections to database as possible
   ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
@@ -30,6 +36,8 @@ Comments:
 Shop:
 Staff Page:
   Remake TODO:
+    Reports:
+      ☐ Refresh list when comment is made so 'staff replied' will refresh
     Overall:
       ☐ Ensure security with sessions
       ☐ Change 'username' in lists to 'name' cause we actually show display name :p
@@ -38,6 +46,7 @@ Staff Page:
       ☐ Add ability to reload just list from a section, not entire section
     Punishments:
       ☐ Option to give players ability to create second appeal if first is denied (must be requsted, TODO later on)
+      ☐ Cannot create new punishment, noty closes when selecting name
     Recoveries:
       ☐ Add stat to see # of times recovered lately
       ☐ Add option to 'lock' account if admin finds recovery suspcious and frequent
