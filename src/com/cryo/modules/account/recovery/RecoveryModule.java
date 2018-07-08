@@ -175,9 +175,7 @@ public class RecoveryModule extends WebModule {
 							String creation = request.queryParams("creation");
 							String cico = request.queryParams("cico");
 							String additional = request.queryParams("additional");
-							System.out.println("Passes: 1"+request.queryParams("passone")+" 2"+request.queryParams("passtwo")+" 3"+request.queryParams("passthree"));
 							String[] passes = { request.queryParams("passone"), request.queryParams("passtwo"), request.queryParams("passthree") };
-							System.out.println(Arrays.toString(passes));
 							String recovery_id = RandomStringUtils.random(20, true, true);
 							long created = 0L;
 							loop: while (true) {
