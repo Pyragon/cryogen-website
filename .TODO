@@ -1,16 +1,41 @@
 It is recommended that you use the atom-tasks package to view TODO files.
 https://atom.io/packages/tasks
 Before release:
-  ☐ Ensure recoveries can be sent, viewed by the sender, and responded to properly
-  ✔ Ensure reports can be sent, viewed and responded to @done(2018-06-21 08:08) @project(Before release)
-  ☐ Ensure appeals can be sent, viewed and responded to
-  ☐ Enxure votes can be claimed
+  Appeals:
+    ✔ Ensure appeals can be sent @done(2018-07-07 22:40) @project(Before release / Appeals)
+    ✔ Ensure appeals can be viewed @done(2018-07-07 22:40) @project(Before release / Appeals)
+    ✔ Ensure appeals can be responded to @done(2018-07-07 23:12) @project(Before release / Appeals)
+  Punishments:
+    ✔ Ensure punishments can be viewed @done(2018-07-07 23:46) @project(Before release / Punishments)
+    ✔ Ensure punishments can be ended @done(2018-07-07 23:47) @project(Before release / Punishments)
+    ✔ Ensure punishments can be extended @done(2018-07-07 23:46) @project(Before release / Punishments)
+  Recoveries:
+    ✔ Ensure recoveries can be sent @done(2018-07-08 00:39) @project(Before release / Recoveries)
+    ✔ Ensure recovery password is given successfully @done(2018-07-08 00:39) @project(Before release / Recoveries)
+    ✔ Ensure recovery status can be viewed with password @done(2018-07-08 00:39) @project(Before release / Recoveries)
+    ✔ Ensure recovery can be viewed by staff @done(2018-07-08 01:03) @project(Before release / Recoveries)
+    ✔ Ensure recovery can be accepted and declined by staff @done(2018-07-08 01:05) @project(Before release / Recoveries)
+    ✔ Ensure recovery link is successfully sent to email if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+    ✔ Ensure recovery link is successfully sent to discord if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+    ✔ Ensure recovery link is successfully sent to forum if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+    ✔ Links and warnings should be sent to email, discord, and forum if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+  Reports:
+    ✔ Ensure reports can be sent @done(2018-07-08 01:18) @project(Before release / Reports)
+    ✔ Ensure reports can be viewed @done(2018-07-08 01:18) @project(Before release / Reports)
+    ✔ Ensure reports can be responded to @done(2018-07-08 01:18) @project(Before release / Reports)
+  Announcements:
+    ✔ Ensure announcements can be created @done(2018-07-08 01:19) @project(Before release / Announcements)
+    ✔ Ensure announcements can be viewed @done(2018-07-08 01:19) @project(Before release / Announcements)
+    ✔ Ensure viewing announcements changes 'read' value @done(2018-07-08 01:26) @project(Before release / Announcements)
+  ☐ Ensure votes can be claimed
   ☐ Fix comments for rest of staff/account section
   ☐ Ensure Forum Integration/Discord Integration is working
-  ☐ Finish forums section of TODO
   ☐ Make auto updating client with option to sit in background and listen for events, then print them.
+  ✔ Ensure users can register @done(2018-07-07 23:48) @project(Before release)
 Forums:
   ☐ Get new forum logo + read/unread buttons
+Recoveries:
+  ☐ Add expiry time to the new passes
 Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 Restart Message:
@@ -30,6 +55,9 @@ General:
   ☐ Add message for mobile users explaining navbar glitch and that site is not data-optimized
   ☐ Add ability for customized cursors
   ☐ Add admin panel for website functions. (reset cache, reset comments cache, etc)
+Registration:
+  ☐ Create database with different security questions/answers
+  ☐ Possibly load random question/answers from an api online
 Comments:
   ☐ Add username to commentlist so we can add check for players only being able to comment on their own comment lists (if someone gets hacky)
   ☐ Investigate differences in style because of different stylesheets across sections
