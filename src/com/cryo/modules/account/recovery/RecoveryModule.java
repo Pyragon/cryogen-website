@@ -214,17 +214,19 @@ public class RecoveryModule extends WebModule {
 										e.printStackTrace();
 									}
 								}
-								if (!email.equals("")) { // email verification
-									Object[] data = EmailConnection.connection().handleRequest("get-email", username);
-									if (data != null) {
-										String real_email = (String) data[0];
-										if (real_email.equalsIgnoreCase(email)) {
-											// WE HAVE CORRECT EMAIL. LET'S SEND AN
-											// EMAILED
-											// RECOVERY
-											EmailUtils.sendRecoveryEmail(username, recovery_id, real_email);
-										}
-									}
+								Object[] data = EmailConnection.connection().handleRequest("get-email", username);
+								if (data != null) {
+									String real_email = (String) data[0];
+									EmailUtils.sendRecoveryEmail(username, recovery_id, real_email);
+								}
+								data = ForumConnection.connection().handleRequest("get-uid", username);
+								if (data != null) {
+									int real_id = (int) data[0];
+										String random = RandomStringUtils.random(20, true, true);
+										RecoveryConnection.connection().handleRequest("add-forum-rec", recovery_id, random);
+										String message = "Hello " + username
+												+ ", a password recovery attempt has been made on your in-game account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen-rsps.com/recover?action=redeem_instant&method=forum&recovery_id="+recovery_id+"&instant_id="+random;
+										ForumConnection.sendForumMessage(real_id, "Recovery attempt made!", message, "Recovery Attempt");
 								}
 								int forumId = 0;
 								if (!forum.equals("")) { // forum verification
@@ -234,22 +236,8 @@ public class RecoveryModule extends WebModule {
 										break loop;
 									}
 									forumId = Integer.parseInt(forum);
-									Object[] data = ForumConnection.connection().handleRequest("get-uid", username);
-									if (data != null) {
-										int real_id = (int) data[0];
-										if (forumId == real_id) {
-											// WE HAVE CORRECT FORUM ID. LET'S SEND A
-											// PMED
-											// RECOVERY
-											String random = RandomStringUtils.random(20, true, true);
-											RecoveryConnection.connection().handleRequest("add-forum-rec", recovery_id, random);
-											String message = "Hello " + username
-													+ ", a password recovery attempt has been made on your in-game account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen-rsps.com/recover?action=redeem_instant&method=forum&recovery_id="+recovery_id+"&instant_id="+random;
-											ForumConnection.sendForumMessage(real_id, "Recovery attempt made!", message, "Recovery Attempt");
-										}
-									}
 								}
-								Object[] data = PreviousConnection.connection().handleRequest("compare-hashes", passes, username);
+								data = PreviousConnection.connection().handleRequest("compare-hashes", passes, username);
 								int[] res = new int[3];
 								if (data == null)
 									Arrays.fill(res, -1);
