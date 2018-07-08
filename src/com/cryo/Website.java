@@ -60,6 +60,7 @@ import com.cryo.utils.CookieManager;
 import com.cryo.utils.CorsFilter;
 import com.cryo.utils.Logger;
 import com.cryo.utils.Utilities;
+import com.cryo.utils.UtilityModule;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -135,6 +136,7 @@ public class Website {
 		SearchManager.registerEndpoints(this);
 		StaffModule.registerEndpoints(this);
 		CommentsModule.registerEndpoints(this);
+		UtilityModule.registerEndpoints(this);
 		get(IndexModule.PATH, (req, res) -> {
 			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
 		});

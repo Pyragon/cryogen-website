@@ -273,23 +273,28 @@ script.
     }
 
     function viewEndPunishNoty(id) {
-      n = noty({
-        text: 'Are you sure you wish to end this punishment?',
-        type: 'confirm',
-        layout: 'center',
-        dismissQueue: false,
-        theme: 'cryogen',
-        buttons: [
-          {
-            addClass: 'btn btn-primary', text: 'Yes', onClick: function($noty) {
-              closeNoty($noty)
-              endPunishment(id)
+      $.post('/utils', { action: 'view-noty' }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        n = noty({
+          text: 'Are you sure you wish to end this punishment?',
+          type: 'confirm',
+          layout: 'center',
+          dismissQueue: false,
+          template: data.html,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-primary', text: 'Yes', onClick: function($noty) {
+                closeNoty($noty)
+                endPunishment(id)
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty
             }
-          },
-          {
-            addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty
-          }
-        ]
+          ]
+        })
       })
     }
 
