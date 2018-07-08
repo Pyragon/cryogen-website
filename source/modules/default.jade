@@ -66,6 +66,7 @@ html
         
         $(document).on('click', '.signin', openLogin)
         $(document).on('click', '.login', login)
+        $(document).on('click', '.forgot', recover)
         
         $(document).on('keypress', '.username', (e) => {
           if(e.which == 13) {
@@ -107,6 +108,12 @@ html
                   }
                 },
                 {
+                  addClass: 'btn btn-primary', text: 'Forgot Password', onClick: function($noty) {
+                    recover()
+                    closeNoty($noty)
+                  }
+                },
+                {
                   addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
                     closeNoty($noty)
                   }
@@ -115,6 +122,12 @@ html
             })
           })
           return false
+        }
+        
+        function recover() {
+          var element = $('.login-wrapper').length > 0 ? $('.login-wrapper') : $('.main-login-wrapper')
+          var username = element.find('.username').val()
+          location.href = '/recover?username='+username
         }
         
         function login() {

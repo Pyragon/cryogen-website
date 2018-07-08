@@ -61,6 +61,7 @@ public class RecoveryModule extends WebModule {
 				} else if(success != null) {
 					model.put("success", true);
 					model.put("id", id);
+					model.put("url", Website.PATH+"view_status?id="+id);
 				} else {
 					//GET&PUT RECOVERY STATUS
 					Object[] data = RecoveryConnection.connection().handleRequest("get-recovery", id);
@@ -71,6 +72,7 @@ public class RecoveryModule extends WebModule {
 						int status = recovery.getActive();
 						model.put("status", status);
 						model.put("id", recovery.getId());
+						model.put("url", Website.PATH+"view_status?id="+recovery.getId());
 						if(status == 1)
 							model.put("pass", recovery.getNewPass());
 						else
@@ -173,7 +175,9 @@ public class RecoveryModule extends WebModule {
 							String creation = request.queryParams("creation");
 							String cico = request.queryParams("cico");
 							String additional = request.queryParams("additional");
+							System.out.println("Passes: 1"+request.queryParams("passone")+" 2"+request.queryParams("passtwo")+" 3"+request.queryParams("passthree"));
 							String[] passes = { request.queryParams("passone"), request.queryParams("passtwo"), request.queryParams("passthree") };
+							System.out.println(Arrays.toString(passes));
 							String recovery_id = RandomStringUtils.random(20, true, true);
 							long created = 0L;
 							loop: while (true) {
@@ -224,7 +228,7 @@ public class RecoveryModule extends WebModule {
 										}
 									}
 								}
-								int forumId = -1;
+								int forumId = 0;
 								if (!forum.equals("")) { // forum verification
 									if(!NumberUtils.isNumber(forum)) {
 										prop.put("success", false);
@@ -257,7 +261,7 @@ public class RecoveryModule extends WebModule {
 								Recovery recovery = new Recovery(recovery_id, username, email, forumId, created, cico, additional, res, 0, "", "", request.ip(), new Timestamp(new Date().getTime()));
 								RecoveryConnection.connection().handleRequest("add-recovery", recovery);
 								prop.put("success", true);
-								prop.put("id", recovery_id);
+								prop.put("url", Website.PATH+"/view_status?success=true&id="+recovery_id);
 								break loop;
 							}
 							return new Gson().toJson(prop);

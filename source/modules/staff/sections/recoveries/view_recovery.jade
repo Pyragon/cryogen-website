@@ -22,7 +22,7 @@ div.noty_message
               else
                 h6.color-red.t-center= 'Incorrect email. Entered: '+recovery.getEmail()+' Actual: '+real_email
         h4.color-white.t-center Forum Integration
-          if recovery.getForumId() == ''
+          if recovery.getForumId() == 0
             if has_forum == true
               h6.color-red.t-center= 'No forum ID entered. Linked Forum ID: '+forum_id
             else

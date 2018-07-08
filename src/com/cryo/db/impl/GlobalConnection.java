@@ -86,7 +86,7 @@ public class GlobalConnection extends DatabaseConnection {
 				insert("player_data", "DEFAULT", username, hash, salt, 0, 0, date);
 				DisplayConnection	.connection()
 									.handleRequest("create", username, Utilities.formatName(username));
-				return new Object[] { true };
+				return new Object[] { salt, hash };
 			case "search-players":
 				String text = (String) data[1];
 				text = "%" + text + "%";

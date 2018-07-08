@@ -6,6 +6,7 @@ import java.util.Properties;
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
@@ -63,11 +64,16 @@ public class RegisterModule extends WebModule {
 			if(valid != null && !valid.equals(""))
 				return json(false, valid);
 			GlobalConnection connection = GlobalConnection.connection();
-			connection.handleRequest("register", username, password);
+			data = connection.handleRequest("register", username, password);
+			if(data == null)
+				return json(false, "Error registering.");
+			String salt = (String) data[0];
+			String hash = (String) data[1];
 			data = connection.handleRequest("get-account", username);
 			if(data == null)
 				return redirect("/login", 0, request, response);
 			Account account = (Account) data[0];
+			PreviousConnection.connection().handleRequest("add-prev-hash", salt, hash);
 			String sess_id = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
 			response.cookie("cryo-sess", sess_id);
 			return json(true, redirect("/register?success", 0, request, response));

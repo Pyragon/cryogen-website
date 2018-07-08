@@ -3,11 +3,10 @@ extend ../../default
 block head
   script.
     $(document).ready(function() {
-      var username = '#{id}';
+      var username = '#{username}';
 
       if(username !== '') {
         $('#username-recov').val(username);
-        $('#username-recov').attr('disabled', true);
       }
 
       $('#recover-btn').click(function() {
@@ -41,8 +40,7 @@ block head
       $.post('/recover', { action:'submit', username:username, email:email, forum:forum, creation:creation, cico:cico, additional:additional, passone:passes[0], passtwo:passes[1], passthree:passes[2] }, function(ret) {
         var data = getJSON(ret);
         if(data == null) return false;
-        var id = data.id;
-        window.location='http://cryogen-rsps.com/view_status?success=true&id='+id
+        window.location=data.url
       });
       return false;
     }
@@ -79,8 +77,8 @@ block content
             input.form-control#city-country(type='text', placeholder='Enter City/Country on creation')
           div.col-md-6.box
             label Previous Passwords: (These passwords are not seen by staff. Click #[a(href='#') here] for more info)
-            input.form-control#prev-pass1(type='text', placeholder='Enter previous password')
             input.form-control#prev-pass0(type='text', placeholder='Enter previous password')
+            input.form-control#prev-pass1(type='text', placeholder='Enter previous password')
             input.form-control#prev-pass2(type='text', placeholder='Enter previous password')
             label Additional Information:
             textarea.form-control.text-input#additional(rows='4', cols='50', placeholder='Enter detailed report')

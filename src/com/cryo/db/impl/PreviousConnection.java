@@ -134,9 +134,8 @@ public class PreviousConnection extends DatabaseConnection {
 			salt = (String) data[0];
 			int[] results = new int[compare.length];
 			hashes = getHashes(salt);
-			if (hashes == null) {
+			if (hashes == null)
 				return null;
-			}
 			for (int i = 0; i < compare.length; i++) {
 				String hash = compare[i];
 				if (hash.equals("")) {
