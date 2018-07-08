@@ -1,0 +1,52 @@
+script.
+	$(document).ready(function() {
+
+
+
+	});
+div(style='margin: 10px auto')#immediate
+	h4.t-center.color-white Immediate Action Required
+	if total == 0
+		h6.t-center.color-grey No items requiring immediate action.
+	else
+		div.iactions(style='margin: 10px auto;')
+			table.table.hs-table.table-condensed.table-responsive.widget
+				thead
+					tr
+						th.t-center Action
+						th.t-center Username
+						th.t-center Time
+						th.t-center Last Action
+						th.t-center View
+						th.t-center Unpin
+				tbody
+					for appeal in i_appeals
+						tr(data-id=appeal.getId(), data-type=appeal.type())
+							td.b-right Appeal
+							td.b-right= '$for-name='+appeal.getUsername()+'$end'
+							td.b-right= formatter.formatTimestamp(appeal.getTime(), 'MMMMM dd, YYYY H:mm a')
+							td.b-right= appeal.getLastAction()
+							td.b-right.vis-link.view-i View
+							td.link#pin
+								i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+								span  Unpin
+					for report in i_preports
+						tr(data-id=report.getId(), data-type=report.type())
+							td.b-right Player Report
+							td.b-right= '$for-name='+report.getUsername()+'$end reporting $for-name='+report.getOffender()+'$end'
+							td.b-right= formatter.formatTimestamp(report.getTime(), 'MMMMM dd, YYYY H:mm a')
+							td.b-right= report.getLastAction()
+							td.b-right.vis-link.view-i View
+							td.link#pin
+								i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+								span  Unpin
+					for report in i_breports
+						tr(data-id=report.getId(), data-type=report.type())
+							td.b-right Bug Report
+							td.b-right= '$for-name='+report.getUsername()+'$end'
+							td.b-right= formatter.formatTimestamp(report.getTime(), 'MMMMM dd, YYYY H:mm a')
+							td.b-right= report.getLastAction()
+							td.b-right.vis-link.view-i View
+							td.link#pin 
+								i.ionicons.ion-pin(style='font-size: 10px; transform: rotate(35deg);')
+								span  Unpin

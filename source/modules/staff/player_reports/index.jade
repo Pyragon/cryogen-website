@@ -1,0 +1,151 @@
+script.
+	var archive = false;
+	var toggled = false;
+	var preport_page = 1;
+	$(document).ready(function() {
+
+		$('#search-preport-icon').attr('title', open);
+
+		loadPlayerReportList();
+
+		function loadPlayerReportList() {
+			loadList('preport', archive, preport_page);
+			return false;
+		}
+
+		function loadPlayerReport(id) {
+			loadReport('preport', archive, id);
+		}
+
+		$(document).on('click', '#view', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			var type = tr.data('type');
+			if(type != 'PLAYER')
+				return;
+			loadPlayerReport(id);
+			return false;
+		});
+
+		$(document).on('click', '.return-but', loadPlayerReportList);
+
+		$('#archive-btn').click(function() {
+			archive = !archive;
+			preport_page = 1;
+			return loadPlayerReportList();
+		});
+
+		$(document).on('click', '#preport-pages .page-link', function() {
+			preport_page = $(this).data('page');
+			return loadPlayerReportList();
+		})
+
+		//click for actions
+		$(document).on('click', '#caction', function() {
+			var cnt = $(this).find('.dropdwn-cnt');
+			if(toggled) {
+				cnt.removeClass('dropdwn-show');
+			} else {
+				cnt.addClass('dropdwn-show');
+			}
+			toggled = !toggled;
+			return false;
+		});
+
+		$(document).on('click', '.archive-cac-btn', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			noty({
+				text: 'Are you sure you wish to archive this report?',
+				type: 'confirm',
+				layout: 'center',
+				dismissQueue: false,
+				theme: 'cryogen',
+				buttons: [{
+					addClass: 'btn btn-primary', text: 'Archive', onClick: function($noty) {
+						$.post("/staff", { mod:'preport', action:'archive-report', id: id }, function(ret) {
+							if(ret.includes('Login to')) {
+								$noty.close();
+								sendAlert('Session expired! Refresh the page to login again.');
+								return;
+							}
+							var data = JSON.parse(ret);
+							if(!data.success)
+								sendAlert(data.error);
+							else {
+								$('#preport-main').html(data.html);
+								sendAlert('Post successfully archived.');
+							}
+						});
+						$noty.close();
+						n = null;
+					}
+				},
+				{
+					addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+						$noty.close();
+						n = null;
+					}
+				}]
+			})
+			return false;
+		});
+
+		$('#search-preport-icon').attr('title', OPEN);
+
+			//click search icon
+		$('#search-preport-icon').click(function() {
+			clickSearchIcon('preport', archive, appeal_page);
+		});
+
+		$('#search-preport-pin').find('input').keydown(function(e) {
+			if(e.which == 13) {
+				$('#search-preport-icon').click();
+				$(this).blur();
+				return false;
+			}
+		});
+
+		$(document).on('click', '.search-filters-preport .remove-filter', function() {
+			var filter = $(this).closest('.search-filter');
+			if(typeof filter === 'undefined')
+				return false;
+			var name = filter.data('name');
+			if(name === '')
+				return false;
+			removeFilter('preport', name, archive);
+			return false;
+		});
+
+	});
+div.tab-pane.fade(id='preports')
+	div.row 
+		div.iactions
+			div
+				div(style='float: left; margin: 10px 10px;')
+					h5.color-grey Player Reports
+						h6.color-grey#preport-info Currently viewing all active player reports
+				div(style='float: right; margin: 33.5px 5px;')
+					div.link#archive-btn
+						i.fa.fa-archive
+						span#archive-preport  Archive
+	div.row(style='padding: 15px;')
+		div#search-preport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+			div.col-xs-4
+				p.color-grey.search-info Click the search icon to begin searching through player reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+			div.col-xs-4
+				p.color-grey.search-info Filters: username:(name, must be exact username)
+					br
+					br
+					span (More to be added)
+			div.col-xs-4
+				p.color-grey.search-info Example: username:cody
+			div
+				span.glyphicon.glyphicon-search.link#search-preport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+				div#search-preport-pin(style='float: right; display: none;', display='none')
+					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.search-filters-preport(style='clear: both; float: right;')
+		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+		div#preport-main
+		div.pages
+			div#preport-pages

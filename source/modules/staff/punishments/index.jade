@@ -1,0 +1,113 @@
+script.
+	var archive = false;
+	var changed = false;
+	var punish_page = 1;
+	$(document).ready(function() {
+
+		loadPunishmentList();
+
+		function loadPunishmentList() {
+			loadList('punish', archive, punish_page);
+			return false;
+		}
+
+		function loadPunish(id) {
+			loadPunishment(id, 'false', 'punish');
+			return false;
+		}
+
+		$(document).on('click', '#punish-link', function() {
+			var elem = $(this).closest('tr');
+			var id = elem.data('id');
+			return loadPunish(id);
+		});
+
+		$(document).on('click', '#appeal-link', function() {
+			var id = $(this).data('id');
+			return loadAppeal(id, 'punish');
+		});
+
+		$('#archivepu-btn').click(function() {
+			archive = !archive;
+			punish_page = 1;
+			return loadPunishmentList();
+		});
+
+		$(document).on('click', '.returnp-but, .returna-but', function() {
+			return loadPunishmentList();
+		});
+
+		$(document).on('click', '#punish-pages .page-link', function() {
+			punish_page = $(this).data('page');
+			if(searching['punish'] == true) {
+				search('punish', punish_page);
+				return false;
+			}
+			loadPunishmentList();
+			return false;
+		});
+
+		$('#search-punish-icon').click(function() {
+			clickSearchIcon('punish', archive, punish_page);
+		});
+
+		$('#search-punish-pin').find('input').keydown(function(e) {
+			if(e.which == 13) {
+				$('#search-punish-icon').click();
+				$(this).blur();
+				return false;
+			}
+		});
+
+		$(document).on('click', '#create-p', function() {
+			$.post('/staff', { mod:'punish', action:'view_create' }, function(ret) {
+				var data = getJSON(ret);
+				if(data == null) return;
+				update(false, data.html, 'punish');
+			});
+			return false;
+		});
+
+		$(document).on('click', '.search-filters-punish .remove-filter', function() {
+			var filter = $(this).closest('.search-filter');
+			if(typeof filter === 'undefined')
+				return false;
+			var name = filter.data('name');
+			if(name === '')
+				return false;
+			removeFilter('punish', name, archive);
+			return false;
+		});
+
+	});
+div.tab-pane.fade#punishments
+	div.row 
+		div.iactions
+			div
+				div(style='float: left; margin: 10px 10px;')
+					h5.color-grey Punishments
+						h6.color-grey#punish-info Currently viewing all active punishments
+				div(style='float: right; margin: 33.5px 5px;')
+					div.link#create-p
+						i.fa.fa-plus-square
+						span  New
+					div.link#archivepu-btn
+						i.fa.fa-archive
+						span#archive-punish  Archive
+	div.row(style='padding: 15px;')
+		div#search-punish(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+			div.col-xs-4
+				p.color-grey.search-info Click the search icon to begin searching through punishments. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+			div.col-xs-4
+				p.color-grey.search-info Filters: type:(mute/ban), expired, status:(declined, accepted, pending, none), username:(name, must be exact username), expiry:(first date)-(second date) (dates in dd/MM/yyyy) OR expiry:never
+			div.col-xs-4
+				p.color-grey.search-info Example: type:mute, username:cody, expired:true, status:declined, expiry:25/04/2017-05/05/2017
+			div
+				span.glyphicon.glyphicon-search.link#search-punish-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+				div#search-punish-pin(style='float: right; display: none;', display='none')
+					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.search-filters-punish(style='clear: both; float: right;')
+		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+		div#punish-main
+		div.pages
+			div#punish-pages

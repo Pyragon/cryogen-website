@@ -1,0 +1,28 @@
+script.
+	$(document).ready(function() {
+
+		$(document).on('click', '.view-i', function() {
+			var tr = $(this).closest('tr');
+			var id = tr.data('id');
+			var type = tr.data('type');
+			$.post('/staff', { mod:'overview', action:'view', id:id, type:type }, function(ret) {
+				var data = getJSON(ret);
+				if(data == null) return;
+				if(type === 'BUG') {
+					$('a[href="#breports"]').tab('show');
+					$('#breport-main').html(data.html);
+				} else if(type === 'APPEAL') {
+					$('a[href="#appeals"]').tab('show');
+					$('#appeal-main').html(data.html);
+				} else if(type === 'PLAYER') {
+					$('a[href="#preports"]').tab('show');
+					$('#preport-main').html(data.html);
+				}
+			});
+		});
+
+	});
+div.tab-pane.fade.in.active(id='overview')
+	div#immediate-main
+		include immediate
+	include announcements/announcements

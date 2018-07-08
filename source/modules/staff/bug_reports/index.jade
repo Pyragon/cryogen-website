@@ -1,0 +1,98 @@
+script.
+	var archive = false;
+	var breport_page = 1;
+	$(document).ready(function() {
+
+		loadBugReportList();
+
+		function loadBugReportList() {
+			loadList('breport', archive, breport_page);
+			return false;
+		}
+
+		function loadBugReport(id) {
+			loadReport('breport', archive, id);
+		}
+
+		$(document).on('click', '#breport-pages .page-link', function() {
+			breport_page = $(this).data('page');
+			return loadBugReportList();
+		});
+
+		$(document).on('click', '#view', function() {
+			var elem = $(this).closest('tr');
+			var id = elem.data('id');
+			var type = elem.data('type');
+			if(type != 'BUG')
+				return false;
+			loadBugReport(id);
+			return false;
+		});    
+
+		$(document).on('click', '.returnb-but', loadBugReportList);
+
+		$('#viewarch-btn').click(function() {
+			archive = !archive;
+			breport_page = 1;
+			return loadBugReportList();
+		});
+
+		$('#search-breport-icon').attr('title', OPEN);
+
+			//click search icon
+		$('#search-breport-icon').click(function() {
+			clickSearchIcon('breport', archive, appeal_page);
+		});
+
+		$('#search-breport-pin').find('input').keydown(function(e) {
+			if(e.which == 13) {
+				$('#search-breport-icon').click();
+				$(this).blur();
+				return false;
+			}
+		});
+
+		$(document).on('click', '.search-filters-breport .remove-filter', function() {
+			var filter = $(this).closest('.search-filter');
+			if(typeof filter === 'undefined')
+				return false;
+			var name = filter.data('name');
+			if(name === '')
+				return false;
+			removeFilter('breport', name, archive);
+			return false;
+		});
+
+	});
+div.tab-pane.fade#breports
+	div.row
+		div.iactions
+			div
+				div(style='float: left; margin: 10px 10px;')
+					h5.color-grey Bug Reports
+						h6.color-grey#breport-info Currently viewing all active bug reports
+				div(style='float: right; margin: 33.5px 5px;')
+					div.link#viewarch-btn
+						i.fa.fa-archive
+						span#archive-breport  Archive
+	div.row(style='padding: 15px;')
+		div#search-breport(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+			div.col-xs-4
+				p.color-grey.search-info Click the search icon to begin searching through bug reports. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+			div.col-xs-4
+				p.color-grey.search-info Filters: username:(name, must be exact username)
+					br
+					br
+					span (More to be added)
+			div.col-xs-4
+				p.color-grey.search-info Example: username:cody
+			div
+				span.glyphicon.glyphicon-search.link#search-breport-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+				div#search-breport-pin(style='float: right; display: none;', display='none')
+					input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+		div.search-filters-breport(style='clear: both; float: right;')
+		div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+		div
+			div#breport-main
+			div.pages 
+				div#breport-pages
