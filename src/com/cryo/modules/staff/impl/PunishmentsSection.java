@@ -211,8 +211,10 @@ public class PunishmentsSection implements StaffSection {
 					PunishmentsConnection.connection().handleRequest("end-punishment", id);
 				prop.put("success", true);
 				break;
+			case "view-accept-appeal":
 			case "view-decline-appeal":
-				html = WebModule.render("./source/modules/staff/sections/punishments/decline_appeal.jade", model, request, response);
+				model.put("decline", action.contains("decline"));
+				html = WebModule.render("./source/modules/staff/sections/punishments/respond_appeal.jade", model, request, response);
 				prop.put("success", true);
 				prop.put("html", html);
 				break;

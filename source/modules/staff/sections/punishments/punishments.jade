@@ -152,23 +152,28 @@ script.
     }
 
     function viewAcceptAppeal(id) {
-      n = noty({
-        text: 'Are you sure you wish to accept this appeal?',
-        type: 'confirm',
-        layout: 'center',
-        dismissQueue: false,
-        theme: 'cryogen',
-        buttons: [
-          {
-            addClass: 'btn btn-success', text: 'Yes', onClick: function($noty) {
-              if(acceptAppeal(id))
-                closeNoty($noty)
+      $.post('/staff/punishments', { action:'view-accept-appeal' }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        n = noty({
+          text: 'Are you sure you wish to accept this appeal?',
+          type: 'confirm',
+          layout: 'center',
+          dismissQueue: false,
+          template: data.html,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-primary', text: 'Accept', onClick: function($noty) {
+                if(acceptAppeal(id))
+                  closeNoty($noty)
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty
             }
-          },
-          {
-            addClass: 'btn btn-danger', text: 'No', onClick: closeNoty
-          }
-        ]
+          ]
+        })
       })
     }
 
@@ -447,19 +452,19 @@ script.
       var element = $(this).closest('.player-value')
       var name = element.data('name');
       var id = element.data('id');
-      //$('#player-search').blur();
+      $('#player-search').blur();
       $('#player-search').css({
         "border-bottom-left-radius": "4px",
         "border-bottom-right-radius": "4px"
       });
       $('#player-search').val(name);
-      $('.player-list').empty();
       $('.player-list').css('display', 'none');
     }
 
     function searchPlayer() {
       var name = $(this).val();
       var list = $('.player-list');
+      list.empty();
       if(name == '') {
         $(this).css({
           "border-bottom-left-radius": "4px",

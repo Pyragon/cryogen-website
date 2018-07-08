@@ -225,23 +225,28 @@ script.
     }
 
     function viewAcceptAppeal(id) {
-      n = noty({
-        text: 'Are you sure you wish to accept this appeal?',
-        type: 'confirm',
-        layout: 'center',
-        dismissQueue: false,
-        theme: 'cryogen',
-        buttons: [
-          {
-            addClass: 'btn btn-success', text: 'Yes', onClick: function($noty) {
-              if(acceptAppeal(id))
-                closeNoty($noty)
+      $.post('/staff/punishments', { action:'view-accept-appeal' }, (ret) => {
+        var data = getJSON(ret)
+        if(data == null) return false
+        n = noty({
+          text: 'Are you sure you wish to accept this appeal?',
+          type: 'confirm',
+          layout: 'center',
+          dismissQueue: false,
+          template: data.html,
+          theme: 'cryogen',
+          buttons: [
+            {
+              addClass: 'btn btn-primary', text: 'Accept', onClick: function($noty) {
+                if(acceptAppeal(id))
+                  closeNoty($noty)
+              }
+            },
+            {
+              addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty
             }
-          },
-          {
-            addClass: 'btn btn-danger', text: 'No', onClick: closeNoty
-          }
-        ]
+          ]
+        })
       })
     }
 
