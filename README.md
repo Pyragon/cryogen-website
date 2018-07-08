@@ -14,6 +14,8 @@ A properties template file has been included (props_.json) for reference. Copy t
 An empty SQL export has also been included (database_skeletons.sql), you should only need to import this file into your database, and be set.
 ```Please note this export requires at least MySQL v5.6.5.```
 
+Should either of these files end up out of date, please let me know and I will be sure to update them.
+
 ### TODO ###
 
 A link to the TODO file can be found [here](.TODO).
