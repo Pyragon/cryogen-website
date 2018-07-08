@@ -46,6 +46,11 @@ public abstract class DatabaseConnection {
 
 	public void ping() {
 		try {
+			if(connection == null) {
+				System.out.println("The SQL server needs to be started.");
+				System.exit(-1);
+				return;
+			}
 			if (connection.isClosed())
 				return;
 			long start = System.currentTimeMillis();
