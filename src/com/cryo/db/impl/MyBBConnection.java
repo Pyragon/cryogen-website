@@ -60,7 +60,7 @@ public class MyBBConnection extends DatabaseConnection {
 		return new Object[] { post };
 	};
 	
-	public static String getFormattedPost(int pid) {
+	private static String getFormattedPost(int pid) {
 		String path = Website.getProperties().getProperty("forum-path");
 		String url = "http://"+path+"/parse_message.php?pid="+pid;
 		String[] website = Utilities.getWebsite(url);
@@ -77,23 +77,19 @@ public class MyBBConnection extends DatabaseConnection {
 		String command = ((String) data[0]).toLowerCase();
 		switch(command) {
 			case "get-user":
-				String username = "";
-				int uid = -1;
+				int uid;
 				if(data[1] instanceof String) {
-					username = (String) data[1];
+					String username = (String) data[1];
 					data = select("mybb_users", "username=?", GET_USER, username);
 				} else {
 					uid = (int) data[1];
 					data = select("mybb_users", "uid=?", GET_USER, uid);
 				}
-				return data == null ? null : new Object[] { (ForumUser) data[0] };
+				return data;
 			case "get-latest-threads":
-				data = select("mybb_threads", "(fid=4 OR fid=5) AND deletetime=0 ORDER BY dateline DESC LIMIT 5", GET_LATEST_THREADS);
-				return data == null ? null : new Object[] { (PostList) data[0] };
+				return select("mybb_threads", "(fid=4 OR fid=5) AND deletetime=0 ORDER BY dateline DESC LIMIT 5", GET_LATEST_THREADS);
 			case "get-post":
-				int pid = (int) data[1];
-				data = select("mybb_posts", "pid=?", GET_POST, pid);
-				return data == null ? null : new Object[] { (PostDAO) data[0] };
+				return select("mybb_posts", "pid=?", GET_POST, (int) data[1]);
 		}
 		return null;
 	}

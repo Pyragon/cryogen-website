@@ -1,37 +1,31 @@
 It is recommended that you use the atom-tasks package to view TODO files.
 https://atom.io/packages/tasks
 Before release:
-  Appeals:
-    ✔ Ensure appeals can be sent @done(2018-07-07 22:40) @project(Before release / Appeals)
-    ✔ Ensure appeals can be viewed @done(2018-07-07 22:40) @project(Before release / Appeals)
-    ✔ Ensure appeals can be responded to @done(2018-07-07 23:12) @project(Before release / Appeals)
-  Punishments:
-    ✔ Ensure punishments can be viewed @done(2018-07-07 23:46) @project(Before release / Punishments)
-    ✔ Ensure punishments can be ended @done(2018-07-07 23:47) @project(Before release / Punishments)
-    ✔ Ensure punishments can be extended @done(2018-07-07 23:46) @project(Before release / Punishments)
-  Recoveries:
-    ✔ Ensure recoveries can be sent @done(2018-07-08 00:39) @project(Before release / Recoveries)
-    ✔ Ensure recovery password is given successfully @done(2018-07-08 00:39) @project(Before release / Recoveries)
-    ✔ Ensure recovery status can be viewed with password @done(2018-07-08 00:39) @project(Before release / Recoveries)
-    ✔ Ensure recovery can be viewed by staff @done(2018-07-08 01:03) @project(Before release / Recoveries)
-    ✔ Ensure recovery can be accepted and declined by staff @done(2018-07-08 01:05) @project(Before release / Recoveries)
-    ✔ Ensure recovery link is successfully sent to email if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
-    ✔ Ensure recovery link is successfully sent to discord if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
-    ✔ Ensure recovery link is successfully sent to forum if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
-    ✔ Links and warnings should be sent to email, discord, and forum if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
-  Reports:
-    ✔ Ensure reports can be sent @done(2018-07-08 01:18) @project(Before release / Reports)
-    ✔ Ensure reports can be viewed @done(2018-07-08 01:18) @project(Before release / Reports)
-    ✔ Ensure reports can be responded to @done(2018-07-08 01:18) @project(Before release / Reports)
   Announcements:
-    ✔ Ensure announcements can be created @done(2018-07-08 01:19) @project(Before release / Announcements)
-    ✔ Ensure announcements can be viewed @done(2018-07-08 01:19) @project(Before release / Announcements)
-    ✔ Ensure viewing announcements changes 'read' value @done(2018-07-08 01:26) @project(Before release / Announcements)
   ☐ Ensure votes can be claimed
   ☐ Fix comments for rest of staff/account section
-  ☐ Ensure Forum Integration/Discord Integration is working
   ☐ Make auto updating client with option to sit in background and listen for events, then print them.
-  ✔ Ensure users can register @done(2018-07-07 23:48) @project(Before release)
+  Auto Udpating Client:
+    ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
+    ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
+    ☐ Sits in background and taskbar and can listen for events to your acc
+    ☐ Create plugin system for the client that exposes an api with client data
+    Login Page:
+      ☐ Possibly a second 'insecure' option to just auto-login (Will save hashed pass on computer)
+      ☐ Decide whether to refresh token when expired, or require login again
+      ☐ Link forgotton password button to /recover?username= webpage
+      ✔ Remember Me button should delete previously saved username if unchecked @done(2018-07-17 22:24) @project(Before release / Auto Udpating Client / Login Page)
+    Enhancements:
+      ☐ Restyle login button on login UI
+      ☐ Restyle remember me button on login UI
+      ☐ Add animation to minimizing/maximizing screen
+API:
+  ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
+  Login:
+    ✔ Add expiry parameter to /login endpoint to set expiry time of token (default=3 hours, max=1 day) @done(2018-07-10 22:24) @project(API / Login)
+    ✔ Add revoke parameter to /login endpoint to revoke all other tokens at time of login (default=false) @done(2018-07-10 22:25) @project(API / Login)
+    ☐ Add revoke action to /account endpoint to revoke all tokens (requires username/password)
+    ☐ Add counting of invalid attempts and lock account after certain amount within time limit
 Forums:
   ☐ Get new forum logo + read/unread buttons
 Recoveries:
@@ -40,7 +34,7 @@ Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 Restart Message:
   ☐ Add timer to check website restart time (rather than only when page is loaded)
-  ☐ Check 'Website is now online' receiving false-positive because of cloudflare
+  ☐ Check 'Website is now online' receiving false-positive because of cloudflare (Check response code, should be 502 for site offline)
 Layout fixes:
   ☐ Sign-In/Forgot buttons on login widget
   ☐ Account buttons on Index
@@ -56,8 +50,7 @@ General:
   ☐ Add ability for customized cursors
   ☐ Add admin panel for website functions. (reset cache, reset comments cache, etc)
 Registration:
-  ☐ Create database with different security questions/answers
-  ☐ Possibly load random question/answers from an api online
+  ☐ Integrate captcha
 Comments:
   ☐ Add username to commentlist so we can add check for players only being able to comment on their own comment lists (if someone gets hacky)
   ☐ Investigate differences in style because of different stylesheets across sections
@@ -91,8 +84,6 @@ Other:
 Securiy:
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
   ☐ Change session ids to use local storage instead of cookies
-API:
-  ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
 Highscores:
   ☐ 'Seasonal' highscores page. Different highscores goal each month, random things like nex kills, or chicken kills, bows fletched, etc
   ☐ Banner on left, top option pulls out to reveal all skill icons (this is how highscores is navigated)
@@ -109,6 +100,31 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+  ✔ Ensure appeals can be sent @done(2018-07-07 22:40) @project(Before release / Appeals)
+  ✔ Ensure appeals can be viewed @done(2018-07-07 22:40) @project(Before release / Appeals)
+  ✔ Ensure appeals can be responded to @done(2018-07-07 23:12) @project(Before release / Appeals)
+  ✔ Ensure punishments can be viewed @done(2018-07-07 23:46) @project(Before release / Punishments)
+  ✔ Ensure punishments can be ended @done(2018-07-07 23:47) @project(Before release / Punishments)
+  ✔ Ensure punishments can be extended @done(2018-07-07 23:46) @project(Before release / Punishments)
+  ✔ Ensure recoveries can be sent @done(2018-07-08 00:39) @project(Before release / Recoveries)
+  ✔ Ensure recovery password is given successfully @done(2018-07-08 00:39) @project(Before release / Recoveries)
+  ✔ Ensure recovery status can be viewed with password @done(2018-07-08 00:39) @project(Before release / Recoveries)
+  ✔ Ensure recovery can be viewed by staff @done(2018-07-08 01:03) @project(Before release / Recoveries)
+  ✔ Ensure recovery can be accepted and declined by staff @done(2018-07-08 01:05) @project(Before release / Recoveries)
+  ✔ Ensure recovery link is successfully sent to email if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+  ✔ Ensure recovery link is successfully sent to discord if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+  ✔ Ensure recovery link is successfully sent to forum if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+  ✔ Links and warnings should be sent to email, discord, and forum if registered @done(2018-07-08 01:12) @project(Before release / Recoveries)
+  ✔ Ensure reports can be sent @done(2018-07-08 01:18) @project(Before release / Reports)
+  ✔ Ensure reports can be viewed @done(2018-07-08 01:18) @project(Before release / Reports)
+  ✔ Ensure reports can be responded to @done(2018-07-08 01:18) @project(Before release / Reports)
+  ✔ Ensure announcements can be created @done(2018-07-08 01:19) @project(Before release / Announcements)
+  ✔ Ensure announcements can be viewed @done(2018-07-08 01:19) @project(Before release / Announcements)
+  ✔ Ensure viewing announcements changes 'read' value @done(2018-07-08 01:26) @project(Before release / Announcements)
+  ✔ Ensure Forum Integration/Discord Integration is working @done(2018-07-09 02:32) @project(Before release)
+  ✔ Ensure users can register @done(2018-07-07 23:48) @project(Before release)
+  ✔ Use Cryogen API to login and grab token @done(2018-07-10 13:44) @project(Before release / Auto Udpating Client / Login Page)
+  ✔ Remember me check-button that saves username via cookies @done(2018-07-10 13:44) @project(Before release / Auto Udpating Client / Login Page)
   ✔ Searching @done(2018-06-16 01:55) @project(Staff Page / Remake TODO / Appeals)
   ✔ Add 'archiver' message to viewing reports @done(2018-06-21 03:55) @project(Staff Page / Remake TODO / Reports)
   ✔ Check why 'archived' is default to 'null' in mysql. Should default to current_timestamp, and source should just have DEFAULT as value to set @done(2018-06-21 04:07) @project(Staff Page / Remake TODO / Reports)

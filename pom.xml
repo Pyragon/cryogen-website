@@ -19,17 +19,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>com.sparkjava</groupId>
-			<artifactId>spark-core</artifactId>
-			<version>2.7.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jade4j</artifactId>
-					<groupId>de.neuland-bfi</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -44,7 +33,7 @@
 		<dependency>
 			<groupId>com.paypal.sdk</groupId>
 			<artifactId>rest-api-sdk</artifactId>
-			<version>LATEST</version>
+			<version>1.14.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.neuland-bfi</groupId>
@@ -89,6 +78,17 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-nop</artifactId>
 			<version>1.7.25</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sparkjava</groupId>
+			<artifactId>spark-core</artifactId>
+			<version>2.5.5</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jade4j</artifactId>
+					<groupId>de.neuland-bfi</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

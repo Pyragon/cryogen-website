@@ -27,17 +27,17 @@ public class OnlineUserCache extends CachedItem {
 			return;
 		}
 		String[] names = response.split(",");
-		String players = "";
+		StringBuilder players = new StringBuilder();
 		boolean sData = false;
 		for(String name : names) {
 			Account account = AccountUtils.getAccount(name);
 			if(account == null)
 				continue;
 			if(sData)
-				players += ", ";
-			players += AccountUtils.crownHTML(account);
+				players.append(", ");
+			players.append(AccountUtils.crownHTML(account));
 		}
-		this.cachedData = players;
+		this.cachedData = players.toString();
 	}
 
 	@Override

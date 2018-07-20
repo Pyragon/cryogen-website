@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.client.utils.URIBuilder;
 
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.impl.GlobalConnection;
@@ -113,6 +116,35 @@ public class Utilities {
 		if(containsInvalidWords(name))
 			return "Name contains invalid words.";
 		return null;
+	}
+	
+	public static ArrayList<String> requestFromWebsite(String url, String method, Properties prop) {
+		try {
+			URIBuilder b = new URIBuilder(url);
+			if(prop != null) {
+				for(Object key : prop.keySet()) {
+					Object value = prop.get(key);
+					b.addParameter(key.toString(), value.toString());
+				}
+			}
+			URL dao = b.build().toURL();
+			HttpURLConnection con = (HttpURLConnection) dao.openConnection();
+			con.setRequestMethod(method);
+			con.setRequestProperty("User-Agent", "Mozilla/5.0");
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			con.setReadTimeout(5000);
+			con.connect();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String line = null;
+			ArrayList<String> list = new ArrayList<>();
+			while((line = reader.readLine()) != null)
+				list.add(line);
+			return list;
+		} catch(IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return new ArrayList<String>();
 	}
 	
 	public static boolean containsInvalidWords(String name) {

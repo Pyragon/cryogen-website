@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -88,7 +89,7 @@ public class Website {
 	public static String PATH = "http://cryogen.live/";
 
 	private static Website INSTANCE;
-	
+
 	public static @Getter @Setter int SHUTDOWN_TIME;
 
 	public static volatile boolean LOADED;
@@ -98,222 +99,195 @@ public class Website {
 	private @Getter final DBConnectionManager connectionManager;
 
 	private @Getter final PaypalManager paypalManager;
-	
+
 	private @Getter final CachingManager cachingManager;
-	
+
 	private @Getter final CommentsManager commentsManager;
-	
+
 	private @Getter final SearchManager searchManager;
 
 	private final Timer fastExecutor;
 
 	private static File FAVICON = null;
-	
+
 	private static @Getter Gson Gson;
 
 	public Website() {
-		if(System.getProperty("os.name").equals("Windows 10"))
-			PATH = "http://localhost:8085/";
-		loadProperties();
-		Gson = buildGson();
-		FAVICON = new File(properties.getProperty("favico"));
-		connectionManager = new DBConnectionManager();
-		commentsManager = new CommentsManager();
-		paypalManager = new PaypalManager(this);
-		cachingManager = new CachingManager();
-		cachingManager.loadCachedItems();
-		fastExecutor = new Timer();
-		searchManager = new SearchManager();
-		ShopConnection.load(this);
-		searchManager.load();
-		port(Integer.parseInt(properties.getProperty("port")));
-		PaypalManager.createAPIContext();
-		staticFiles.externalLocation("source/");
-		staticFiles.expireTime(0); // ten minutes
-		staticFiles.header("Access-Control-Allow-Origin", "*");
-		CorsFilter.apply();
-		AccountModule.registerEndpoints(this);
-		SearchManager.registerEndpoints(this);
-		StaffModule.registerEndpoints(this);
-		CommentsModule.registerEndpoints(this);
-		UtilityModule.registerEndpoints(this);
-		get(IndexModule.PATH, (req, res) -> {
-			return new IndexModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		get(LoginModule.PATH, (req, res) -> {
-			return new LoginModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post(LoginModule.PATH, (req, res) -> {
-			return new LoginModule(this).decodeRequest(req, res, RequestType.POST);
-		});
-		post(LogoutModule.PATH, (req, res) -> {
-			return new LogoutModule(this).decodeRequest(req, res, RequestType.POST);
-		});
-		get(HighscoresModule.PATH, (req, res) -> {
-			return new HighscoresModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post(HighscoresModule.PATH, (req, res) -> {
-			return new HighscoresModule(this).decodeRequest(req, res, RequestType.POST);
-		});
-		get(LogoutModule.PATH, (req, res) -> {
-			return new LogoutModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		get("/kill_web", (req, res) -> {
-			Account account = CookieManager.getAccount(req);
-			if(account == null || account.getRights() < 2)
-				return error("Insufficient permissions.");;
-			if(SHUTDOWN_TIME > 0)
-				return "Website already being shutdown. Please wait.";
-			String time = req.queryParams("delay");
-			int delay = 30;
-			if(time != null)
-				delay = Integer.parseInt(time);
-			SHUTDOWN_TIME = delay;
-			fastExecutor.schedule(new TimerTask() {
+		try {
+			if(System.getProperty("os.name").equals("Windows 10"))
+				PATH = "http://localhost:8085/";
+			loadProperties();
+			Gson = buildGson();
+			FAVICON = new File(properties.getProperty("favico"));
+			connectionManager = new DBConnectionManager();
+			commentsManager = new CommentsManager();
+			paypalManager = new PaypalManager(this);
+			cachingManager = new CachingManager();
+			cachingManager.loadCachedItems();
+			fastExecutor = new Timer();
+			searchManager = new SearchManager();
+			ShopConnection.load(this);
+			searchManager.load();
+			port(Integer.parseInt(properties.getProperty("port")));
+			PaypalManager.createAPIContext();
+			staticFiles.externalLocation("source/");
+			staticFiles.expireTime(0); // ten minutes
+			staticFiles.header("Access-Control-Allow-Origin", "*");
+			CorsFilter.apply();
+			System.out.println("here");
+			AccountModule.registerEndpoints(this);
+			SearchManager.registerEndpoints(this);
+			StaffModule.registerEndpoints(this);
+			CommentsModule.registerEndpoints(this);
+			UtilityModule.registerEndpoints(this);
+			get(IndexModule.PATH, (req, res) -> new IndexModule(this).decodeRequest(req, res, RequestType.GET));
+			get(LoginModule.PATH, (req, res) -> new LoginModule(this).decodeRequest(req, res, RequestType.GET));
+			post(LoginModule.PATH, (req, res) -> new LoginModule(this).decodeRequest(req, res, RequestType.POST));
+			post(LogoutModule.PATH, (req, res) -> new LogoutModule(this).decodeRequest(req, res, RequestType.POST));
+			get(HighscoresModule.PATH, (req, res) -> new HighscoresModule(this).decodeRequest(req, res, RequestType.GET));
+			post(HighscoresModule.PATH, (req, res) -> new HighscoresModule(this).decodeRequest(req, res, RequestType.POST));
+			get(LogoutModule.PATH, (req, res) -> new LogoutModule(this).decodeRequest(req, res, RequestType.GET));
+			get("/kill_web", (req, res) -> {
+				Account account = CookieManager.getAccount(req);
+				if(account == null || account.getRights() < 2)
+					return error("Insufficient permissions.");
+				if(SHUTDOWN_TIME > 0)
+					return "Website already being shutdown. Please wait.";
+				String time = req.queryParams("delay");
+				int delay = 30;
+				if(time != null)
+					delay = Integer.parseInt(time);
+				SHUTDOWN_TIME = delay;
+				fastExecutor.schedule(new TimerTask() {
 
-				@Override
-				public void run() {
-					Website.SHUTDOWN_TIME--;
-					if(Website.SHUTDOWN_TIME == 0)
-						System.exit(0);
+					@Override
+					public void run() {
+						Website.SHUTDOWN_TIME--;
+						if(Website.SHUTDOWN_TIME == 0)
+							System.exit(0);
+					}
+
+				}, 0, 1000);
+				return "Shutting down website in "+delay+" seconds.";
+			});
+			get("/paypal_error", (req, res) -> error("Error getting payment URL"));
+			get("/process_payment", (req, res) -> new PaypalManager(this).decodeRequest(req, res, RequestType.GET));
+			post("/grab_data", Website::grab_data);
+			get("/grab_data", Website::grab_data);
+			get("/test", (req, res) -> new TestModule(this).decodeRequest(req, res, RequestType.GET));
+			post("/test", (req, res) -> {
+				return new TestModule(this).decodeRequest(req, res, RequestType.POST);
+			});
+			get("/redirect", (req, res) -> {
+				HashMap<String, Object> model = new HashMap<>();
+				model.put("redirect", "/logout");
+				return Jade4J.render("./source/modules/redirect.jade", model);
+			});
+			get(LiveModule.PATH, (req, res) -> {
+				return new LiveModule(this).decodeRequest(req, res, RequestType.GET);
+			});
+			get("/recover", (req, res) -> {
+				return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.GET);
+			});
+			post("/recover", (req, res) -> {
+				return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.POST);
+			});
+			get("/view_status", (req, res) -> {
+				return new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.GET);
+			});
+			post("/view_status", (req, res) -> {
+				return new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.POST);
+			});
+			get(RegisterModule.PATH, (req, res) -> {
+				return new RegisterModule(this).decodeRequest(req, res, RequestType.GET);
+			});
+			System.out.println("here");
+			post(RegisterModule.PATH, (req, res) -> {
+				return new RegisterModule(this).decodeRequest(req, res, RequestType.POST);
+			});
+			get("/players", (req, res) -> {
+				return Integer.toString(Utilities.getOnlinePlayers());
+			});
+			get("/online", (req, res) -> {
+				SocketAddress addr = new InetSocketAddress("localhost", 43594);
+				@Cleanup Socket socket = new Socket();
+				try {
+					socket.connect(addr, 5_000);
+				} catch(IOException e) {
+					return "offline";
 				}
-				
-			}, 0, 1000);
-			return "Shutting down website in "+delay+" seconds.";
-		});
-		get("/paypal_error", (req, res) -> {
-			return error("Error getting payment URL");
-		});
-		get("/process_payment", (req, res) -> {
-			return new PaypalManager(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post("/grab_data", (req, res) -> {
-			return grab_data(req, res);
-		});
-		get("/grab_data", (req, res) -> {
-			return grab_data(req, res);
-		});
-		get("/test", (req, res) -> {
-			return new TestModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post("/test", (req, res) -> {
-			return new TestModule(this).decodeRequest(req, res, RequestType.POST);
-		});
-		get("/redirect", (req, res) -> {
-			HashMap<String, Object> model = new HashMap<>();
-			model.put("redirect", "/logout");
-			return Jade4J.render("./source/modules/redirect.jade", model);
-		});
-		get(LiveModule.PATH, (req, res) -> {
-			return new LiveModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		get("/recover", (req, res) -> {
-			return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.GET);
-		});
-		post("/recover", (req, res) -> {
-			return new RecoveryModule(this, "recover").decodeRequest(req, res, RequestType.POST);
-		});
-		get("/view_status", (req, res) -> {
-			return new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.GET);
-		});
-		post("/view_status", (req, res) -> {
-			return new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.POST);
-		});
-		get(RegisterModule.PATH, (req, res) -> {
-			return new RegisterModule(this).decodeRequest(req, res, RequestType.GET);
-		});
-		post(RegisterModule.PATH, (req, res) -> {
-			return new RegisterModule(this).decodeRequest(req, res, RequestType.POST);
-		});
-		get("/players", (req, res) -> {
-			return Integer.toString(Utilities.getOnlinePlayers());
-		});
-		get("/online", (req, res) -> {
-			SocketAddress addr = new InetSocketAddress("localhost", 43594);
-			@Cleanup Socket socket = new Socket();
-			try {
-				socket.connect(addr, 5_000);
-			} catch(IOException e) {
-				return "offline";
-			}
-			return "online";
-		});
-		get("/create", (req, res) -> {
-			return Jade4J.render("./source/modules/staff/punishments/create_punish.jade", new HashMap<String, Object>());
-		});
-		get("/favicon.ico", (req, response) -> {
-                try {
-                    InputStream in = null;
-                    OutputStream out = null;
-                    try {
-                        in = new BufferedInputStream(new FileInputStream(FAVICON));
-                        out = new BufferedOutputStream(response.raw().getOutputStream());
-                        response.raw().setContentType(MediaType.ICO.toString());
-                        response.status(200);
-                        ByteStreams.copy(in, out);
-                        out.flush();
-                        return "";
-                    } finally {
-                        in.close();
-                    }
-                } catch (FileNotFoundException ex) {
-                    response.status(404);
-                    return ex.getMessage();
-                } catch (IOException ex) {
-                    response.status(500);
-                    return ex.getMessage();
-                }
-        });
-		get("/rsfont", (req, res) -> {
-			try {
-				res.header("Access-Control-Allow-Origin", "*");
-                InputStream in = null;
-                OutputStream out = null;
-                try {
-                    in = new BufferedInputStream(new FileInputStream(new File("runescape_chat.woff2")));
-                    out = new BufferedOutputStream(res.raw().getOutputStream());
-                    res.raw().setContentType(MediaType.ANY_TYPE.type());
-                    res.status(200);
-                    ByteStreams.copy(in, out);
-                    out.flush();
-                    return "";
-                } finally {
-                    in.close();
-                }
-            } catch (FileNotFoundException ex) {
-            	res.status(404);
-                return ex.getMessage();
-            } catch (IOException ex) {
-            	res.status(500);
-                return ex.getMessage();
-            }
-		});
-		get("*", Website::render404);
-		fastExecutor.schedule(new TaskManager(), 0, 1000);
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-
-			@Override
-			public void run() {
+				return "online";
+			});
+			get("/favicon.ico", (req, response) -> {
+	                try {
+	                    InputStream in = null;
+	                    OutputStream out = null;
+	                    try {
+	                        in = new BufferedInputStream(new FileInputStream(FAVICON));
+	                        out = new BufferedOutputStream(response.raw().getOutputStream());
+	                        response.raw().setContentType(MediaType.ICO.toString());
+	                        response.status(200);
+	                        ByteStreams.copy(in, out);
+	                        out.flush();
+	                        return "";
+	                    } finally {
+	                        in.close();
+	                    }
+	                } catch (FileNotFoundException ex) {
+	                    response.status(404);
+	                    return ex.getMessage();
+	                } catch (IOException ex) {
+	                    response.status(500);
+	                    return ex.getMessage();
+	                }
+	        });
+			get("/rsfont", (req, res) -> {
+				try {
+					res.header("Access-Control-Allow-Origin", "*");
+	                InputStream in = null;
+	                OutputStream out = null;
+	                try {
+	                    in = new BufferedInputStream(new FileInputStream(new File("runescape_chat.woff2")));
+	                    out = new BufferedOutputStream(res.raw().getOutputStream());
+	                    res.raw().setContentType(MediaType.ANY_TYPE.type());
+	                    res.status(200);
+	                    ByteStreams.copy(in, out);
+	                    out.flush();
+	                    return "";
+	                } finally {
+	                    in.close();
+	                }
+	            } catch (FileNotFoundException ex) {
+	            	res.status(404);
+	                return ex.getMessage();
+	            } catch (IOException ex) {
+	            	res.status(500);
+	                return ex.getMessage();
+	            }
+			});
+			get("*", Website::render404);
+			fastExecutor.schedule(new TaskManager(), 0, 1000);
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				LOADED = false;
 				System.out.println("Stopping spark.");
-				Spark.stop();
-			}
-
-		});
+				stop();
+			}));
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
 		System.out.println("Listening on port: "+properties.getProperty("port"));
 	}
-	
+
 	public static Gson buildGson() {
-		Gson gson = new GsonBuilder()
+		return new GsonBuilder()
 				.serializeNulls()
 				.setVersion(1.0)
 				.disableHtmlEscaping()
 				.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
 				.create();
-		return gson;
 	}
-	
-	public static String grab_data(Request req, Response res) {
+
+	private static String grab_data(Request req, Response res) {
 		Properties prop = new Properties();
 		String action = req.queryParams("action");
 		HashMap<String, Object> model = new HashMap<>();
@@ -419,14 +393,14 @@ public class Website {
 		}
 		return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
 	}
-	
+
 	public static Properties getNotLoggedError() {
 		Properties prop = new Properties();
 		prop.put("success", false);
 		prop.put("error", "Session expired! Please reload the page to login again.");
 		return prop;
 	}
-	
+
 	public static HttpServletResponse sendFile(File file, Response res, MediaType type) {
 		res.header("Content-Disposition", "attachment; filename="+file.getName());
 		res.type("application/force-download");
