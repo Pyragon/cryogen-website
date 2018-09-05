@@ -678,7 +678,7 @@ h4.title {
 }
 
 p.small {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .package-options a .glyphicon {
@@ -711,6 +711,10 @@ p.small {
 .col-centered {
   float: none;
   margin: 0 auto;
+}
+
+.col-white {
+    color: white;
 }
 
 .t-center {
@@ -822,7 +826,7 @@ p.small {
   border-bottom: 3px solid #111;
 }
 
-.widget .form-control:focus {
+.form-control:focus {
   border-color: #000;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(0, 0, 0, 0.6);
   outline: 0 none;
@@ -866,6 +870,71 @@ p.small {
 
 .news-post p {
   margin-bottom: 3px;
+}
+
+/* The switch - the box around the slider */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide default HTML checkbox */
+
+.switch input {
+    display: none;
+}
+
+/* The slider */
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+
+/* Rounded sliders */
+
+.slider.round {
+    border-radius: 17px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }
 
 

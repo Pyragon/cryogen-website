@@ -2,6 +2,7 @@ package com.cryo.modules;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
@@ -106,6 +107,13 @@ public abstract class WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("redirect", redirect);
 		return render("./source/modules/account/login.jade", model, request, response);
+	}
+
+	public static String error(String error) {
+		Properties prop = new Properties();
+		prop.put("success", false);
+		prop.put("error", error);
+		return Website.getGson().toJson(prop);
 	}
 	
 	public static String redirect(String redirect, Request request, Response response) {

@@ -1,2 +1,0 @@
-find . -name "*.java" -print | xargs javac -d bin -cp library/lombok.jar:library/guava-20.0.jar:library/javax.json-api-1.0-javadoc.jar:library/mysql.jar
-read -rsp $'Press any key to continue...\n' -n 1 key

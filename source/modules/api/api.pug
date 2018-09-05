@@ -1,0 +1,211 @@
+extend ../default
+
+block head
+    script.
+        var loaded = []
+        var section = ''
+
+        function loadSection(section) {
+            $.post('/api/'+section, {}, (ret) => {
+                var data = getJSON(ret)
+                if(data == null) return null
+                $('#'+section).html(data.html)
+                return true
+            })
+        }
+
+        $(document).ready(() => {
+            section = '!{section}'
+
+            if(!section) return;
+
+            history.pushState({}, 'API Docs', '/api/'+section)
+
+            loadSection(section)
+
+            loaded.push(section)
+
+            $('.nav-tabs a[href="#'+section+'"]').tab('show')
+
+            $('.nav-tabs a').click(function() {
+                $(this).tab('show');
+
+                section = $(this).attr('href').replace("#", "")
+                if(!loaded.includes(section)) {
+                    if(loadSection(section))
+                        loaded.push(section)
+                }
+                history.pushState({}, "API Docs", "/api/"+section)
+
+            })
+        })
+
+        $(document).on('click', '.endpoint-return-type', function() {
+            var type = $(this).html().replace(' - ', '');
+            if(type == 'Integer' || type == 'String' || type == 'Boolean') return false;
+            var elem = $(this).closest('.endpoint-return-name');
+            if(elem.find(`#endpoint-return-${type}`).length > 0) {
+                elem.find(`#endpoint-return-${type}`).remove();
+                return;
+            }
+            $.get('/api/type/'+type, {}, (ret) => {
+                var data = getJSON(ret);
+                if(data == null) return false;
+                if(data.html) {
+                    n = noty({
+                        text: 'View abstract type',
+                        type: 'confirm',
+                        layout: 'center',
+                        width: 500,
+                        dismissQueue: false,
+                        template: data.html,
+                        theme: 'cryogen',
+                        buttons: [
+                        {
+                            addClass: 'btn btn-danger', text: 'Close', onClick: closeNoty
+                        }]
+                    })
+                    return false;
+                }
+                var div = $(`<div id="endpoint-return-${type}"></div>`);
+                var h = $(`<h6 class="endpoint-return-title">${data.name}</h6>`);
+
+                div.append(h);
+
+                var container = $(`<div class="endpoint-return-container"></div>`);
+                for(var i = 0; i < data.returns.length; i++) {
+                    var value = data.returns[i];
+                    var ty = value.Type;
+
+                    var line = $(`<p class="info endpoint-return-name">${value.Name}</p>`);
+
+                    if(ty != 'Integer' && ty != 'String' && ty != 'Boolean' && ty != 'Long') {
+                        if(ty.includes('List')) {
+                            line.append(`<span> - ${ty.substring(0, ty.indexOf('<')+1)}</span>`);
+                            var t = ty.substring(ty.indexOf('<')+1, ty.length-1);
+                            if(t != 'Integer' && t != 'String' && t != 'Boolean' && t != 'Long') {
+                                line.append(`<span class="endpoint-return-type">${t}<span>`);
+                            } else
+                                line.append(`<span>${t}</span>`);
+                            line.append('<span>></span>');
+                        } else if(ty.includes('Map')) {
+                            line.append(`<span> - ${ty.substring(0, ty.indexOf('<')+1)}</span>`);
+                            var types = ty.substring(ty.indexOf('<')+1, ty.length-1).split(', ');
+                            for(var i = 0; i < types.length; i++) {
+                                var t = types[i];
+                                if(t != 'Integer' && t != 'String' && t != 'Boolean' && t != 'Long') {
+                                    line.append(`<span class="endpoint-return-type">${t}<span>`);
+                                } else
+                                    line.append(`<span>${t}</span>`);
+                                if(i != types.length-1)
+                                    line.append('<span>, </span>');
+                            }
+                            line.append('<span>></span>');
+                        } else {
+                            line.append('<span> - </span>');
+                            line.append(`<span class="endpoint-return-type">${ty}</span>`);
+                        }
+                    } else {
+                        line.append(`<span> - ${value.Type}</span>`);
+                    }
+
+                    line.append(`<span> - ${value.Description}</span>`);
+                    container.append(line);
+                }
+
+                div.append(container);
+
+                elem.append(div);
+            });
+        });
+
+        $(document).on('click', '.test-api-button', function() {
+            var container = $(this).closest('.endpoint-container');
+            var permissions = container
+            var user = "!{user}";
+            if(permissions != -1 && !user) {
+                openLogin('/api/'+section);
+                return;
+            } else {
+                console.log(`p: ${permissions} u: ${user}`)
+            }
+            $.post(`/api/${section}/${container.data('id')}/viewTest`, {}, (ret) => {
+                var data = getJSON(ret);
+                if(data == null) return;
+                n = noty({
+                    text: 'Test Endpoint',
+                    type: 'confirm',
+                    layout: 'center',
+                    dismissQueue: false,
+                    template: data.html,
+                    theme: 'cryogen',
+                    buttons: [
+                    {
+                        addClass: 'btn btn-success', text: 'Test', onClick: ($noty) => {
+                            testAPI(container.data('id'), $noty);
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Close', onClick: closeNoty
+                    }]
+                })
+            })
+        });
+
+        function testAPI(id, $noty) {
+            var values = {};
+            $('.endpoint-test-parameter-container').each(function(i, value) {
+                var name = $(this).find('.endpoint-test-parameter-name').html();
+                value = $(this).find('input').val();
+                if(value == "")
+                    value = $(this).find('input').prop('placeholder');
+                values[name] = value;
+            });
+            $('.endpoint-test-output').html('Querying...');
+            $.post(`/api/${section}/${id}/test`, values, (ret) => {
+                var data = getJSON(ret);
+                if(data == null) return false;
+                if(data.output != null)  
+                    $('.endpoint-test-output').html(data.output);
+            })
+        }
+
+
+block content
+    div.container.account-area(style='min-height: 600px; padding: 20px 0;')
+        div.row
+            div.col-md-3
+                ul.nav.nav-tabs
+                    li.nav.active.account-item
+                        a(href='#overview', data-toggle='tab') Overview
+                    li.nav.account-item
+                        a(href='#forums', data-toggle='tab') Forums
+                    li.nav.account-item
+                        a(href='#highscores', data-toggle='tab') Highscores
+                    li.nav.account-item
+                        a(href='#in-game', data-toggle='tab') In-game Information
+                    li.nav.account-item
+                        a(href='#client', data-toggle='tab') Client
+                    li.nav.account-item
+                        a(href='#login', data-toggle='tab') Login
+                    li.nav.account-item
+                        a(href='#status-info', data-toggle='tab') Status Information
+                    li.nav.account-item
+                        a(href='#telemetry-events', data-toggle='tab') Telemetry Events
+                    li.nav.account-item
+                        a(href='#update-info', data-toggle='tab') Update Information
+                    li.nav.account-item
+                        a(href='#user-data' data-toggle='tab') User Data
+            div.col-md-9
+                div.widget
+                    div.tab-content.content
+                        div.tab-pane.fade.in.active(id='overview')
+                        div.tab-pane.fade.in(id='forums')
+                        div.tab-pane.fade.in(id='highscores')
+                        div.tab-pane.fade.in(id='in-game')
+                        div.tab-pane.fade.in(id='client')
+                        div.tab-pane.fade.in(id='login')
+                        div.tab-pane.fade.in(id='status-info')
+                        div.tab-pane.fade.in(id='telemetry-events')
+                        div.tab-pane.fade.in(id='update-info')
+                        div.tab-pane.fade.in(id='user-data')

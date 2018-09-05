@@ -1,3 +1,0 @@
-{
-    "java.jdt.ls.vmargs": "-javaagent:C:/Users/Cody/Desktop/lombok.jar -Xbootclasspath/a:/C:/Users/Cody/Desktop/lombok.jar -noverify -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication"
-}
