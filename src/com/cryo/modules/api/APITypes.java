@@ -33,7 +33,7 @@ public enum APITypes {
     }, true, null),
     LAVA_FLOW_INFO("LavaFlowMine", new APIReturn[]{
             new APIReturn("row", "Integer", "Index of the row the blockage is on. 0=A,1=B,2=C,3=D"),
-            new APIReturn("boilder", "Boolean", "Whether or not the boiler is broken. True=Broken")
+            new APIReturn("boiler", "Boolean", "Whether or not the boiler is broken. True=Broken")
     }, false, "MinigameInfoDAO"),
     ART_WORKSHOP_INFO("ArtWorkshop", new APIReturn[]{
             new APIReturn("armour", "String", "Which type of armour is currently active in the ancient armour section."),
