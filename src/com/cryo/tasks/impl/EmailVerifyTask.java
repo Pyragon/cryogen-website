@@ -8,6 +8,7 @@ import com.cryo.db.impl.EmailConnection;
  *
  * Created on: March 13, 2017 at 3:05:39 PM
  */
+@SuppressWarnings("unused")
 public class EmailVerifyTask extends Task {
 	
 	public EmailVerifyTask() {
