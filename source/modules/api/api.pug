@@ -121,7 +121,7 @@ block head
 
         $(document).on('click', '.test-api-button', function() {
             var container = $(this).closest('.endpoint-container');
-            var permissions = container
+            var permissions = container.data('permissions');
             var user = "!{user}";
             if(permissions != -1 && !user) {
                 openLogin('/api/'+section);
