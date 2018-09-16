@@ -19,7 +19,10 @@ public class AccountConnection extends DatabaseConnection {
 	}
 	
 	public static AccountConnection connection() {
-		return (AccountConnection) Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+		if(Website.instance() == null || Website.instance().getConnectionManager() == null) return null;
+		DatabaseConnection con = Website.instance().getConnectionManager().getConnection(Connection.ACCOUNT);
+		if(con == null) return null;
+		return (AccountConnection) con;
 	}
 
 	@Override
@@ -45,7 +48,7 @@ public class AccountConnection extends DatabaseConnection {
 				if(expiry.getTime() < System.currentTimeMillis()) return null;
 				return new Object[] { username };
 			case "remove-tokens":
-				delete("tokens", "expiry < DATE_SUB(NOW())");
+				delete("tokens", "expiry < DATE_SUB(NOW(), INTERVAL 1 DAY);");
 				break;
 		case "get-user":
 			String sess_id = (String) data[1];

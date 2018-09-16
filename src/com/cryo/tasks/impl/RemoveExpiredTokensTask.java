@@ -12,7 +12,7 @@ public class RemoveExpiredTokensTask extends Task {
 
     @Override
     public void run() {
-        if(!Website.LOADED) return;
+        if(!Website.LOADED || AccountConnection.connection() == null) return;
         AccountConnection.connection().handleRequest("remove-tokens");
     }
 }
