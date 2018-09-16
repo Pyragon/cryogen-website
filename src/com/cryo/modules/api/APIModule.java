@@ -55,7 +55,6 @@ public class APIModule {
                 prop.put("html", html);
             }
             prop.put("success", true);
-            System.out.println(prop);
             return getGson().toJson(prop);
         });
         post("/api/:section", (request, response) -> {
