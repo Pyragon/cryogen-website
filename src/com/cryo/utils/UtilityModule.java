@@ -29,6 +29,10 @@ public class UtilityModule extends WebModule {
 		HashMap<String, Object> model = new HashMap<>();
 		Properties prop = new Properties();
 		switch(action) {
+			case "get-restart-time":
+				prop.put("success", true);
+				prop.put("delay", Website.SHUTDOWN_TIME);
+				break;
 		case "view-noty":
 			String html = WebModule.render("./source/modules/staff/sections/punishments/respond_appeal.jade", model, request, response);
 			prop.put("success", true);

@@ -266,7 +266,36 @@ var shutdown = 0;
 
 var shutdown_timer = null;
 
+var restart_timer = null;
+
 var reconnect_timer = null;
+
+function checkRestart() {
+    if (shutdown_timer) {
+        clearInterval(restart_timer);
+        return;
+    };
+    $.ajax({
+        url: 'http://66.70.190.195:8080/utils?action=get-restart-time',
+        type: 'POST',
+        error: () => {
+            clearInterval(restart_timer);
+            restarted();
+        },
+        success: (ret) => {
+            var data = getJSON(ret);
+            if (data == null) return;
+            var delay = data.delay;
+            console.log(delay);
+            if (delay > 0) {
+                shutdown = delay;
+                shutdown_timer = setInterval(decreaseRestart, 1000);
+                clearInterval(restart_timer);
+            }
+        },
+        timeout: 900
+    });
+}
 
 function decreaseRestart() {
     if (shutdown == 0) {
@@ -279,11 +308,12 @@ function decreaseRestart() {
 
 function reconnect() {
     $.ajax({
-        url: '/',
-        error: function() {
+        url: 'http://66.70.190.195:8080/',
+        type: 'GET',
+        error: function(data) {
             setTimeout(reconnect, 1000);
         },
-        success: function() {
+        success: function(data) {
             $('#shutdown-timer').html('Website has restarted. Click here to refresh the page.');
             $('#shutdown-timer').addClass('restart-page').css('cursor', 'pointer');
         },
@@ -367,10 +397,10 @@ function post(link, options, callback) {
 
 $(document).ready(function() {
 
-    shutdown = $('#shutdown').val();
-    if (shutdown != 0) {
+    shutdown = $('#shutdown').val(); //TODO - redo
+    if (shutdown > 0)
         shutdown_timer = setInterval(decreaseRestart, 1000);
-    }
+    else restart_timer = setInterval(checkRestart, 5000);
 
     $(document).on('click', '.restart-page', function() {
         location.reload();

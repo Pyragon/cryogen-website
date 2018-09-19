@@ -80,7 +80,7 @@ public class Website {
 
 	private static Website INSTANCE;
 
-	public static @Getter @Setter int SHUTDOWN_TIME;
+	public static @Getter @Setter int SHUTDOWN_TIME = -1;
 
 	public static volatile boolean LOADED;
 
