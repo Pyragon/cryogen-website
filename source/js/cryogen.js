@@ -286,7 +286,6 @@ function checkRestart() {
             var data = getJSON(ret);
             if (data == null) return;
             var delay = data.delay;
-            console.log(delay);
             if (delay > 0) {
                 shutdown = delay;
                 shutdown_timer = setInterval(decreaseRestart, 1000);

@@ -27,22 +27,22 @@ public class ForumUtils {
 		String display = "{username}";
 		switch(usergroup) {
 			case 4: //owner
-				display = "<span style=\"color: #FF0000;\"><strong><img src=\"images/crowns/owner.png\"/> {username}</strong></span>";
+				display = "<span style=\"color: #FF0000;\"><strong><img src=\"http://cryogen.live/images/crowns/owner.png\"/> {username}</strong></span>";
 				break;
 			case 3: //admin
-				display = "<span style=\"color: #FF0000;\"><img src=\"images/crowns/admin.gif\"/> <strong>{username}</strong></span>";
+				display = "<span style=\"color: #FF0000;\"><img src=\"http://cryogen.live/images/crowns/admin.gif\"/> <strong>{username}</strong></span>";
 				break;
 			case 6: //moderator
-				display = "<span style=\"color: #0174DF;\"><strong><img src=\"images/crowns/mod.gif\"/> {username}</strong></span>";
+				display = "<span style=\"color: #0174DF;\"><strong><img src=\"http://cryogen.live/images/crowns/mod.gif\"/> {username}</strong></span>";
 				break;
 			case 8: //high-roller
-				display = "<span style=\"color: #98C7F3;\"><strong><img src=\"images/crowns/hroller_ing.png\"/> {username}</strong></span>";
+				display = "<span style=\"color: #98C7F3;\"><strong><img src=\"http://cryogen.live/images/crowns/hroller_ing.png\"/> {username}</strong></span>";
 				break;
 			case 9: //super-donator
-				display = "<span style=\"color: #01A9DB;\"><strong><img src=\"images/crowns/sdonator_ing.png\"/> {username}</strong></span>";
+				display = "<span style=\"color: #01A9DB;\"><strong><img src=\"http://cryogen.live/images/crowns/sdonator_ing.png\"/> {username}</strong></span>";
 				break;
 			case 10: //donator
-				display = "<span style=\"color: #004300;\"><strong><img src=\"images/crowns/donator_ing.png\"/> {username}</strong></span>";
+				display = "<span style=\"color: #004300;\"><strong><img src=\"http://cryogen.live/images/crowns/donator_ing.png\"/> {username}</strong></span>";
 				break;
 		}
 		display = display.replace("{username}", user.getUsername());

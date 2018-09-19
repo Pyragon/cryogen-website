@@ -20,7 +20,7 @@ Before release:
       ☐ Restyle remember me button on login UI
       ☐ Add animation to minimizing/maximizing screen
 API:
-  ☐ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them
+  ✔ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them @done(2018-09-19 00:19) @project(API)
   Login:
     ✔ Add expiry parameter to /login endpoint to set expiry time of token (default=3 hours, max=1 day) @done(2018-07-10 22:24) @project(API / Login)
     ✔ Add revoke parameter to /login endpoint to revoke all other tokens at time of login (default=false) @done(2018-07-10 22:25) @project(API / Login)
