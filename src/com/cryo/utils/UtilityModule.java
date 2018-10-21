@@ -18,9 +18,8 @@ public class UtilityModule extends WebModule {
 	}
 	
 	public static void registerEndpoints(Website website) {
-		Spark.post("/utils", (req, res) -> {
-			return new UtilityModule(website).decodeRequest(req, res, RequestType.GET);
-		});
+		Spark.post("/utils", (req, res) -> new UtilityModule(website).decodeRequest(req, res, RequestType.POST));
+		Spark.get("/utils", (req, res) -> new UtilityModule(website).decodeRequest(req, res, RequestType.GET));
 	}
 
 	@Override
