@@ -276,7 +276,7 @@ function checkRestart() {
         return;
     };
     $.ajax({
-        url: 'http://66.70.190.195:8080/utils?action=get-restart-time',
+        url: 'http://66.70.190.195:8085/utils?action=get-restart-time',
         type: 'POST',
         error: () => {
             clearInterval(restart_timer);
