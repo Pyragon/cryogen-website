@@ -4,27 +4,9 @@ Before release:
   Announcements:
   ☐ Ensure votes can be claimed
   ☐ Fix comments for rest of staff/account section
-  ☐ Make auto updating client with option to sit in background and listen for events, then print them.
-  Auto Udpating Client:
-    ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
-    ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
-    ☐ Sits in background and taskbar and can listen for events to your acc
-    ☐ Create plugin system for the client that exposes an api with client data
-    Login Page:
-      ☐ Possibly a second 'insecure' option to just auto-login (Will save hashed pass on computer)
-      ☐ Decide whether to refresh token when expired, or require login again
-      ☐ Link forgotton password button to /recover?username= webpage
-      ✔ Remember Me button should delete previously saved username if unchecked @done(2018-07-17 22:24) @project(Before release / Auto Udpating Client / Login Page)
-    Enhancements:
-      ☐ Restyle login button on login UI
-      ☐ Restyle remember me button on login UI
-      ☐ Add animation to minimizing/maximizing screen
 API:
-  ✔ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them @done(2018-09-19 00:19) @project(API)
+    ☐ Add 'possible inputs' to endpoint params
   Login:
-    ✔ Add expiry parameter to /login endpoint to set expiry time of token (default=3 hours, max=1 day) @done(2018-07-10 22:24) @project(API / Login)
-    ✔ Add revoke parameter to /login endpoint to revoke all other tokens at time of login (default=false) @done(2018-07-10 22:25) @project(API / Login)
-    ☐ Add revoke action to /account endpoint to revoke all tokens (requires username/password)
     ☐ Add counting of invalid attempts and lock account after certain amount within time limit
 Forums:
   ☐ Get new forum logo + read/unread buttons
@@ -40,7 +22,6 @@ Layout fixes:
   ☐ Account buttons on Index
 General:
   ☐ Reduce as many connections to database as possible
-  ☐ Add return false to jquery clicks (forgot...) to prevent page scrolling
   ☐ Recode base to properly utilize a 'module' structure
   ☐ Cleanup github to only include required files
   ☐ Cleanup stylesheets to be dependent on section
@@ -50,9 +31,7 @@ General:
   ☐ Add ability for customized cursors
   ☐ Add admin panel for website functions. (reset cache, reset comments cache, etc)
 Registration:
-  ☐ Integrate captcha
 Comments:
-  ☐ Add username to commentlist so we can add check for players only being able to comment on their own comment lists (if someone gets hacky)
   ☐ Investigate differences in style because of different stylesheets across sections
 Shop:
 Staff Page:
@@ -100,6 +79,17 @@ Tracker:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+    ✔ Make auto updating client with option to sit in background and listen for events, then print them. @done(2018-10-23 20:33) @project(Before release)
+    ✔ Add revoke action to /account endpoint to revoke all tokens (requires username/password) @done(2018-10-23 20:34) @project(API / Login)
+    ✔ Add return false to jquery clicks (forgot...) to prevent page scrolling @done(2018-10-23 20:34) @project(General)
+    ✔ Integrate captcha @done(2019-01-10 02:29) @project(Registration)
+    ✔ Add username to commentlist so we can add check for players only being able to comment on their own comment lists (if someone gets hacky) @done(2018-12-29 02:31) @project(Comments)
+    ✔ Auto-updating client created in node.js and express @done(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
+    ✘ Load JAR into node in client (hopefully, otherwise just have it run the jar) @cancelled(2018-07-12 23:32) @project(Before release / Auto Udpating Client)
+    ✔ Remember Me button should delete previously saved username if unchecked @done(2018-07-17 22:24) @project(Before release / Auto Udpating Client / Login Page)
+    ✔ Add javadoc with requirements for using api endpoints and create/use program to create webpage for them @done(2018-09-19 00:19) @project(API)
+    ✔ Add expiry parameter to /login endpoint to set expiry time of token (default=3 hours, max=1 day) @done(2018-07-10 22:24) @project(API / Login)
+    ✔ Add revoke parameter to /login endpoint to revoke all other tokens at time of login (default=false) @done(2018-07-10 22:25) @project(API / Login)
   ✔ Ensure appeals can be sent @done(2018-07-07 22:40) @project(Before release / Appeals)
   ✔ Ensure appeals can be viewed @done(2018-07-07 22:40) @project(Before release / Appeals)
   ✔ Ensure appeals can be responded to @done(2018-07-07 23:12) @project(Before release / Appeals)

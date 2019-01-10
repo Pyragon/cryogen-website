@@ -1,7 +1,12 @@
 package com.cryo.modules.account;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
@@ -12,9 +17,17 @@ import com.cryo.db.impl.DisplayConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.CookieManager;
+import com.cryo.utils.DateUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
+import com.google.gson.JsonObject;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.HttpRequestWithBody;
+import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 
@@ -40,10 +53,9 @@ public class RegisterModule extends WebModule {
 			username = Utilities.formatNameForProtocol(username);
 			String password = request.queryParams("password");
 			String passVerify = request.queryParams("passwordVerify");
-			String bot = request.queryParams("bot");
-			String bot2 = request.queryParams("bot2");
+			String recaptchaToken = request.queryParams("token");
 			String error = "";
-			if(Utilities.hasNullOrEmpty(username,password,passVerify,bot,bot2))
+			if(Utilities.hasNullOrEmpty(username,password,passVerify,recaptchaToken))
 				error = "All fields must be filled out.";
 			else if(username.length() < 3 || username.length() > 12)
 				error = "Usernames must be between 3 and 12 characters";
@@ -51,22 +63,35 @@ public class RegisterModule extends WebModule {
 				error = "Passwords must be between 6 and 20 characters";
 			else if(!password.equals(passVerify))
 				error = "Passwords do not match.";
-			else if(!bot.equals("33") || !bot2.toLowerCase().equals("red")) 
-				error = "Wrong bot verification answer";
 			if(!error.equals(""))
-				return json(false, error);
+				return error(error);
+			HttpRequestWithBody body = Unirest.post("https://www.google.com/recaptcha/api/siteverify?secret="+Website.getProperties().getProperty("recaptcha_secret")+"&response="+recaptchaToken);
+			try {
+				HttpResponse<JsonNode> node = body.asJson();
+				JSONObject object = node.getBody().getObject();
+				if(object == null) return error("Error loading recaptcha response.");
+				if(!object.has("success") || !object.has("challenge_ts")) return error("Error loading recaptcha response.");
+				boolean success = object.getBoolean("success");
+				if(!success) return error("You failed the recaptcha! Please try again later.");
+				Calendar cal = javax.xml.bind.DatatypeConverter.parseDateTime(object.getString("challenge_ts"));
+				if(DateUtils.getDateDiff(cal.getTime(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
+			} catch (UnirestException e) {
+				e.printStackTrace();
+				return error(e.getMessage());
+			}
+			//Check recaptcha result
 			Object[] data = DisplayConnection.connection().handleRequest("name-exists", username, username);
 			if(data == null)
-				return json(false, "Error retrieving display name details");
+				return error("Error retrieving display name details");
 			if((boolean) data[0])
-				return json(false, "Username is already in use.");
+				return error("Username is already in use.");
 			String valid = Utilities.isValidDisplay(username);
 			if(valid != null && !valid.equals(""))
-				return json(false, valid);
+				return error(valid);
 			GlobalConnection connection = GlobalConnection.connection();
 			data = connection.handleRequest("register", username, password);
 			if(data == null)
-				return json(false, "Error registering.");
+				return error("Error registering.");
 			String salt = (String) data[0];
 			String hash = (String) data[1];
 			data = connection.handleRequest("get-account", username);
@@ -80,6 +105,7 @@ public class RegisterModule extends WebModule {
 		}
 		HashMap<String, Object> model = new HashMap<>();
 		model.put("success", request.queryParams().contains("success"));
+		model.put("siteKey", "6LdcjYgUAAAAAA6w1_a2z8I5tsLFpGaYSiruNI62");
 		return render("./source/modules/account/register.jade", model, request, response);
 	}
 	
