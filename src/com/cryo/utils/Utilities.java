@@ -64,6 +64,10 @@ public class Utilities {
 		return builder.toString();
 	}
 
+	public static String replaceLast(String text, String regex, String replacement) {
+		return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
+	}
+
 	public static long timePassed(long time) {
 		return System.currentTimeMillis() - time;
 	}
@@ -102,9 +106,10 @@ public class Utilities {
 			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
 			'8', '9', ' ' };
 	
-	public static final String[] INVALID_WORDS = { "admin", "mod" };
+	public static final String[] INVALID_WORDS = { "Admin ", " Admin", " Mod", "Mod " };
 	
 	public static String isValidDisplay(String name) {
+		name = name.toLowerCase();
 		if(name.length() < 3 || name.length() > 12)
 			return "Name must be between 3 and 12 characters.";
 		if(containsInvalidCharacter(name))
@@ -113,7 +118,8 @@ public class Utilities {
 			return "Name contains two spaces or hyphens in a row.";
 		if(startsOrEndsWith(name))
 			return "Name cannot start or end with a space or hyphen.";
-		if(containsInvalidWords(name))
+		if(name.startsWith("mod ") || name.endsWith(" mod") || name.startsWith("admin ") || name.endsWith(" admin") ||
+				name.startsWith("jmod ") || name.endsWith(" jmod") || containsInvalidWords(name))
 			return "Name contains invalid words.";
 		return null;
 	}
