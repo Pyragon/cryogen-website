@@ -83,11 +83,13 @@ html
 
                 checkIssue();
 
-                var timeout;
+                var issueTimeout;
+
+                setInterval(loadOnlinePlayers, 1000);
 
                 $(window).resize(function() {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(checkIssue, 100);
+                    clearTimeout(issueTimeout);
+                    issueTimeout = setTimeout(checkIssue, 100);
                 });
 
                 //- $(document).on('click', function(e) {
@@ -110,7 +112,15 @@ html
                         $('#navbar-collapse-1').addClass('small-bar');
                     else
                         $('#navbar-collapse-1').removeClass('small-bar');
-                    clearTimeout(timeout);
+                    clearTimeout(issueTimeout);
+                }
+
+                function loadOnlinePlayers() {
+                    $.post('http://localhost:5555/game/players/online', { }, (ret) => {
+                        var data = getJSON(ret);
+                        if(data == null) return false;
+                        $('#p-online').text('Players Online: '+data.online.all);
+                    });
                 }
 
                 $(document).on('click', '.signin', openLogin)
@@ -157,7 +167,7 @@ html
         body
             input#shutdown(type='hidden', value=shutdown)
             div#page-container
-                div.color-white.header-right#p-online= 'Players In-game: '+online
+                div.color-white.header-right#p-online Players Online: Loading...
                 if loggedIn
                     if user.getRights() > 0
                         div.color-white.header-left.vis-link#staff-actions= actions+' items requiring your action'
