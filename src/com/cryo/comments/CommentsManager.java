@@ -23,11 +23,11 @@ public class CommentsManager {
 		commentLists = new HashMap<>();
 	}
 	
-	public int createCommentList(int rightsReq) {
-		Object[] data = CommentsConnection.connection().handleRequest("add-comment-list", rightsReq);
+	public int createCommentList(int rightsReq, String creator) {
+		Object[] data = CommentsConnection.connection().handleRequest("add-comment-list", creator, rightsReq);
 		if(data == null) return -1;
 		int nextListId = (int) data[0];
-		CommentList list = new CommentList(nextListId, rightsReq, new HashMap<Integer, Comment>());
+		CommentList list = new CommentList(nextListId, rightsReq, creator, new HashMap<>());
 		commentLists.put(nextListId, list);
 		return nextListId;
 	}

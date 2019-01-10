@@ -1,188 +1,189 @@
 script.
-  var announce_page = 1
-  var announce_filters = {}
-  var archived = false
-  var n = null
-  $(document).ready(() => {
+    var announce_page = 1
+    var announce_filters = {}
+    var archived = false
+    var n = null
+    $(document).ready(() => {
 
-    loadList()
+        loadList();
 
-    function loadList() {
-      $.post('/staff/announcements', { action: 'load-list', archive:archived, page:announce_page }, (ret) => {
-        var data = getJSON(ret)
-        if(data == null) return null
-        $('#announcements-main').html(data.html)
-        updatePage(data.pageTotal, announce_page, 'announcements')
-      })
-    }
+        function loadList() {
+            if($('.search-filter').length > 0) return clickedSearchIcon();
+            $.post('/staff/announcements', { action: 'load-list', archive:archived, page:announce_page }, (ret) => {
+                var data = getJSON(ret);
+                if(data == null) return null;
+                $('#announcements-main').html(data.html);
+                updatePage(data.pageTotal, announce_page, 'announcements');
+            });
+        }
 
-    function loadListWPage(archive, page) {
-      this.announce_page = page
-      this.archived = archive
-      loadList();
-    }
+        function loadListWPage(archive, page) {
+            this.announce_page = page;
+            this.archived = archive;
+            loadList();
+        }
 
-    function viewCreateNoty() {
-      $.post('/staff/announcements', { action:'view-create' }, (ret) => {
-        var data = getJSON(ret);
-        if(data == null) return null;
-        n = noty({
-          text: 'Create Announcement',
-          type: 'confirm',
-          layout: 'center',
-          template: data.html,
-          dismissQueue: false,
-          theme: 'cryogen',
-          buttons: [{
-            addClass: 'btn btn-primary', text: 'Create', onClick: ($noty) => {
-              var title = $('#announce-title').val()
-              var text = $('#announce-text').val()
-              var date = $('#announce-date').val()
-              if(!title || !text || !date) {
-                sendAlert('All fields must be filled out.')
-                return false
-              }
-              $.post('/staff/announcements', { action:'create', title:title, text:text, expiry:date }, (ret) => {
-                var data = getJSON(ret)
-                if(data == null) return null
-                archive = false
-                announce_page = 1
-                sendAlert('Announcement successfully posted!')
-                loadList()
-                $noty.close()
-              })
-            }
-          },
-          {
-            addClass: 'btn btn-danger', text: 'Cancel',  onClick: function($noty) {
-              $noty.close();
-            }
-          }]
-        })
-      });
-    }
+        function viewCreateNoty() {
+            $.post('/staff/announcements', { action:'view-create' }, (ret) => {
+                var data = getJSON(ret);
+                if(data == null) return null;
+                n = noty({
+                    text: 'Create Announcement',
+                    type: 'confirm',
+                    layout: 'center',
+                    template: data.html,
+                    dismissQueue: false,
+                    theme: 'cryogen',
+                    buttons: [{
+                        addClass: 'btn btn-primary', text: 'Create', onClick: ($noty) => {
+                            var title = $('#announce-title').val()
+                            var text = $('#announce-text').val()
+                            var date = $('#announce-date').val()
+                            if(!title || !text || !date) {
+                                sendAlert('All fields must be filled out.')
+                                return false
+                            }
+                            $.post('/staff/announcements', { action:'create', title:title, text:text, expiry:date }, (ret) => {
+                                var data = getJSON(ret)
+                                if(data == null) return null
+                                archive = false
+                                announce_page = 1
+                                sendAlert('Announcement successfully posted!')
+                                loadList()
+                                $noty.close()
+                            })
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Cancel',  onClick: function($noty) {
+                            $noty.close();
+                        }
+                    }]
+                })
+            });
+        }
 
-    function viewAnnouncement() {
-      var id = $(this).closest('tr').data('id')
-      $.post('/staff/announcements', { action: 'read', id:id }, (ret) => {
-        var data = getJSON(ret)
-        if(data == null) return false
-        var buttons = []
-        if(data.unread)
-          buttons.push({
-            addClass: 'btn btn-primary btn-green', text: 'Mark as Read', onClick: function($noty) {
-              $.post('/staff/announcements', { action: 'mark-read', id:id }, (ret) => {
+        function viewAnnouncement() {
+            var id = $(this).closest('tr').data('id')
+            $.post('/staff/announcements', { action: 'read', id:id }, (ret) => {
                 var data = getJSON(ret)
                 if(data == null) return false
-                sendAlert('Announcement has been marked as read. Thank you.')
-                loadList()
-              })
-              $noty.close();
+                var buttons = []
+                if(data.unread)
+                    buttons.push({
+                        addClass: 'btn btn-primary btn-green', text: 'Mark as Read', onClick: function($noty) {
+                            $.post('/staff/announcements', { action: 'mark-read', id:id }, (ret) => {
+                                var data = getJSON(ret)
+                                if(data == null) return false
+                                sendAlert('Announcement has been marked as read. Thank you.')
+                                loadList()
+                            })
+                            $noty.close();
+                        }
+                    })
+                buttons.push({
+                    addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                        $noty.close();
+                    }
+                })
+                n = noty({
+                    text: 'Read Announcement',
+                    type: 'confirm',
+                    layout: 'center',
+                    template: data.html,
+                    dismissQueue: false,
+                    theme: 'cryogen',
+                    buttons: buttons
+                })
+            })
+        }
+
+        function switchArchive() {
+            archived = !archived
+            announce_page = 1
+            removeFilters('announcements')
+            $('#archive-announcements').html(' View '+(archived ? 'Active' : 'Archive'))
+            loadList()
+        }
+
+        function changePage() {
+            var page = $(this).data('page')
+            if(page == announce_page)
+                return false;
+            announce_page = page;
+            loadList();
+        }
+
+        $(document).click(function(e) {
+            var target = e.target;
+            if(n == null)
+                return;
+            var id = n.options.id;
+            if($(e.target).closest('#'+id).length) {
+
+            } else {
+                n.close();
+                n = null;
             }
-          })
-        buttons.push({
-          addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
-            $noty.close();
-          }
+        });
+
+        $(document).keydown((e) => {
+            if(e.which == 13)
+                clickedSearchIcon();
         })
-        n = noty({
-          text: 'Read Announcement',
-          type: 'confirm',
-          layout: 'center',
-          template: data.html,
-          dismissQueue: false,
-          theme: 'cryogen',
-          buttons: buttons
-        })
-      })
-    }
 
-    function switchArchive() {
-      archived = !archived
-      announce_page = 1
-      removeFilters('announcements')
-      $('#archive-announcements').html(' View '+(archived ? 'Active' : 'Archive'))
-      loadList()
-    }
+        function clickedSearchIcon() {
+            clickSearchIcon('announcements', false, announce_page, loadListWPage)
+        }
 
-    function changePage() {
-      var page = $(this).data('page')
-      if(page == announce_page)
-        return false;
-      announce_page = page;
-      loadList();
-    }
+        function clickedFilter() {
+            clickRemoveFilter('announcements', $(this), false, loadListWPage)
+        }
 
-    $(document).click(function(e) {
-      var target = e.target;
-      if(n == null)
-        return;
-      var id = n.options.id;
-      if($(e.target).closest('#'+id).length) {
+        $('#announcements-create').click(viewCreateNoty)
+        $('#announcements-archive-btn').click(switchArchive)
+        $('#search-announcements-icon').attr('title', OPEN)
+        $('#search-announcements-icon').click(clickedSearchIcon)
 
-      } else {
-        n.close();
-        n = null;
-      }
-    });
+        $(document).on('click', '#announcements-pages span', changePage)
+        $(document).on('click', '.remove-filter', clickedFilter)
+        $(document).on('click', '.read-announce', viewAnnouncement)
 
-    $(document).keydown((e) => {
-      if(e.which == 13)
-        clickedSearchIcon();
     })
-
-    function clickedSearchIcon() {
-      clickSearchIcon('announcements', false, announce_page, loadListWPage)
-    }
-
-    function clickedFilter() {
-      clickRemoveFilter('announcements', $(this), false, loadListWPage)
-    }
-
-    $('#announcements-create').click(viewCreateNoty)
-    $('#announcements-archive-btn').click(switchArchive)
-    $('#search-announcements-icon').attr('title', OPEN)
-    $('#search-announcements-icon').click(clickedSearchIcon)
-
-    $(document).on('click', '#announcements-pages span', changePage)
-    $(document).on('click', '.remove-filter', clickedFilter)
-    $(document).on('click', '.read-announce', viewAnnouncement)
-
-  })
 h5 Announcements
 p.small.info The following list is announcements created by Administrators, Developers, and Owners of Cryogen.
 p.small.info You may view the announcement by clicking it. You will then need to click the button at the bottom to set the announcement as 'Read'
 p.small.info Announcements posted here MUST be read by all staff, and this is monitored to ensure staff are reading all announcements.
 div.row
-  div.iactions
-    div
-      div(style='float: left; margin: 10px 10px')
-        div.col-xs-4
-          p.color-grey.search-info Click the search icon to begin searching through announcements. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
-        div.col-xs-4
-          p.color-grey.search-info Filters: createdby: (name), title: (name), date: (span-span, in dd/mm/yyyy), expiry(span-span, in dd/mm/yyyy)
-        div.col-xs-4
-          p.color-grey.search-info Example: createdby: cody, title: first
-      div(style='float: right; margin: 33.5px 5px;')
-        if user.getRights() == 2
-          div.link#announcements-create
-            i.fa.fa-plus-square
-            span  Create
-        div.link#announcements-archive-btn
-          i.fa.fa-archive
-          span#archive-announcements  View Archive
-        if user.getRights() == 2
-          div.link#announcements-mod(title='TODO')
-            i.fa.fa-shield
-            span  Moderation
+    div.iactions
+        div
+            div(style='float: left; margin: 10px 10px')
+                div.col-xs-4
+                    p.color-grey.search-info Click the search icon to begin searching through announcements. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+                div.col-xs-4
+                    p.color-grey.search-info Filters: createdby: (name), title: (name), date: (span-span, in dd/mm/yyyy), expiry(span-span, in dd/mm/yyyy)
+                div.col-xs-4
+                    p.color-grey.search-info Example: createdby: cody, title: first
+            div(style='float: right; margin: 33.5px 5px;')
+                if user.getRights() == 2
+                    div.link#announcements-create
+                        i.fa.fa-plus-square
+                        span  Create
+                div.link#announcements-archive-btn
+                    i.fa.fa-archive
+                    span#archive-announcements  View Archive
+                if user.getRights() == 2
+                    div.link#announcements-mod(title='TODO')
+                        i.fa.fa-shield
+                        span  Moderation
 div.row(style='padding: 15px;')
-  div#search-announcements(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
-    div
-      span.fa.fa-search.link#search-announcements-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
-      div#search-announcements-pin(style='float: right; display: none;', display='none')
-        input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
-  div.search-filters-announcements(style='clear: both; float: right;')
-  div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
-  div#announcements-main
-  div.pages
-    div#announcements-pages
+    div#search-announcements(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+        div
+            span.fa.fa-search.link#search-announcements-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+            div#search-announcements-pin(style='float: right; display: none;', display='none')
+                input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+    div.search-filters-announcements(style='clear: both; float: right;')
+    div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+    div#announcements-main
+    div.pages
+        div#announcements-pages

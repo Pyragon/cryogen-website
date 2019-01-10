@@ -15,6 +15,7 @@ public class CommentList {
 	
 	private int listId;
 	private int rightsReq;
+	private String creator;
 	private HashMap<Integer, Comment> comments;
 	
 	public boolean hasStaffReplied() {

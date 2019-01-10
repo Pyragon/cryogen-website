@@ -315,7 +315,7 @@ public class PunishmentsSection implements StaffSection {
 					c.add(Calendar.DAY_OF_YEAR, length);
 					expiry = new Timestamp(c.getTimeInMillis());
 				}
-				int commentList = Website.instance().getCommentsManager().createCommentList(1);
+				int commentList = Website.instance().getCommentsManager().createCommentList(1, account.getUsername());
 				punishment = new Punishment(-1, name, type, null, expiry, account.getUsername(), reason, true, -1, null, null, commentList);
 				PunishmentsConnection.connection().handleRequest("create-punishment", punishment);
 				prop.put("success", true);

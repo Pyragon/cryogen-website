@@ -21,7 +21,6 @@ import spark.Request;
 public class CookieManager {
 	
 	//User loads page, if sess_id is present, find acc from id
-	//sess_id = username+password+salt
 	
 	public static boolean isLoggedIn(Request request) {
 		return getAccount(request) != null;

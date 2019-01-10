@@ -53,7 +53,7 @@ public class CommentsModule extends WebModule {
 				prop.put("error", "Error loading comment list.");
 				break;
 			}
-			if(account.getRights() < list.getRightsReq()) {
+			if(account.getRights() < list.getRightsReq() || (!account.getUsername().equals(list.getCreator()) && account.getRights() == 0)) {
 				prop.put("success", false);
 				prop.put("error", "You do not have sufficient permission to comment on this.");
 				break;

@@ -31,9 +31,10 @@ public class CommentsConnection extends DatabaseConnection {
 			data = select("lists", "list_id=?", GET_COMMENT_LIST, listId);
 			if(data == null) return null;
 			int rights = (int) data[1];
+			String creator = (String) data[2];
 			data = select("comments", "list_id=?", GET_COMMENTS, listId);
 			if(data == null) return null;
-			return new Object[] { new CommentList(listId, rights, (HashMap<Integer, Comment>) data[0]) };
+			return new Object[] { new CommentList(listId, rights, creator, (HashMap<Integer, Comment>) data[0]) };
 		case "get-comment":
 			return select("comments", "id=?", GET_COMMENT, (int) data[1]);
 		case "add-comment":
@@ -46,14 +47,15 @@ public class CommentsConnection extends DatabaseConnection {
 			break;
 		case "add-comment-list":
 			int rightsReq = 0;
-			if(data.length > 1)
-				rightsReq = (int) data[1];
+			creator = (String) data[1];
+			if(data.length > 2)
+				rightsReq = (int) data[2];
 			data = GlobalConnection.connection().handleRequest("get-misc-data", "comment_list_increment");
 			int commentList = -1;
 			if(data != null)
 				commentList = Integer.parseInt((String) data[0]);
 			commentList++;
-			insert("lists", commentList, rightsReq);
+			insert("lists", commentList, rightsReq, creator);
 			GlobalConnection.connection().handleRequest("set-misc-data", "comment_list_increment", Integer.toString(commentList));
 			return new Object[] { commentList };
 		}
@@ -80,7 +82,8 @@ public class CommentsConnection extends DatabaseConnection {
 		if(empty(set)) return null;
 		int listId = getInt(set, "list_id");
 		int rights = getInt(set, "rights");
-		return new Object[] { listId, rights };
+		String creator = getString(set, "creator");
+		return new Object[] { listId, rights, creator };
 	};
 	
 	private Comment loadComment(ResultSet set) {

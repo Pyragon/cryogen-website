@@ -96,7 +96,7 @@ function getJSON(ret) {
         console.error('Error with return from server!', ret);
         return null;
     }
-    if (!data.success) {
+    if (typeof data.success === 'undefined') {
         sendAlert('Session expired! Please reload the page to login again.');
         return null;
     }
@@ -114,95 +114,6 @@ function closeNoty(noty) {
     if (comment_n != null)
         comment_n.close()
     comment_n = null
-}
-
-function loadPunishment(id, appeal, mod) {
-    $.post('/staff', {
-        mod: 'punish',
-        action: 'view-punish',
-        id: id,
-        appeal: appeal
-    }, function(ret) {
-        var data = getJSON(ret);
-        if (data == null) return;
-        update(false, data.html, mod);
-        update(true, 'Currently viewing punishment', mod);
-        hidePages(mod);
-    }).fail(function() {
-        sendAlert('Error connecting to the website server. Please try again later.');
-    });
-}
-
-function loadAppeal(id, mod) {
-    $.post('/staff', {
-        mod: 'appeal',
-        action: 'view-appeal',
-        id: id
-    }, function(ret) {
-        var data = getJSON(ret);
-        if (data == null) return;
-        update(false, data.html, mod);
-        update(true, 'Currently viewing appeal', mod);
-        hidePages(mod);
-    }).fail(function() {
-        sendAlert('Error connecting to the website server. Please try again later.');
-    });
-}
-
-function loadReport(mod, archive, id) {
-    $.post('/staff', {
-        mod: mod,
-        action: 'view-report',
-        id: id,
-        archived: archive
-    }, function(ret) {
-        var data = getJSON(ret);
-        if (data == null) return;
-        update(true, 'Currently viewing report', mod);
-        update(false, data.html, mod);
-        hidePages(mod);
-    }).fail(function() {
-        sendAlert('Error connecting to the website server. Please try again later.');
-    });
-}
-
-function loadRecovery(id) {
-    $.post('/staff', {
-        mod: 'recover',
-        action: 'view',
-        id: id
-    }, function(ret) {
-        var data = getJSON(ret);
-        if (data == null) return;
-        update(true, 'Currently viewing recovery', 'recover');
-        update(false, data.html, 'recover');
-        hidePages('recover');
-    }).fail(function() {
-        sendAlert('Error connecting to the website server. Please try again later.');
-    });
-}
-
-function loadRecoveryList() {
-    loadList('recover', archive, recover_page);
-    return false;
-}
-
-function loadList(mod, archive, page) {
-    $.post('/staff', {
-        mod: mod,
-        action: 'view-list',
-        archived: archive,
-        page: page
-    }, function(ret) {
-        var data = getJSON(ret);
-        if (data == null) return;
-        update(false, data.html, mod);
-        update(true, getDescription(archive), mod);
-        updatePage(data.pageTotal, page, mod);
-        removeFilters(mod);
-    }).fail(function() {
-        sendAlert('Error connecting to the website server. Please try again later.');
-    });
 }
 
 function update(info, data, mod) {
@@ -226,37 +137,6 @@ function sendAlert(text) {
         layout: 'topRight',
         timeout: 5000,
         theme: 'cryogen'
-    });
-}
-
-//account search section
-
-//staff section search
-var searching = [];
-
-function search(mod, page, archive, input = null) {
-    if (input === null)
-        input = filtersToQuery(mod);
-    if (input === '' || input === ',' || input === ', ') {
-        loadList(mod, archive, 1);
-        updateSearchInput(mod, '');
-        searching[mod] = false;
-        return false;
-    }
-    searching[mod] = true;
-    changed = true;
-    $.post('/staff', {
-        mod: mod,
-        action: 'search',
-        search: input,
-        page: page,
-        archive: archive
-    }, function(ret) {
-        var data = getJSON(ret);
-        if (data == null) return false;
-        update(false, data.html, mod);
-        updateSearchInput(mod, updateFilters(mod, data.filters));
-        updatePage(data.pageTotal, page, mod);
     });
 }
 
@@ -384,14 +264,6 @@ function validName(name) {
     return null;
 }
 
-function post(link, options, callback) {
-    $.post(link, options, function(ret) {
-        callback(ret);
-    }).fail(function() {
-        sendAlert('Error connecting to website server. Please try again.');
-    });
-}
-
 //static
 
 $(document).ready(function() {
@@ -401,8 +273,6 @@ $(document).ready(function() {
         shutdown_timer = setInterval(decreaseRestart, 1000);
     else restart_timer = setInterval(checkRestart, 5000);
 
-    $(document).on('click', '.restart-page', function() {
-        location.reload();
-    });
+    $(document).on('click', '.restart-page', () => location.reload());
 
 });

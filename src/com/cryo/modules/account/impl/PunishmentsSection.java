@@ -144,7 +144,7 @@ public class PunishmentsSection implements AccountSection {
 				prop.put("error", "Appeal cannot exceed 750 characters.");
 				break;
 			}
-			int listId = Website.instance().getCommentsManager().createCommentList(0);
+			int listId = Website.instance().getCommentsManager().createCommentList(0, account.getUsername());
 			try {
 				Appeal appeal = new Appeal(0, punish.getType(), account.getUsername(), title, info, "Created", 1, id, listId, null);
 				data = PunishmentsConnection.connection().handleRequest("create-appeal", appeal);

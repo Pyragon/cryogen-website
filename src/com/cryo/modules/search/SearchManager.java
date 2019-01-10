@@ -50,12 +50,8 @@ public class SearchManager {
 	}
 	
 	public static void registerEndpoints(Website website) {
-		post("/search/:module", (req, res) -> {
-			return new Gson().toJson(handleEndpoint(req.params(":module"), req, res));
-		});
-		get("/search/:module", (req, res) -> {
-			return new Gson().toJson(handleEndpoint(req.params(":module"), req, res));
-		});
+		post("/search/:module", (req, res) -> new Gson().toJson(handleEndpoint(req.params(":module"), req, res)));
+		get("/search/:module", (req, res) -> new Gson().toJson(handleEndpoint(req.params(":module"), req, res)));
 	}
 	
 	public static Properties handleEndpoint(String module, Request request, Response response) {
