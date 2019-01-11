@@ -121,13 +121,17 @@ public abstract class WebModule {
 	}
 	
 	public static String redirect(String redirect, int time, Request request, Response response) {
+		return redirect(redirect, time, null, request, response);
+	}
+
+	public static String redirect(String redirect, int time, HashMap<String, Object> model, Request request, Response response) {
+		if(model == null) model = new HashMap<>();
 		if(redirect == null || redirect == "")
 			redirect = "/";
 		if(time == -1) {
 			response.redirect(redirect);
 			return "";
 		}
-		HashMap<String, Object> model = new HashMap<>();
 		model.put("redirect", redirect);
 		model.put("time", time);
 		return render("./source/modules/redirect.jade", model, request, response);

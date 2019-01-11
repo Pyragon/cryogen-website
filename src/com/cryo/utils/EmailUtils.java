@@ -32,7 +32,7 @@ public class EmailUtils {
 			return;
 		EmailConnection.connection().handleRequest("add-verify", username, email, random);
 		sendEmail(email, "Cryogen - Email verification almost complete!", "Hello, "+AccountUtils.getDisplayName(account)+"!"
-				+ "\n\nYour verification is nearly complete. Click or paste this link into your browser to verify your email! http://cryogen-rsps.com/account?action=verify&id="+random+"\n\nThis link will expire in 24 hours.");
+				+ "\n\nYour verification is nearly complete. Click or paste this link into your browser to verify your email! http://cryogen.live/account?action=verify&id="+random+"\n\nThis link will expire in 24 hours.");
 	}
 	
 	public static void sendRecoveryEmail(String username, String id, String email) {
@@ -42,35 +42,44 @@ public class EmailUtils {
 			return;
 		RecoveryConnection.connection().handleRequest("add-email-rec", id, random);
 		sendEmail(email, "Cryogen - Password Recovery!",
-				"Hello, "+AccountUtils.getDisplayName(account)+", a password recovery attempt has been made on your account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen-rsps.com/recover?action=redeem_instant&method=email&recovery_id="+id+"&instant_id="+random+"\n\nThis link will expire in 24 hours.");
+				"Hello, "+AccountUtils.getDisplayName(account)+", a password recovery attempt has been made on your account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen.live/recover?action=redeem_instant&method=email&recovery_id="+id+"&instant_id="+random+"\n\nThis link will expire in 24 hours.");
 	}
 	
 	public static void sendEmail(String email, String subject, String message) {
-		final String email_user = (String) Website.getProperties().get("email");
-		final String password = (String) Website.getProperties().get("emailpass");
-		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.port", "587");
+		Session session;
+		try {
+			final String email_user = (String) Website.getProperties().get("email");
+			final String password = (String) Website.getProperties().get("emailpass");
+			Properties props = new Properties();
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.host", "mail.privateemail.com");
+			props.put("mail.smtp.port", "587");
 
-		Session session = Session.getInstance(props,
-		  new javax.mail.Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(email_user, password);
-			}
-		  });
+			session = Session.getInstance(props, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(email_user, password);
+				}
+			});
+		} catch(Exception e) {
+			e.printStackTrace();
+			return;
+		}
 
 		try {
 
 			Message mime = new MimeMessage(session);
-			mime.setFrom(new InternetAddress("webmaster@cryogen-rsps.com"));
+			mime.setFrom(new InternetAddress("noreply@cryogen.live"));
 			mime.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(email));
 			mime.setSubject(subject);
 			mime.setText(message);
 
-			Transport.send(mime);
+			try {
+				Transport.send(mime);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);

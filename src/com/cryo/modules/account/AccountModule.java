@@ -2,6 +2,7 @@ package com.cryo.modules.account;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.EmailConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.AccountSection;
 import com.cryo.utils.CookieManager;
@@ -40,10 +41,23 @@ public class AccountModule extends WebModule {
 		get("/account", (request, response) -> {
 			if(!CookieManager.isLoggedIn(request))
 				return WebModule.showLoginPage("/account/overview", request, response);
+			String action = request.queryParams("action");
+			HashMap<String, Object> model = new HashMap<>();
+			if(action != null) {
+				switch(action) {
+					case "verify":
+						String id = request.queryParams("id");
+						Object[] data = EmailConnection.connection().handleRequest("verify", id);
+						model.put("title", data != null ? "Email verification successful!" : "Error verifying email!");
+						model.put("title_colour", data != null ? "green" : "red");
+						if(data != null) model.put("extra_info", "Your email verification was complete. You are now being redirected back to the account section.");
+						else model.put("extra_info", "Email verification could not be completed. Perhaps the token expired? Please try again later or contact an Admin if this problem persists.");
+						return redirect("/account", 10, model, request, response);
+				}
+			}
 			AccountSection section = sections.get("overview");
 			if(section == null)
 				return Website.render404(request, response);
-			HashMap<String, Object> model = new HashMap<>();
 			model.put("section", section);
 			return WebModule.render("./source/modules/account/index.jade", model, request, response);
 		});

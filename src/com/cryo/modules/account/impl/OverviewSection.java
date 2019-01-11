@@ -91,7 +91,7 @@ public class OverviewSection implements AccountSection {
 			prop.put("used", (boolean) data[0]);
 			break;
 		case "submit":
-			HashMap<String, String> values = new HashMap<>();
+			HashMap<String, String> values;
 			String valueString = request.queryParams("values");
 			if(valueString == null || valueString.equals("")) {
 				prop.put("success", false);
