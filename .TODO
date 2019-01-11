@@ -58,8 +58,10 @@ Account:
   ☐ Add failsafes in viewings to ensure player can only view their own reports, punishments, etc
 Other:
   ☐ Create independant html pages to serve as error pages for nginx
-  ☐ Create html pages for emails
-  ☐ Create cryogen-rsps.com emails and change webmaster emails + recovery/verification from addresses
+Email:
+    ✔ Create noreply, anon, cody cryogen.live emails @done(2019-01-10 02:40) @project(Email)
+    ✔ Change forum verification + recovery emails to come from noreply email @done(2019-01-10 18:57) @project(Email)
+    ☐ Create html pages for emails
 Securiy:
   ☐ Add 'password' to recovery statuses only given when you submit + view (id all that is needed and it is sent to client all the time)
   ☐ Change session ids to use local storage instead of cookies
