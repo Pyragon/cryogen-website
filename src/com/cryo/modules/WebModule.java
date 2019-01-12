@@ -47,7 +47,6 @@ public abstract class WebModule {
 		model.put("baseurl", "http://localhost/");
 		model.put("formatter", new DateUtils());
 		model.put("acutils", new AccountUtils());
-		model.put("online", Utilities.getOnlinePlayers());
 		model.put("shutdown", Website.SHUTDOWN_TIME);
 		model.put("tools", new Tools());
 		Account account = CookieManager.getAccount(request);

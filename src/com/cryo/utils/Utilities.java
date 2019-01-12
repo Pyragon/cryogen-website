@@ -94,13 +94,6 @@ public class Utilities {
 		Matcher matcher = pattern.matcher(seq);
 		return matcher.matches();
 	}
-	
-	public static int getOnlinePlayers() {
-		Object[] data = GlobalConnection.connection().handleRequest("get-misc-data", "players_logged");
-		if (data == null)
-			return -1;
-		return Integer.parseInt((String) data[0]);
-	}
 
 	public static final char[] VALID_CHARS = { '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
