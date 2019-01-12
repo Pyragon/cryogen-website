@@ -176,7 +176,6 @@ public class Website {
 			post("/view_status", (req, res) -> new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.POST));
 			get(RegisterModule.PATH, (req, res) -> new RegisterModule(this).decodeRequest(req, res, RequestType.GET));
 			post(RegisterModule.PATH, (req, res) -> new RegisterModule(this).decodeRequest(req, res, RequestType.POST));
-			get("/players", (req, res) -> Integer.toString(Utilities.getOnlinePlayers()));
 			get("/online", (req, res) -> {
 				SocketAddress addr = new InetSocketAddress("localhost", 43594);
 				@Cleanup Socket socket = new Socket();
@@ -188,9 +187,8 @@ public class Website {
 				return "online";
 			});
 			get("/favicon.ico", (req, response) -> {
-	                try {
-	                    InputStream in = null;
-	                    OutputStream out = null;
+	                    @Cleanup InputStream in = null;
+	                    @Cleanup OutputStream out = null;
 	                    try {
 	                        in = new BufferedInputStream(new FileInputStream(FAVICON));
 	                        out = new BufferedOutputStream(response.raw().getOutputStream());
@@ -199,16 +197,13 @@ public class Website {
 	                        ByteStreams.copy(in, out);
 	                        out.flush();
 	                        return "";
-	                    } finally {
-	                        in.close();
-	                    }
-	                } catch (FileNotFoundException ex) {
-	                    response.status(404);
-	                    return ex.getMessage();
-	                } catch (IOException ex) {
-	                    response.status(500);
-	                    return ex.getMessage();
-	                }
+						} catch (FileNotFoundException ex) {
+							response.status(404);
+							return ex.getMessage();
+						} catch (IOException ex) {
+							response.status(500);
+							return ex.getMessage();
+						}
 	        });
 			get("/rsfont", (req, res) -> {
 				try {
