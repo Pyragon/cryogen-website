@@ -120,7 +120,7 @@ html
                         var data = getJSON(ret);
                         if(data == null) return false;
                         $('#p-online').text('Players Online: '+data.online.all);
-                    });
+                    }).fail(() => $('#p-online').text('Unable to connect to API'));
                 }
 
                 $(document).on('click', '.signin', openLogin)
