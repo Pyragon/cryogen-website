@@ -1,25 +1,25 @@
 table.table.hs-table.table-condensed.table-responsive.recoveries-table.widget(style='font-size: 12px;')
-  thead
-    tr
-      th.t-center Username
-      th.t-center Status
-      if archive
-        th.t-center Reason
-      th.t-center Date
-      th.t-center View
-  tbody
-    for recovery in recoveries
-      -var arch = archive ? 'true' : 'false';
-      tr(data-id=recovery.getId())
-        td.b-right= '$for-name='+recovery.getUsername()+'$end'
-        td.b-right
-          span(class=''+recovery.getColour())= recovery.getStatus()
-        if archive
-          td.b-right.reason= recovery.getActive() == 1 ? 'N/A' : 'Hover'
-            if recovery.getActive() == 2
-              div.hover-content
-                div.bubble
-                  p.reason-title.color-white Reason
-                  p.t-center(style='padding: 5px;')= recovery.getReason()
-        td.b-right= formatter.formatTimestamp(recovery.getDate(), 'MMM dd, YYYY h:mm a')
-        td.vis-link.viewr View
+    thead
+        tr
+            th.t-center Name
+            th.t-center Status
+            if archive
+                th.t-center Reason
+            th.t-center Date
+            th.t-center View
+    tbody
+        for recovery in recoveries
+            -var arch = archive ? 'true' : 'false';
+            tr(data-id=recovery.getId())
+                td.b-right= '$for-name='+recovery.getUsername()+'$end'
+                td.b-right
+                    span(class=''+recovery.getColour())= recovery.getStatus()
+                if archive
+                    td.b-right.reason= recovery.getActive() == 1 ? 'N/A' : 'Hover'
+                        if recovery.getActive() == 2
+                            div.hover-content
+                                div.bubble
+                                    p.reason-title.color-white Reason
+                                    p.t-center(style='padding: 5px;')= recovery.getReason()
+                td.b-right= formatter.formatTimestamp(recovery.getDate(), 'MMM dd, YYYY h:mm a')
+                td.vis-link.viewr View

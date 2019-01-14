@@ -1,38 +1,38 @@
 table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;')
-  thead
-    tr
-      th.t-center Type
-      th.t-center Title
-      if staff
-        th.t-center Username
-      th.t-center Date Reported
-      if archived
-        th.t-center Date Archived
-      th.t-center Last Action
-      th.t-center Comment Count
-      th.t-center Staff Replied
-      th.t-center View
-  tbody
-    if reports.size() == 0
-      tr
-        td.color-red(align='center', colspan='8')= 'Currently no '+(archive ? 'expired' : 'active')+' reports.'
-    else
-      for report in reports
-        tr(data-id=report.getId(), data-type=report.type())
-          td.b-right
-            if report.type() == 0
-              span.fa.fa-bug
-            else
-              span.fa.fa-user
-            span= '  '+report.type() == 0 ? ' Bug' : ' Player'
-          td.b-right= report.getTitle()
-          if staff
-            td.b-right= '$for-name='+report.getUsername()+'$end'
-          td.b-right= formatter.formatTimestamp(report.getDate(), 'MMM dd, YYYY H:mm a')
-          if archived
-            td.b-right= formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY H:mm a')
-          td.b-right= report.getLastAction()
-          td.b-right= report.getCommentList().getComments() == null ? '0' : report.getCommentList().getComments().size()
-          -var replied = report.getCommentList().hasStaffReplied()
-          td(class='b-right '+(replied ? 'color-green' : 'color-red'))= replied ? 'Yes' : 'No'
-          td.vis-link.view-report View
+    thead
+        tr
+            th.t-center Type
+            th.t-center Title
+            if staff
+                th.t-center Name
+            th.t-center Date Reported
+            if archived
+                th.t-center Date Archived
+            th.t-center Last Action
+            th.t-center Comment Count
+            th.t-center Staff Replied
+            th.t-center View
+    tbody
+        if reports.size() == 0
+            tr
+                td.color-red(align='center', colspan='8')= 'Currently no '+(archive ? 'expired' : 'active')+' reports.'
+        else
+            for report in reports
+                tr(data-id=report.getId(), data-type=report.type())
+                    td.b-right
+                        if report.type() == 0
+                            span.fa.fa-bug
+                        else
+                            span.fa.fa-user
+                        span= '  '+report.type() == 0 ? ' Bug' : ' Player'
+                    td.b-right= report.getTitle()
+                    if staff
+                        td.b-right= '$for-name='+report.getUsername()+'$end'
+                    td.b-right= formatter.formatTimestamp(report.getDate(), 'MMM dd, YYYY H:mm a')
+                    if archived
+                        td.b-right= formatter.formatTimestamp(report.getArchived(), 'MMM dd, YYYY H:mm a')
+                    td.b-right= report.getLastAction()
+                    td.b-right= report.getCommentList().getComments() == null ? '0' : report.getCommentList().getComments().size()
+                    -var replied = report.getCommentList().hasStaffReplied()
+                    td(class='b-right '+(replied ? 'color-green' : 'color-red'))= replied ? 'Yes' : 'No'
+                    td.vis-link.view-report View
