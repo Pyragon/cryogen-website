@@ -45,7 +45,14 @@ public class IndexModule extends WebModule {
 			return Website.error("Error loading HS Cache.");
 		model.put("hsusers", cache.getCachedData("mini-list"));
 		model.put("redirect", "/");
-		return render("./source/modules/index/index.jade", model, request, response);
+		String html = null;
+		try {
+			html = render("./source/modules/index/index.jade", model, request, response);
+		} catch(Exception e) {
+			System.err.println(e);
+			return error("Error loading.");
+		}
+		return html;
 	}
 	
 	@RequiredArgsConstructor

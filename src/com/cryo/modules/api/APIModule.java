@@ -47,7 +47,7 @@ public class APIModule {
                             put("name", t.getName());
                             put("returns", t.getReturns());
                         }}).collect(Collectors.toList());
-                String html = WebModule.render("./source/modules/api/abstract-type-noty.pug", new HashMap<String, Object>() {{
+                String html = WebModule.render("./source/modules/api/abstract-type-noty.jade", new HashMap<String, Object>() {{
                     put("returns", type.getReturns());
                     put("name", type.getName());
                     put("children", children);
@@ -62,7 +62,7 @@ public class APIModule {
            if(sectionName == null || !APISections.getSections().containsKey(sectionName))
                return error("Unable to find section.");
            APISections section = APISections.getSections().get(sectionName);
-           String html = WebModule.render("./source/modules/api/endpoint.pug", new HashMap<String, Object>() {{
+           String html = WebModule.render("./source/modules/api/endpoint.jade", new HashMap<String, Object>() {{
                put("realName", sectionName);
                put("name", section.getName() != null ? section.getName() : formatName(sectionName));
                put("message", section.getMessages());
@@ -88,7 +88,7 @@ public class APIModule {
             Properties prop = new Properties();
             prop.put("success", true);
             try {
-                prop.put("html", WebModule.render("./source/modules/api/test-noty.pug", model, request, response));
+                prop.put("html", WebModule.render("./source/modules/api/test-noty.jade", model, request, response));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -136,7 +136,7 @@ public class APIModule {
     }
 
     public static String renderAPI(String section, Request request, Response response) {
-        return WebModule.render("./source/modules/api/api.pug", new HashMap<String, Object>() {{
+        return WebModule.render("./source/modules/api/api.jade", new HashMap<String, Object>() {{
             put("section", section);
         }}, request, response);
     }
