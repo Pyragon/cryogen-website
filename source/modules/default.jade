@@ -116,7 +116,7 @@ html
                 }
 
                 function loadOnlinePlayers() {
-                    $.post('http://localhost:5555/game/players/online', { }, (ret) => {
+                    $.post('http://api.cryogen.live/game/players/online', { }, (ret) => {
                         var data = getJSON(ret);
                         if(data == null) return false;
                         $('#p-online').text('Players Online: '+data.online.all);
