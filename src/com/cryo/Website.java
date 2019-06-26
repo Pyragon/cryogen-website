@@ -76,7 +76,7 @@ import spark.Response;
  */
 public class Website {
 
-	public static String PATH = "http://cryogen.live/";
+	public static String PATH = "http://codysprojects.ca/";
 
 	private static Website INSTANCE;
 

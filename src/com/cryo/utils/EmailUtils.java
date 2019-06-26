@@ -69,7 +69,7 @@ public class EmailUtils {
 		try {
 
 			Message mime = new MimeMessage(session);
-			mime.setFrom(new InternetAddress("noreply@cryogen.live"));
+			mime.setFrom(new InternetAddress("noreply@codysprojects.ca"));
 			mime.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse(email));
 			mime.setSubject(subject);

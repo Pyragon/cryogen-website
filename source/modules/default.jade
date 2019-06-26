@@ -116,7 +116,7 @@ html
                 }
 
                 function loadOnlinePlayers() {
-                    $.post('http://api.cryogen.live/game/players/online', { }, (ret) => {
+                    $.post('http://api.cryogen.codysprojects.ca/game/players/online', { }, (ret) => {
                         var data = getJSON(ret);
                         if(data == null) return false;
                         $('#p-online').text('Players Online: '+data.online.all);
@@ -192,7 +192,7 @@ html
                                         li
                                             a(href='/live?action=download-auto&method=jar') Download as JAR
                                 li#spacer(class='spacer')
-                                    a(href='http://forums.cryogen.live/') Community
+                                    a(href='#') N/A
                                 li
                                     a(href='/highscores') Highscores
                                 li
