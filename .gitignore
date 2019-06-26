@@ -1,2 +1,4 @@
 .idea/
 *.iml
+target/
+data/props.json

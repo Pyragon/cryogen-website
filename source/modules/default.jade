@@ -32,7 +32,7 @@ html
         script.
             var open = false;
 
-            function openLogin(redirect='/') {
+            function openLogin(redirectLink='/') {
                 $.post('/login', { action:'view-login' }, (ret) => {
                     var data = getJSON(ret)
                     if(data == null) return false
@@ -45,7 +45,7 @@ html
                         theme: 'cryogen',
                         buttons: [{
                             addClass: 'btn btn-success', text: 'Sign In', onClick: function($noty) {
-                                login(redirect)
+                                login(redirectLink)
                                 closeNoty($noty)
                             }
                         }, {
@@ -67,11 +67,11 @@ html
                 location.href = '/recover?username='+username
             }
 
-            function login(redirect) {
+            function login(redirectLink='/') {
                 var element = $('.login-wrapper').length > 0 ? $('.login-wrapper') : $('.main-login-wrapper')
-                var username = element.find('.username').val()
-                var password = element.find('.password').val()
-                $.post('/login', { action:'login', username:username, password:password, redirect:redirect }, (ret) => {
+                var username = element.find('.username').val();
+                var password = element.find('.password').val();
+                $.post('/login', { action:'login', username, password }, (ret) => {
                     var data = getJSON(ret)
                     if(data == null) return false
                     document.write(data.html)
@@ -124,7 +124,7 @@ html
                 }
 
                 $(document).on('click', '.signin', openLogin)
-                $(document).on('click', '.login', login)
+                $(document).on('click', '.login', () => login())
                 $(document).on('click', '.forgot', recover)
 
                 $(document).on('keypress', '.username', (e) => {
