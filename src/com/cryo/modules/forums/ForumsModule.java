@@ -199,7 +199,7 @@ public class ForumsModule extends WebModule {
                 }
                 return redirect("/forums/thread/"+thread.getId(), "You are now being redirected to your new thread.", 5, null, request, response);
             default:
-                return error("Error decoding request: "+endpoint);
+                return Website.render404(request, response);
         }
         return Website.getGson().toJson(prop);
     }
