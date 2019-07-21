@@ -1,11 +1,10 @@
 package com.cryo.cache.impl;
 
 import com.cryo.cache.CachedItem;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.server.ServerConnection;
-
-import lombok.*;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -30,7 +29,7 @@ public class OnlineUserCache extends CachedItem {
 		StringBuilder players = new StringBuilder();
 		boolean sData = false;
 		for(String name : names) {
-			Account account = AccountUtils.getAccount(name);
+			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, name);
 			if(account == null)
 				continue;
 			if(sData)

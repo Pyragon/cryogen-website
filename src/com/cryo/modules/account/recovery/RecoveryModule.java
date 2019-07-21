@@ -4,7 +4,6 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.*;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.entities.Recovery;
 import com.cryo.utils.EmailUtils;
@@ -177,7 +176,7 @@ public class RecoveryModule extends WebModule {
 									prop.put("error", "At least one field must be filled out.");
 									break loop;
 								}
-								Account account = AccountUtils.getAccount(username);
+								Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
 								if (account == null) {
 									prop.put("success", false);
 									prop.put("error", "No account of this name exists.");

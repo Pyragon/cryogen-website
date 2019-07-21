@@ -2,6 +2,7 @@ package com.cryo.modules;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.forums.ForumUser;
@@ -74,7 +75,7 @@ public abstract class WebModule {
 			while(html.contains("$for-name=")) {
 				String format = html.substring(html.indexOf("$for-name=")+10);
 				format = format.substring(0, format.indexOf("$end"));
-				Account acc = AccountUtils.getAccount(format);
+				Account acc = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, format);
 				String name = Utilities.formatNameForDisplay(format);
 				if(acc != null)
 					name = AccountUtils.crownHTML(acc);

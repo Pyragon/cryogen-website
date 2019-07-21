@@ -1,21 +1,8 @@
 package com.cryo.modules.staff.impl;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Properties;
-
-import org.apache.commons.lang.ArrayUtils;
-
 import com.cryo.Website;
-import com.cryo.db.impl.CommentsConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PunishmentsConnection;
-import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
@@ -25,10 +12,13 @@ import com.cryo.modules.staff.entities.StaffSection;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
-import com.mysql.jdbc.StringUtils;
-
+import org.apache.commons.lang.ArrayUtils;
 import spark.Request;
 import spark.Response;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class PunishmentsSection implements StaffSection {
 
@@ -302,7 +292,7 @@ public class PunishmentsSection implements StaffSection {
 						break;
 					}
 				}
-				if(AccountUtils.getAccount(name) == null) {
+				if (GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, name) == null) {
 					prop.put("success", false);
 					prop.put("error", "Unable to find a player with that username! Please try again and select from the list.");
 					break;

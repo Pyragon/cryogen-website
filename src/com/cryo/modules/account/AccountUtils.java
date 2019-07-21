@@ -2,9 +2,8 @@ package com.cryo.modules.account;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.GlobalConnection;
-import com.cryo.modules.account.entities.Account;
 import com.cryo.db.impl.DisplayConnection;
+import com.cryo.modules.account.entities.Account;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -12,14 +11,6 @@ import com.cryo.db.impl.DisplayConnection;
  * Created on: Mar 7, 2017 at 9:57:12 PM
  */
 public class AccountUtils {
-	
-	public static Account getAccount(String username) {
-		GlobalConnection connection = (GlobalConnection) Website.instance().getConnectionManager().getConnection(Connection.GLOBAL);
-		Object[] data = connection.handleRequest("get-account", username);
-		if(data == null)
-			return null;
-		return (Account) data[0];
-	}
 	
 	public static String getDisplayName(Account account) {
 		DisplayConnection connection = (DisplayConnection) Website.instance().getConnectionManager().getConnection(Connection.DISPLAY);

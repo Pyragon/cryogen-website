@@ -92,10 +92,8 @@ public class GlobalConnection extends DatabaseConnection {
 				if (data != null) {
 					ArrayList<String> list = (ArrayList<String>) data[0];
 					for (String user : list) {
-						data = handleRequest("get-account", user);
-						if (data == null)
-							continue;
-						Account account = (Account) data[0];
+						Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, user);
+						if (account == null) continue;
 						if (!accounts.containsKey(account.getUsername()))
 							accounts.put(account.getUsername(), account);
 					}
@@ -105,10 +103,8 @@ public class GlobalConnection extends DatabaseConnection {
 				if (data != null) {
 					ArrayList<String> users = (ArrayList<String>) data[0];
 					for (String user : users) {
-						data = handleRequest("get-account", user);
-						if (data == null)
-							continue;
-						Account account = (Account) data[0];
+						Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, user);
+						if (account == null) continue;
 						if (!accounts.containsKey(account.getUsername()))
 							accounts.put(account.getUsername(), account);
 					}
@@ -184,10 +180,6 @@ public class GlobalConnection extends DatabaseConnection {
 						.getConnection(Connection.PREVIOUS)
 						.handleRequest("add-prev-hash", salt, hash);
 				break;
-			case "get-account":
-				username = (String) data[1];
-				data = select("player_data", "username=?", GET_ACCOUNT, username);
-				return data == null ? null : new Object[] { ((Account) data[0]) };
 			case "get-announcement":
 				int id = (int) data[1];
 				data = select("announcements", "id=?", GET_ANNOUNCEMENT, id);
@@ -274,19 +266,6 @@ public class GlobalConnection extends DatabaseConnection {
 		String hash = getString(set, "password");
 		String salt = getString(set, "salt");
 		return new Object[] { hash, salt };
-	};
-
-	private final SQLQuery GET_ACCOUNT = (set) -> {
-		if (empty(set))
-			return null;
-		String username = getString(set, "username");
-		int id = getInt(set, "id");
-		int rights = getInt(set, "rights");
-		int donator = getInt(set, "donator");
-		String avatarUrl = getString(set, "avatar_url");
-		Timestamp date = getTimestamp(set, "creation_date");
-		Account account = new Account(username, id, rights, donator, avatarUrl, date);
-		return new Object[] { account };
 	};
 
 	private final SQLQuery SEARCH_ACCOUNTS = (set) -> {

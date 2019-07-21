@@ -1,32 +1,21 @@
 package com.cryo.modules.staff.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.RandomStringUtils;
-
 import com.cryo.Website;
-import com.cryo.db.impl.EmailConnection;
-import com.cryo.db.impl.ForumConnection;
-import com.cryo.db.impl.GlobalConnection;
-import com.cryo.db.impl.PreviousConnection;
-import com.cryo.db.impl.RecoveryConnection;
+import com.cryo.db.impl.*;
 import com.cryo.db.impl.PreviousConnection.PreviousIP;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.entities.Recovery;
 import com.cryo.modules.staff.entities.StaffSection;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.google.gson.Gson;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import spark.Request;
 import spark.Response;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class RecoveriesSection implements StaffSection {
 
@@ -112,7 +101,7 @@ public class RecoveriesSection implements StaffSection {
 					}
 					// CREATION DATE
 					long l = recovery.getCreation();
-					Account toRecover = AccountUtils.getAccount(recovery.getUsername());
+					Account toRecover = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, recovery.getUsername());
 					if (toRecover == null) {
 						prop.put("success", false);
 						prop.put("error", "Error finding account associated.");

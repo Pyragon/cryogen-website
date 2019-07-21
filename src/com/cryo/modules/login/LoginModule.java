@@ -2,20 +2,20 @@ package com.cryo.modules.login;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
+import spark.Request;
+import spark.Response;
 
 import java.util.HashMap;
 import java.util.Properties;
 
-import spark.Request;
-import spark.Response;
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -63,8 +63,8 @@ public class LoginModule extends WebModule {
 				prop.put("error", "Invalid username or password.");
 				break;
 			}
-			data = GlobalConnection.connection().handleRequest("get-account", username);
-			if(data == null) {
+			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
+			if (account == null) {
 				prop.put("success", false);
 				prop.put("error", "Error loading account!");
 				break;

@@ -49,7 +49,7 @@ public class Thread extends MySQLDao {
 
     public void updateLastPost(Post post) {
         lastPostId = post.getId();
-        lastPostAuthor = post.getAuthor();
+        lastPostAuthor = post.getAuthorId();
         lastPostTime = post.getAdded();
         ForumConnection.connection().set("threads", "last_post_id=?, last_post_author=?, last_post_time=?", "id=?", post.getId(), post.getAuthor(), post.getAdded(), id);
     }

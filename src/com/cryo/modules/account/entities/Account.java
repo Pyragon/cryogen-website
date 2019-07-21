@@ -1,6 +1,8 @@
 package com.cryo.modules.account.entities;
 
 import com.cryo.db.impl.EmailConnection;
+import com.cryo.entities.MySQLDao;
+import com.cryo.entities.MySQLDefault;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -13,16 +15,17 @@ import java.sql.Timestamp;
  */
 @RequiredArgsConstructor
 @Data
-public class Account {
+public class Account extends MySQLDao {
 
-	private final String username;
-
+	@MySQLDefault
 	private final int id;
+	private final String username;
+	private final String password;
+	private final String salt;
 	private final int rights;
 	private final int donator;
-
 	private final String avatarUrl;
-
+	@MySQLDefault
 	private final Timestamp creationDate;
 	
 	public String getEmail() {
@@ -30,6 +33,10 @@ public class Account {
 		if(data == null)
 			return "";
 		return (String) data[0];
+	}
+
+	public String getDisplayName() {
+		return username;
 	}
 	
 }

@@ -1,27 +1,17 @@
 package com.cryo.modules.account;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.db.impl.GlobalConnection;
-import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.DisplayConnection;
+import com.cryo.db.impl.GlobalConnection;
+import com.cryo.db.impl.PreviousConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
-
-import com.google.gson.JsonObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -30,6 +20,12 @@ import com.mashape.unirest.request.HttpRequestWithBody;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -94,10 +90,9 @@ public class RegisterModule extends WebModule {
 				return error("Error registering.");
 			String salt = (String) data[0];
 			String hash = (String) data[1];
-			data = connection.handleRequest("get-account", username);
-			if(data == null)
+			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
+			if (account == null)
 				return redirect("/login", 0, request, response);
-			Account account = (Account) data[0];
 			PreviousConnection.connection().handleRequest("add-prev-hash", salt, hash);
 			String sess_id = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
 			response.cookie("cryo-sess", sess_id);

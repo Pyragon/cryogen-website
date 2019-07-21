@@ -1,13 +1,11 @@
 package com.cryo.comments;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.cryo.modules.account.AccountUtils;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.entities.Account;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.HashMap;
 
 @AllArgsConstructor
 @Data
@@ -20,7 +18,7 @@ public class CommentList {
 	
 	public boolean hasStaffReplied() {
 		for(Comment comment : comments.values()) {
-			Account account = AccountUtils.getAccount(comment.getUsername());
+			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, comment.getUsername());
 			if(account == null)
 				continue;
 			if(account.getRights() > 0)

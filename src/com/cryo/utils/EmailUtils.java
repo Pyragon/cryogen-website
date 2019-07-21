@@ -1,22 +1,17 @@
 package com.cryo.utils;
 
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.lang3.RandomStringUtils;
-
 import com.cryo.Website;
 import com.cryo.db.impl.EmailConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.RecoveryConnection;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
+import org.apache.commons.lang3.RandomStringUtils;
+
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -27,7 +22,7 @@ public class EmailUtils {
 	
 	public static void sendVerificationEmail(String username, String email) {
 		final String random = RandomStringUtils.random(20, true, true);
-		final Account account = AccountUtils.getAccount(username);
+		final Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
 		if(account == null)
 			return;
 		EmailConnection.connection().handleRequest("add-verify", username, email, random);
@@ -37,7 +32,7 @@ public class EmailUtils {
 	
 	public static void sendRecoveryEmail(String username, String id, String email) {
 		final String random = RandomStringUtils.random(20, true, true);
-		final Account account = AccountUtils.getAccount(username);
+		final Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
 		if(account == null)
 			return;
 		RecoveryConnection.connection().handleRequest("add-email-rec", id, random);

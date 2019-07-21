@@ -1,16 +1,8 @@
 package com.cryo.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.GlobalConnection;
-import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
-
-import lombok.*;
 import spark.Request;
 
 /**
@@ -35,7 +27,7 @@ public class CookieManager {
 				return null;
 			}
 			String username = (String) data[0];
-			Account account = AccountUtils.getAccount(username);
+			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
 			return account;
 		}
 		return null;
@@ -43,7 +35,7 @@ public class CookieManager {
 	
 	public static int getRights(Request request) {
 		if(!isLoggedIn(request)) return -1;
-		Account account = AccountUtils.getAccount(getUsername(request));
+		Account account = getAccount(request);
 		if(account == null) return -1;
 		return account.getRights();
 	}
