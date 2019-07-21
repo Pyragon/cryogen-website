@@ -10,14 +10,15 @@ script.
     });
 
 for post in posts
-    div.author-block
-        p.display-name=post.getAuthor().getDisplayName()
-        div.author-avatar
-            img(src=(post.getAuthor() == null || post.getAuthor().getAvatarUrl() == null) ? '/images/default_avatar.png' : '', style='width: 75px; height: 75px;')
     div.post-block
-        div.date-block
-            p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
-            p.post-link.vis-link= '#'+post.getId()
-        div.post
-            p(style='margin-left: 0px;')= post.getPost()
-    .clear
+        div.author-block
+            p.display-name=post.getAuthor().getDisplayName()
+            div.author-avatar
+                img(src=post.getAuthor().getAvatarUrl() == null ? '/images/default_avatar.png' : post.getAuthor().getAvatarUrl(), style='width: 75px; height: 75px;')
+        div.body-block
+            div.date-block
+                p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
+                p.post-link.vis-link= '#'+post.getId()
+            div.post
+                p(style='margin-left: 0px;')= post.getPost()
+        .clear

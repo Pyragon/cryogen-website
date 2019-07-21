@@ -833,6 +833,10 @@ p.small {
 
 #bread-link {}
 
+.post-block:not(:first-of-type) {
+    border-top: 1px solid #000;
+}
+
 .author-block {
     padding: 0px;
     height: 200px;
@@ -848,7 +852,7 @@ p.small {
     border: 1px solid #000;
 }
 
-.post-block {
+.body-block {
     width: 77%;
     height: 200px;
     display: inline-block;
