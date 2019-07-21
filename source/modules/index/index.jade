@@ -1,27 +1,28 @@
 extend ../default
 
 block content
-	div.container
-		div.row
-			div.col-md-8
-				h4.title Recent News:
-				include latest-threads
-			div.col-md-4
-				h4.title(style='text-align: center;') Account & Community
-				div.widget.mini-login
-					div.header
-						if loggedIn
-							h4.color-white#login-welcome= 'Welcome, $for-name='+user.getUsername()+'$end'
-						else
-							h4.color-white#login-welcome Account Login
-					div.content
-						if loggedIn
-							include account-node/account-node
-						else
-							include account-node/login-widget
-				if !loggedIn
-					a(href='/register')
-						button.btn.btn-default.sidebar-btn Create Account
-				a(href='/live/download')
-					button.btn.btn-default.sidebar-btn Download Cryogen
-				include ../highscores/mini/mini-hs-widget
+    div.container
+        div.row
+            div.col-md-8
+                h4.title Recent News:
+                include latest-threads
+                h4.title Test
+            div.col-md-4
+                h4.title(style='text-align: center;') Account & Community
+                div.widget.mini-login
+                    div.header
+                        if loggedIn
+                            h4.color-white#login-welcome= 'Welcome, $for-name='+user.getUsername()+'$end'
+                        else
+                            h4.color-white#login-welcome Account Login
+                    div.content
+                        if loggedIn
+                            include account-node/account-node
+                        else
+                            include account-node/login-widget
+                if !loggedIn
+                    a(href='/register')
+                        button.btn.btn-default.sidebar-btn Create Account
+                a(href='/live/download')
+                    button.btn.btn-default.sidebar-btn Download Cryogen
+                include ../highscores/mini/mini-hs-widget

@@ -1,5 +1,12 @@
 package com.cryo.utils;
 
+import com.cryo.entities.Endpoint;
+import com.google.gson.Gson;
+import com.mysql.jdbc.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
+import spark.Route;
+import spark.Spark;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -9,23 +16,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.http.client.utils.URIBuilder;
-
-import com.cryo.db.DBConnectionManager;
-import com.cryo.db.impl.GlobalConnection;
-import com.google.gson.Gson;
-import com.mysql.jdbc.StringUtils;
-
-import spark.Request;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -47,6 +40,17 @@ public class Utilities {
 	
 	public static void main(String[] args) {
 		
+	}
+
+	public static void registerEndpoints(String[] routes, Endpoint endpoint) {
+		int index = 0;
+		while (index < routes.length) {
+			String method = routes[index++];
+			String route = routes[index++];
+			Route sparkRoute = (req, res) -> endpoint.interact(route, req, res);
+			if (method.equals("GET")) Spark.get(route, sparkRoute);
+			else Spark.post(route, sparkRoute);
+		}
 	}
 	
 	public static String formatMillisToTimeString(long millis) {

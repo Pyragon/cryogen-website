@@ -1,15 +1,12 @@
 package com.cryo.cache.impl;
 
-import java.util.HashMap;
-
 import com.cryo.cache.CachedItem;
 import com.cryo.modules.highscores.HSDataList;
 import com.cryo.modules.highscores.HSUserCache;
 import com.cryo.modules.highscores.HSUtils;
 import com.cryo.modules.highscores.HSUtils.HSData;
-import com.cryo.utils.Logger;
 
-import lombok.*;
+import java.util.HashMap;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -69,8 +66,9 @@ public class HighscoresCache extends CachedItem {
 		}
 		return null;
 	}
-	
-	private boolean hasExpired(Object... data) {
+
+	@Override
+	protected boolean hasExpired(Object... data) {
 		String opcode = (String) data[0];
 		long time = 0;
 		if(opcode.equals("personal")) {
@@ -80,6 +78,13 @@ public class HighscoresCache extends CachedItem {
 		} else
 			time = opcode.equals("mini-list") ? mini_list_expiry : global_list_expiry;
 		return time <= System.currentTimeMillis();
+	}
+
+	@Override
+	public void clear() {
+		userData.clear();
+		mini_list_expiry = 0L;
+		global_list_expiry = 0L;
 	}
 
 	@Override

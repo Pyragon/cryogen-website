@@ -1,0 +1,44 @@
+script.
+    $(document).ready(() => {
+
+        let page = "!{page}";
+        if(!page) page = 1;
+
+        loadPage(page);
+
+        function loadPage(page) {
+            let regex = /page\/\d/;
+            let found = location.pathname.match(regex);
+            let endpoint;
+            let curPage = page;
+            if(found) {
+                curPage = found[0];
+                endpoint = location.pathname.replace('/page/'+curPage, '/page/'+page);
+            } else endpoint = location.pathname+'/page/'+page
+            $.post(endpoint, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#post-list').html(data.html);
+            });
+        }
+
+        function changePage(nPage) {
+            page = nPage;
+            loadPage(page);
+            let regex = /page\/\d/;
+            let found = location.pathname.match(regex);
+            let endpoint;
+            let curPage = page;
+            if(found) {
+                curPage = found[0];
+                endpoint = location.pathname.replace('/page/'+curPage, '/page/'+page);
+            } else endpoint = location.pathname+'/page/'+page
+            history.pushState({}, "ForumSection", endpoint);
+        }
+
+    });
+div.news-post
+    div.header
+        p.single-title= thread.getTitle()
+    div.content
+        div#post-list

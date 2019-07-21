@@ -101,6 +101,10 @@ function getJSON(ret) {
         return null;
     }
     if (!data.success) {
+        if (data.redirect) {
+            document.write(data.redirect);
+            return null;
+        }
         if (data.error !== '')
             sendAlert(data.error);
         return null;
@@ -154,13 +158,14 @@ function checkRestart() {
     if (shutdown_timer) {
         clearInterval(restart_timer);
         return;
-    };
+    }
     $.ajax({
-        url: 'http://66.70.190.195:8085/utils?action=get-restart-time',
+        url: 'http://localhost:8085/utilities/get-restart-time',
         type: 'POST',
-        error: () => {
+        error: (error) => {
             clearInterval(restart_timer);
             restarted();
+            console.error(error);
         },
         success: (ret) => {
             var data = getJSON(ret);

@@ -1,24 +1,20 @@
 package com.cryo.db.impl;
 
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Properties;
-
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.modules.account.entities.Appeal;
-import com.cryo.modules.account.entities.Punishment;
+import com.cryo.db.DatabaseConnection;
+import com.cryo.db.SQLQuery;
 import com.cryo.modules.account.recovery.InstantRecoveryDAO;
 import com.cryo.modules.account.recovery.RecoveryModule;
 import com.cryo.modules.staff.entities.Recovery;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
-import com.cryo.db.DatabaseConnection;
-import com.cryo.db.SQLQuery;
 
-import lombok.*;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -68,7 +64,7 @@ public class RecoveryConnection extends DatabaseConnection {
 		String id = getString(set, "id");
 		String username = getString(set, "username");
 		String email = getString(set, "email");
-		int forum = getInt(set, "forum");
+        int forum = getInt(set, "forums");
 		Timestamp creation = getTimestamp(set, "creation");
 		String cico = getString(set, "cico");
 		String additional = getString(set, "additional");
@@ -179,22 +175,22 @@ public class RecoveryConnection extends DatabaseConnection {
 			set("recoveries", "status=?,reason=?", "id=?", status, (String) data[3], id);
 			break;
 		case "has-email-rec":
-		case "has-forum-rec":
+            case "has-forums-rec":
 			id = (String) data[1];
 			return select("instant", "id=? AND method=? AND status=0", GET_INSTANT, id,
 					opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM);
 		case "set-email-status":
-		case "set-forum-status":
+            case "set-forums-status":
 			id = (String) data[1];
 			status = (int) data[2];
-			data = handleRequest("has-" + (opcode.contains("email") ? "email" : "forum") + "-rec", id);
+                data = handleRequest("has-" + (opcode.contains("email") ? "email" : "forums") + "-rec", id);
 			if (data == null)
 				return null;
 			set("instant", "status=?", "id=? AND method=?", status, id,
 					opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM);
 			break;
 		case "add-email-rec":
-		case "add-forum-rec":
+            case "add-forums-rec":
 			id = (String) data[1];
 			String rand = (String) data[2];
 			insert("instant", id, rand, opcode.contains("email") ? RecoveryModule.EMAIL : RecoveryModule.FORUM, 0, "DEFAULT");

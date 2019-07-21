@@ -8,16 +8,15 @@ import com.cryo.modules.account.entities.AccountSection;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
-
 import spark.Request;
 import spark.Response;
-
-import static spark.Spark.get;
-import static spark.Spark.post;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
+
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class AccountModule extends WebModule {
 	
@@ -52,7 +51,7 @@ public class AccountModule extends WebModule {
 						model.put("title_colour", data != null ? "green" : "red");
 						if(data != null) model.put("extra_info", "Your email verification was complete. You are now being redirected back to the account section.");
 						else model.put("extra_info", "Email verification could not be completed. Perhaps the token expired? Please try again later or contact an Admin if this problem persists.");
-						return redirect("/account", 10, model, request, response);
+						return redirect("/account", null, 10, model, request, response);
 				}
 			}
 			AccountSection section = sections.get("overview");

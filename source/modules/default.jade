@@ -92,14 +92,17 @@ html
                     issueTimeout = setTimeout(checkIssue, 100);
                 });
 
-                //- $(document).on('click', function(e) {
-                //- 	var target = $(e.target);
-                //- 	if(target)
-                //- 		sendAlert(target.attr('class'));
-                //- });
-
                 $(document).on('click', '#staff-actions', function() {
                     window.location.href = '/staff#overview';
+                    return false;
+                });
+
+                $('#clear-cache').click(() => {
+                    $.post('/utilities/clear-cache', ret => {
+                        let data = getJSON(ret);
+                        if(data == null) return false;
+                        sendAlert('Cache successfully cleared.');
+                    });
                     return false;
                 });
 
@@ -192,7 +195,7 @@ html
                                         li
                                             a(href='/live?action=download-auto&method=jar') Download as JAR
                                 li#spacer(class='spacer')
-                                    a(href='#') N/A
+                                    a(href='/forums') Community
                                 li
                                     a(href='/highscores') Highscores
                                 li
@@ -227,7 +230,7 @@ html
                 div(class='footer')
                     div(class='container')
                         div(class='row')
-                            div.col-md-4
+                            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
                                 h3 Cryogen
                                 ul
                                     li
@@ -236,7 +239,7 @@ html
                                         a(href='http://github.com/Pyragon/cryogen-website') Open-Sourced
                                     li
                                         a(href='/api') API Documentation
-                            div.col-md-4
+                            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
                                 h3 Community
                                 ul
                                     li
@@ -245,7 +248,7 @@ html
                                         a(href='/highscores') Highscores
                                     li
                                         a(href='/account/vote') Vote
-                            div.col-md-4
+                            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
                                 h3 Account
                                 ul
                                     if loggedIn
@@ -265,3 +268,9 @@ html
                                             a(href="/register") Register
                                         li
                                             a(href='/recover') Forgot my Password
+                            if loggedIn && user.getRights() > 1
+                                div.col-md-3
+                                    h3 Admin
+                                    ul 
+                                        li
+                                            a#clear-cache(href='#') Clear Cache

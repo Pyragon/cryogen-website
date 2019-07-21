@@ -1,0 +1,23 @@
+script.
+    $(document).ready(() => {
+
+        let width = $('#post-list').width();
+        if(width == '718') {
+            $('#post-list').find('.container').width(width);
+            $('#post-list').find('.row').width(width);
+        }
+
+    });
+
+for post in posts
+    div.author-block
+        p.display-name Cody
+        div.author-avatar
+            img(src=user.getAvatarUrl() == null ? '/images/default_avatar.png' : '', style='width: 75px; height: 75px;')
+    div.post-block
+        div.date-block
+            p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
+            p.post-link.vis-link= '#'+post.getId()
+        div.post
+            p(style='margin-left: 0px;')= post.getPost()
+    .clear

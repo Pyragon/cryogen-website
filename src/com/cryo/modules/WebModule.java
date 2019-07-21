@@ -1,9 +1,5 @@
 package com.cryo.modules;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Properties;
-
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.modules.account.AccountUtils;
@@ -11,18 +7,16 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.forums.ForumUser;
 import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;
-import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateUtils;
-import com.cryo.utils.JadeIterator;
-import com.cryo.utils.Tools;
-import com.cryo.utils.Utilities;
-
+import com.cryo.utils.*;
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
 import lombok.Synchronized;
-import lombok.val;
 import spark.Request;
 import spark.Response;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -32,9 +26,21 @@ import spark.Response;
 public abstract class WebModule {
 	
 	protected Website website;
+
+	public WebModule() {
+		this.website = Website.instance();
+	}
 	
 	public WebModule(Website website) {
 		this.website = website;
+	}
+
+	public String[] getEndpoints() {
+		return new String[]{};
+	}
+
+	public String decodeRequest(String endpoint, Request request, Response response) {
+		return error("Error decoding request.");
 	}
 	
 	public abstract Object decodeRequest(Request request, Response response, RequestType type);
@@ -74,14 +80,14 @@ public abstract class WebModule {
 					name = AccountUtils.crownHTML(acc);
 				html = html.replace("$for-name="+format+"$end", name);
 			}
-			while(html.contains("$forum-name=")) {
-				String format = html.substring(html.indexOf("$forum-name=")+12);
+			while (html.contains("$forums-name=")) {
+				String format = html.substring(html.indexOf("$forums-name=") + 12);
 				format = format.substring(0, format.indexOf("$end"));
 				ForumUser user = ForumUtils.getUser(format);
 				String name = format;
 				if(user != null)
 					name = ForumUtils.crownUser(user);
-				html = html.replace("$forum-name="+format+"$end", name);
+				html = html.replace("$forums-name=" + format + "$end", name);
 			}
 			while(html.contains("$link=")) {
 				String format = html.substring(html.indexOf("$link=")+6);
@@ -116,14 +122,14 @@ public abstract class WebModule {
 	}
 	
 	public static String redirect(String redirect, Request request, Response response) {
-		return redirect(redirect, 5, request, response);
+		return redirect(redirect, null, 5, null, request, response);
 	}
 	
 	public static String redirect(String redirect, int time, Request request, Response response) {
-		return redirect(redirect, time, null, request, response);
+		return redirect(redirect, null, time, null, request, response);
 	}
 
-	public static String redirect(String redirect, int time, HashMap<String, Object> model, Request request, Response response) {
+	public static String redirect(String redirect, String extraInfo, int time, HashMap<String, Object> model, Request request, Response response) {
 		if(model == null) model = new HashMap<>();
 		if(redirect == null || redirect == "")
 			redirect = "/";
@@ -131,9 +137,18 @@ public abstract class WebModule {
 			response.redirect(redirect);
 			return "";
 		}
+		if (extraInfo != null)
+			model.put("extra_info", extraInfo);
 		model.put("redirect", redirect);
 		model.put("time", time);
-		return render("./source/modules/redirect.jade", model, request, response);
+		String html = render("./source/modules/redirect.jade", model, request, response);
+		if (request.requestMethod().equals("POST")) {
+			Properties prop = new Properties();
+			prop.put("success", false);
+			prop.put("redirect", html);
+			return Website.getGson().toJson(prop);
+		}
+		return html;
 	}
 	
 }

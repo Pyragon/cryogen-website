@@ -1,11 +1,9 @@
 package com.cryo.cache;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.cryo.utils.Utilities;
 
-import lombok.*;
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -33,7 +31,17 @@ public class CachingManager {
 			throw new RuntimeException("Unable to load cache data.", e);
 		}
 	}
-	
+
+	public void clear() {
+		cachedItems.values().forEach(CachedItem::clear);
+	}
+
+	public Object getData(String opcode, Object... values) {
+		CachedItem item = get(opcode);
+		if (item == null) return null;
+		return item.getCachedData(values);
+	}
+
 	public CachedItem get(String opcode) {
 		if(!cachedItems.containsKey(opcode)) return null;
 		return cachedItems.get(opcode);

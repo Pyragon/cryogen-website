@@ -1,12 +1,10 @@
 package com.cryo.cache.impl;
 
-import java.util.HashMap;
-
 import com.cryo.cache.CachedItem;
 import com.cryo.server.ServerConnection;
 import com.cryo.server.item.ServerItem;
 
-import lombok.*;
+import java.util.HashMap;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -36,6 +34,11 @@ public class ServerItemCache extends CachedItem {
 		if(!cache.containsKey(name)) return true;
 		Object[] data = cache.get(name);
 		return (long) data[0] < System.currentTimeMillis();
+	}
+
+	@Override
+	public void clear() {
+		cache.clear();
 	}
 
 	@Override

@@ -1,38 +1,26 @@
 package com.cryo.modules.account.recovery;
 
+import com.cryo.Website;
+import com.cryo.Website.RequestType;
+import com.cryo.db.impl.*;
+import com.cryo.modules.WebModule;
+import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.entities.Account;
+import com.cryo.modules.staff.entities.Recovery;
+import com.cryo.utils.EmailUtils;
+import com.google.gson.Gson;
+import com.mysql.jdbc.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import spark.Request;
+import spark.Response;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-
-import com.cryo.Website;
-import com.cryo.Website.RequestType;
-import com.cryo.db.impl.EmailConnection;
-import com.cryo.db.impl.ForumConnection;
-import com.cryo.db.impl.GlobalConnection;
-import com.cryo.db.impl.PreviousConnection;
-import com.cryo.db.impl.RecoveryConnection;
-import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountUtils;
-import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.staff.entities.Recovery;
-import com.cryo.utils.BCrypt;
-import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateUtils;
-import com.cryo.utils.EmailUtils;
-import com.cryo.utils.Utilities;
-import com.google.gson.Gson;
-import com.mysql.jdbc.StringUtils;
-
-import lombok.*;
-import spark.Request;
-import spark.Response;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -120,7 +108,7 @@ public class RecoveryModule extends WebModule {
 							return render("./source/modules/account/recovery/redeem_instant.jade", model, request, response);
 						}
 						RecoveryConnection.connection().handleRequest("set-email-status", recovery.getId(), 1);
-						RecoveryConnection.connection().handleRequest("set-forum-status", recovery.getId(), 1);
+                        RecoveryConnection.connection().handleRequest("set-forums-status", recovery.getId(), 1);
 						model.put("success", true);
 						model.put("newPass", new_pass);
 						return render("./source/modules/account/recovery/redeem_instant.jade", model, request, response);
@@ -155,7 +143,7 @@ public class RecoveryModule extends WebModule {
 								break;
 							}
 							RecoveryConnection.connection().handleRequest("set-email-status", recovery.getId(), 1);
-							RecoveryConnection.connection().handleRequest("set-forum-status", recovery.getId(), 1);
+                            RecoveryConnection.connection().handleRequest("set-forums-status", recovery.getId(), 1);
 							RecoveryConnection.connection().handleRequest("set-status", recovery.getId(), 2, "Cancelled through "+method+".");
 							model.put("success", true);
 							break;
@@ -171,7 +159,7 @@ public class RecoveryModule extends WebModule {
 							Properties prop = new Properties();
 							String username = request.queryParams("username");
 							String email = request.queryParams("email");
-							String forum = request.queryParams("forum");
+                            String forum = request.queryParams("forums");
 							String creation = request.queryParams("creation");
 							String cico = request.queryParams("cico");
 							String additional = request.queryParams("additional");
@@ -223,13 +211,13 @@ public class RecoveryModule extends WebModule {
 								if (data != null) {
 									int real_id = (int) data[0];
 										String random = RandomStringUtils.random(20, true, true);
-										RecoveryConnection.connection().handleRequest("add-forum-rec", recovery_id, random);
+                                    RecoveryConnection.connection().handleRequest("add-forums-rec", recovery_id, random);
 										String message = "Hello " + username
 												+ ", a password recovery attempt has been made on your in-game account.\n\nIf you did not make this request, click here immediately!\n\nOtherwise follow this link to reset your password: http://cryogen-rsps.com/recover?action=redeem_instant&method=forum&recovery_id="+recovery_id+"&instant_id="+random;
 										ForumConnection.sendForumMessage(real_id, "Recovery attempt made!", message, "Recovery Attempt");
 								}
 								int forumId = 0;
-								if (!forum.equals("")) { // forum verification
+                                if (!forum.equals("")) { // forums verification
 									if(!NumberUtils.isNumber(forum)) {
 										prop.put("success", false);
 										prop.put("error", "Forum ID must be a number!");

@@ -1,0 +1,18 @@
+for category in categories
+    div.news-post
+        div.header
+            p.title= category.getName()
+                a.minimize
+                    span.fa.fa-minus
+            p.description= category.getDescription()
+        div.content
+            for forum in category.getSubForums()
+                div.forum
+                    if forum.isLink()
+                        a.name.link(href=forum.getLink(), target='_blank')= forum.getName()
+                    else
+                        div.name.link(data-link='/forums/forum/'+forum.getId())= forum.getName()
+                    div.last-post= forum.getLastPost() == null ? 'N/A' : 'By Cody'
+                    div.last-post-time= forum.getLastPost() == null ? 'N/A' : 'Today'
+                    div.separator |
+                div(style='clear: both;')

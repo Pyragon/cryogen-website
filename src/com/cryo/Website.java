@@ -1,39 +1,13 @@
 package com.cryo;
 
-import static spark.Spark.*;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.servlet.http.HttpServletResponse;
-
 import com.cryo.cache.CachingManager;
 import com.cryo.comments.CommentsManager;
 import com.cryo.comments.CommentsModule;
 import com.cryo.db.DBConnectionManager;
-import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.TestModule;
+import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountModule;
-import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.RegisterModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.recovery.RecoveryModule;
@@ -46,9 +20,6 @@ import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.search.SearchManager;
 import com.cryo.modules.staff.StaffModule;
 import com.cryo.paypal.PaypalManager;
-import com.cryo.server.ServerConnection;
-import com.cryo.server.item.ServerItem;
-import com.cryo.server.item.ShopItem;
 import com.cryo.tasks.TaskManager;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.CorsFilter;
@@ -60,7 +31,6 @@ import com.google.common.net.MediaType;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
 import lombok.Cleanup;
@@ -68,6 +38,15 @@ import lombok.Getter;
 import lombok.Setter;
 import spark.Request;
 import spark.Response;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.*;
+
+import static spark.Spark.*;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -128,7 +107,7 @@ public class Website {
 			SearchManager.registerEndpoints(this);
 			StaffModule.registerEndpoints(this);
 			CommentsModule.registerEndpoints(this);
-			UtilityModule.registerEndpoints(this);
+			Utilities.registerEndpoints(UtilityModule.ENDPOINTS, UtilityModule.decodeRequest);
 			APIModule.registerEndpoints(this);
 			get(IndexModule.PATH, (req, res) -> new IndexModule(this).decodeRequest(req, res, RequestType.GET));
 			get(LoginModule.PATH, (req, res) -> new LoginModule(this).decodeRequest(req, res, RequestType.GET));
@@ -186,6 +165,24 @@ public class Website {
 				}
 				return "online";
 			});
+			for (Class<?> c : Utilities.getClasses("com.cryo.modules")) {
+				try {
+					if (!WebModule.class.isAssignableFrom(c)) continue;
+					if (c.getName().equals("com.cryo.modules.WebModule")) continue;
+					Object o = c.newInstance();
+					if (!(o instanceof WebModule)) continue;
+					WebModule module = (WebModule) o;
+					int i = 0;
+					while (i < module.getEndpoints().length) {
+						String method = module.getEndpoints()[i++];
+						String path = module.getEndpoints()[i++];
+						if (method.equals("GET")) get(path, (req, res) -> module.decodeRequest(path, req, res));
+						else post(path, (req, res) -> module.decodeRequest(path, req, res));
+					}
+				} catch (Exception e) {
+
+				}
+			}
 			get("/favicon.ico", (req, response) -> {
 	                    @Cleanup InputStream in = null;
 	                    @Cleanup OutputStream out = null;

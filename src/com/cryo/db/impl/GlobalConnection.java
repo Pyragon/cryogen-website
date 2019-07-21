@@ -1,24 +1,21 @@
 package com.cryo.db.impl;
 
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Properties;
-
 import com.cryo.Website;
+import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
-import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.entities.Announcement;
 import com.cryo.utils.BCrypt;
-import com.cryo.utils.CookieManager;
-import com.cryo.utils.DateSpan;
 import com.cryo.utils.Logger;
 import com.cryo.utils.Utilities;
+
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -83,7 +80,7 @@ public class GlobalConnection extends DatabaseConnection {
 				String hash = BCrypt.hashPassword(password, salt);
 				Timestamp date = new Timestamp(Calendar	.getInstance()
 														.getTimeInMillis());
-				insert("player_data", "DEFAULT", username, hash, salt, 0, 0, date);
+				insert("player_data", "DEFAULT", username, hash, salt, 0, 0, null, date);
 				DisplayConnection	.connection()
 									.handleRequest("create", username, Utilities.formatName(username));
 				return new Object[] { salt, hash };
@@ -286,8 +283,9 @@ public class GlobalConnection extends DatabaseConnection {
 		int id = getInt(set, "id");
 		int rights = getInt(set, "rights");
 		int donator = getInt(set, "donator");
+		String avatarUrl = getString(set, "avatar_url");
 		Timestamp date = getTimestamp(set, "creation_date");
-		Account account = new Account(username, id, rights, donator, date);
+		Account account = new Account(username, id, rights, donator, avatarUrl, date);
 		return new Object[] { account };
 	};
 

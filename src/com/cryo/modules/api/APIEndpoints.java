@@ -15,7 +15,7 @@ import java.util.Properties;
 @RequiredArgsConstructor
 public enum APIEndpoints {
 
-    FORUMS_POST(1, "/forums/post", "Returns a parsed version of a forum post.", 0, "GET",
+    FORUMS_POST(1, "/forums/post", "Returns a parsed version of a forums post.", 0, "GET",
             new APIParameter[] {
                     new APIParameter("post_id", "Integer", "Post ID to look up.", false, 1) },
             new APIReturn[] {

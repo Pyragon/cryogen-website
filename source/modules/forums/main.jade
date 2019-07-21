@@ -1,0 +1,44 @@
+script.
+    $(document).ready(() => {
+
+        let breadcrumbs = "!{breadcrumbs}";
+        let links = "!{links}";
+        breadcrumbs = breadcrumbs.substring(1, breadcrumbs.length-1);
+        breadcrumbs = breadcrumbs.split(', ');
+        links = links.substring(1, links.length-1);
+        links = links.split(', ');
+
+        setBreadcrumbs(breadcrumbs, links);
+
+        function setBreadcrumbs(breadcrumbs, links) {
+            let element = $('#breadcrumbs');
+            element.html('');
+            for(let i = 0; i < breadcrumbs.length; i++) {
+                let value = breadcrumbs[i];
+                let span = $(`<span ${(i != breadcrumbs.length-1 ? (`class="link", data-link="${links[i]}"`) : (''))}>${value}</span>`);
+                let separator = $('<span> > </span>');
+                element.append(span);
+                if(i != breadcrumbs.length-1)
+                    element.append(separator);
+            }
+        }
+
+    });
+
+div.container
+    div.row
+        div#forum-header
+            p#breadcrumbs.col-md-4.offset-md-8
+    div.row
+        div.col-md-8
+            div#forum-content
+                if categories != null
+                    include category-list
+                else if forum != null
+                    include forum
+                else if thread != null
+                    include thread
+                else
+                    include new-thread
+        div.col-md-4
+            h4.title.t-center Stats

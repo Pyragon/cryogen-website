@@ -21,7 +21,7 @@ public enum APISections {
     }, null),
     FORUMS(new String[] {
             "Although the API mainly serves the server, I have added endpoints for the forums for ease of access.",
-            "This section of the API is very limited at the moment, and will need a serious overhaul soon incorporating linked forum accounts."
+            "This section of the API is very limited at the moment, and will need a serious overhaul soon incorporating linked forums accounts."
     }, new APIEndpoints[]{
             APIEndpoints.FORUMS_POST,
             APIEndpoints.FORUMS_POST

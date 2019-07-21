@@ -1,8 +1,5 @@
 package com.cryo.db.impl;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
-
 import com.cryo.Website;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
@@ -61,7 +58,7 @@ public class MyBBConnection extends DatabaseConnection {
 	};
 	
 	private static String getFormattedPost(int pid) {
-		String path = Website.getProperties().getProperty("forum-path");
+        String path = Website.getProperties().getProperty("forums-path");
 		String url = "http://"+path+"/parse_message.php?pid="+pid;
 		String[] website = Utilities.getWebsite(url);
 		if(website == null)

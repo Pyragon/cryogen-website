@@ -1,16 +1,15 @@
 package com.cryo.db.impl;
 
-import java.util.Arrays;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
 import com.cryo.utils.Utilities;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.apache.commons.lang3.StringEscapeUtils;
 
-import lombok.*;
+import java.util.Arrays;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -44,7 +43,7 @@ public class ForumConnection extends DatabaseConnection {
 		case "add-verify":
 			username = (String) data[1];
 			forum_id = (int) data[2];
-			String[] webData = sendForumMessage(forum_id, "Forum Integration", "Your forum verification is nearly complete! Reply #yes to this message to finish, or #no to cancel.[br][br]"
+            String[] webData = sendForumMessage(forum_id, "Forum Integration", "Your forums verification is nearly complete! Reply #yes to this message to finish, or #no to cancel.[br][br]"
 					+ "This message will expire in 24 hours and you will need to relink the account", "Forum Verification");
 			if(webData == null)
 				return null;
@@ -64,7 +63,7 @@ public class ForumConnection extends DatabaseConnection {
 		subject = StringEscapeUtils.escapeHtml4(subject);
 		message = StringEscapeUtils.escapeHtml4(message);
 		message = message.replaceAll("&", "%26");
-		String path = Website.getProperties().getProperty("forum-path");
+        String path = Website.getProperties().getProperty("forums-path");
 		String secret = Website.getProperties().getProperty("secret-key");
 		secret = StringEscapeUtils.escapeHtml4(secret);
 		reason = StringEscapeUtils.escapeHtml4(reason);

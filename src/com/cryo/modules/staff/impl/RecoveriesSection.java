@@ -171,7 +171,7 @@ public class RecoveriesSection implements StaffSection {
 				RecoveryConnection.connection().handleRequest("set-status", id, 1, pass);
 				GlobalConnection.connection().handleRequest("change-pass", recovery.getUsername(), pass, null, false);
 				RecoveryConnection.connection().handleRequest("set-email-status", id, 1);
-				RecoveryConnection.connection().handleRequest("set-forum-status", id, 1);
+				RecoveryConnection.connection().handleRequest("set-forums-status", id, 1);
 				prop.put("success", true);
 				break;
 			case "decline":
@@ -196,7 +196,7 @@ public class RecoveriesSection implements StaffSection {
 				}
 				RecoveryConnection.connection().handleRequest("set-status", id, 2, reason);
 				RecoveryConnection.connection().handleRequest("set-email-status", id, 1);
-				RecoveryConnection.connection().handleRequest("set-forum-status", id, 1);
+				RecoveryConnection.connection().handleRequest("set-forums-status", id, 1);
 				prop.put("success", true);
 				break;
 			}

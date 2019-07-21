@@ -1,0 +1,34 @@
+button.btn.btn-default#new-thread-btn New Post
+if forum.getSubForums().length > 0
+    div.news-post
+        div.header
+            p.title= forum.getName()
+                a.minimize
+                    span.fa.fa-minus
+            p.description= forum.getDescription()
+        div.content
+            for subforum in forum.getSubForums()
+                div.forum
+                    if subforum.isLink()
+                        a.name.link(href=subforum.getLink(), target='_blank')= subforum.getName()
+                    else
+                        div.name.link(data-link='/forums/forum/'+subforum.getId())= subforum.getName()
+                    div.last-post= subforum.getLastPost() == null ? 'N/A' : 'By Cody'
+                    div.last-post-time= subforum.getLastPost() == null ? 'N/A' : 'Today'
+                    div.separator |
+                div(style='clear: both;')
+div.news-post
+    div.header
+        p.title= forum.getName()
+        p.description= forum.getDescription()
+    div.content
+        if forum.getThreads().size() == 0
+            p.t-center No threads have been created yet.
+        else
+            for thread in forum.getThreads()
+                div.forum
+                    div.name.link(data-link='/forums/thread/'+thread.getId())= thread.getTitle()
+                    div.last-post= thread.getLastPost() == null ? 'N/A' : 'By Cody'
+                    div.last-post-time= thread.getLastPost() == null ? 'N/A' : 'Today'
+                    div.separator |
+                div(style='clear: both;')

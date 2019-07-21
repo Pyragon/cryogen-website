@@ -1,6 +1,6 @@
 package com.cryo.cache;
 
-import lombok.*;
+import lombok.Data;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -18,7 +18,6 @@ public abstract class CachedItem {
 	
 	public CachedItem(String cacheName) {
 		this.cacheName = cacheName;
-		refreshTime();
 	}
 	
 	public abstract void fetchNewData(Object... values);
@@ -26,14 +25,18 @@ public abstract class CachedItem {
 	public abstract long getCacheTimeLimit();
 	
 	public Object getCachedData(Object... values) {
-		if(hasExpired()) {
+		if (hasExpired(values)) {
 			refreshTime();
 			fetchNewData(values);
 		}
 		return cachedData;
 	}
-	
-	protected boolean hasExpired() {
+
+	protected void clear() {
+		this.cacheTime = 0;
+	}
+
+	protected boolean hasExpired(Object... values) {
 		return this.cacheTime <= System.currentTimeMillis();
 	}
 	

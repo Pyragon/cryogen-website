@@ -1,12 +1,10 @@
 package com.cryo.modules.account.entities;
 
-import java.sql.Timestamp;
-
 import com.cryo.db.impl.EmailConnection;
-
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+
+import java.sql.Timestamp;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -14,13 +12,18 @@ import lombok.Setter;
  * Created on: Mar 7, 2017 at 9:55:54 PM
  */
 @RequiredArgsConstructor
+@Data
 public class Account {
-	
-	private final @Getter String username;
-	
-	private final @Getter int id, rights, donator;
-	
-	private final @Getter Timestamp creationDate;
+
+	private final String username;
+
+	private final int id;
+	private final int rights;
+	private final int donator;
+
+	private final String avatarUrl;
+
+	private final Timestamp creationDate;
 	
 	public String getEmail() {
 		Object[] data = EmailConnection.connection().handleRequest("get-email", username);
