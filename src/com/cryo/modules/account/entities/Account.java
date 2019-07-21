@@ -1,6 +1,8 @@
 package com.cryo.modules.account.entities;
 
+import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
+import com.cryo.entities.CurrentDisplayName;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import lombok.Data;
@@ -36,7 +38,9 @@ public class Account extends MySQLDao {
 	}
 
 	public String getDisplayName() {
-		return username;
+		CurrentDisplayName name = DisplayConnection.connection().selectClass("current_names", "username=?", CurrentDisplayName.class, username);
+		if (name == null) return username;
+		return name.getDisplayName();
 	}
 	
 }
