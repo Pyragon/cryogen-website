@@ -101,8 +101,11 @@ public class ForumsModule extends WebModule {
                 prop.put("html", render("./source/modules/forums/forum.jade", model, request, response));
                 break;
             case "/forums/forum/:id/new-thread":
-                if(account == null)
-                    return showLoginPage(endpoint, request, response);
+                if (account == null) {
+                    if (request.requestMethod().equals("GET"))
+                        return showLoginPage(endpoint, request, response);
+                    else return error("You must be logged in to create a new post.");
+                }
                 idString = request.params(":id");
                 try {
                     id = Integer.parseInt(idString);
@@ -185,8 +188,6 @@ public class ForumsModule extends WebModule {
                         return error("Title must be between 5 and 50 characters long.");
                     if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 50)
                         return error("Body must be between 5 and 50 characters long.");
-                    //TODO - get user id, set MySQLDefault in thread class
-                    //TODO - allow MySQLDefault to provide a default value
                     thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, null, false, -1, null, null);
                     insertId = ForumConnection.connection().insert("threads", thread.data());
                     Post post = new Post(-1, insertId, account.getId(), body, null, null);

@@ -1,4 +1,5 @@
-button.btn.btn-default#new-thread-btn New Post
+if loggedIn
+    button.btn.btn-default#new-thread-btn New Post
 if forum.getSubForums().length > 0
     div.news-post
         div.header
