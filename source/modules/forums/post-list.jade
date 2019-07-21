@@ -13,7 +13,7 @@ for post in posts
     div.author-block
         p.display-name Cody
         div.author-avatar
-            img(src=user.getAvatarUrl() == null ? '/images/default_avatar.png' : '', style='width: 75px; height: 75px;')
+            img(src=user.getAvatarUrl() == null ? 'http://codysprojects.ca/images/default_avatar.png' : '', style='width: 75px; height: 75px;')
     div.post-block
         div.date-block
             p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
