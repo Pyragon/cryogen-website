@@ -162,7 +162,7 @@ public class ForumsModule extends WebModule {
                 }
                 break;
             case "/forums/forum/:id/submit-new-thread":
-                int insertId;
+                int threadId;
                 try {
                     if (request.requestMethod().equals("GET"))
                         return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
@@ -189,9 +189,10 @@ public class ForumsModule extends WebModule {
                     if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 50)
                         return error("Body must be between 5 and 50 characters long.");
                     thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, null, false, -1, null, null);
-                    insertId = ForumConnection.connection().insert("threads", thread.data());
-                    Post post = new Post(-1, insertId, account.getId(), body, null, null);
-                    insertId = ForumConnection.connection().insert("posts", post.data());
+                    threadId = ForumConnection.connection().insert("threads", thread.data());
+                    thread.setId(threadId);
+                    Post post = new Post(-1, threadId, account.getId(), body, null, null);
+                    int insertId = ForumConnection.connection().insert("posts", post.data());
                     post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, insertId);
                     thread.updateLastPost(post);
                 } catch(Exception e) {

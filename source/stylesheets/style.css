@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
     background: url('../images/bg-lighting.png') no-repeat scroll center -463px #18597f;
@@ -38,7 +39,8 @@ html, body {
     float: left;
 }
 
-.login_line input, .login_line textarea {
+.login_line input,
+.login_line textarea {
     border-radius: 3px;
     margin: 5px;
     padding: 5px;
@@ -349,7 +351,8 @@ h4.title {
     margin-bottom: 20px;
 }
 
-.minimize, .modal-content {
+.minimize,
+.modal-content {
     background: rgb(35, 35, 35);
     /* Old browsers */
     background: -moz-linear-gradient(top, rgba(35, 35, 35, 1) 0%, rgba(19, 19, 19, 1) 100%);
@@ -435,7 +438,9 @@ h4.title {
     z-index: 0;
 }
 
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+.navbar-default .navbar-nav>.open>a,
+.navbar-default .navbar-nav>.open>a:hover,
+.navbar-default .navbar-nav>.open>a:focus {
     background-color: #111;
 }
 
@@ -548,7 +553,8 @@ h4.title {
     border-top: 2px solid #18597f;
 }
 
-.modal-alert, .mini-alert {
+.modal-alert,
+.mini-alert {
     display: none;
 }
 
@@ -614,7 +620,9 @@ h4.title {
     color: #FFF !important;
 }
 
-.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:hover,
+.nav-tabs>li.active>a:focus {
     background: #0a354f;
     color: #FFF !important;
     border: 0;
@@ -629,14 +637,16 @@ h4.title {
 
 .auth-refresh-spin {}
 
-.cart, .packages {
+.cart,
+.packages {
     padding: 10px;
     background: #111;
     border: 1px solid #333;
     color: #666;
 }
 
-.cart p, .packages p {
+.cart p,
+.packages p {
     margin: 5px 5px;
 }
 
@@ -909,7 +919,7 @@ p.small {
     font-size: 10px;
 }
 
-.forum>.last-post {
+.forum>.last-post-title {
     float: right;
     margin: 10px;
     color: white;
@@ -1122,7 +1132,12 @@ input:checked+.slider:before {
     margin: 15px 0;
 }
 
-.register .btn, .sidebar-btn, .btn-comment, .recover-btn, #new-thread-btn, #submit-thread-btn {
+.register .btn,
+.sidebar-btn,
+.btn-comment,
+.recover-btn,
+#new-thread-btn,
+#submit-thread-btn {
     margin: 100px auto 30px auto;
     display: block;
     padding: 10px 50px;
@@ -1140,7 +1155,8 @@ input:checked+.slider:before {
     margin: 10px 5px 5px auto;
 }
 
-#new-thread-title-p, #new-thread-body-p {
+#new-thread-title-p,
+#new-thread-body-p {
     color: white;
     margin: 5px auto auto 10px;
     font-size: 13px;
@@ -1148,7 +1164,8 @@ input:checked+.slider:before {
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
 }
 
-#new-thread-title, #new-thread-body {
+#new-thread-title,
+#new-thread-body {
     margin: 5px auto 5px 10px;
     border-radius: 5px;
     max-height: 25px;
@@ -1170,7 +1187,13 @@ input:checked+.slider:before {
     font-size: 13px;
 }
 
-.register .btn:hover, .sidebar-btn:hover, .btn-comment:hover, .btn-comment:active, .btn:active, .btn:hover, .btn:focus {
+.register .btn:hover,
+.sidebar-btn:hover,
+.btn-comment:hover,
+.btn-comment:active,
+.btn:active,
+.btn:hover,
+.btn:focus {
     border: 2px solid #050505;
     background: #111;
     color: #CCC !important;
@@ -1214,7 +1237,8 @@ Widget
 /*
 * Mini highscores
 */
-.widget, .mini-sh .content {
+.widget,
+.mini-sh .content {
     //background: rgb(35,35,35);
     //background: -moz-linear-gradient(top,  rgba(35,35,35,1) 0%, rgba(19,19,19,1) 100%); /* FF3.6+ */
     //background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(35,35,35,1)), color-stop(100%,rgba(19,19,19,1))); /* Chrome,Safari4+ */
@@ -1250,7 +1274,8 @@ Widget
     margin-top: 8px;
 }
 
-.mini-table, .hs-table {
+.mini-table,
+.hs-table {
     margin: 0;
 }
 
@@ -1278,7 +1303,12 @@ Widget
     color: #FFF;
 }
 
-.mini-table>thead>tr>th, .mini-table>tbody>tr>th, .mini-table>tfoot>tr>th, .mini-table>thead>tr>td, .mini-table>tbody>tr>td, .mini-table>tfoot>tr>td {
+.mini-table>thead>tr>th,
+.mini-table>tbody>tr>th,
+.mini-table>tfoot>tr>th,
+.mini-table>thead>tr>td,
+.mini-table>tbody>tr>td,
+.mini-table>tfoot>tr>td {
     border-bottom: 1px solid #111;
 }
 
@@ -1355,7 +1385,9 @@ Widget
     font-weight: 300;
 }
 
-.mini-login form input, .register input, .form-control[disabled] {
+.mini-login form input,
+.register input,
+.form-control[disabled] {
     background: #111;
     border: 1px solid #000;
     font-size: 11px;
@@ -1370,7 +1402,8 @@ Widget
     width: 100%;
 }
 
-.mini-login button:hover, .mini-login button:active {
+.mini-login button:hover,
+.mini-login button:active {
     background: #181818;
     border-color: #000;
 }
@@ -1399,7 +1432,12 @@ Widget
     color: #FFF;
 }
 
-.hs-table>thead>tr>th, .hs-table>tbody>tr>th, .hs-table>tfoot>tr>th, .hs-table>thead>tr>td, .hs-table>tbody>tr>td, .hs-table>tfoot>tr>td {
+.hs-table>thead>tr>th,
+.hs-table>tbody>tr>th,
+.hs-table>tfoot>tr>th,
+.hs-table>thead>tr>td,
+.hs-table>tbody>tr>td,
+.hs-table>tfoot>tr>td {
     border-bottom: 1px solid #111;
 }
 
@@ -1427,7 +1465,8 @@ Widget
    Coded by /u/j0be in scss.
    See scss source here -> http://codepen.io/j0be/pen/MKRVyN
 */
-.navbar .navbar-toggle:hover, .navbar .navbar-toggle:focus {
+.navbar .navbar-toggle:hover,
+.navbar .navbar-toggle:focus {
     background-color: transparent;
 }
 

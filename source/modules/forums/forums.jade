@@ -54,7 +54,7 @@ block head
                 window.location.href=link;
             });
 
-            function setBreadcrumbs(breadcrumbs, links) {
+            window.setBreadCrumbs =  function(breadcrumbs, links) {
                 let element = $('#breadcrumbs');
                 element.html('');
                 for(let i = 0; i < breadcrumbs.length; i++) {

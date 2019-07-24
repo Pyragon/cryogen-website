@@ -1,3 +1,41 @@
+include ../utils/forum_name
+script.
+    $(document).ready(() => {
+
+        $(document).on('click', '.last-post-author', function() {
+            console.log('author');
+            return false;
+        });
+
+        $(document).on('click', '.last-post-time>span', function() {
+            if(!$(this).prop('class').includes('link') || $(this).prop('class').includes('author')) return false;
+            let id = $(this).data('id');
+            if(!id) return false;
+            $.post('/forums/thread/'+id, {}, ret => {
+                    let data = getJSON(ret);
+                    if(data == null) return false;
+                    history.pushState({}, 'ForumSection', '/forums/thread/'+id);
+                    setBreadCrumbs(data.breadcrumbs, data.links);
+                    $('#forum-content').html(data.html);
+            });
+            return false;
+        });
+
+        $(document).on('click', '.last-post-title', function() {
+            let id = $(this).data('id');
+            if(!id) return false;
+            $.post('/forums/thread/'+id, {}, ret => {
+                    let data = getJSON(ret);
+                    if(data == null) return false;
+                    history.pushState({}, 'ForumSection', '/forums/thread/'+id);
+                    setBreadCrumbs(data.breadcrumbs, data.links);
+                    $('#forum-content').html(data.html);
+            });
+            return false;
+        });
+
+    });
+
 for category in categories
     div.news-post
         div.header
@@ -12,7 +50,12 @@ for category in categories
                         a.name.link(href=forum.getLink(), target='_blank')= forum.getName()
                     else
                         div.name.link(data-link='/forums/forum/'+forum.getId())= forum.getName()
-                    div.last-post= forum.getLastPost() == null ? 'N/A' : 'By Cody'
-                    div.last-post-time= forum.getLastPost() == null ? 'N/A' : 'Today'
+                    .last-post-time
+                        span.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getTimeRelative()
+                        if forum.getLastPost() != null
+                            span  by 
+                            span.last-post-author(data-id=forum.getLastPost().getAuthor().getId()).link
+                                +showName(forum.getLastPost().getAuthor(), 14, 15)
+                    div.last-post-title.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getThread().getTitle()
                     div.separator |
                 div(style='clear: both;')

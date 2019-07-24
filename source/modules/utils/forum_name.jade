@@ -1,0 +1,6 @@
+mixin showName(author, height, width)
+    if author.getImageBefore() != null
+        img.forum-name(src=author.getImageBefore(), style='height: '+height+'px; width: '+width+'px;')
+    span(style=author.getNameColour() == null ? '' : 'color: '+author.getNameColour()+';')= author.getDisplayName()
+    if author.getImageAfter() != null
+        img.forum-name(src=author.getImageAfter(), style='height: '+height+'px; width: '+width+'px;')

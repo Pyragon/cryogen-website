@@ -43,6 +43,11 @@ public class SubforumCache extends CachedItem {
     }
 
     @Override
+    public void clear() {
+        subforumsTimes.clear();
+    }
+
+    @Override
     public long getCacheTimeLimit() {
         return 120_000;
     }

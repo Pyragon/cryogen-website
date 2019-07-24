@@ -16,7 +16,8 @@ import java.util.ArrayList;
 public class Thread extends MySQLDao {
 
     @MySQLDefault
-    private final int id;
+    @MySQLRead
+    private int id;
     private final int forumId;
     private final String title;
     private final int author;
@@ -51,7 +52,7 @@ public class Thread extends MySQLDao {
         lastPostId = post.getId();
         lastPostAuthor = post.getAuthorId();
         lastPostTime = post.getAdded();
-        ForumConnection.connection().set("threads", "last_post_id=?, last_post_author=?, last_post_time=?", "id=?", post.getId(), post.getAuthor(), post.getAdded(), id);
+        ForumConnection.connection().set("threads", "last_post_id=?, last_post_author=?, last_post_time=?", "id=?", lastPostId, lastPostAuthor, lastPostTime, id);
     }
 
     public ArrayList<Post> getPosts(int page) {
