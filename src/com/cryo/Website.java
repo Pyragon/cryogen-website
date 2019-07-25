@@ -12,6 +12,7 @@ import com.cryo.modules.account.RegisterModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.recovery.RecoveryModule;
 import com.cryo.modules.api.APIModule;
+import com.cryo.modules.api.APISections;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
@@ -65,23 +66,28 @@ public class Website {
 
 	private static @Getter Properties properties;
 
-	private @Getter final DBConnectionManager connectionManager;
+	private @Getter
+	DBConnectionManager connectionManager;
 
-	private @Getter final PaypalManager paypalManager;
+	private @Getter
+	PaypalManager paypalManager;
 
-	private @Getter final CachingManager cachingManager;
+	private @Getter
+	CachingManager cachingManager;
 
-	private @Getter final CommentsManager commentsManager;
+	private @Getter
+	CommentsManager commentsManager;
 
-	private @Getter final SearchManager searchManager;
+	private @Getter
+	SearchManager searchManager;
 
-	private final Timer fastExecutor;
+	private Timer fastExecutor;
 
 	private static File FAVICON = null;
 
 	private static @Getter Gson Gson;
 
-	public Website() {
+	public void load() {
 		try {
 			if(System.getProperty("os.name").equals("Windows 10"))
 				PATH = "http://localhost:8085/";
@@ -103,6 +109,7 @@ public class Website {
 			staticFiles.expireTime(0); // ten minutes
 			staticFiles.header("Access-Control-Allow-Origin", "*");
 			CorsFilter.apply();
+			APISections.loadSections();
 			AccountModule.registerEndpoints(this);
 			SearchManager.registerEndpoints(this);
 			StaffModule.registerEndpoints(this);
@@ -313,6 +320,7 @@ public class Website {
 
 	public static void main(String[] args) {
 		INSTANCE = new Website();
+		INSTANCE.load();
 
 	}
 

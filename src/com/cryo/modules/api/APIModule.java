@@ -2,24 +2,23 @@ package com.cryo.modules.api;
 
 import com.cryo.Website;
 import com.cryo.modules.WebModule;
-import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.server.APIConnection;
 import com.cryo.utils.CookieManager;
-import com.google.gson.Gson;
 import com.mashape.unirest.http.JsonNode;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static spark.Spark.*;
-import static com.cryo.Website.*;
+import static com.cryo.Website.error;
+import static com.cryo.Website.getGson;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class APIModule {
 

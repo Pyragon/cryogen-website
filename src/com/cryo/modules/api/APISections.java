@@ -1,7 +1,6 @@
 package com.cryo.modules.api;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -54,10 +53,11 @@ public enum APISections {
 
     private static @Getter HashMap<String, APISections> sections;
 
-    static {
+    public static void loadSections() {
         sections = new HashMap<>();
-        for(APISections section : APISections.values())
+        for (APISections section : APISections.values())
             sections.put(section.name().toLowerCase().replaceAll("_", "-"), section);
+        System.out.println(sections);
     }
 
     public APIEndpoints getEndpoint(int id) {
