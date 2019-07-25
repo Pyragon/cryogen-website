@@ -28,4 +28,10 @@ public class Category extends MySQLDao {
         return (ArrayList<SubForum>) data;
     }
 
+    public Permissions getPermissions() {
+        Object data = Website.instance().getCachingManager().getData("permissions-cache", permissions);
+        if (data == null) return null;
+        return (Permissions) data;
+    }
+
 }

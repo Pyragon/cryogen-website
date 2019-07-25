@@ -11,7 +11,7 @@ block head
                     if(data == null) return false;
                     history.pushState({}, 'ForumSection', link);
                     $('#forum-content').html(data.html);
-                    setBreadcrumbs(data.breadcrumbs, data.links);
+                    setBreadCrumbs(data.breadcrumbs, data.links);
                 });
             });
 
@@ -21,7 +21,7 @@ block head
                     if(data == null) return false;
                     history.pushState({}, 'ForumSection', location.pathname+'/new-thread');
                     $('#forum-content').html(data.html);
-                    setBreadcrumbs(data.breadcrumbs, data.links);
+                    setBreadCrumbs(data.breadcrumbs, data.links);
                 });
             });
 

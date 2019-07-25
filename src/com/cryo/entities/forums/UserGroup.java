@@ -16,6 +16,7 @@ public class UserGroup extends MySQLDao {
     private final String colour;
     private final String imageBefore;
     private final String imageAfter;
+    private final String userTitle;
     @MySQLDefault
     private final Timestamp added;
     @MySQLDefault

@@ -8,6 +8,7 @@ import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
 import com.cryo.entities.forums.UserGroup;
+import com.cryo.modules.highscores.HSUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -36,12 +37,38 @@ public class Account extends MySQLDao {
 	private final String usergroupsString;
 	@MySQLDefault
 	private final Timestamp creationDate;
+
+	public HSUtils.HSData getHSData() {
+		Object data = Website.instance().getCachingManager().getData("hs-cache", "personal", username);
+		if (data == null) return null;
+		return (HSUtils.HSData) data;
+	}
 	
 	public String getEmail() {
 		Object[] data = EmailConnection.connection().handleRequest("get-email", username);
 		if(data == null)
 			return "";
 		return (String) data[0];
+	}
+
+	public int getThanksGiven() {
+		Object data = Website.instance().getCachingManager().getData("thanks-cache", "count-given", id);
+		if (data == null) return 0;
+		return (int) data;
+	}
+
+	public int getThanksReceived() {
+		Object data = Website.instance().getCachingManager().getData("thanks-cache", "count-received", id);
+		if (data == null) return 0;
+		return (int) data;
+	}
+
+	public String getUserTitle() {
+		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
+			return getDisplayGroup().getUserTitle();
+		for (UserGroup group : getUsergroups())
+			if (group.getUserTitle() != null) return group.getUserTitle();
+		return null;
 	}
 
 	public String getDisplayName() {

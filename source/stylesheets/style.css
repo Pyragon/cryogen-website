@@ -864,11 +864,33 @@ p.small {
 
 .body-block {
     width: 77%;
-    height: 200px;
-    display: inline-block;
+    min-height: 200px;
     border-left: 1px solid #000;
     float: right;
     padding: 0px;
+}
+
+.body-block>.thanks-content>.thanks-block>.thanks-about {
+    margin-top: 5px;
+    margin-left: 5px;
+    font-size: 10px;
+}
+
+.body-block>.thanks-content>.thanks-block>.thanks {
+    margin-top: 5px;
+    margin-left: 5px;
+    font-size: 11px;
+}
+
+.body-block>.thanks-content>.thanks-block>.thanks>span:last-of-type {
+    display: none;
+}
+
+.body-block>.thanks-content>.thanks-block {
+    min-height: 20px;
+    width: 100%;
+    border: 1px solid #000;
+    margin-top: 10px;
 }
 
 .date-block {
@@ -901,9 +923,50 @@ p.small {
     line-height: 25px;
 }
 
+.edit-options {
+    float: right;
+    margin-right: 5px;
+    margin-bottom: -5px;
+    font-size: 10px;
+}
+
+.edit-options>p,
+.edit-options>i {
+    display: inline-block;
+    margin-left: 5px;
+}
+
 .author-block>.display-name {
     text-align: center;
     color: white;
+}
+
+.author-block>.user-title {
+    text-align: center;
+    font-size: 10px;
+}
+
+.author-block>.thanks-received,
+.author-block>.thanks-given {
+    text-align: center;
+    font-size: 11px;
+    margin-top: 10px;
+}
+
+.author-block>.thanks-given {
+    margin-top: 5px;
+}
+
+.author-block>.ingame-total {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.author-block>.ingame-total>img {
+    width: 15px;
+    height: 14px;
+    vertical-align: middle;
 }
 
 .forum>.name {

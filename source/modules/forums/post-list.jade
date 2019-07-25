@@ -1,3 +1,4 @@
+include ../utils/forum_name
 script.
     $(document).ready(() => {
 
@@ -7,18 +8,57 @@ script.
             $('#post-list').find('.row').width(width);
         }
 
+        $(document).on('click', '.add-thanks', function() {
+            let postId = $(this).data('post_id');
+            $.post('/forums/post/'+postId+'/add-thanks', {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('.thanks-content[data-post_id='+postId+']').html(data.html);
+                $('.add-thanks[data-post_id='+postId+']>span').html(' Remove Thanks');
+            });
+        });
+
     });
 
 for post in posts
     div.post-block
         div.author-block
-            p.display-name=post.getAuthor().getDisplayName()
+            p.display-name
+                +showName(post.getAuthor(), 15, 16)
+            if post.getAuthor().getUserTitle() != null
+                p.user-title= post.getAuthor().getUserTitle()
             div.author-avatar
                 img(src=post.getAuthor().getAvatarUrl() == null ? '/images/default_avatar.png' : post.getAuthor().getAvatarUrl(), style='width: 75px; height: 75px;')
+            div.thanks-received
+                i.fa.fa-thumbs-up.link
+                    span  Thanks Received: 
+                    span= post.getAuthor().getThanksReceived()
+            div.thanks-given
+                i.fa.fa-thumbs-up.link
+                    span  Thanks Given: 
+                    span= post.getAuthor().getThanksGiven()
+            if post.getAuthor().getHSData() != null
+                div.ingame-total
+                    img(src='/images/skills/overall.png')
+                    span  In-Game Total: 
+                    span= post.getAuthor().getHSData().getTotalLevel()
         div.body-block
             div.date-block
                 p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
                 p.post-link.vis-link= '#'+post.getId()
             div.post
                 p(style='margin-left: 0px;')= post.getPost()
+            div.edit-options
+                if post.hasBeenEdited()
+                    p= 'Last Edited: '+post.getTimeRelative(post.getEdited())
+                if loggedIn && post.getAuthor().getId() == user.getId()
+                    p.vis-link Edit
+                if loggedIn
+                    p.vis-link Quote
+                if loggedIn// && post.getAuthor().getId() != user.getId()
+                    i.fa.fa-thumbs-up.link.add-thanks(data-post_id=post.getId())
+                        span.vis-link  Thanks
+            .clear
+            div.thanks-content(data-post_id=post.getId())
+                include thanks-list
         .clear

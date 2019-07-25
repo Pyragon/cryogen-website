@@ -1,5 +1,6 @@
 package com.cryo.entities.forums;
 
+import com.cryo.Website;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.MySQLDao;
@@ -8,14 +9,17 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Data
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class Post extends MySQLDao {
 
     @MySQLDefault
@@ -25,6 +29,7 @@ public class Post extends MySQLDao {
     private final String post;
     @MySQLDefault
     private final Timestamp added;
+    private final Timestamp edited;
     @MySQLDefault
     private final Timestamp updated;
 
@@ -36,11 +41,23 @@ public class Post extends MySQLDao {
         return ForumConnection.connection().selectClass("threads", "id=?", Thread.class, threadId);
     }
 
-    public String getTimeRelative() {
+    public ArrayList<Account> getThanks() {
+        ArrayList<Account> accounts = new ArrayList<>();
+        Object data = Website.instance().getCachingManager().getData("thanks-cache", "thanks", id);
+        if (data == null) return accounts;
+        return (ArrayList<Account>) data;
+    }
+
+    public boolean hasBeenEdited() {
+        return edited != null;
+    }
+
+    public String getTimeRelative(Timestamp stamp) {
+        if (stamp == null) stamp = added;
         Date now = new Date();
-        long diff = DateUtils.getDateDiff(now, added, TimeUnit.DAYS);
+        long diff = DateUtils.getDateDiff(now, stamp, TimeUnit.DAYS);
         SimpleDateFormat format = new SimpleDateFormat("hh:mm a");
-        String timeF = format.format(added);
+        String timeF = format.format(stamp);
         format = new SimpleDateFormat("MM/dd/yyyy");
         diff = Math.abs(diff);
         String result = "";
@@ -52,7 +69,7 @@ public class Post extends MySQLDao {
             result = diff + " days ago @ ";
         if (diff <= 7)
             return result + timeF;
-        return format.format(added) + " @ " + timeF;
+        return format.format(stamp) + " @ " + timeF;
     }
 
 }

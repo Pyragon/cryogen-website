@@ -191,7 +191,7 @@ public class ForumsModule extends WebModule {
                     thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, null, false, -1, null, null);
                     threadId = ForumConnection.connection().insert("threads", thread.data());
                     thread.setId(threadId);
-                    Post post = new Post(-1, threadId, account.getId(), body, null, null);
+                    Post post = new Post(-1, threadId, account.getId(), body, null, null, null);
                     int insertId = ForumConnection.connection().insert("posts", post.data());
                     post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, insertId);
                     thread.updateLastPost(post);

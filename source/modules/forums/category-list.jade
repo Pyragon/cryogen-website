@@ -37,25 +37,27 @@ script.
     });
 
 for category in categories
-    div.news-post
-        div.header
-            p.title= category.getName()
-                a.minimize
-                    span.fa.fa-minus
-            p.description= category.getDescription()
-        div.content
-            for forum in category.getSubForums()
-                div.forum
-                    if forum.isLink()
-                        a.name.link(href=forum.getLink(), target='_blank')= forum.getName()
-                    else
-                        div.name.link(data-link='/forums/forum/'+forum.getId())= forum.getName()
-                    .last-post-time
-                        span.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getTimeRelative()
-                        if forum.getLastPost() != null
-                            span  by 
-                            span.last-post-author(data-id=forum.getLastPost().getAuthor().getId()).link
-                                +showName(forum.getLastPost().getAuthor(), 14, 15)
-                    div.last-post-title.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getThread().getTitle()
-                    div.separator |
-                div(style='clear: both;')
+    if category.getPermissions() == null || category.getPermissions().canReadThread(user)
+        div.news-post
+            div.header
+                p.title= category.getName()
+                    a.minimize
+                        span.fa.fa-minus
+                p.description= category.getDescription()
+            div.content
+                for forum in category.getSubForums()
+                    if forum.getPermissions() == null || forum.getPermissions().canReadThread(user)
+                        div.forum
+                            if forum.isLink()
+                                a.name.link(href=forum.getLink(), target='_blank')= forum.getName()
+                            else
+                                div.name.link(data-link='/forums/forum/'+forum.getId())= forum.getName()
+                            .last-post-time
+                                span.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getTimeRelative(null)
+                                if forum.getLastPost() != null
+                                    span  by 
+                                    span.last-post-author(data-id=forum.getLastPost().getAuthor().getId()).link
+                                        +showName(forum.getLastPost().getAuthor(), 14, 15)
+                            div.last-post-title.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getThread().getTitle()
+                            div.separator |
+                        div(style='clear: both;')
