@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               10.1.25-MariaDB - mariadb.org binary distribution
--- Server OS:                    Win32
--- HeidiSQL Version:             9.5.0.5196
+-- Server version:               10.3.15-MariaDB - mariadb.org binary distribution
+-- Server OS:                    Win64
+-- HeidiSQL Version:             10.2.0.5599
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -20,20 +20,22 @@ USE `cryogen_accounts`;
 CREATE TABLE IF NOT EXISTS `sessions` (
   `username` varchar(12) NOT NULL,
   `sess_id` varchar(100) NOT NULL,
-  `expiry` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `expiry` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_accounts.tokens
 CREATE TABLE IF NOT EXISTS `tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(12) NOT NULL,
   `token` varchar(100) NOT NULL,
-  `expiry` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expiry` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18228 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_comments
 CREATE DATABASE IF NOT EXISTS `cryogen_comments` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -45,11 +47,12 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `list_id` int(11) NOT NULL,
   `username` varchar(12) NOT NULL,
   `comment` varchar(1000) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_comments.lists
 CREATE TABLE IF NOT EXISTS `lists` (
   `list_id` int(11) NOT NULL,
@@ -57,6 +60,7 @@ CREATE TABLE IF NOT EXISTS `lists` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_discord
 CREATE DATABASE IF NOT EXISTS `cryogen_discord` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -69,14 +73,16 @@ CREATE TABLE IF NOT EXISTS `discord_linked` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_discord.discord_verify
 CREATE TABLE IF NOT EXISTS `discord_verify` (
   `username` varchar(14) NOT NULL,
   `rand_hash` varchar(50) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_display
 CREATE DATABASE IF NOT EXISTS `cryogen_display` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -89,13 +95,15 @@ CREATE TABLE IF NOT EXISTS `current_names` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_display.delays
 CREATE TABLE IF NOT EXISTS `delays` (
   `username` varchar(12) DEFAULT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_display.last_names
 CREATE TABLE IF NOT EXISTS `last_names` (
   `username` varchar(12) NOT NULL,
@@ -103,6 +111,7 @@ CREATE TABLE IF NOT EXISTS `last_names` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_email
 CREATE DATABASE IF NOT EXISTS `cryogen_email` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -115,19 +124,35 @@ CREATE TABLE IF NOT EXISTS `linked` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_email.temp
 CREATE TABLE IF NOT EXISTS `temp` (
   `username` varchar(12) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `random` varchar(20) DEFAULT NULL,
-  `expiry` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `expiry` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 
+
 -- Dumping database structure for cryogen_forum
 CREATE DATABASE IF NOT EXISTS `cryogen_forum` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `cryogen_forum`;
+
+-- Dumping structure for table cryogen_forum.categories
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `permissions` int(11) NOT NULL,
+  `priority` int(11) NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `added` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
 
 -- Dumping structure for table cryogen_forum.forum_linked
 CREATE TABLE IF NOT EXISTS `forum_linked` (
@@ -137,15 +162,110 @@ CREATE TABLE IF NOT EXISTS `forum_linked` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_forum.forum_verify
 CREATE TABLE IF NOT EXISTS `forum_verify` (
   `username` varchar(12) NOT NULL,
   `forum_id` int(10) NOT NULL,
   `pm_id` int(10) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_forum.permissions
+CREATE TABLE IF NOT EXISTS `permissions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` int(11) NOT NULL,
+  `can_read_threads` varchar(500) NOT NULL DEFAULT '',
+  `can_read_own_threads` varchar(500) NOT NULL DEFAULT '',
+  `can_create_thread` varchar(500) NOT NULL DEFAULT '',
+  `can_read_staff_threads` varchar(500) NOT NULL DEFAULT '',
+  `can_create_polls` varchar(500) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_forum.posts
+CREATE TABLE IF NOT EXISTS `posts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `thread_id` int(11) NOT NULL,
+  `author_id` int(11) NOT NULL,
+  `post` varchar(50000) NOT NULL,
+  `added` timestamp NOT NULL DEFAULT current_timestamp(),
+  `edited` timestamp NULL DEFAULT current_timestamp(),
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_forum.subforums
+CREATE TABLE IF NOT EXISTS `subforums` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(50) NOT NULL,
+  `parent_id` int(11) NOT NULL,
+  `parent_is_category` int(11) NOT NULL,
+  `is_category` int(11) NOT NULL,
+  `is_link` int(11) NOT NULL,
+  `permissions` int(11) NOT NULL,
+  `priority` int(11) NOT NULL,
+  `link` varchar(50) NOT NULL DEFAULT '',
+  `added` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_forum.thanks
+CREATE TABLE IF NOT EXISTS `thanks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) NOT NULL,
+  `author_id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `added` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_forum.threads
+CREATE TABLE IF NOT EXISTS `threads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `forum_id` int(11) NOT NULL DEFAULT 0,
+  `title` varchar(50) NOT NULL,
+  `author` int(11) NOT NULL,
+  `last_post_id` int(11) NOT NULL,
+  `last_post_author` int(11) NOT NULL,
+  `last_post_time` timestamp NULL DEFAULT NULL,
+  `has_poll` int(11) NOT NULL,
+  `poll_id` int(11) NOT NULL,
+  `added` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_forum.usergroups
+CREATE TABLE IF NOT EXISTS `usergroups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `rights` int(11) NOT NULL,
+  `colour` varchar(50) DEFAULT NULL,
+  `image_before` varchar(50) DEFAULT NULL,
+  `image_after` varchar(50) DEFAULT NULL,
+  `user_title` varchar(50) DEFAULT NULL,
+  `added` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_global
 CREATE DATABASE IF NOT EXISTS `cryogen_global` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -166,6 +286,7 @@ CREATE TABLE IF NOT EXISTS `alogs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.announcements
 CREATE TABLE IF NOT EXISTS `announcements` (
   `id` int(100) NOT NULL AUTO_INCREMENT,
@@ -173,18 +294,32 @@ CREATE TABLE IF NOT EXISTS `announcements` (
   `title` varchar(100) NOT NULL,
   `announcement` varchar(1000) NOT NULL,
   `read` varchar(1000) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `expiry` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `expiry` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
+-- Dumping structure for table cryogen_global.client_data
+CREATE TABLE IF NOT EXISTS `client_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version` varchar(50) NOT NULL,
+  `last_update` varchar(1000) DEFAULT '',
+  `latest` int(1) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+
+-- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.events
 CREATE TABLE IF NOT EXISTS `events` (
   `event_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.highscores
 CREATE TABLE IF NOT EXISTS `highscores` (
   `username` varchar(14) NOT NULL,
@@ -218,6 +353,7 @@ CREATE TABLE IF NOT EXISTS `highscores` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.misc_data
 CREATE TABLE IF NOT EXISTS `misc_data` (
   `name` varchar(50) DEFAULT NULL,
@@ -225,6 +361,7 @@ CREATE TABLE IF NOT EXISTS `misc_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.personal_shop
 CREATE TABLE IF NOT EXISTS `personal_shop` (
   `username` varchar(12) NOT NULL,
@@ -232,6 +369,7 @@ CREATE TABLE IF NOT EXISTS `personal_shop` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.player_data
 CREATE TABLE IF NOT EXISTS `player_data` (
   `id` int(100) NOT NULL AUTO_INCREMENT,
@@ -240,19 +378,24 @@ CREATE TABLE IF NOT EXISTS `player_data` (
   `salt` varchar(100) NOT NULL,
   `rights` int(2) NOT NULL,
   `donator` int(2) NOT NULL,
-  `creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `avatar_url` varchar(500) DEFAULT NULL,
+  `display_group` int(11) NOT NULL DEFAULT 2,
+  `usergroups` varchar(500) DEFAULT NULL,
+  `creation_date` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_global.weblogs
 CREATE TABLE IF NOT EXISTS `weblogs` (
   `logMessage` varchar(50) DEFAULT NULL,
   `logType` varchar(50) DEFAULT NULL,
-  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_logs
 CREATE DATABASE IF NOT EXISTS `cryogen_logs` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -264,10 +407,11 @@ CREATE TABLE IF NOT EXISTS `commands` (
   `command` varchar(50) NOT NULL,
   `parameters` varchar(100) NOT NULL,
   `ip` varchar(50) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.dice
 CREATE TABLE IF NOT EXISTS `dice` (
   `winner` varchar(12) NOT NULL,
@@ -276,10 +420,11 @@ CREATE TABLE IF NOT EXISTS `dice` (
   `loser_ip` varchar(100) NOT NULL,
   `winner_stake` varchar(1000) NOT NULL,
   `loser_stake` varchar(1000) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.drop
 CREATE TABLE IF NOT EXISTS `drop` (
   `username` varchar(12) NOT NULL,
@@ -287,10 +432,11 @@ CREATE TABLE IF NOT EXISTS `drop` (
   `amount` int(20) NOT NULL,
   `ip` varchar(100) NOT NULL,
   `drop_type` int(1) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.duel
 CREATE TABLE IF NOT EXISTS `duel` (
   `winner` varchar(12) NOT NULL,
@@ -299,18 +445,20 @@ CREATE TABLE IF NOT EXISTS `duel` (
   `losing_stake` varchar(1000) NOT NULL,
   `winning_ip` varchar(100) NOT NULL,
   `losing_ip` varchar(100) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.login
 CREATE TABLE IF NOT EXISTS `login` (
   `username` varchar(12) NOT NULL,
   `ip` varchar(100) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.pickup
 CREATE TABLE IF NOT EXISTS `pickup` (
   `username` varchar(12) NOT NULL,
@@ -319,10 +467,11 @@ CREATE TABLE IF NOT EXISTS `pickup` (
   `owner` varchar(12) NOT NULL,
   `tile` varchar(100) NOT NULL,
   `ip` varchar(100) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.pos
 CREATE TABLE IF NOT EXISTS `pos` (
   `buyer` varchar(12) NOT NULL,
@@ -330,10 +479,11 @@ CREATE TABLE IF NOT EXISTS `pos` (
   `id` int(20) NOT NULL,
   `amount` int(20) NOT NULL,
   `ip` varchar(50) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.punish
 CREATE TABLE IF NOT EXISTS `punish` (
   `punishee` varchar(12) NOT NULL,
@@ -341,10 +491,11 @@ CREATE TABLE IF NOT EXISTS `punish` (
   `remover` varchar(12) NOT NULL,
   `type` int(2) NOT NULL,
   `ip` varchar(50) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.pvp
 CREATE TABLE IF NOT EXISTS `pvp` (
   `winner` varchar(12) NOT NULL,
@@ -352,20 +503,22 @@ CREATE TABLE IF NOT EXISTS `pvp` (
   `items` varchar(1000) NOT NULL,
   `winner_ip` varchar(100) NOT NULL,
   `loser_ip` varchar(100) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.shop
 CREATE TABLE IF NOT EXISTS `shop` (
   `username` varchar(12) NOT NULL,
   `id` int(20) NOT NULL,
   `amount` int(20) NOT NULL,
   `ip` varchar(50) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_logs.trade
 CREATE TABLE IF NOT EXISTS `trade` (
   `trader` varchar(12) NOT NULL,
@@ -374,10 +527,11 @@ CREATE TABLE IF NOT EXISTS `trade` (
   `tradee_items` varchar(1000) NOT NULL,
   `trader_ip` varchar(100) NOT NULL,
   `tradee_ip` varchar(100) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_previous
 CREATE DATABASE IF NOT EXISTS `cryogen_previous` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -390,6 +544,7 @@ CREATE TABLE IF NOT EXISTS `ips` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='previous ips. Username - { { ip, datelong }, ... }';
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_previous.passwords
 CREATE TABLE IF NOT EXISTS `passwords` (
   `salt` varchar(100) NOT NULL,
@@ -398,6 +553,7 @@ CREATE TABLE IF NOT EXISTS `passwords` (
 
 -- Data exporting was unselected.
 
+
 -- Dumping database structure for cryogen_punish
 CREATE DATABASE IF NOT EXISTS `cryogen_punish` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `cryogen_punish`;
@@ -405,7 +561,7 @@ USE `cryogen_punish`;
 -- Dumping structure for table cryogen_punish.appeals
 CREATE TABLE IF NOT EXISTS `appeals` (
   `id` int(200) NOT NULL AUTO_INCREMENT,
-  `type` int(1) NOT NULL DEFAULT '0',
+  `type` int(1) NOT NULL DEFAULT 0,
   `punish_id` int(200) NOT NULL,
   `comment_list` int(200) NOT NULL,
   `username` varchar(12) NOT NULL,
@@ -415,31 +571,33 @@ CREATE TABLE IF NOT EXISTS `appeals` (
   `action` varchar(1000) NOT NULL DEFAULT 'Created',
   `read` varchar(10000) NOT NULL DEFAULT '',
   `active` int(1) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `answered` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `answered` timestamp NULL DEFAULT current_timestamp(),
   `answerer` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_punish.punishments
 CREATE TABLE IF NOT EXISTS `punishments` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `appeal_id` int(20) NOT NULL DEFAULT '0',
+  `appeal_id` int(20) NOT NULL DEFAULT 0,
   `username` varchar(12) NOT NULL,
   `type` int(1) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
   `expiry` timestamp NULL DEFAULT '0000-00-00 00:00:00',
   `punisher` varchar(12) NOT NULL,
   `reason` varchar(100) NOT NULL,
-  `active` int(1) NOT NULL DEFAULT '1',
-  `archived` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `active` int(1) NOT NULL DEFAULT 1,
+  `archived` timestamp NULL DEFAULT current_timestamp(),
   `archiver` varchar(12) DEFAULT NULL,
   `comment_list` int(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_recovery
 CREATE DATABASE IF NOT EXISTS `cryogen_recovery` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -451,10 +609,11 @@ CREATE TABLE IF NOT EXISTS `instant` (
   `rand` varchar(50) NOT NULL,
   `method` int(1) NOT NULL,
   `status` int(1) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_recovery.recoveries
 CREATE TABLE IF NOT EXISTS `recoveries` (
   `id` varchar(50) NOT NULL,
@@ -471,11 +630,12 @@ CREATE TABLE IF NOT EXISTS `recoveries` (
   `new_pass` varchar(500) NOT NULL,
   `reason` varchar(75) NOT NULL,
   `read` varchar(2000) NOT NULL,
-  `ip` varchar(20) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `ip` varchar(50) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_reports
 CREATE DATABASE IF NOT EXISTS `cryogen_reports` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -491,15 +651,16 @@ CREATE TABLE IF NOT EXISTS `bug_reports` (
   `info` varchar(1000) NOT NULL,
   `last_action` varchar(1000) NOT NULL DEFAULT 'Created',
   `comment_list` int(10) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `archived` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `archived` timestamp NULL DEFAULT current_timestamp(),
   `archiver` varchar(12) DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `type` tinyint(1) NOT NULL DEFAULT '0',
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `type` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_reports.player_reports
 CREATE TABLE IF NOT EXISTS `player_reports` (
   `id` int(200) NOT NULL AUTO_INCREMENT,
@@ -511,15 +672,16 @@ CREATE TABLE IF NOT EXISTS `player_reports` (
   `proof` varchar(1000) NOT NULL,
   `last_action` varchar(1000) NOT NULL DEFAULT 'Created',
   `comment_list` int(10) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `archived` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `archived` timestamp NULL DEFAULT current_timestamp(),
   `archiver` varchar(12) DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '1',
-  `type` tinyint(1) NOT NULL DEFAULT '1',
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `type` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_shop
 CREATE DATABASE IF NOT EXISTS `cryogen_shop` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -532,16 +694,18 @@ CREATE TABLE IF NOT EXISTS `cart_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_shop.invoices
 CREATE TABLE IF NOT EXISTS `invoices` (
   `id` varchar(50) NOT NULL,
   `username` varchar(12) NOT NULL,
   `items` varchar(1000) NOT NULL,
   `active` int(1) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_shop.item_data
 CREATE TABLE IF NOT EXISTS `item_data` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
@@ -552,22 +716,24 @@ CREATE TABLE IF NOT EXISTS `item_data` (
   `description` varchar(50) DEFAULT NULL,
   `active` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_shop.packages
 CREATE TABLE IF NOT EXISTS `packages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(12) NOT NULL DEFAULT '0',
-  `package_id` int(10) NOT NULL DEFAULT '0',
+  `package_id` int(10) NOT NULL DEFAULT 0,
   `invoice_id` varchar(1000) NOT NULL DEFAULT '0',
-  `active` int(1) NOT NULL DEFAULT '0',
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `redeem_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `active` int(1) NOT NULL DEFAULT 0,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `redeem_date` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 
 -- Dumping database structure for cryogen_vote
 CREATE DATABASE IF NOT EXISTS `cryogen_vote` /*!40100 DEFAULT CHARACTER SET latin1 */;
@@ -578,30 +744,33 @@ CREATE TABLE IF NOT EXISTS `auths` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `auth` varchar(12) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_vote.auth_logs
 CREATE TABLE IF NOT EXISTS `auth_logs` (
   `id` int(255) NOT NULL,
   `usernames` varchar(26) NOT NULL,
   `auths` varchar(26) NOT NULL,
   `details` varchar(26) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 -- Dumping structure for table cryogen_vote.vote_data
 CREATE TABLE IF NOT EXISTS `vote_data` (
   `username` varchar(12) NOT NULL,
-  `runelocus` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `rune-server` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `toplist` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `runelocus` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `rune-server` timestamp NOT NULL DEFAULT current_timestamp(),
+  `toplist` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
+
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
