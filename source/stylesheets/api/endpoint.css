@@ -3,16 +3,26 @@
     clear: both;
 }
 
-.endpoint-container, .endpoint-parameter-container, .endpoint-return-container, .endpoint-example-container, .abstract-type-container, .marg-left-10 {
+.endpoint-container,
+.endpoint-parameter-container,
+.endpoint-return-container,
+.endpoint-example-container,
+.abstract-type-container,
+.marg-left-10 {
     margin-left: 10px;
     clear: both;
 }
 
-.endpoint, .endpoint-return-title, .endpoint-example-title, .endpoint-parameter-title, .endpoint-return-type {
+.endpoint,
+.endpoint-return-title,
+.endpoint-example-title,
+.endpoint-parameter-title,
+.endpoint-return-type {
     color: white;
 }
 
-.endpoint-parameter-name, .endpoint-return-name {
+.endpoint-parameter-name,
+.endpoint-return-name {
     max-width: 550px;
 }
 
@@ -26,7 +36,7 @@
 }
 
 .endpoint-example-output-container {
-    height: 150px;
+    height: 250px;
     width: 100%;
     border: 1px solid #000;
     background: #111;
@@ -50,7 +60,8 @@
     color: green;
 }
 
-.endpoint-test-title, .abstract-type-title {
+.endpoint-test-title,
+.abstract-type-title {
     color: white;
     font-size: 17px;
     text-align: center;
@@ -99,7 +110,8 @@
     padding: 5px;
 }
 
-.endpoint-test-input[data-type="String"], .endpoint-test-input[data-type="Long"] {
+.endpoint-test-input[data-type="String"],
+.endpoint-test-input[data-type="Long"] {
     width: 80px;
 }
 
@@ -129,7 +141,8 @@
     overflow-y: auto;
 }
 
-.noty_close, .noty_buttons {
+.noty_close,
+.noty_buttons {
     clear: both;
 }
 
