@@ -8,16 +8,14 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.db.impl.PreviousConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
+import com.cryo.utils.BCrypt;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequestWithBody;
-import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 
@@ -42,6 +40,7 @@ public class RegisterModule extends WebModule {
 
 	@Override
 	public String decodeRequest(Request request, Response response, RequestType type) {
+		HashMap<String, Object> model = new HashMap<>();
 		if(CookieManager.isLoggedIn(request) && !request.queryParams().contains("success"))
 			return redirect("/", 0, request, response);
 		if(type == RequestType.POST) {
@@ -63,13 +62,13 @@ public class RegisterModule extends WebModule {
 				return error(error);
 			HttpRequestWithBody body = Unirest.post("https://www.google.com/recaptcha/api/siteverify?secret="+Website.getProperties().getProperty("recaptcha_secret")+"&response="+recaptchaToken);
 			try {
-				HttpResponse<JsonNode> node = body.asJson();
-				JSONObject object = node.getBody().getObject();
-				if(object == null) return error("Error loading recaptcha response.");
-				if(!object.has("success") || !object.has("challenge_ts")) return error("Error loading recaptcha response.");
-				boolean success = object.getBoolean("success");
+				HashMap<String, Object> obj = Website.getGson().fromJson(body.asString().getBody(), HashMap.class);
+				if (obj == null) return error("Error loading recaptcha response.");
+				if (!obj.containsKey("success") || !obj.containsKey("challenge_ts"))
+					return error("Error loading recaptcha response.");
+				boolean success = (boolean) obj.get("success");
 				if(!success) return error("You failed the recaptcha! Please try again later.");
-				Calendar cal = javax.xml.bind.DatatypeConverter.parseDateTime(object.getString("challenge_ts"));
+				Calendar cal = javax.xml.bind.DatatypeConverter.parseDateTime((String) obj.get("challenge_ts"));
 				if(DateUtils.getDateDiff(cal.getTime(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
 			} catch (UnirestException e) {
 				e.printStackTrace();
@@ -84,23 +83,25 @@ public class RegisterModule extends WebModule {
 			String valid = Utilities.isValidDisplay(username);
 			if(valid != null && !valid.equals(""))
 				return error(valid);
-			GlobalConnection connection = GlobalConnection.connection();
-			data = connection.handleRequest("register", username, password);
-			if(data == null)
-				return error("Error registering.");
-			String salt = (String) data[0];
-			String hash = (String) data[1];
-			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
-			if (account == null)
-				return redirect("/login", 0, request, response);
+			String salt = BCrypt.generate_salt();
+			String hash = BCrypt.hashPassword(password, salt);
+			Account account = new Account(-1, username, hash, salt, 0, 0, null, 2, null, null);
+			if (account == null) return error("Error registering.");
+			int insertId = GlobalConnection.connection().insert("player_data", account.data());
+			if (insertId == -1) return error("Error registering.");
+			String display = Utilities.formatNameForDisplay(username);
+			DisplayConnection.connection().insert("current_names", username, display);
 			PreviousConnection.connection().handleRequest("add-prev-hash", salt, hash);
 			String sess_id = (String) AccountConnection.connection().handleRequest("add-sess", username)[0];
 			response.cookie("cryo-sess", sess_id);
-			return json(true, redirect("/register?success", 0, request, response));
+			Properties prop = new Properties();
+			prop.put("success", true);
+			model.put("success", true);
+			prop.put("html", render("./source/modules/account/register.jade", model, request, response));
+			return new Gson().toJson(prop);
 		}
-		HashMap<String, Object> model = new HashMap<>();
 		model.put("success", request.queryParams().contains("success"));
-		model.put("siteKey", "6LdcjYgUAAAAAA6w1_a2z8I5tsLFpGaYSiruNI62");
+		model.put("siteKey", "6LeYZ68UAAAAADVhihPUEQ3MI8bBm6ndRb3TVF9s");
 		return render("./source/modules/account/register.jade", model, request, response);
 	}
 	

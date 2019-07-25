@@ -3,7 +3,6 @@ extend ../default
 block head
     if success
         meta(http-equiv='refresh', content='5; url=/')
-    -var siteKey = "#{siteKey}";
     script(src='https://www.google.com/recaptcha/api.js')
 block content
     script.
@@ -30,7 +29,7 @@ block content
                 $.post('/register', {username:username, password:password,passwordVerify:passVerify,token:grecaptcha.getResponse()}, function(ret) {
                     var data = getJSON(ret);
                     if(data == null) return;
-                    document.write(data.data);
+                    document.write(data.html);
                     document.close();
                 });
                 return false;
@@ -55,7 +54,7 @@ block content
                             label Retype Password:
                             input.form-control.reg-password-verify(type='password', placeholder='Retype desired password')
                             div
-                                div.g-recaptcha(data-sitekey='6LdcjYgUAAAAAA6w1_a2z8I5tsLFpGaYSiruNI62', style='margin-top: 20px;')
+                                div.g-recaptcha(data-sitekey=siteKey, style='margin-top: 20px;')
                         div.col-md-6.register-info
                             span.glyphicon.glyphicon-user(aria-hidden='true')
                             h3 Registration Info:

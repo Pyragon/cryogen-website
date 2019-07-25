@@ -32,6 +32,7 @@ public class Account extends MySQLDao {
 	private final int rights;
 	private final int donator;
 	private final String avatarUrl;
+	@MySQLDefault
 	private final int displayGroup;
 	@MySQLRead("usergroups")
 	private final String usergroupsString;
