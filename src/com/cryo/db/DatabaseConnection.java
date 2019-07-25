@@ -365,7 +365,7 @@ public abstract class DatabaseConnection {
 				else if (obj instanceof Boolean)
 					stmt.setBoolean(index, (Boolean) obj);
 			}
-			System.out.println(stmt);
+//			System.out.println(stmt);
 			stmt.execute();
 			ResultSet set = stmt.getGeneratedKeys();
 			if(set.next())

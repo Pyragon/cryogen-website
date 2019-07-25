@@ -57,7 +57,6 @@ public enum APISections {
         sections = new HashMap<>();
         for (APISections section : APISections.values())
             sections.put(section.name().toLowerCase().replaceAll("_", "-"), section);
-        System.out.println(sections);
     }
 
     public APIEndpoints getEndpoint(int id) {

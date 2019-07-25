@@ -42,7 +42,6 @@ public class APIConnection {
         };
         Object[] data = GlobalConnection.connection().handleRequest("compare", username, password);
         if(data == null || !((boolean) data[0])) return;
-        System.out.println("Generating.");
         JsonNode node = getResponse("/login", new Properties() {{
             put("username", username);
             put("password", password);
@@ -53,7 +52,6 @@ public class APIConnection {
             return;
         }
         token = node.getObject().getString("token");
-        System.out.println("Token: " + token);
     }
 
     public JsonNode getResponse(String endpoint, Properties prop, String requestType, int rights) {
