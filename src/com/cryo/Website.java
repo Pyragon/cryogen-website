@@ -85,7 +85,11 @@ public class Website {
 
 	private static File FAVICON = null;
 
-	private static @Getter Gson Gson;
+	private static Gson Gson;
+
+	public static Gson getGson() {
+		return Gson;
+	}
 
 	public void load() {
 		try {
