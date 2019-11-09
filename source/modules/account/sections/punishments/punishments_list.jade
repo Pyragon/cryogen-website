@@ -1,43 +1,40 @@
-if punishments.size() == 0
-  p.t-center No punishments to display. Keep up the good work!
-else
-  table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;')
+table.table.hs-table.table-condensed.table-responsive.preports-table.widget(style='font-size: 12px;')
     thead
-      tr
-        th.t-center Type
-        th.t-center Date
-        th.t-center Expiry
-        th.t-center Reason
-        th.t-center Appeal
-        th.t-center View
-        th.t-center View Appeal
+        tr
+            th.t-center Type
+            th.t-center Date
+            th.t-center Expiry
+            th.t-center Reason
+            th.t-center Appeal
+            th.t-center View
+            th.t-center View Appeal
     tbody
-      for punish in punishments
-        tr(data-id=punish.getId())
-          td.b-right.t-center
-            if punish.getType() == 1
-              span.fa.fa-gavel
-            else
-              span.fa.fa-microphone-slash
-            span= ' '+(punish.getType() == 0 ? 'Mute' : 'Ban')
-          td.b-right.t-center= formatter.formatTimestamp(punish.getDate(), 'MMMMM dd, YYYY')
-          td.b-right.t-center= punish.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punish.getExpiry(), "MMMMM dd, YYYY")
-          td.b-right.t-center.reason(style='min-width: 94px;') 
-            i hover
-            div.hover-content.t-center
-              div.bubble.t-center
-                p.t-center.reason-title.color-white Reason
-                p.t-center(style='padding: 5px;')= punish.getReason()
-          td.b-right.t-center
-            if !punish.isActive() && punish.getAppeal() == null
-              span N/A
-            else if punish.getAppeal() == null
-              span.vis-link#create-appeal Create Appeal
-            else
-              span(class=''+punish.getAppeal().getColour())= punish.getAppeal().getStatus()
-          td.link.t-center.vis-link.b-right#punish-link View
-          td.t-center
-            if punish.getAppeal() != null
-              span.vis-link#appeal-link View Appeal
-            else
-              span N/A
+        for punish in punishments
+            tr(data-id=punish.getId())
+                td.b-right.t-center
+                    if punish.getType() == 1
+                        span.fa.fa-gavel
+                    else
+                        span.fa.fa-microphone-slash
+                    span= ' '+(punish.getType() == 0 ? 'Mute' : 'Ban')
+                td.b-right.t-center= formatter.formatTimestamp(punish.getDate(), 'MMMMM dd, YYYY')
+                td.b-right.t-center= punish.getExpiry() == null ? 'Permanent' : formatter.formatTimestamp(punish.getExpiry(), "MMMMM dd, YYYY")
+                td.b-right.t-center.reason(style='min-width: 94px;') 
+                    i hover
+                    div.hover-content.t-center
+                        div.bubble.t-center
+                            p.t-center.reason-title.color-white Reason
+                            p.t-center(style='padding: 5px;')= punish.getReason()
+                td.b-right.t-center
+                    if !punish.isActive() && punish.getAppeal() == null
+                        span N/A
+                    else if punish.getAppeal() == null
+                        span.vis-link#create-appeal Create Appeal
+                    else
+                        span(class=''+punish.getAppeal().getColour())= punish.getAppeal().getStatus()
+                td.link.t-center.vis-link.b-right#punish-link View
+                td.t-center
+                    if punish.getAppeal() != null
+                        span.vis-link#appeal-link View Appeal
+                    else
+                        span N/A
