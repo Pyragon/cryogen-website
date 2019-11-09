@@ -81,15 +81,15 @@ public abstract class WebModule {
 					name = AccountUtils.crownHTML(acc);
 				html = html.replace("$for-name="+format+"$end", name);
 			}
-			while (html.contains("$forums-name=")) {
-				String format = html.substring(html.indexOf("$forums-name=") + 12);
-				format = format.substring(0, format.indexOf("$end"));
-				ForumUser user = ForumUtils.getUser(format);
-				String name = format;
-				if(user != null)
-					name = ForumUtils.crownUser(user);
-				html = html.replace("$forums-name=" + format + "$end", name);
-			}
+//			while (html.contains("$forums-name=")) {
+//				String format = html.substring(html.indexOf("$forums-name=") + 12);
+//				format = format.substring(0, format.indexOf("$end"));
+//				ForumUser user = ForumUtils.getUser(format);
+//				String name = format;
+//				if(user != null)
+//					name = ForumUtils.crownUser(user);
+//				html = html.replace("$forums-name=" + format + "$end", name);
+//			}
 			while(html.contains("$link=")) {
 				String format = html.substring(html.indexOf("$link=")+6);
 				format = format.substring(0, format.indexOf("$end"));

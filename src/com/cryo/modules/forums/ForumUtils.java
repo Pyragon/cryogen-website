@@ -2,7 +2,6 @@ package com.cryo.modules.forums;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.db.impl.MyBBConnection;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -10,14 +9,6 @@ import com.cryo.db.impl.MyBBConnection;
  * Created on: Mar 8, 2017 at 5:40:25 AM
  */
 public class ForumUtils {
-	
-	public static ForumUser getUser(String username) {
-		MyBBConnection connection = (MyBBConnection) Website.instance().getConnectionManager().getConnection(Connection.MY_BB);
-		Object[] data = connection.handleRequest("get-user", username);
-		if(data == null)
-			return null;
-		return (ForumUser) data[0];
-	}
 	
 	public static String crownUser(ForumUser user) {
 		int usergroup = user.getUsergroup();

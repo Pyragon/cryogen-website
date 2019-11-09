@@ -9,7 +9,6 @@ import com.cryo.db.impl.CommentsConnection;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
-import com.cryo.db.impl.MyBBConnection;
 import com.cryo.db.impl.HighscoresConnection;
 import com.cryo.db.impl.PreviousConnection;
 import com.cryo.db.impl.PunishmentsConnection;
@@ -47,7 +46,6 @@ public class DBConnectionManager {
 	
 	public void init() {
 		connections = new HashMap<>();
-		connections.put(Connection.MY_BB, new MyBBConnection());
 		connections.put(Connection.HIGHSCORES, new HighscoresConnection());
 		connections.put(Connection.GLOBAL, new GlobalConnection());
 		connections.put(Connection.DISPLAY, new DisplayConnection());
