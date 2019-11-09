@@ -20,7 +20,6 @@ import com.cryo.modules.account.entities.Report;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
-import com.mysql.jdbc.StringUtils;
 
 import spark.Request;
 import spark.Response;

@@ -14,7 +14,6 @@ import com.cryo.modules.account.entities.Report;
 import com.cryo.modules.staff.entities.StaffSection;
 import com.cryo.utils.CookieManager;
 import com.google.gson.Gson;
-import com.mysql.jdbc.StringUtils;
 
 import spark.Request;
 import spark.Response;
