@@ -1,0 +1,18 @@
+div.news-post
+    div.header
+        p.title Forum Stats
+            a.minimize
+                span.fa.fa-minus
+        p.description Real-Time stats about the forums
+    div.content
+        p.t-center.grey= 'Registered Guests: '+registeredUsers
+        p.t-center.grey= 'Forum Users Online: N/A'
+        p.t-center.grey= 'Guests Online: N/A'
+        p.t-center.grey= 'Most Users Online: N/A'
+        //- span.link(data-id=forum.getLastPost() == null ? '' : forum.getLastPost().getThread().getId())= forum.getLastPost() == null ? 'N/A' : forum.getLastPost().getTimeRelative(null)
+        //-                         if forum.getLastPost() != null
+        //-                             span  by 
+        //-                             span.last-post-author(data-id=forum.getLastPost().getAuthor().getId()).link
+        //-                                 +showName(forum.getLastPost().getAuthor(), 14, 15)
+        if latestPost != null
+            p.t-center.grey= 'Latest Post: '+latestPost.getThread().getTitle()+' @ '

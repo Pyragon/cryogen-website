@@ -2,7 +2,9 @@ package com.cryo.modules;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
+import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.entities.forums.Post;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.forums.ForumUser;
@@ -56,7 +58,12 @@ public abstract class WebModule {
 		model.put("acutils", new AccountUtils());
 		model.put("shutdown", Website.SHUTDOWN_TIME);
 		model.put("tools", new Tools());
-		Account account = CookieManager.getAccount(request);
+        //forums
+        model.put("registeredUsers", GlobalConnection.connection().selectCount("player_data", null));
+        Post post = ForumConnection.connection().selectClass("posts", null, "ORDER BY added DESC LIMIT 1", Post.class, new Object[] { });
+		if(post != null)
+            model.put("latestPost", post);
+        Account account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
 		if(account != null)
 			model.put("user", account);
