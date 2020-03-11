@@ -192,7 +192,7 @@ function decreaseRestart() {
 
 function reconnect() {
     $.ajax({
-        url: 'http://66.70.190.195:8085/',
+        url: 'http://localhost:8085/',
         type: 'GET',
         error: function(data) {
             setTimeout(reconnect, 1000);
