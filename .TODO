@@ -15,8 +15,8 @@ Recoveries:
 Bugs:
   ☐ Logo overlaps navigation button on mobile and it cannot be tapped
 Restart Message:
-  ☐ Add timer to check website restart time (rather than only when page is loaded)
-  ☐ Check 'Website is now online' receiving false-positive because of cloudflare (Check response code, should be 502 for site offline)
+  ✔ Add timer to check website restart time (rather than only when page is loaded) @done(2019-11-10 22:59) @project(Restart Message)
+  ✔ Check 'Website is now online' receiving false-positive because of cloudflare (Check response code, should be 502 for site offline) @done(2019-11-10 22:52) @project(Restart Message)
 Layout fixes:
   ☐ Sign-In/Forgot buttons on login widget
   ☐ Account buttons on Index
@@ -67,7 +67,8 @@ Securiy:
   ☐ Change session ids to use local storage instead of cookies
 Highscores:
   ☐ 'Seasonal' highscores page. Different highscores goal each month, random things like nex kills, or chicken kills, bows fletched, etc
-  ☐ Banner on left, top option pulls out to reveal all skill icons (this is how highscores is navigated)
+  ✘ Banner on left, top option pulls out to reveal all skill icons (this is how highscores is navigated) @cancelled(2019-11-11 23:15) @project(Highscores)
+  ☐ Remake highscores with options on the left
   ☐ Main highscore page will have the search for player function
 Tracker:
   Full account tracker and basically an online view of your account
