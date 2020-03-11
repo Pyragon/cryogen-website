@@ -8,13 +8,19 @@ script.
             $('#post-list').find('.row').width(width);
         }
 
-        $(document).on('click', '.add-thanks', function() {
+        $(document).on('click', '.addremove-thanks', function() {
+            let span = $(this).find('span');
+            let removing = false;
+            if(span.hasClass('thanked')) removing = true;
             let postId = $(this).data('post_id');
-            $.post('/forums/post/'+postId+'/add-thanks', {}, ret => {
+            console.log(removing);
+            $.post('/forums/post/'+postId+'/addremove-thanks', { removing }, ret => {
                 let data = getJSON(ret);
                 if(data == null) return false;
+                if(removing === true) span.removeClass('thanked');
+                else span.addClass('thanked');
                 $('.thanks-content[data-post_id='+postId+']').html(data.html);
-                $('.add-thanks[data-post_id='+postId+']>span').html(' Remove Thanks');
+                span.html(' '+(!removing ? 'Remove ' : '')+'Thanks');
             });
         });
 
@@ -46,8 +52,8 @@ for post in posts
             div.date-block
                 p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
                 p.post-link.vis-link= '#'+post.getId()
-            div.post
-                p(style='margin-left: 0px;')= post.getPost()
+            .clear
+            div.post= post.getPost()
             div.edit-options
                 if post.hasBeenEdited()
                     p= 'Last Edited: '+post.getTimeRelative(post.getEdited())
@@ -56,8 +62,11 @@ for post in posts
                 if loggedIn
                     p.vis-link Quote
                 if loggedIn// && post.getAuthor().getId() != user.getId()
-                    i.fa.fa-thumbs-up.link.add-thanks(data-post_id=post.getId())
-                        span.vis-link  Thanks
+                    i.fa.fa-thumbs-up.link.addremove-thanks(data-post_id=post.getId())
+                        if loggedIn && post.hasBeenThankedBy(user.getId())
+                            span.vis-link.thanked  Remove Thanks
+                        else
+                            span.vis-link  Thanks
             .clear
             div.thanks-content(data-post_id=post.getId())
                 include thanks-list

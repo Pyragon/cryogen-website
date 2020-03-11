@@ -48,6 +48,13 @@ public class Post extends MySQLDao {
         return (ArrayList<Account>) data;
     }
 
+    public boolean hasBeenThankedBy(int id) {
+        return getThanks().stream()
+                        .filter(a -> a.getId() == id)
+                        .findFirst()
+                        .isPresent();
+    }
+
     public boolean hasBeenEdited() {
         return edited != null;
     }

@@ -4,6 +4,7 @@ import com.cryo.Website;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.SubForum;
+import com.cryo.entities.forums.Thanks;
 import com.cryo.entities.forums.Thread;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
@@ -35,6 +36,7 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/forum/:id/submit-new-thread",
                 "POST", "/forums/thread/:id", //for getting data to make non-refresh page
                 "POST", "/forums/post/:id", //for getting data to make non-refresh page (not needed?)
+                "POST", "/forums/post/:id/addremove-thanks",
                 "POST", "/forums/post", //for posting post
                 "POST", "/forums/thread", //for posting thread
                 "POST", "/forums/user" //for creating user, use recaptcha, email verification, and cooldowns
@@ -200,6 +202,34 @@ public class ForumsModule extends WebModule {
                     return error("An error has occurred.");
                 }
                 return redirect("/forums/thread/"+thread.getId(), "You are now being redirected to your new thread.", 5, null, request, response);
+            case "/forums/post/:id/addremove-thanks":
+                if(account == null) return error("You must be logged in to do this.");
+                idString = request.params(":id");
+                boolean removing;
+                try {
+                    id = Integer.parseInt(idString);
+                    removing = Boolean.parseBoolean(request.queryParams("removing"));
+                } catch (Exception e) {
+                    return error("Error thanking. Please refresh page and try again.");
+                }
+                Post post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
+                if(post == null)
+                    return error("Error finding post. Please refresh page and try again.");
+                // if(post.getAuthorId() == account.getId()) return error("You cannot thank your own post.");
+                if(removing)
+                    ForumConnection.connection().delete("thanks", "post_id=? && account_id=?", post.getId(), account.getId());
+                else {
+                    Thanks thanks = ForumConnection.connection().selectClass("thanks", "post_id=? && account_id=?", Thanks.class, post.getId(), account.getId());
+                    if (thanks != null)
+                        return error("You have already thanked this post.");
+                        System.out.println("Inserting");
+                    ForumConnection.connection().insert("thanks", "DEFAULT", post.getId(), post.getAuthorId(), account.getId(), "DEFAULT");
+                }
+                Website.instance().getCachingManager().clear("thanks-cache");
+                model.put("post", post);
+                prop.put("success", true);
+                prop.put("html", render("./source/modules/forums/thanks-list.jade", model, request, response));
+                break;
             default:
                 return Website.render404(request, response);
         }
