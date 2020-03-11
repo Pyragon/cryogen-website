@@ -19,6 +19,8 @@ import com.mashape.unirest.request.HttpRequestWithBody;
 import spark.Request;
 import spark.Response;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,9 +70,11 @@ public class RegisterModule extends WebModule {
 					return error("Error loading recaptcha response.");
 				boolean success = (boolean) obj.get("success");
 				if(!success) return error("You failed the recaptcha! Please try again later.");
-				Calendar cal = javax.xml.bind.DatatypeConverter.parseDateTime((String) obj.get("challenge_ts"));
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZ");
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(format.parse((String) obj.get("challenge_ts")));
 				if(DateUtils.getDateDiff(cal.getTime(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
-			} catch (UnirestException e) {
+			} catch (ParseException | UnirestException e) {
 				e.printStackTrace();
 				return error(e.getMessage());
 			}
