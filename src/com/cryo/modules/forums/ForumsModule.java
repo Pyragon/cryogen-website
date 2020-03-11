@@ -215,7 +215,7 @@ public class ForumsModule extends WebModule {
                 Post post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
                 if(post == null)
                     return error("Error finding post. Please refresh page and try again.");
-                // if(post.getAuthorId() == account.getId()) return error("You cannot thank your own post.");
+                if(post.getAuthorId() == account.getId()) return error("You cannot thank your own post.");
                 if(removing)
                     ForumConnection.connection().delete("thanks", "post_id=? && account_id=?", post.getId(), account.getId());
                 else {
