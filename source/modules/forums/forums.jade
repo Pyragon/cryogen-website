@@ -4,7 +4,7 @@ block head
     script.
         $(document).ready(() => {
 
-            $(document).on('click', '.forum>div.name', function() {
+            $(document).on('click', '.forum-namedesc>.name', function() {
                 let link = $(this).data('link');
                 $.post(link, {}, ret => {
                     let data = getJSON(ret);

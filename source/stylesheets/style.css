@@ -855,7 +855,10 @@ p.small {
     clear: both;
 }
 
-.forum {}
+.forum {
+    height: 60px;
+    border-bottom: 1px solid #000;
+}
 
 #breadcrumbs {
     font-size: 11px;
@@ -991,10 +994,36 @@ p.small {
     vertical-align: middle;
 }
 
-.forum>.name {
-    margin: 10px;
-    float: left;
+.forum-namedesc>.name {
+    margin: 2px auto auto 5px;
     color: white;
+}
+
+.forum>.forum-namedesc {
+    float: left;
+}
+
+.forum-namedesc>.forum-description {
+    margin-left: 5px;
+    width: 250px;
+}
+
+.forum-lastpost {
+    width: 150px;
+}
+
+.forum>.forum-lastpost {
+    float: right;
+    margin-right: 5px;
+}
+
+.forum-lastpost>.name {
+    color: white;
+    text-align: left;
+}
+
+.forum-lastpost>.time {
+    text-align: right;
 }
 
 .forum>.separator {
@@ -1014,8 +1043,6 @@ p.small {
 .forum>.last-post-time {
     float: right;
     margin: 10px;
-    color: white;
-    font-size: 10px;
 }
 
 .news-post>.header>.title {
