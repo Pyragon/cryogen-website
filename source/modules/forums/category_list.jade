@@ -12,7 +12,17 @@ script.
                 $('#forum-content').html(data.html);
             });
         });
+        
+        $(".minimize").click(function() {
+            $(this).closest(".news-post").find(".content").slideToggle(400);
+            $(this).html($(this).html() == '<span class="glyphicon glyphicon-plus"></span>' ? '<span class="glyphicon glyphicon-minus"></span>' : '<span class="glyphicon glyphicon-plus"></span>');
+        });
 
+        $(".minimized").each(function() {
+            $(this).find(".content").hide();
+            $(this).find(".minimize").html('<span class="glyphicon glyphicon-plus"></span>');
+        });
+        
     });
 
 for category in categories
