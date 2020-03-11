@@ -222,7 +222,6 @@ public class ForumsModule extends WebModule {
                     Thanks thanks = ForumConnection.connection().selectClass("thanks", "post_id=? && account_id=?", Thanks.class, post.getId(), account.getId());
                     if (thanks != null)
                         return error("You have already thanked this post.");
-                        System.out.println("Inserting");
                     ForumConnection.connection().insert("thanks", "DEFAULT", post.getId(), post.getAuthorId(), account.getId(), "DEFAULT");
                 }
                 Website.instance().getCachingManager().clear("thanks-cache");
