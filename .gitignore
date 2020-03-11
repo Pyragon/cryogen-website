@@ -2,3 +2,6 @@
 *.iml
 target/
 data/props.json
+.factorypath
+.project
+.settings/*
