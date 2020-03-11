@@ -133,7 +133,7 @@ public class ForumsModule extends WebModule {
                 if(request.requestMethod().equals("GET"))
                     return render("./source/modules/forums/forums.jade", model, request, response);
                 prop.put("success", true);
-                prop.put("html", render("./source/modules/forums/new-thread.jade", model, request, response));
+                prop.put("html", render("./source/modules/forums/new_thread.jade", model, request, response));
                 break;
             case "/forums/thread/:id":
                 return loadThread(1, request, response);
@@ -160,7 +160,7 @@ public class ForumsModule extends WebModule {
                 else {
                     prop.put("success", true);
                     model.put("posts", thread.getPosts(page));
-                    prop.put("html", render("./source/modules/forums/post-list.jade", model, request, response));
+                    prop.put("html", render("./source/modules/forums/post_list.jade", model, request, response));
                 }
                 break;
             case "/forums/forum/:id/submit-new-thread":
@@ -227,7 +227,7 @@ public class ForumsModule extends WebModule {
                 Website.instance().getCachingManager().clear("thanks-cache");
                 model.put("post", post);
                 prop.put("success", true);
-                prop.put("html", render("./source/modules/forums/thanks-list.jade", model, request, response));
+                prop.put("html", render("./source/modules/forums/thanks_list.jade", model, request, response));
                 break;
             default:
                 return Website.render404(request, response);

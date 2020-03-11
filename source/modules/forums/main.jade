@@ -33,12 +33,13 @@ div.container
         div.col-md-8
             div#forum-content
                 if categories != null
-                    include category-list
+                    include category_list
                 else if forum != null
                     include forum
                 else if thread != null
                     include thread
                 else
-                    include new-thread
+                    include new_thread
         div.col-md-4
             h4.title.t-center Stats
+                include forum_stats
