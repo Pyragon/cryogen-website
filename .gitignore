@@ -6,3 +6,4 @@ data/props.json
 .project
 .settings/*
 .classpath
+launch.json
