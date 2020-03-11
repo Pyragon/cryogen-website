@@ -37,7 +37,6 @@ public class ShopConnection extends DatabaseConnection {
 		Object[] data = connection(website).handleRequest("get-items");
 		if(data == null) {
 			cached = new HashMap<>();
-			System.out.println("nulll");
 			return;
 		}
 		cached = (HashMap<Integer, ShopItem>) data[0];
