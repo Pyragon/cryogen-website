@@ -36,6 +36,11 @@ public class CachingManager {
 		cachedItems.values().forEach(CachedItem::clear);
 	}
 
+    public void clear(String opcode) {
+        if(!cachedItems.containsKey(opcode)) return;
+        cachedItems.get(opcode).clear();
+    }
+
 	public Object getData(String opcode, Object... values) {
 		CachedItem item = get(opcode);
 		if (item == null) return null;
