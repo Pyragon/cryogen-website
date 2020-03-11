@@ -6,6 +6,28 @@ body {
     color: #888;
 }
 
+.skill {
+    max-height: 60px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.skill:hover {
+    background: #777;
+}
+
+.skill .skill-icon {
+    max-height: 30px;
+    max-width: 30px;
+    min-height: 30px;
+    min-width: 30px;
+}
+
+.skill .name {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
 .main-login-wrapper p {
     margin-left: 10px;
     color: white;
