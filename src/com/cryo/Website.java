@@ -56,7 +56,7 @@ import static spark.Spark.*;
  */
 public class Website {
 
-	public static String PATH = "http://codysprojects.ca/";
+	public static String PATH = "http://localhost:8085/";
 
 	private static Website INSTANCE;
 

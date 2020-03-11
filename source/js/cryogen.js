@@ -165,7 +165,7 @@ function checkRestart() {
         error: (error) => {
             clearInterval(restart_timer);
             restarted();
-            console.error(error);
+            console.error(error.message || error);
         },
         success: (ret) => {
             var data = getJSON(ret);

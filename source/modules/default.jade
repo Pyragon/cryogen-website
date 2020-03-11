@@ -119,7 +119,7 @@ html
                 }
 
                 function loadOnlinePlayers() {
-                    $.post('http://api.cryogen.codysprojects.ca/game/players/online', { }, (ret) => {
+                    $.post('http://localhost:8923/game/players/online', { }, (ret) => {
                         var data = getJSON(ret);
                         if(data == null) return false;
                         $('#p-online').text('Players Online: '+data.online.all);
@@ -190,10 +190,8 @@ html
                                     a.link.dropdown-toggle(data-toggle='dropdown') Play
                                         b.caret
                                     ul.dropdown-menu
-                                        //- li
-                                        //-     a(href='http://api.cryogen.codysprojects.ca/live/download/latest') Download Wrapper
                                         li
-                                            a(href='http://api.cryogen.codysprojects.ca/live/download/latest') Download as JAR
+                                            a(href='http://localhost:8923/live/download/latest') Download as JAR
                                 li#spacer(class='spacer')
                                     a(href='/forums') Community
                                 li
@@ -234,7 +232,7 @@ html
                                 h3 Cryogen
                                 ul
                                     li
-                                        a(href='http://api.cryogen.codysprojects.ca/live/download/latest') Download JAR
+                                        a(href='http://localhost:8923/live/download/latest') Download JAR
                                     li
                                         a(href='http://github.com/Pyragon/cryogen-website') Open-Sourced
                                     li
