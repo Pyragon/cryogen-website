@@ -5,3 +5,4 @@ data/props.json
 .factorypath
 .project
 .settings/*
+.classpath
