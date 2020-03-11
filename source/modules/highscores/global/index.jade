@@ -1,29 +1,44 @@
 extend ../../default
 
 block head
-  script.
-    $(document).ready(function() {
-      $(".skill").click(function() {
-        changeSkillData($(this).attr('skill_id'));
-      });
-      
-      function changeSkillData(skill_id) {
-        $.post('/highscores', { skill_id: skill_id }, function(data) {
-          $('.highscores').html(data);
+    script.
+        $(document).ready(function() {
+            $(".skill").click(function() {
+                changeSkillData($(this).attr('skill_id'));
+            });
+
+            function changeSkillData(skill_id) {
+                $.post('/highscores', { skill_id: skill_id }, function(data) {
+                    $('.highscores').html(data);
+                });
+            }
         });
-      }
-    });
 
 block content
-  div.container(style='min-height: 700px;')
-    div.skills
-      -for i in jIterator.iterate(25)
-        a.skill(skill_id=''+i, href='#')
-          img(src='images/skills_hd/'+i+'.png')
-    div.widget.highscores(style='min-height: 400px;')
-      if hsuser != null
-        include personal-view
-      else if skill_id == -1
-        include global-users
-      else
-        include skill-view
+    div.container(style='min-height: 700px;')
+        div.row
+            div.col-md-2
+                div.widget.hs-options
+                    div.skill(data-skillId=-1, href='#')
+                        img.skill-icon(src='images/skills/overall.png', style='margin-left: 5px;')
+                        span.name Overall
+                    -for i in jIterator.iterate(25)
+                        div.skill(data-skillId=i, href='#')
+                            img.skill-icon(src='images/skills_hd/'+i+'.png')
+                            span.name= hsutils.getSkillName(i)
+                        .clear
+                        //- a.skill(skill_id=''+i, href='#')
+                        //-     img(src='images/skills_hd/'+i+'.png')
+            div.col-md-10
+                div.widget.highscores(style='min-height: 400px;')
+        //- div.skills
+        //-   -for i in jIterator.iterate(25)
+        //-     a.skill(skill_id=''+i, href='#')
+        //-       img(src='images/skills_hd/'+i+'.png')
+        //- div.widget.highscores(style='min-height: 400px;')
+        //-   if hsuser != null
+        //-     include personal-view
+        //-   else if skill_id == -1
+        //-     include global-users
+        //-   else
+        //-     include skill-view
