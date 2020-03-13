@@ -930,6 +930,7 @@ p.small {
     margin: 0px auto 0px 5px;
     margin-top: 0px;
     height: 150px;
+    white-space: pre;
 }
 
 .date {
@@ -972,9 +973,14 @@ p.small {
 }
 
 .author-block>.thanks-received,
-.author-block>.thanks-given {
+.author-block>.thanks-given,
+.author-block>.post-count {
     text-align: center;
     font-size: 11px;
+    margin-top: 5px;
+}
+
+.author-block>.post-count {
     margin-top: 10px;
 }
 
@@ -1026,6 +1032,24 @@ p.small {
 .views {
     margin-top: 5px;
     height: 10px;
+}
+
+#thread-viewers {
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+#quick-reply-text {
+    width: 95%;
+    min-height: 95%;
+    max-width: 95%;
+    min-height: 100px;
+    max-height: 300px;
+    margin-left: calc(5% / 2);
+    margin-top: 2px;
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
+    border: 1px solid #000;
+    border-radius: 5px;
 }
 
 .forum>.forum-lastpost {
@@ -1265,7 +1289,8 @@ input:checked+.slider:before {
 .btn-comment,
 .recover-btn,
 #new-thread-btn,
-#submit-thread-btn {
+#submit-thread-btn,
+#submit-post-btn {
     margin: 100px auto 30px auto;
     display: block;
     padding: 10px 50px;
@@ -1281,6 +1306,9 @@ input:checked+.slider:before {
 
 #submit-thread-btn {
     margin: 10px 5px 5px auto;
+}
+#submit-post-btn {
+    margin: 0px 5px 5px auto;
 }
 
 #new-thread-title-p,

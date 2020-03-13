@@ -1,10 +1,29 @@
+include ../utils/forum_name
 script.
     $(document).ready(() => {
 
-        let page = "!{page}";
-        if(!page) page = 1;
+        $(document).delegate('#quick-reply-text', 'keydown', function(e) {
+            var keyCode = e.keyCode || e.which;
 
-        loadPage(page);
+            if (keyCode == 9) {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+
+                // set textarea value to: text before caret + tab + text after caret
+                $(this).val($(this).val().substring(0, start)
+                            + "\t"
+                            + $(this).val().substring(end));
+
+                // put caret at right position again
+                this.selectionStart =
+                this.selectionEnd = start + 1;
+            }
+        });
+
+        let page = "!{page}";
+        let threadId = "!{thread.getId()}";
+        if(!page) page = 1;
 
         function loadPage(page) {
             let regex = /page\/\d/;
@@ -36,9 +55,41 @@ script.
             history.pushState({}, "ForumSection", endpoint);
         }
 
+        $('#submit-post-btn').click(function() {
+            let body = $('#quick-reply-text').val();
+            if(!body || body == '' || body.replace(/\s/, '') == '') {
+                sendAlert('Post is empty!');
+                return false;
+            }
+            $.post('/forums/thread/'+threadId+'/submit-new-post', { page, body }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                sendAlert('Post successfully submitted. Reloading posts.');
+                $('#quick-reply-text').val('');
+                $('#post-list').html(data.html);
+            });
+        });
+
     });
 div.news-post
     div.header
         p.single-title= thread.getTitle()
     div.content
         div#post-list
+            include post_list
+div#thread-viewers
+    span.white Accounts viewing thread: 
+    for i in jIterator.iterate(thread.getViewers().size())
+        if i != 0
+            span.white , 
+        span.white
+            +showName(thread.getViewers().get(i), 14, 15)
+div.news-post#quick-reply
+    div.header(style='height: 50px;')
+        p.title Quick Reply
+            a.minimize
+                span.fa.fa-minus
+        p.description Add a reply to this thread. Check here for BBCode examples.
+    div.content
+        textarea#quick-reply-text(type='text')
+        button.btn.btn-default#submit-post-btn Submit Post

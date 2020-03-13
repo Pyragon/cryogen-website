@@ -2,6 +2,7 @@ package com.cryo.modules.forums;
 
 import com.cryo.Website;
 import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.SubForum;
 import com.cryo.entities.forums.Thanks;
@@ -38,8 +39,7 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/thread/:id", //for getting data to make non-refresh page
                 "POST", "/forums/post/:id", //for getting data to make non-refresh page (not needed?)
                 "POST", "/forums/post/:id/addremove-thanks",
-                "POST", "/forums/post", //for posting post
-                "POST", "/forums/thread", //for posting thread
+                "POST", "/forums/thread/:id/submit-new-post", //for posting post
                 "POST", "/forums/user" //for creating user, use recaptcha, email verification, and cooldowns
         };
     }
@@ -197,9 +197,9 @@ public class ForumsModule extends WebModule {
                     String body = request.queryParams("body");
                     if (StringUtils.isNullOrEmpty(title) || title.length() < 5 || title.length() > 50)
                         return error("Title must be between 5 and 50 characters long.");
-                    if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 50)
-                        return error("Body must be between 5 and 50 characters long.");
-                    thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, null, false, -1, null, null);
+                    if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
+                        return error("Body must be between 5 and 10,000 characters long.");
+                    thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, -1, null, false, -1, 0, null, null);
                     threadId = ForumConnection.connection().insert("threads", thread.data());
                     thread.setId(threadId);
                     Post post = new Post(-1, threadId, account.getId(), body, null, null, null);
@@ -212,6 +212,40 @@ public class ForumsModule extends WebModule {
                     return error("An error has occurred.");
                 }
                 return redirect("/forums/thread/"+thread.getId(), "You are now being redirected to your new thread.", 5, null, request, response);
+            case "/forums/thread/:id/submit-new-post":
+                if (request.requestMethod().equals("GET"))
+                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request,
+                            response);
+                if (account == null) {
+                    if (request.requestMethod().equals("GET"))
+                        return redirect("/forums", "Not logged in. Redirecting you back to home.", 5, null, request,
+                                response);
+                    else
+                        return error("Not logged in. Please refresh the page and try again.");
+                }
+                idString = request.params(":id");
+                pageString = request.queryParams("page");
+                try {
+                    id = Integer.parseInt(idString);
+                    page = Integer.parseInt(pageString);
+                } catch (Exception e) {
+                    return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request,
+                            response);
+                }
+                thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
+                if(thread == null) return error("Error finding thread. Please refresh and try again.");
+                String body = request.queryParams("body");
+                if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
+                    return error("Body must be between 5 and 10,000 characters long.");
+                System.out.println(body);
+                Post post = new Post(-1, id, account.getId(), body, null, null, null);
+                int insertId = ForumConnection.connection().insert("posts", post.data());
+                post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, insertId);
+                thread.updateLastPost(post);
+                prop.put("success", true);
+                model.put("posts", thread.getPosts(page));
+                prop.put("html", render("./source/modules/forums/post_list.jade", model, request, response));
+                break;
             case "/forums/post/:id/addremove-thanks":
                 if(account == null) return error("You must be logged in to do this.");
                 idString = request.params(":id");
@@ -222,7 +256,7 @@ public class ForumsModule extends WebModule {
                 } catch (Exception e) {
                     return error("Error thanking. Please refresh page and try again.");
                 }
-                Post post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
+                post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
                 if(post == null)
                     return error("Error finding post. Please refresh page and try again.");
                 if(post.getAuthorId() == account.getId()) return error("You cannot thank your own post.");
