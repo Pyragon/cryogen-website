@@ -35,6 +35,10 @@ for post in posts
                 p.user-title= post.getAuthor().getUserTitle()
             div.author-avatar
                 img(src=post.getAuthor().getAvatarUrl() == null ? '/images/default_avatar.png' : post.getAuthor().getAvatarUrl(), style='width: 75px; height: 75px;')
+            div.post-count
+                i.fa.fa-clipboard.link
+                    span  Post Count: 
+                    span= post.getAuthor().getPostCount()
             div.thanks-received
                 i.fa.fa-thumbs-up.link
                     span  Thanks Received: 
@@ -44,7 +48,7 @@ for post in posts
                     span  Thanks Given: 
                     span= post.getAuthor().getThanksGiven()
             if post.getAuthor().getHSData() != null
-                div.ingame-total
+                div.ingame-total.link
                     img(src='/images/skills/overall.png')
                     span  In-Game Total: 
                     span= post.getAuthor().getHSData().getTotalLevel()
