@@ -51,7 +51,13 @@ block head
             $(document).on('click', '#breadcrumbs>span', function() {
                 let link = $(this).data('link');
                 if(!link) return false;
-                window.location.href=link;
+                $.post(link, {}, ret => {
+                    let data = getJSON(ret);
+                    if(data == null) return false;
+                    $('#forum-content').html(data.html);
+                    setBreadCrumbs(data.breadcrumbs, data.links);
+                    history.pushState({}, "ForumSection", link);
+                });
             });
 
             window.setBreadCrumbs =  function(breadcrumbs, links) {
