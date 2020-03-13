@@ -10,14 +10,7 @@ if forum.getSubForums().length > 0
             p.description= forum.getDescription()
         div.content
             for subforum in forum.getSubForums()
-                div.forum
-                    if subforum.isLink()
-                        a.name.link(href=subforum.getLink(), target='_blank')= subforum.getName()
-                    else
-                        div.name.link(data-link='/forums/forum/'+subforum.getId())= subforum.getName()
-                    div.last-post= subforum.getLastPost() == null ? 'N/A' : 'By Cody'
-                    div.last-post-time= subforum.getLastPost() == null ? 'N/A' : 'Today'
-                    div.separator |
+                +showBlock(subforum)
                 div(style='clear: both;')
 div.news-post
     div.header
@@ -28,13 +21,21 @@ div.news-post
             p.t-center No threads have been created yet.
         else
             for thread in forum.getThreads()
-                div.forum
-                    div.name.link(data-link='/forums/thread/'+thread.getId())= thread.getTitle()
-                    .last-post-time
-                                span.link(data-id=thread.getLastPost() == null ? '' : thread.getId())= thread.getLastPost() == null ? 'N/A' : thread.getLastPost().getTimeRelative(null)
-                                if thread.getLastPost() != null
-                                    span  by 
-                                    span.last-post-author(data-id=thread.getLastPost().getAuthor().getId()).link
-                                        +showName(thread.getLastPost().getAuthor(), 14, 15)
-                            div.separator |
+                div.forum(style='height: 40px;')
+                    div.forum-namedesc
+                        div.name.link(data-link='/forums/thread/'+thread.getId())= thread.getTitle()
+                        p.forum-description.small.grey= 'Started by '
+                            span
+                                +showName(thread.getAuthor(), 14, 15)
+                            span , 
+                            span= thread.getLastPost().getTimeRelative(null)
+                    div.forum-lastpost
+                        div.author-name.small
+                            span by 
+                            span
+                                +showName(thread.getLastPost().getAuthor(), 14, 15)
+                        div.small.time= thread.getLastPost().getTimeRelative(null)
+                    div.view-info
+                        p.small.replies= 'Replies: '+(thread.getPostCount()-1)
+                        p.small.views= 'Views: '+thread.getViews()
                 div(style='clear: both;')

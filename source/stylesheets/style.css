@@ -1004,12 +1004,28 @@ p.small {
 }
 
 .forum-namedesc>.forum-description {
-    margin-left: 5px;
+    margin-left: 15px;
     width: 250px;
 }
 
 .forum-lastpost {
     width: 150px;
+}
+
+.view-info {
+    float: right;
+    margin-right: 20px;
+    height: 40px;
+}
+
+.replies {
+    margin-top: 5px;
+    height: 10px;
+}
+
+.views {
+    margin-top: 5px;
+    height: 10px;
 }
 
 .forum>.forum-lastpost {

@@ -1,0 +1,16 @@
+mixin showBlock(forum)
+    div.forum
+        div.forum-namedesc
+            if forum.isLink()
+                a.name.link(href=forum.getLink(), target='_blank')= forum.getName()
+            else
+                div.name.link(data-link='/forums/forum/'+forum.getId())= forum.getName()
+            p.forum-description.small.grey= forum.getDescription()
+        div.forum-lastpost
+            if forum.getLastPost() != null
+                div.name.link(data-link='/forums/thread/'+forum.getLastPost().getThreadId())= forum.getLastPost().getThread().getTitle()
+                div.author-name.small
+                    span  by 
+                    span.author-name-link.link(data-link='/forums/user/'+forum.getLastPost().getAuthor().getId())
+                        +showName(forum.getLastPost().getAuthor(), 14, 15)
+                div.small.time= forum.getLastPost().getTimeRelative(null)

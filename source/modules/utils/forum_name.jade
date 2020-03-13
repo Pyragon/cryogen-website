@@ -1,3 +1,4 @@
+//TODO - Add 'noBlock' variable to have print with display: inline-block or w/e to have it all on same line
 mixin showName(author, height, width)
     if author.getImageBefore() != null && author.getImageBefore() != ''
         img.forum-name(src=author.getImageBefore(), style='height: '+height+'px; width: '+width+'px; vertical-align: middle;')
