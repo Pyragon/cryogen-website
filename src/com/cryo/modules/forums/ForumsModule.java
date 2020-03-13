@@ -30,6 +30,7 @@ public class ForumsModule extends WebModule {
                 "GET", "/forums/user/:id",
                 "GET", "/forums",
                 "POST", "/forums",
+                "POST", "/forums/stats",
                 "POST", "/forums/thread/:id/page/:page",
                 "POST", "/forums/forum/:id",
                 "POST", "/forums/forum/:id/new-thread",
@@ -63,6 +64,8 @@ public class ForumsModule extends WebModule {
                     model.put("links", links);
                     prop.put("breadcrumbs", breadcrumbs);
                     prop.put("links", links);
+                    if(account != null)
+                        account.setStatus(1, 0, 0, 0);
                     if(request.requestMethod().equals("POST")) {
                         String html = render("./source/modules/forums/main.jade", model, request, response);
                         prop.put("success", true);
@@ -74,6 +77,10 @@ public class ForumsModule extends WebModule {
                     e.printStackTrace();
                     return error("Error loading");
                 }
+            case "/forums/stats":
+                prop.put("success", true);
+                prop.put("html", render("./source/modules/forums/forum_stats.jade", model, request, response));
+                break;
             case "/forums/forum/:id":
                 String idString = request.params(":id");
                 int id;
@@ -97,6 +104,8 @@ public class ForumsModule extends WebModule {
                 model.put("links", links);
                 prop.put("breadcrumbs", crumbs);
                 prop.put("links", links);
+                if(account != null)
+                    account.setStatus(0, forum.getId(), 0, 0);
                 if(request.requestMethod().equals("GET"))
                     return render("./source/modules/forums/forums.jade", model, request, response);
                 prop.put("success", true);
@@ -136,7 +145,7 @@ public class ForumsModule extends WebModule {
                 prop.put("html", render("./source/modules/forums/new_thread.jade", model, request, response));
                 break;
             case "/forums/thread/:id":
-                return loadThread(1, request, response);
+                return loadThread(account, 1, request, response);
             case "/forums/thread/:id/page/:page":
                 String pageString = request.params(":page");
                 int page;
@@ -156,7 +165,7 @@ public class ForumsModule extends WebModule {
                 Thread thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
                 if(thread == null) return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
                 if(request.requestMethod().equals("GET"))
-                    return loadThread(thread, page, request, response);
+                    return loadThread(account, thread, page, request, response);
                 else {
                     prop.put("success", true);
                     model.put("posts", thread.getPosts(page));
@@ -197,6 +206,7 @@ public class ForumsModule extends WebModule {
                     int insertId = ForumConnection.connection().insert("posts", post.data());
                     post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, insertId);
                     thread.updateLastPost(post);
+                    thread.updateFirstPost(post);
                 } catch(Exception e) {
                     e.printStackTrace();
                     return error("An error has occurred.");
@@ -235,7 +245,7 @@ public class ForumsModule extends WebModule {
         return Website.getGson().toJson(prop);
     }
 
-    public String loadThread(int page, Request request, Response response) {
+    public String loadThread(Account account, int page, Request request, Response response) {
         String idString = request.params(":id");
         int id;
         try {
@@ -244,10 +254,10 @@ public class ForumsModule extends WebModule {
             return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
         }
         Thread thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
-        return loadThread(thread, page, request, response);
+        return loadThread(account, thread, page, request, response);
     }
 
-    public String loadThread(Thread thread, int page, Request request, Response response) {
+    public String loadThread(Account account, Thread thread, int page, Request request, Response response) {
         if(thread == null) return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
         HashMap<String, Object> model = new HashMap<>();
         Properties prop = new Properties();
@@ -255,6 +265,7 @@ public class ForumsModule extends WebModule {
         if(forum == null) return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
         model.put("thread", thread);
         model.put("page", page);
+        model.put("posts", thread.getPosts(page));
         ArrayList crumbs = new ArrayList<>();
         ArrayList links = new ArrayList<>();
         crumbs.add(thread.getTitle());
@@ -268,8 +279,11 @@ public class ForumsModule extends WebModule {
         model.put("links", links);
         prop.put("breadcrumbs", crumbs);
         prop.put("links", links);
+        if(account != null)
+            account.setStatus(0, 0, 0, thread.getId());
         if(request.requestMethod().equals("GET"))
             return render("./source/modules/forums/forums.jade", model, request, response);
+        thread.addView();
         prop.put("success", true);
         prop.put("html", render("./source/modules/forums/thread.jade", model, request, response));
         return Website.getGson().toJson(prop);

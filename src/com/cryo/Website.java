@@ -238,7 +238,7 @@ public class Website {
 	            }
 			});
 			get("*", Website::render404);
-			fastExecutor.schedule(new TaskManager(), 0, 1000);
+			fastExecutor.schedule(new TaskManager(), 1000, 1000);
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				LOADED = false;
 				System.out.println("Stopping spark.");

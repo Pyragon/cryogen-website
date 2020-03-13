@@ -7,7 +7,7 @@ import com.cryo.db.impl.AccountConnection;
 public class RemoveExpiredTokensTask extends Task {
 
     public RemoveExpiredTokensTask() {
-        super(-1, -1, -1);
+        super("* * %5 *");
     }
 
     @Override

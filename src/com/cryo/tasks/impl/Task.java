@@ -2,21 +2,19 @@ package com.cryo.tasks.impl;
 
 import com.cryo.Website;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
  *
  * Created on: March 13, 2017 at 2:59:27 PM
  */
-@RequiredArgsConstructor
+@Data
 public abstract class Task {
 	
-	private final @Getter int hour, minute, second;
+	private final String time;
 	
-	protected @Setter Website website;
+	protected Website website;
 	
 	public abstract void run();
 	

@@ -12,7 +12,7 @@ import com.cryo.db.impl.EmailConnection;
 public class EmailVerifyTask extends Task {
 	
 	public EmailVerifyTask() {
-		super(-1, -1, -1); //-1 means will happen always. so will happen every hour, every minute, only 1 every 60 seconds
+		super("* * %5 *");
 	}
 
 	@Override

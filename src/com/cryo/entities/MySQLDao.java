@@ -4,6 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
 public abstract class MySQLDao {
 
     public Object[] data() {

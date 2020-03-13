@@ -4,6 +4,7 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.entities.Misc;
 import com.cryo.entities.forums.Post;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
@@ -63,19 +64,13 @@ public abstract class WebModule {
         Post post = ForumConnection.connection().selectClass("posts", null, "ORDER BY added DESC LIMIT 1", Post.class, new Object[] { });
 		if(post != null)
             model.put("latestPost", post);
+        model.put("onlineUsers", ForumConnection.connection().selectCount("account_statuses", "expiry > CURRENT_TIMESTAMP()"));
+        Misc misc = GlobalConnection.connection().selectClass("misc_data", "name=?", Misc.class, "most_online");
+        model.put("mostOnline", misc == null ? "N/A" : misc.asInt());
         Account account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
 		if(account != null)
 			model.put("user", account);
-//		if(account != null && account.getRights() > 0) {
-//			PunishUtils utils = new PunishUtils();
-//			int comp_total = 0;
-//			val appeals = utils.getAppeals(account.getUsername(), false);
-//			val preports = utils.getPlayerReports(account.getUsername(), false);
-//			val breports = utils.getBugReports(account.getUsername(), false);
-//			comp_total = appeals.size() + preports.size() + breports.size();
-//			model.put("actions", comp_total);
-//		}
 		model.put("isMobile", request.headers("User-Agent").toLowerCase().contains("mobile"));
 		try {
 			String html = Jade4J.render(file, model);

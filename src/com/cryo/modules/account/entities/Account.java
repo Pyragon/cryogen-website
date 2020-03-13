@@ -3,10 +3,12 @@ package com.cryo.modules.account.entities;
 import com.cryo.Website;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
+import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.CurrentDisplayName;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
+import com.cryo.entities.forums.AccountStatus;
 import com.cryo.entities.forums.UserGroup;
 import com.cryo.modules.highscores.HSUtils;
 import lombok.Data;
@@ -63,6 +65,10 @@ public class Account extends MySQLDao {
 		if (data == null) return 0;
 		return (int) data;
 	}
+
+    public int getPostCount() {
+        return ForumConnection.connection().selectCount("posts", "author_id=?", id);
+    }
 
 	public String getUserTitle() {
 		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
@@ -126,5 +132,16 @@ public class Account extends MySQLDao {
 		}
 		return groups;
 	}
+
+    public void setStatus(int index, int forumId, int userId, int threadId) {
+        long millis = System.currentTimeMillis() + (1000 * 60 * 5);
+        AccountStatus status = new AccountStatus(-1, id, index, forumId, userId, threadId, new Timestamp(millis));
+        ForumConnection.connection().delete("account_statuses", "account_id=?", id);
+        ForumConnection.connection().insert("account_statuses", status.data());
+    }
+
+    public AccountStatus getStatus() {
+        return ForumConnection.connection().selectClass("account_statuses", "account_id=? && expiry > CURRENT_TIMESTAMP()", AccountStatus.class, id);
+    }
 	
 }

@@ -23,6 +23,16 @@ script.
             }
         }
 
+        function loadStats() {
+            $.post('/forums/stats', {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#forum-stats-content').html(data.html);
+            });
+        }
+
+        setInterval(loadStats, 1000);
+
     });
 
 div.container
@@ -41,4 +51,11 @@ div.container
                 else
                     include new_thread
         div.col-md-4
-            include forum_stats
+            div.news-post
+                div.header
+                    p.title Forum Stats
+                        a.minimize
+                            span.fa.fa-minus
+                    p.description Real-Time stats about the forums
+                div.content#forum-stats-content
+                    include forum_stats
