@@ -77,19 +77,21 @@ div.news-post
     div.content
         div#post-list
             include post_list
-div#thread-viewers
-    span.white Accounts viewing thread: 
-    for i in jIterator.iterate(thread.getViewers().size())
-        if i != 0
-            span.white , 
-        span.white
-            +showName(thread.getViewers().get(i), 14, 15)
-div.news-post#quick-reply
-    div.header(style='height: 50px;')
-        p.title Quick Reply
-            a.minimize
-                span.fa.fa-minus
-        p.description Add a reply to this thread. Check here for BBCode examples.
-    div.content
-        textarea#quick-reply-text(type='text')
-        button.btn.btn-default#submit-post-btn Submit Post
+if thread.getViewers().size() > 0
+    div#thread-viewers
+        span.white Accounts viewing thread: 
+        for i in jIterator.iterate(thread.getViewers().size())
+            if i != 0
+                span.white , 
+            span.white
+                +showName(thread.getViewers().get(i), 14, 15)
+if loggedIn && thread.getSubForum().getPermissions().canReply(thread, user)
+    div.news-post#quick-reply
+        div.header(style='height: 50px;')
+            p.title Quick Reply
+                a.minimize
+                    span.fa.fa-minus
+            p.description Add a reply to this thread. Check here for BBCode examples.
+        div.content
+            textarea#quick-reply-text(type='text')
+            button.btn.btn-default#submit-post-btn Submit Post

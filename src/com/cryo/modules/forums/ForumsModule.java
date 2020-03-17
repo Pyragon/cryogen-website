@@ -39,6 +39,7 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/thread/:id", //for getting data to make non-refresh page
                 "POST", "/forums/post/:id", //for getting data to make non-refresh page (not needed?)
                 "POST", "/forums/post/:id/addremove-thanks",
+                "POST", "/forums/post/:id/edit",
                 "POST", "/forums/thread/:id/submit-new-post", //for posting post
                 "POST", "/forums/user" //for creating user, use recaptcha, email verification, and cooldowns
         };
@@ -62,14 +63,14 @@ public class ForumsModule extends WebModule {
                     }};
                     model.put("breadcrumbs", breadcrumbs);
                     model.put("links", links);
-                    prop.put("breadcrumbs", breadcrumbs);
-                    prop.put("links", links);
                     if(account != null)
                         account.setStatus(1, 0, 0, 0);
                     if(request.requestMethod().equals("POST")) {
                         String html = render("./source/modules/forums/main.jade", model, request, response);
                         prop.put("success", true);
                         prop.put("html", html);
+                        prop.put("breadcrumbs", breadcrumbs.toArray());
+                        prop.put("links", links.toArray());
                         break;
                     }
                     return render("./source/modules/forums/forums.jade", model, request, response);
@@ -92,6 +93,8 @@ public class ForumsModule extends WebModule {
                 Object data = Website.instance().getCachingManager().getData("subforums-cache", id);
                 if(data == null) return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
                 SubForum forum = (SubForum) data;
+                if(!forum.getPermissions().canSeeForum(account))
+                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
                 model.put("forum", forum);
                 ArrayList<String> crumbs = new ArrayList<>();
                 ArrayList<String> links = new ArrayList<>();
@@ -126,6 +129,9 @@ public class ForumsModule extends WebModule {
                 data = Website.instance().getCachingManager().getData("subforums-cache", id);
                 if(data == null) return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
                 forum = (SubForum) data;
+                if (!forum.getPermissions().canCreateThread(account))
+                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request,
+                            response);
                 crumbs = new ArrayList<>();
                 links = new ArrayList<>();
                 crumbs.add("New Thread");
@@ -193,6 +199,8 @@ public class ForumsModule extends WebModule {
                     if (data == null)
                         return redirect("/community", "Invalid request. Redirecting you back to home.", 5, null, request, response);
                     forum = (SubForum) data;
+                    if(!forum.getPermissions().canCreateThread(account))
+                        return error("You do not have permission to create threads in this forum.");
                     String title = request.queryParams("title");
                     String body = request.queryParams("body");
                     if (StringUtils.isNullOrEmpty(title) || title.length() < 5 || title.length() > 50)
@@ -234,6 +242,8 @@ public class ForumsModule extends WebModule {
                 }
                 thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
                 if(thread == null) return error("Error finding thread. Please refresh and try again.");
+                if(!thread.getSubForum().getPermissions().canReply(thread, account))
+                    return error("You do not have permission to reply on this thread.");
                 String body = request.queryParams("body");
                 if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
                     return error("Body must be between 5 and 10,000 characters long.");
@@ -273,6 +283,20 @@ public class ForumsModule extends WebModule {
                 prop.put("success", true);
                 prop.put("html", render("./source/modules/forums/thanks_list.jade", model, request, response));
                 break;
+            case "/forums/post/:id/edit":
+                idString = request.params(":id");
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (Exception e) {
+                    return error("Error getting post. Please refresh page and try again.");
+                }
+                post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
+                if(post == null) 
+                    return error("Error getting post. Please refresh page and try again.");
+                if(!post.getThread().getSubForum().getPermissions().canEdit(post, account))
+                    return error("You do not have permission to edit this post.");
+                //if so, send unformatted version of post
+                break;
             default:
                 return Website.render404(request, response);
         }
@@ -297,11 +321,13 @@ public class ForumsModule extends WebModule {
         Properties prop = new Properties();
         SubForum forum = thread.getSubForum();
         if(forum == null) return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
+        if(!forum.getPermissions().canReadThread(thread, account))
+            return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
         model.put("thread", thread);
         model.put("page", page);
         model.put("posts", thread.getPosts(page));
-        ArrayList crumbs = new ArrayList<>();
-        ArrayList links = new ArrayList<>();
+        ArrayList<String> crumbs = new ArrayList<>();
+        ArrayList<String> links = new ArrayList<>();
         crumbs.add(thread.getTitle());
         links.add("");
         Object[] cData = forum.createBreadcrumbs(crumbs, links);

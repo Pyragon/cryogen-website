@@ -54,15 +54,18 @@ block head
                 $.post(link, {}, ret => {
                     let data = getJSON(ret);
                     if(data == null) return false;
+                    console.log(data);
                     $('#forum-content').html(data.html);
                     setBreadCrumbs(data.breadcrumbs, data.links);
                     history.pushState({}, "ForumSection", link);
+                    console.log(link);
                 });
             });
 
-            window.setBreadCrumbs =  function(breadcrumbs, links) {
+            window.setBreadCrumbs = function(breadcrumbs, links) {
                 let element = $('#breadcrumbs');
                 element.html('');
+                if(!breadcrumbs) return false;
                 for(let i = 0; i < breadcrumbs.length; i++) {
                     let value = breadcrumbs[i];
                     let span = $(`<span ${(i != breadcrumbs.length-1 ? (`class="link", data-link="${links[i]}"`) : (''))}>${value}</span>`);

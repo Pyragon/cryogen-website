@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.Optional;
 
 @Data
-public class SubForum extends MySQLDao {
+public class SubForum extends ForumParent {
 
     @MySQLDefault
     private final int id;
@@ -22,7 +22,7 @@ public class SubForum extends MySQLDao {
     private final boolean parentIsCategory;
     private final boolean isCategory;
     private final boolean isLink;
-    private final int permissions;
+    private final int permissionsId;
     private final int priority;
     private final String link;
     @MySQLDefault
@@ -30,16 +30,28 @@ public class SubForum extends MySQLDao {
     @MySQLDefault
     private final Timestamp updated;
 
+    public SubForum(int id, String name, String description, int parentId, boolean parentIsCategory, boolean isCategory, boolean isLink, 
+        int permissions, int priority, String link, Timestamp updated, Timestamp added) {
+            super(permissions);
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.parentId = parentId;
+            this.parentIsCategory = parentIsCategory;
+            this.isCategory = isCategory;
+            this.isLink = isLink;
+            this.permissionsId = permissions;
+            this.priority = priority;
+            this.link = link;
+            this.added = added;
+            this.updated = updated;
+            setParent(getParent());
+        }
+
     public ArrayList<SubForum> getSubForums() {
         Object data = Website.instance().getCachingManager().getData("subforum-list-cache", false, id);
         if(!(data instanceof ArrayList)) return null;
         return (ArrayList<SubForum>) data;
-    }
-
-    public Permissions getPermissions() {
-        Object data = Website.instance().getCachingManager().getData("permissions-cache", permissions);
-        if (data == null) return null;
-        return (Permissions) data;
     }
 
     public Object[] createBreadcrumbs(ArrayList<String> crumbs, ArrayList<String> links) {
@@ -62,9 +74,21 @@ public class SubForum extends MySQLDao {
         return new Object[] { crumbs, links };
     }
 
-    public Object getParent() {
+    public ForumParent getParent() {
         if(parentIsCategory) return ForumConnection.connection().selectClass("categories", "id=?", Category.class, parentId);
         else return ForumConnection.connection().selectClass("subforums", "id=?", SubForum.class, parentId);
+    }
+
+    public int getTotalViews() {
+        return getThreads().stream().mapToInt(Thread::getViews).sum();
+    }
+
+    public int getTotalThreads() {
+        return getThreads().size();
+    }
+
+    public int getTotalPosts() {
+        return getThreads().stream().mapToInt(Thread::getPostCount).sum();
     }
 
     public Post getLastPost() {

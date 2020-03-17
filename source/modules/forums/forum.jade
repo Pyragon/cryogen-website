@@ -1,8 +1,8 @@
 include ../utils/forum_name
-if loggedIn
-    button.btn.btn-default#new-thread-btn New Post
+if loggedIn && forum.getPermissions().canCreateThread(user)
+    button.btn.btn-default#new-thread-btn New Thread
 if forum.getSubForums().length > 0
-    div.news-post
+    div.news-post(style='min-width: 540px;')
         div.header
             p.title= forum.getName()
                 a.minimize
@@ -10,9 +10,10 @@ if forum.getSubForums().length > 0
             p.description= forum.getDescription()
         div.content
             for subforum in forum.getSubForums()
-                +showBlock(subforum)
-                div(style='clear: both;')
-div.news-post
+                if subforum.getPermissions().canSeeForum(user)
+                    +showBlock(subforum)
+                    div(style='clear: both;')
+div.news-post(style='min-width: 540px;')
     div.header
         p.title= forum.getName()
         p.description= forum.getDescription()
@@ -21,21 +22,22 @@ div.news-post
             p.t-center No threads have been created yet.
         else
             for thread in forum.getThreads()
-                div.forum(style='height: 40px;')
-                    div.forum-namedesc
-                        div.name.link(data-link='/forums/thread/'+thread.getId())= thread.getTitle()
-                        p.forum-description.small.grey= 'Started by '
-                            span
-                                +showName(thread.getAuthor(), 14, 15)
-                            span , 
-                            span= thread.getLastPost().getTimeRelative(null)
-                    div.forum-lastpost
-                        div.author-name.small
-                            span by 
-                            span
-                                +showName(thread.getLastPost().getAuthor(), 14, 15)
-                        div.small.time= thread.getLastPost().getTimeRelative(null)
-                    div.view-info
-                        p.small.replies= 'Replies: '+(thread.getPostCount()-1)
-                        p.small.views= 'Views: '+thread.getViews()
-                div(style='clear: both;')
+                if thread.getSubForum().getPermissions().canReadThread(thread, user)
+                    div.forum(style='height: 40px;')
+                        div.forum-namedesc
+                            div.name.link(data-link='/forums/thread/'+thread.getId())= thread.getTitle()
+                            p.forum-description.small.grey= 'Started by '
+                                span
+                                    +showName(thread.getAuthor(), 14, 15)
+                                span , 
+                                span= thread.getLastPost().getTimeRelative(null)
+                        div.forum-lastpost
+                            div.author-name.small
+                                span by 
+                                span
+                                    +showName(thread.getLastPost().getAuthor(), 14, 15)
+                            div.small.time= thread.getLastPost().getTimeRelative(null)
+                        div.view-info
+                            p.small.replies= 'Replies: '+(thread.getPostCount()-1)
+                            p.small.views= 'Views: '+thread.getViews()
+                    div(style='clear: both;')

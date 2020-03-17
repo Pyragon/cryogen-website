@@ -27,8 +27,8 @@ script.
     });
 
 for category in categories
-    if category.getPermissions() == null || category.getPermissions().canReadThread(user)
-        div.news-post
+    if category.getPermissions().canSeeForum(user)
+        div.news-post(style='min-width: 540px;')
             div.header
                 p.title= category.getName()
                     a.minimize
@@ -36,6 +36,6 @@ for category in categories
                 p.description= category.getDescription()
             div.content
                 for forum in category.getSubForums()
-                    if forum.getPermissions() == null || forum.getPermissions().canReadThread(user)
+                    if forum.getPermissions().canSeeForum(user)
                         +showBlock(forum)
                         div(style='clear: both;')

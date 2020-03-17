@@ -61,7 +61,7 @@ for post in posts
             div.edit-options
                 if post.hasBeenEdited()
                     p= 'Last Edited: '+post.getTimeRelative(post.getEdited())
-                if loggedIn && post.getAuthor().getId() == user.getId()
+                if loggedIn && post.getThread().getSubForum().getPermissions().canEdit(post, user)
                     p.vis-link Edit
                 if loggedIn
                     p.vis-link Quote

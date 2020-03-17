@@ -857,6 +857,7 @@ p.small {
 
 .forum {
     height: 60px;
+    min-width: 540px;
     border-bottom: 1px solid #000;
 }
 
@@ -1016,6 +1017,8 @@ p.small {
 
 .forum-lastpost {
     width: 150px;
+    min-width: 150px;
+    min-height: 100%;
 }
 
 .view-info {
