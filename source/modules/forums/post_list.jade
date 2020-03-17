@@ -2,11 +2,45 @@ include ../utils/forum_name
 script.
     $(document).ready(() => {
 
+        let editingPost = -1;
+
         let width = $('#post-list').width();
         if(width == '718') {
             $('#post-list').find('.container').width(width);
             $('#post-list').find('.row').width(width);
         }
+
+        $(document).on('click', '#edit-cancel', function() {
+            $.post('/forums/post/'+editingPost, {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $(this).closest('.post-body').html(data.html);
+                editingPost = -1;
+            });
+        });
+
+        $(document).on('click', '#edit-save', function() {
+            let post = $(this).closest('.post-body').find('#edit-post-area').val();
+            $.post('/forums/post/'+editingPost+'/submit-edit', { post }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $(this).closest('.post-body').html(data.html);
+                editingPost = -1;
+            });
+        });
+
+        $(document).on('click', '.edit-post', function() {
+            if(editingPost != -1) {
+                //CLOSE CURRENTLY EDITING POST, OPEN NEW ONE
+            }
+            let id = $(this).data('id');
+            $.post('/forums/post/'+id+'/edit', {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                editingPost = id;
+                $(this).closest('.post-body').html(data.html);
+            });
+        });
 
         $(document).on('click', '.addremove-thanks', function() {
             let span = $(this).find('span');
@@ -57,20 +91,8 @@ for post in posts
                 p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
                 p.post-link.vis-link= '#'+post.getId()
             .clear
-            div.post= post.getPost()
-            div.edit-options
-                if post.hasBeenEdited()
-                    p= 'Last Edited: '+post.getTimeRelative(post.getEdited())
-                if loggedIn && post.getThread().getSubForum().getPermissions().canEdit(post, user)
-                    p.vis-link Edit
-                if loggedIn
-                    p.vis-link Quote
-                if loggedIn// && post.getAuthor().getId() != user.getId()
-                    i.fa.fa-thumbs-up.link.addremove-thanks(data-post_id=post.getId())
-                        if loggedIn && post.hasBeenThankedBy(user.getId())
-                            span.vis-link.thanked  Remove Thanks
-                        else
-                            span.vis-link  Thanks
+            div.post-body
+                include post
             .clear
             div.thanks-content(data-post_id=post.getId())
                 include thanks_list

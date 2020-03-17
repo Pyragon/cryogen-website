@@ -5,6 +5,7 @@ import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
+import com.cryo.entities.MySQLRead;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.DateUtils;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ public class Post extends MySQLDao {
     private final int id;
     private final int threadId;
     private final int authorId;
-    private final String post;
+    @MySQLRead
+    private String post;
     @MySQLDefault
     private final Timestamp added;
     private final Timestamp edited;
@@ -57,6 +59,15 @@ public class Post extends MySQLDao {
 
     public boolean hasBeenEdited() {
         return edited != null;
+    }
+
+    public String getFormattedPost() {
+        return post;
+    }
+
+    public void editPost(String post) {
+        this.post = post;
+        ForumConnection.connection().set("posts", "post=?", "id=?", post, id);
     }
 
     public String getTimeRelative(Timestamp stamp) {

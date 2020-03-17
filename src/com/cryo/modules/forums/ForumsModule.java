@@ -37,9 +37,10 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/forum/:id/new-thread",
                 "POST", "/forums/forum/:id/submit-new-thread",
                 "POST", "/forums/thread/:id", //for getting data to make non-refresh page
-                "POST", "/forums/post/:id", //for getting data to make non-refresh page (not needed?)
+                "POST", "/forums/post/:id",
                 "POST", "/forums/post/:id/addremove-thanks",
                 "POST", "/forums/post/:id/edit",
+                "POST", "/forums/post/:id/submit-edit",
                 "POST", "/forums/thread/:id/submit-new-post", //for posting post
                 "POST", "/forums/user" //for creating user, use recaptcha, email verification, and cooldowns
         };
@@ -283,6 +284,22 @@ public class ForumsModule extends WebModule {
                 prop.put("success", true);
                 prop.put("html", render("./source/modules/forums/thanks_list.jade", model, request, response));
                 break;
+            case "/forums/post/:id":
+                idString = request.params(":id");
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (Exception e) {
+                    return error("Error getting post. Please refresh page and try again.");
+                }
+                post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
+                if (post == null)
+                    return error("Error getting post. Please refresh page and try again.");
+                if(!post.getThread().getSubForum().getPermissions().canReadThread(post.getThread(), account))
+                    return error("You do not have permission to read this post.");
+                model.put("post", post);
+                prop.put("success", true);
+                prop.put("html", render("./source/modules/forums/post.jade", model, request, response));
+                break;
             case "/forums/post/:id/edit":
                 idString = request.params(":id");
                 try {
@@ -295,7 +312,29 @@ public class ForumsModule extends WebModule {
                     return error("Error getting post. Please refresh page and try again.");
                 if(!post.getThread().getSubForum().getPermissions().canEdit(post, account))
                     return error("You do not have permission to edit this post.");
-                //if so, send unformatted version of post
+                model.put("post", post);
+                prop.put("success", true);
+                prop.put("html", render("./source/modules/forums/edit_post.jade", model, request, response));
+                break;
+            case "/forums/post/:id/submit-edit":
+                idString = request.params(":id");
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (Exception e) {
+                    return error("Error getting post. Please refresh page and try again.");
+                }
+                post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, id);
+                if (post == null)
+                    return error("Error getting post. Please refresh page and try again.");
+                if (!post.getThread().getSubForum().getPermissions().canEdit(post, account))
+                    return error("You do not have permission to edit this post.");
+                body = request.queryParams("post");
+                if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
+                    return error("Body must be between 5 and 10,000 characters long.");
+                post.editPost(body);
+                model.put("post", post);
+                prop.put("success", true);
+                prop.put("html", render("./source/modules/forums/post.jade", model, request, response));
                 break;
             default:
                 return Website.render404(request, response);

@@ -1037,12 +1037,28 @@ p.small {
     height: 10px;
 }
 
+.edit-container {
+
+}
+
+.edit-post-area {
+
+}
+
+.edit-cancel {
+
+}
+
+.edit-save {
+
+}
+
 #thread-viewers {
     margin-top: -20px;
     margin-bottom: 20px;
 }
 
-#quick-reply-text {
+#quick-reply-text, #edit-post-area {
     width: 95%;
     min-height: 95%;
     max-width: 95%;
@@ -1293,6 +1309,8 @@ input:checked+.slider:before {
 .recover-btn,
 #new-thread-btn,
 #submit-thread-btn,
+#edit-cancel,
+#edit-save,
 #submit-post-btn {
     margin: 100px auto 30px auto;
     display: block;
@@ -1312,6 +1330,15 @@ input:checked+.slider:before {
 }
 #submit-post-btn {
     margin: 0px 5px 5px auto;
+}
+
+#edit-cancel, #edit-save {
+    float: right;
+    margin: auto;
+    margin-right: 10px;
+    width: 70px;
+    height: 40px;
+    padding: inherit;
 }
 
 #new-thread-title-p,
