@@ -9,6 +9,8 @@ import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.utils.Utilities;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 public class BBCodeManager {
 
     private ArrayList<BBCode> bbcodes;
@@ -18,6 +20,7 @@ public class BBCodeManager {
     }
 
     public String getFormattedPost(String post) {
+        post = StringEscapeUtils.escapeHtml4(post);
         while(true) {
             int startPos = -1;
             int endPos = -1;
