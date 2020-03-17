@@ -31,7 +31,8 @@ script.
 
         $(document).on('click', '.edit-post', function() {
             if(editingPost != -1) {
-                //CLOSE CURRENTLY EDITING POST, OPEN NEW ONE
+                sendAlert('Already editing a post. Please cancel that one before trying to edit another.');
+                return false;
             }
             let id = $(this).data('id');
             $.post('/forums/post/'+id+'/edit', {}, ret => {
