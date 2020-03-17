@@ -62,7 +62,7 @@ public class Post extends MySQLDao {
     }
 
     public String getFormattedPost() {
-        return post;
+        return Website.instance().getBBCodeManager().getFormattedPost(post);
     }
 
     public void editPost(String post) {

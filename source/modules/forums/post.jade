@@ -1,4 +1,4 @@
-div.post= post.getFormattedPost()
+div.post!= post.getFormattedPost()
 div.edit-options
     if post.hasBeenEdited()
         p= 'Last Edited: '+post.getTimeRelative(post.getEdited())

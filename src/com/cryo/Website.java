@@ -13,6 +13,7 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.recovery.RecoveryModule;
 import com.cryo.modules.api.APIModule;
 import com.cryo.modules.api.APISections;
+import com.cryo.modules.forums.bbcode.BBCodeManager;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;
@@ -81,6 +82,9 @@ public class Website {
 	private @Getter
 	SearchManager searchManager;
 
+    @Getter
+    private BBCodeManager BBCodeManager;
+
 	private Timer fastExecutor;
 
 	private static File FAVICON = null;
@@ -105,6 +109,8 @@ public class Website {
 			cachingManager.loadCachedItems();
 			fastExecutor = new Timer();
 			searchManager = new SearchManager();
+            BBCodeManager = new BBCodeManager();
+            BBCodeManager.load();
 			ShopConnection.load(this);
 			searchManager.load();
 			port(Integer.parseInt(properties.getProperty("port")));
