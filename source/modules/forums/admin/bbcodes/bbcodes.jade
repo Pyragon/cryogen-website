@@ -1,0 +1,107 @@
+script.
+    let c;
+    (async function() {
+        import('/js/module-helper.js').then((mod) => {
+            c = new mod.ModuleHelper('bbcodes', '/forums/admin/bbcodes');
+            c.setup();
+        }).catch(console.error);
+    })();
+    $(document).ready(() => {
+
+        $('#add-bbcode').click(function() {
+            viewBBCodeModal(true);
+        });
+
+        $(document).on('click', '.edit-code', function() {
+            viewBBCodeModal(false, $(this));
+        });
+
+        function viewBBCodeModal(add, element) {
+            let id;
+            if(!add)
+                id = element.closest('tr').data('id');
+            $.post('/forums/admin/bbcodes/view', add ? {} : { id }, (ret) => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                let buttons = [];
+                buttons.push({
+                        addClass: 'btn btn-primary submit-btn', text: add ? 'Add' : 'Edit', onClick: ($noty) => {
+                            let name = $('#name').val();
+                            let description = $('#description').val();
+                            let tag = $('#tag').val();
+                            let allowNested = $('#nested').is(':checked');
+                            let regex = $('#regex').val();
+                            let replacement = $('#replacement').val();
+                            let example = $('#example').val();
+                            if(!name || !description || !tag || !regex || !replacement || !example) {
+                                sendAlert('Everything must be filled out!');
+                                return false;
+                            }
+                            let vars = {
+                                name,
+                                description,
+                                tag,
+                                allowNested,
+                                regex,
+                                replacement,
+                                example
+                            };
+                            if(!add) vars.id = id;
+                            $.post('/forums/admin/bbcodes/save', vars, ret => {
+                                let data = getJSON(ret);
+                                if(data == null) return false;
+                                sendAlert('Successfully '+(add ? 'added' : 'edited')+' bbcode.');
+                                closeNoty($noty);
+                                c.loadList();
+                            });
+                        }
+                    });
+                if(!add)
+                    buttons.push({
+                        addClass: 'btn btn-danger', text: 'Remove', onClick: ($noty) => {
+                            
+                        }
+                    });
+                buttons.push({addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty});
+                n = noty({
+                    text: (add ? 'Add' : 'Edit')+' BBCode',
+                    type: 'confirm',
+                    layout: 'center',
+                    template: data.html,
+                    dismissQueue: false,
+                    theme: 'cryogen',
+                    buttons
+                });
+            });
+        }
+
+    });
+div#bbcodes
+    h5 BBCodes
+    p.small.info The following is a list of all forum bbcodes for Cryogen
+    p.small.info Please use the plus button to add a bbcode.
+    div.row
+        div.iactions
+            div
+                div(style='float: left; margin: 10px 10px')
+                    div.col-xs-4
+                        p.color-grey.search-info Click the search icon to begin searching through bbcodes. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
+                    div.col-xs-4
+                        p.color-grey.search-info Filters: matches: (string), tag: (tag)
+                    div.col-xs-4
+                        p.color-grey.search-info
+                div(style='float: right; margin: 33.5px 5px;')
+                    div.link#add-bbcode
+                        i.fa.fa-plus-square
+                        span  Add BBCode
+    div.row(style='padding: 15px;')
+        div#search(style='clear: both; float: right; margin-bottom: 15px; text-align: left;')
+            div
+                span.fa.fa-search.link#search-icon(style='display: inline; float: right; padding-left: 5px; margin-top: 7px;')
+                div#search-pin(style='float: right; display: none;', display='none')
+                    input.form-control(type='text', placeholder='Search', style='max-width: 150px; max-height: 30px; background: #111; border: #000; display: inline!important;')
+        div.search-filters(style='clear: both; float: right;')
+        div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+        div#main
+        div.pages
+            div#pages

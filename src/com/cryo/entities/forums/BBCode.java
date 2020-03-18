@@ -4,19 +4,33 @@ import java.sql.Timestamp;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
+import com.cryo.entities.MySQLRead;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class BBCode extends MySQLDao {
 
+    @MySQLDefault
     private final int id;
-    private final String name;
-    private final String description;
-    private final String regex;
-    private final String replacement;
+    @MySQLRead
+    private String name;
+    @MySQLRead
+    private String description;
+    @MySQLRead
+    private String tag;
+    @MySQLRead
+    private boolean allowNested;
+    @MySQLRead
+    private String regex;
+    @MySQLRead
+    private String replacement;
+    @MySQLRead
+    private String example;
     @MySQLDefault
     private final Timestamp added;
     @MySQLDefault

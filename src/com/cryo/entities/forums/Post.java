@@ -61,8 +61,8 @@ public class Post extends MySQLDao {
         return edited != null;
     }
 
-    public String getFormattedPost() {
-        return Website.instance().getBBCodeManager().getFormattedPost(post);
+    public String getFormattedPost(Account account) {
+        return Website.instance().getBBCodeManager().getFormattedPost(account, post);
     }
 
     public void editPost(String post) {

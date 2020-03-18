@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -411,6 +412,30 @@ public abstract class DatabaseConnection {
 				.append(condition != null ? condition : "");
 		execute(builder.toString());
 	}
+
+    public void update(String database, String clause, Object clazz, String[] replacementsS, Object... vals) {
+        try {
+            StringBuilder builder = new StringBuilder();
+            ArrayList<Object> values = new ArrayList<>();
+            List<String> replacements = Arrays.asList(replacementsS);
+            for(Field field : clazz.getClass().getDeclaredFields()) {
+                if(!replacements.contains(field.getName())) continue;
+                field.setAccessible(true);
+                String name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, field.getName());
+                if (field.isAnnotationPresent(MySQLRead.class)) {
+                    String value = field.getAnnotation(MySQLRead.class).value();
+                    if (!value.equals("null"))
+                        name = value;
+                }
+                builder.append(name+"=?,");
+                values.add(field.get(clazz));
+            }
+            values.addAll(Arrays.asList(vals));
+            set(database, builder.substring(0, builder.length()-1), clause, values.toArray());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	public void execute(String query) {
 		try {

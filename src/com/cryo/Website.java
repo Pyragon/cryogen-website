@@ -13,7 +13,7 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.recovery.RecoveryModule;
 import com.cryo.modules.api.APIModule;
 import com.cryo.modules.api.APISections;
-import com.cryo.modules.forums.bbcode.BBCodeManager;
+import com.cryo.modules.forums.BBCodeManager;
 import com.cryo.modules.highscores.HighscoresModule;
 import com.cryo.modules.index.IndexModule;
 import com.cryo.modules.live.LiveModule;

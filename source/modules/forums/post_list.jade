@@ -10,6 +10,40 @@ script.
             $('#post-list').find('.row').width(width);
         }
 
+        $(document).on('click', '.quote-author', function() {
+            let id = $(this).data('id');
+            $.post('/forums/user/'+id, {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#forum-content').html(data.html);
+                setBreadCrumbs(data.breadcrumbs, data.link);
+                history.pushState({}, 'ForumSection', '/forums/user/'+id);
+            });
+        });
+
+        $(document).on('click', '.quote-thread', function() {
+            let threadId = $(this).data('id');
+            $.post('/forums/thread/'+threadId, {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#forum-content').html(data.html);
+                setBreadCrumbs(data.breadcrumbs, data.links);
+                history.pushState({}, 'ForumSection', '/forums/thread/'+threadId);
+            });
+        });
+
+        $(document).on('click', '.quote-id', function() {
+            let threadId = $(this).data('threadid');
+            let postId = $(this).data('postid');
+            $.post('/forums/thread/'+threadId+'#'+postId, {}, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#forum-content').html(data.html);
+                setBreadCrumbs(data.breadcrumbs, data.links);
+                history.pushState({}, 'ForumSection', '/forums/thread/'+threadId+'#'+postId);
+            });
+        });
+
         $(document).on('click', '#edit-cancel', function() {
             $.post('/forums/post/'+editingPost, {}, ret => {
                 let data = getJSON(ret);
@@ -28,6 +62,30 @@ script.
                 editingPost = -1;
             });
         });
+
+        $(document).on('click', '.quote-post', function() {
+            let id = $(this).closest('.post-body').data('id');
+            insertAtCursor($('#quick-reply-text')[0], '[QUOTE='+id+']');
+        });
+
+        function insertAtCursor(myField, myValue) {
+            //IE support
+            if (document.selection) {
+                myField.focus();
+                sel = document.selection.createRange();
+                sel.text = myValue;
+            }
+            //MOZILLA and others
+            else if (myField.selectionStart || myField.selectionStart == '0') {
+                var startPos = myField.selectionStart;
+                var endPos = myField.selectionEnd;
+                myField.value = myField.value.substring(0, startPos)
+                    + myValue
+                    + myField.value.substring(endPos, myField.value.length);
+            } else {
+                myField.value += myValue;
+            }
+        }
 
         $(document).on('click', '.edit-post', function() {
             if(editingPost != -1) {
@@ -92,7 +150,7 @@ for post in posts
                 p.date= formatter.formatTimestamp(post.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
                 p.post-link.vis-link= '#'+post.getId()
             .clear
-            div.post-body
+            div.post-body(data-id=post.getId())
                 include post
             .clear
             div.thanks-content(data-post_id=post.getId())

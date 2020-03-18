@@ -348,18 +348,19 @@ public class ForumsModule extends WebModule {
         try {
             id = Integer.parseInt(idString);
         } catch (Exception e) {
-            return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
+            e.printStackTrace();
+            return redirect("/forums", "Error loading page0, redirecting you back to home.", 5, null, request, response);
         }
         Thread thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
         return loadThread(account, thread, page, request, response);
     }
 
     public String loadThread(Account account, Thread thread, int page, Request request, Response response) {
-        if(thread == null) return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
+        if(thread == null) return redirect("/forums", "Error loading page1, redirecting you back to home.", 5, null, request, response);
         HashMap<String, Object> model = new HashMap<>();
         Properties prop = new Properties();
         SubForum forum = thread.getSubForum();
-        if(forum == null) return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
+        if(forum == null) return redirect("/forums", "Error loading page2, redirecting you back to home.", 5, null, request, response);
         if(!forum.getPermissions().canReadThread(thread, account))
             return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
         model.put("thread", thread);

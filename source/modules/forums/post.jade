@@ -1,11 +1,11 @@
-div.post!= post.getFormattedPost()
+div.post!= post.getFormattedPost(user)
 div.edit-options
     if post.hasBeenEdited()
         p= 'Last Edited: '+post.getTimeRelative(post.getEdited())
     if loggedIn && post.getThread().getSubForum().getPermissions().canEdit(post, user)
         p.edit-post.vis-link(data-id=post.getId()) Edit
     if loggedIn
-        p.vis-link Quote
+        p.vis-link.quote-post Quote
     if loggedIn && post.getAuthor().getId() != user.getId()
         i.fa.fa-thumbs-up.link.addremove-thanks(data-post_id=post.getId())
             if loggedIn && post.hasBeenThankedBy(user.getId())

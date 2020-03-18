@@ -1,0 +1,12 @@
+include ../utils/forum_name
+div.quote
+    div.quote-info.white(data-id=post.getAuthorId())
+        span Quote by 
+        span.link.quote-author
+            +showName(post.getAuthor(), 14, 15)
+        span= ', '+post.getTimeRelative(null)
+        span  on 
+        span.link.quote-thread(data-id=post.getThread().getId())= post.getThread().getTitle()
+    div.vis-link.quote-id(data-threadid=post.getThread().getId(), data-postid=post.getId())= '#'+post.getId()
+    .clear
+    div.quote-body!= post.getFormattedPost(user)

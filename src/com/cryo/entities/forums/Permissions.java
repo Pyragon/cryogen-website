@@ -83,6 +83,8 @@ public class Permissions extends MySQLDao {
             return true;
         if (account != null && permissions.contains(-2))
             return true;
+        if(account == null) return false;
+        if(permissions.contains(account.getDisplayGroup().getId())) return true;
         ArrayList<Integer> copy = new ArrayList<>(permissions);
         List<Integer> groupsI = account.getUsergroups().stream().map(UserGroup::getId).collect(Collectors.toList());
         copy.retainAll(groupsI);

@@ -1,0 +1,66 @@
+extend ../../default
+
+block head
+	script.
+		var loaded = [];
+		var section = "";
+
+		function loadSection(section) {
+			$.post('/forums/admin/' + section, { action: 'load' }, function (ret) {
+				var data = getJSON(ret);
+				if (data == null) return false;
+				$('#' + section).html(data.html);
+				return true;
+			});
+		}
+		$(document).ready(function () {
+
+			section = "!{section.getName()}";
+
+			history.pushState({}, "ForumAdminSection", "/forums/admin/" + section)
+
+			loadSection(section);
+
+			loaded.push(section)
+
+			$('.nav-tabs a[href="#' + section + '"]').tab('show')
+
+			$('.nav-tabs a').click(function () {
+				$(this).tab('show');
+
+				section = $(this).attr('href').replace("#", "")
+				if (!loaded.includes(section)) {
+					if (loadSection(section))
+						loaded.push(section)
+				}
+				history.pushState({}, "ForumAdminSection", "/forums/admin/" + section)
+
+			})
+		});
+
+block content
+	div.container.account-area(style = 'min-height: 600px; min-width: 703px; padding: 20px 0;')
+		div.row
+			div.col-md-3
+				ul.nav.nav-tabs
+					li.nav.active.account-item
+						a(href='#overview', data-toggle='tab') Overview
+					li.nav.account-item
+						a(href='#users', data-toggle='tab') Users
+					li.nav.account-item
+						a(href='#usergroups', data-toggle='tab') UserGroups
+					li.nav.account-item
+						a(href='#forums', data-toggle='tab') Forums
+					li.nav.account-item
+						a(href='#threads', data-toggle='tab') Threads
+					li.nav.account-item
+						a(href='#bbcodes', data-toggle='tab') BBCodes
+			div.col-md-9
+				div.widget
+					div.tab-content.content
+						div.tab-pane.fade.in.active(id='overview')
+						div.tab-pane.fade.in(id='users')
+						div.tab-pane.fade.in(id='usergroups')
+						div.tab-pane.fade.in(id='forums')
+						div.tab-pane.fade.in(id='threads')
+						div.tab-pane.fade.in(id='bbcodes')
