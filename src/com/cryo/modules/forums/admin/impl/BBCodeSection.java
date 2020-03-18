@@ -89,7 +89,7 @@ public class BBCodeSection implements ForumAdminSection {
             case "save":
                 String name = request.queryParams("name");
                 String description = request.queryParams("description");
-                String tag = request.queryParams("tag");
+                String css = request.queryParams("css");
                 String allowNestedS = request.queryParams("allowNested");
                 regex = request.queryParams("regex");
                 replacement = request.queryParams("replacement");
@@ -115,18 +115,18 @@ public class BBCodeSection implements ForumAdminSection {
                     if(code == null) return error("Unable to find bbcode for that id");
                     code.setName(name);
                     code.setDescription(description);
-                    code.setTag(tag);
+                    code.setCSS(css);
                     code.setAllowNested(allowNested);
                     code.setRegex(regex);
                     code.setReplacement(replacement);
                     code.setExample(example);
                 } else
-                    code = new BBCode(-1, name, description, tag, allowNested, regex, replacement, example, null, null);
+                    code = new BBCode(-1, name, description, css, allowNested, regex, replacement, example, null, null);
                 if(add)
                     ForumConnection.connection().insert("bbcodes", code.data());
                 else
                     ForumConnection.connection().update("bbcodes", "id=?", code, 
-                            new String[] { "name", "description", "tag", "allowNested", "regex", "replacement", "example" }, id);
+                            new String[] { "name", "description", "CSS", "allowNested", "regex", "replacement", "example" }, id);
                 Website.instance().getBBCodeManager().load();
                 prop.put("success", true);
                 break;

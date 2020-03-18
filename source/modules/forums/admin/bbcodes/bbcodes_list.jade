@@ -4,7 +4,7 @@ table.table.hs-table.table-condensed.table-responsive.users-table.widget(style='
             th.t-center ID
             th.t-center Name
             th.t-center Description
-            th.t-center Tag
+            th.t-center CSS?
             th.t-center Allow Nested
             th.t-center Regex
             th.t-center Replacement
@@ -16,7 +16,7 @@ table.table.hs-table.table-condensed.table-responsive.users-table.widget(style='
                 td.b-right= code.getId()
                 td.b-right= code.getName()
                 td.b-right= code.getDescription()
-                td.b-right= code.getTag()
+                td.b-right= !code.getCSS() == ''
                 td.b-right= code.isAllowNested()
                 td.b-right= code.getRegex()
                 td.b-right= code.getReplacement()

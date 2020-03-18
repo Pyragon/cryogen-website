@@ -65,6 +65,10 @@ public class Post extends MySQLDao {
         return Website.instance().getBBCodeManager().getFormattedPost(account, post);
     }
 
+    public ArrayList<String> getCSS() {
+        return Website.instance().getBBCodeManager().getCSS(post);
+    }
+
     public void editPost(String post) {
         this.post = post;
         ForumConnection.connection().set("posts", "post=?", "id=?", post, id);

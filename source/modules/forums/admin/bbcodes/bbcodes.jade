@@ -28,19 +28,19 @@ script.
                         addClass: 'btn btn-primary submit-btn', text: add ? 'Add' : 'Edit', onClick: ($noty) => {
                             let name = $('#name').val();
                             let description = $('#description').val();
-                            let tag = $('#tag').val();
+                            let css = $('#css').val();
                             let allowNested = $('#nested').is(':checked');
                             let regex = $('#regex').val();
                             let replacement = $('#replacement').val();
                             let example = $('#example').val();
-                            if(!name || !description || !tag || !regex || !replacement || !example) {
+                            if(!name || !description || !css || !regex || !replacement || !example) {
                                 sendAlert('Everything must be filled out!');
                                 return false;
                             }
                             let vars = {
                                 name,
                                 description,
-                                tag,
+                                css,
                                 allowNested,
                                 regex,
                                 replacement,
@@ -87,7 +87,7 @@ div#bbcodes
                     div.col-xs-4
                         p.color-grey.search-info Click the search icon to begin searching through bbcodes. Search using filters with filter:value and separate with commas. True/false or yes/no can be used.
                     div.col-xs-4
-                        p.color-grey.search-info Filters: matches: (string), tag: (tag)
+                        p.color-grey.search-info Filters: matches: (string), name: (name)
                     div.col-xs-4
                         p.color-grey.search-info
                 div(style='float: right; margin: 33.5px 5px;')

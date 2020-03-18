@@ -403,6 +403,12 @@ span {
     background: rgb(15, 47, 64);
 }
 
+#css {
+    min-width: 130px;
+    min-height: 30px;
+    max-height: 100px;
+}
+
 .quote-info {
     float: left;
     font-size: 12px;
@@ -415,6 +421,10 @@ span {
 
 .quote-body {
     margin-top: 5px;
+}
+
+.spoiler {
+    cursor: pointer;
 }
 
 .input {

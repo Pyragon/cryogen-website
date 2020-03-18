@@ -1,3 +1,6 @@
+if post.getCSS() != null
+    for css in post.getCSS()
+        style= css
 div.post!= post.getFormattedPost(user)
 div.edit-options
     if post.hasBeenEdited()

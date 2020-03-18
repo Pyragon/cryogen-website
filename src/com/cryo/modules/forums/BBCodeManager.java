@@ -70,6 +70,17 @@ public class BBCodeManager {
         return post;
     }
 
+    public ArrayList<String> getCSS(String post) {
+        ArrayList<String> list = new ArrayList<>();
+        for (BBCode code : bbcodes) {
+            Pattern pattern = Pattern.compile(code.getRegex(), Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(post);
+            if (matcher.find()) 
+                list.add(code.getCSS());
+        }
+        return list;
+    }
+
     public String getFormattedPost(Account account, String post) {
         post = StringEscapeUtils.escapeHtml4(post);
         ArrayList<Integer[]> noBetween = new ArrayList<>();
@@ -79,7 +90,7 @@ public class BBCodeManager {
             int endPos = -1;
             BBCode useCode = null;
             for(BBCode code : bbcodes) {
-                Pattern pattern = Pattern.compile(code.getRegex());
+                Pattern pattern = Pattern.compile(code.getRegex(), Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(post);
                 if(matcher.find()) {
                     if(isBetween(noBetween, matcher.start(), matcher.end())) continue;
@@ -93,7 +104,7 @@ public class BBCodeManager {
             }
             if(startPos == -1) break;
             HashMap<Integer, String> groups = new HashMap<>();
-            Pattern pattern = Pattern.compile(useCode.getRegex());
+            Pattern pattern = Pattern.compile(useCode.getRegex(), Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(post);
             if(matcher.find()) {
                 for(int i = 1; i < matcher.groupCount()+1; i++)

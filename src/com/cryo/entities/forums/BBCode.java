@@ -21,8 +21,8 @@ public class BBCode extends MySQLDao {
     private String name;
     @MySQLRead
     private String description;
-    @MySQLRead
-    private String tag;
+    @MySQLRead(value="css")
+    private String CSS;
     @MySQLRead
     private boolean allowNested;
     @MySQLRead

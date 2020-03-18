@@ -3,6 +3,9 @@ script.
         let regex = $('#regex').val();
         let replacement = $('#replacement').val();
         let example = $('#example').val();
+        let css = $('#css').val();
+        $('#preview-css').remove();
+        $('<style id="preview-css" type="text/css"> '+css+' </style>').appendTo('head');
         $(this).find('i').addClass('fa-spin');
         let that = $(this);
         setTimeout(() => {
@@ -14,7 +17,8 @@ script.
             $('.bbcode-preview').find('p').html(data.post);
         });
     });
-
+if code != null && code.getCSS() != ''
+    style= code.getCSS()
 .noty_message
     span.noty_text
     .widget.register(style='margin-top: 5px')
@@ -25,10 +29,6 @@ script.
         .report_line
             label.name Description
             input#description(type='text', value=(code == null ? '' : code.getDescription()))
-        .clear
-        .report_line
-            label.name Tag
-            input#tag(type='text', value=(code == null ? '' : code.getTag()))
         .clear
         .report_line
             label.name Allow Nested
@@ -48,9 +48,13 @@ script.
             label.name Example
             input#example(type='text', value=(code == null ? '' : code.getExample()))
         .clear
+        .report_line
+            label.name CSS
+            textarea#css= code == null ? '' : code.getCSS()
+        .clear
         p.bbcode-preview-title Preview: 
             span.vis-link.bbcode-preview-reload
                 i.fa.fa-refresh
         .bbcode-preview
-            p!= code == null ? '' : manager.getFormattedPost(code.getExample())
+            p!= code == null ? '' : manager.getFormattedPost(user, code.getExample())
 .noty_close
