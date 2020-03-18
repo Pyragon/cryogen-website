@@ -10,6 +10,12 @@ script.
             $('#post-list').find('.row').width(width);
         }
 
+        $(document).on('click', '.spoiler', function() {
+            let spoiled = $(this).hasClass('spoiled');
+            if(spoiled) $(this).removeClass('spoiled');
+            else $(this).addClass('spoiled');
+        });
+
         $(document).on('click', '.quote-author', function() {
             let id = $(this).data('id');
             $.post('/forums/user/'+id, {}, ret => {
