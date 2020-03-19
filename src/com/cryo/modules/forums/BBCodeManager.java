@@ -134,9 +134,31 @@ public class BBCodeManager {
                     }
                     HashMap<String, Object> model = new HashMap<>();
                     model.put("post", postDao);
-                    String html = Jade4J.render("./source/modules/forums/quote.jade", model);
+                    String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/quote.jade", model);
                     post = post.substring(0, startPos) + html + post.substring(endPos, post.length());
                     continue wh;
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    noCheck.add(startPos);
+                    continue wh;
+                }
+            } else if(useCode.getName().equals("Post Count")) {
+                try {
+                String postCountString = groups.get(0);
+                int postCount;
+                try {
+                    postCount = Integer.parseInt(postCountString);
+                } catch(Exception e) {
+                    noCheck.add(startPos);
+                    continue wh;
+                }
+                HashMap<String, Object> model = new HashMap<>();
+                model.put("count", postCount);
+                model.put("post", groups.get(1));
+                model.put("user", account);
+                String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/post_count.jade", model);
+                post = post.substring(0, startPos) + html + post.substring(endPos, post.length());
+                continue wh;
                 } catch(Exception e) {
                     e.printStackTrace();
                     noCheck.add(startPos);

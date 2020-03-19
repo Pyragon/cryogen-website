@@ -10,7 +10,7 @@ script.
             $('#post-list').find('.row').width(width);
         }
 
-        $(document).on('click', '.spoiler', function() {
+        $(document).on('click', '.spoiler, .post-spoiler', function() {
             let spoiled = $(this).hasClass('spoiled');
             if(spoiled) $(this).removeClass('spoiled');
             else $(this).addClass('spoiled');
