@@ -8,6 +8,7 @@ import com.cryo.Website;
 import com.cryo.Website.RequestType;
 import com.cryo.entities.forums.ForumAdminSection;
 import com.cryo.modules.WebModule;
+import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.CookieManager;
 import com.cryo.utils.Utilities;
 
@@ -38,6 +39,9 @@ public class ForumAdminModule extends WebModule {
         HashMap<String, Object> model = new HashMap<>();
         if(!CookieManager.isLoggedIn(request))
             return WebModule.showLoginPage("/forums/admin", request, response);
+        Account account = CookieManager.getAccount(request);
+        if(account.getRights() < 2)
+            return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request, response);
         switch(endpoint) {
             case "/forums/admin":
                 ForumAdminSection section = sections.get("overview");
