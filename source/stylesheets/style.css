@@ -423,10 +423,6 @@ span {
     margin-top: 5px;
 }
 
-.spoiler {
-    cursor: pointer;
-}
-
 .input {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
     border: 1px solid #000;
