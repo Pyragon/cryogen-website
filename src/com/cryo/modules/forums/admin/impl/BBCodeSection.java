@@ -86,6 +86,20 @@ public class BBCodeSection implements ForumAdminSection {
                 prop.put("success", true);
                 prop.put("post", Website.instance().getBBCodeManager().getFormattedPost(regex, replacement, example));
                 break;
+            case "remove":
+                String idString = request.queryParams("id");
+                int id;
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (Exception e) {
+                    return error("Error pasing id!");
+                }
+                BBCode code = ForumConnection.connection().selectClass("bbcodes", "id=?", BBCode.class, id);
+                if (code == null)
+                    return error("Unable to find a BBCode with that ID.");
+                ForumConnection.connection().delete("bbcodes", "id=?", code.getId());
+                prop.put("success", true);
+                break;
             case "save":
                 String name = request.queryParams("name");
                 String description = request.queryParams("description");
@@ -94,9 +108,8 @@ public class BBCodeSection implements ForumAdminSection {
                 regex = request.queryParams("regex");
                 replacement = request.queryParams("replacement");
                 example = request.queryParams("example");
-                BBCode code;
                 boolean add = true;
-                int id = -1;
+                id = -1;
                 boolean allowNested;
                 try {
                     allowNested = Boolean.parseBoolean(allowNestedS);
@@ -104,7 +117,7 @@ public class BBCodeSection implements ForumAdminSection {
                     return error("Error parsing value: allow_nested");
                 }
                 if (!StringUtils.isNullOrEmpty(request.queryParams("id"))) {
-                    String idString = request.queryParams("id");
+                    idString = request.queryParams("id");
                     try {
                         id = Integer.parseInt(idString);
                     } catch(Exception e) {

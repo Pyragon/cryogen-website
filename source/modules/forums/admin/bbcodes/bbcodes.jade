@@ -59,7 +59,26 @@ script.
                 if(!add)
                     buttons.push({
                         addClass: 'btn btn-danger', text: 'Remove', onClick: ($noty) => {
-                            
+                            n = noty({
+                                text: 'Are you sure?',
+                                type: 'confirm',
+                                layout: 'center',
+                                dismissQueue: false,
+                                theme: 'cryogen',
+                                buttons: [{
+                                    addClass: 'btn btn-primary', text: 'Yes', onClick: ($noty) => {
+                                        $.post('/forums/admin/bbcodes/'+id+'/remove', {}, ret => {
+                                            let data = getJSON(ret);
+                                            if(data == null) return false;
+                                            closeNoty($noty);
+                                            c.loadList();
+                                            sendAlert('BBCode deleted!');
+                                        });
+                                    }
+                                }, {
+                                    addClass: 'btn btn-danger', text: 'No', onClick: closeNoty
+                                }]
+                            });
                         }
                     });
                 buttons.push({addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty});
