@@ -162,6 +162,8 @@ public class BBCodeManager {
                 +replacement
                 +post.substring(endPos, post.length());
         }
+        if(post.contains("{{name}}"))
+            post = post.replaceAll("\\{\\{name\\}\\}", account == null ? "Guest" : ForumUtils.crownUser(account, 14, 15));
         return post;
     }
 
