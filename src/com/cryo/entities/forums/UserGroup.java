@@ -2,6 +2,8 @@ package com.cryo.entities.forums;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
+import com.cryo.modules.forums.ForumUtils;
+
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -21,5 +23,9 @@ public class UserGroup extends MySQLDao {
     private final Timestamp added;
     @MySQLDefault
     private final Timestamp updated;
+
+    public String getFormattedName() {
+        return ForumUtils.crownUser(this, 14, 15);
+    }
 
 }

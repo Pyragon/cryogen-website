@@ -423,6 +423,13 @@ span {
     margin-top: 5px;
 }
 
+.report-options select {
+    border: 1px solid #010101;
+    border-radius: 2px;
+    background: #151515;
+    color: #888;
+}
+
 .input {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
     border: 1px solid #000;

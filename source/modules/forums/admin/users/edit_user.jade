@@ -1,0 +1,49 @@
+.noty_message
+    span.noty_text
+    .widget.register(style='margin-top: 5px')
+        .report_line
+            label.name Username
+            input#username(type='text', value=(editing == null ? '' : editing.getUsername()))
+        .clear
+        .report_line
+            label.name Display Name
+            input#display-name(type='text', value=(editing == null ? '' : editing.getDisplayName()))
+        .clear
+        .report_line
+            label.name Password
+            input#password(type='text')
+        .clear
+        .report_line
+            label.name Rights
+            input#rights(type='text', value=(editing == null ? '' : editing.getRights()))
+        .clear
+        .report_line
+            label.name Donator
+            input#donator(type='text', value=(editing == null ? '' : editing.getDonator()))
+        .clear
+        .report_line
+            label.name Email
+            input#email(type='text', value=(editing == null ? '' : editing.getEmail()))
+        .clear
+        .report_line
+            label.name Avatar
+            input#avatar(type='text', value=(editing == null ? '' : editing.getAvatarUrl()))
+        .clear
+        .report_line
+            label.name Display Group
+            div.report-options
+                select
+                    -var i = 0;
+                    for group in groups
+                        if group.getId() == (editing == null ? 2 : editing.getDisplayGroup().getId())
+                            option(data-id=group.getId(), selected='selected')
+                                span!= group.getFormattedName()
+                        else
+                            option(data-id=group.getId())
+                                span!= group.getFormattedName()
+        .clear
+        .report_line
+            label.name User Groups
+            input#usergroups(type='text', value=(editing == null ? '' : editing.getUsergroupsJoined()))
+        .clear
+.noty_close

@@ -8,6 +8,95 @@ script.
     })();
     $(document).ready(() => {
 
+        $('#add-user').click(function() {
+            viewUserModal(true);
+        });
+
+        $(document).on('click', '.edit-user', function() {
+            viewUserModal(false, $(this));
+        });
+
+        function viewUserModal(add, element) {
+            let id;
+            if(!add)
+                id = element.closest('tr').data('id');
+            $.post('/forums/admin/users/edit', add ? {} : { id }, (ret) => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                let buttons = [];
+                buttons.push({
+                        addClass: 'btn btn-primary submit-btn', text: add ? 'Add' : 'Edit', onClick: ($noty) => {
+                            let username = $('#username').val();
+                            let displayName = $('#display-name').val();
+                            let password = $('#password').val();
+                            let rights = $('#rights').val();
+                            let donator = $('#donator').val();
+                            let avatar = $('#avatar').val();
+                            let email = $('#email').val();
+                            let displaygroup = $('option:selected').data('id');
+                            let usergroups = $('#usergroups').val();
+                            if(!username || !displayName || !rights || !donator || !displaygroup) {
+                                sendAlert('Everything must be filled out!');
+                                return false;
+                            }
+                            let vars = {
+                                username,
+                                displayName,
+                                password,
+                                rights,
+                                donator,
+                                avatar,
+                                email,
+                                displaygroup,
+                                usergroups
+                            };
+                            if(!add) vars.id = id;
+                            $.post('/forums/admin/users/save', vars, ret => {
+                                let data = getJSON(ret);
+                                if(data == null) return false;
+                                sendAlert('Successfully '+(add ? 'added' : 'edited')+' user.');
+                                closeNoty($noty);
+                                c.loadList();
+                            });
+                        }
+                    });
+                if(!add)
+                    buttons.push({
+                        addClass: 'btn btn-danger', text: 'Remove', onClick: ($noty) => {
+                            n = noty({
+                                text: 'Are you sure? This will break the user\'s account',
+                                type: 'confirm',
+                                layout: 'center',
+                                dismissQueue: false,
+                                theme: 'cryogen',
+                                buttons: [{
+                                    addClass: 'btn btn-primary', text: 'Yes', onClick: ($noty) => {
+                                        $.post('/forums/admin/users/'+id+'/remove', {}, ret => {
+                                            let data = getJSON(ret);
+                                            if(data == null) return false;
+                                            closeNoty($noty);
+                                            c.loadList();
+                                            sendAlert('User deleted!');
+                                        });
+                                    }
+                                }, {
+                                    addClass: 'btn btn-danger', text: 'No', onClick: closeNoty
+                                }]
+                            });
+                        }
+                    });
+                buttons.push({addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty});
+                n = noty({
+                    text: (add ? 'Add' : 'Edit')+' User',
+                    type: 'confirm',
+                    layout: 'center',
+                    template: data.html,
+                    dismissQueue: false,
+                    theme: 'cryogen',
+                    buttons
+                });
+            });
+        }
     });
 div#users
     h5 Forum Users

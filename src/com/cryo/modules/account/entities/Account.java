@@ -5,17 +5,21 @@ import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.CurrentDisplayName;
+import com.cryo.entities.Email;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
 import com.cryo.entities.forums.AccountStatus;
 import com.cryo.entities.forums.UserGroup;
 import com.cryo.modules.highscores.HSUtils;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>
@@ -24,20 +28,28 @@ import java.util.ArrayList;
  */
 @RequiredArgsConstructor
 @Data
+@AllArgsConstructor
 public class Account extends MySQLDao {
 
 	@MySQLDefault
 	private final int id;
-	private final String username;
-	private final String password;
-	private final String salt;
-	private final int rights;
-	private final int donator;
-	private final String avatarUrl;
+    @MySQLRead
+	private String username;
+    @MySQLRead
+	private String password;
+    @MySQLRead
+	private String salt;
+    @MySQLRead
+	private int rights;
+    @MySQLRead
+	private int donator;
+    @MySQLRead
+	private String avatarUrl;
 	@MySQLDefault
-	private final int displayGroup;
-	@MySQLRead("usergroups")
-	private final String usergroupsString;
+    @MySQLRead
+	private int displayGroup;
+    @MySQLRead
+	private String usergroups;
 	@MySQLDefault
 	private final Timestamp creationDate;
 
@@ -53,6 +65,19 @@ public class Account extends MySQLDao {
 			return "";
 		return (String) data[0];
 	}
+
+    public void setEmail(String email) {
+        if(email.equals("")) {
+            EmailConnection.connection().delete("linked", "username=?", username);
+            return;
+        }
+        Email dao = EmailConnection.connection().selectClass("linked", "username=?", Email.class, username);
+        if(dao == null) {
+            dao = new Email(username, email);
+            EmailConnection.connection().insert("linked", dao.data());
+        } else
+            EmailConnection.connection().set("linked", "email=?", "username=?", email, username);
+    }
 
 	public int getThanksGiven() {
 		Object data = Website.instance().getCachingManager().getData("thanks-cache", "count-given", id);
@@ -122,7 +147,7 @@ public class Account extends MySQLDao {
 
 	public ArrayList<UserGroup> getUsergroups() {
 		ArrayList<UserGroup> groups = new ArrayList<>();
-		ArrayList<Integer> ids = Website.getGson().fromJson(usergroupsString, ArrayList.class);
+		ArrayList<Integer> ids = Website.getGson().fromJson(usergroups, ArrayList.class);
 		if (ids != null) {
 			for (int id : ids) {
 				Object data = Website.instance().getCachingManager().getData("usergroup-cache", id);
@@ -132,6 +157,14 @@ public class Account extends MySQLDao {
 		}
 		return groups;
 	}
+
+    public String getUsergroupsJoined() {
+        return getUsergroups()
+                    .stream()
+                    .map(UserGroup::getId)
+                    .map(i -> Integer.toString(i))
+                    .collect(Collectors.joining(","));
+    }
 
     public void setStatus(int index, int forumId, int userId, int threadId) {
         long millis = System.currentTimeMillis() + (1000 * 60 * 5);
