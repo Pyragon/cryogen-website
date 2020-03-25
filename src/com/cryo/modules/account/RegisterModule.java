@@ -105,7 +105,7 @@ public class RegisterModule extends WebModule {
 			return new Gson().toJson(prop);
 		}
 		model.put("success", request.queryParams().contains("success"));
-		model.put("siteKey", "6LeYZ68UAAAAADVhihPUEQ3MI8bBm6ndRb3TVF9s");
+		model.put("siteKey", "6LfrBeQUAAAAAPLHbfoDE_Pqd5BIUGDum0PgInJq");
 		return render("./source/modules/account/register.jade", model, request, response);
 	}
 	
