@@ -54,7 +54,7 @@ public abstract class WebModule {
 		model.put("jIterator", new JadeIterator());
 		model.put("hsutils", new HSUtils());
 		model.put("utils", new Utilities());
-		model.put("baseurl", "http://localhost/");
+		model.put("baseurl", "http://142.44.160.156/");
 		model.put("formatter", new DateUtils());
 		model.put("acutils", new AccountUtils());
 		model.put("shutdown", Website.SHUTDOWN_TIME);

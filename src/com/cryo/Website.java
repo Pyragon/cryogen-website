@@ -57,7 +57,7 @@ import static spark.Spark.*;
  */
 public class Website {
 
-	public static String PATH = "http://localhost:8085/";
+	public static String PATH = "http://142.44.160.156:8085/";
 
 	private static Website INSTANCE;
 
@@ -172,16 +172,6 @@ public class Website {
 			post("/view_status", (req, res) -> new RecoveryModule(this, "view_status").decodeRequest(req, res, RequestType.POST));
 			get(RegisterModule.PATH, (req, res) -> new RegisterModule(this).decodeRequest(req, res, RequestType.GET));
 			post(RegisterModule.PATH, (req, res) -> new RegisterModule(this).decodeRequest(req, res, RequestType.POST));
-			get("/online", (req, res) -> {
-				SocketAddress addr = new InetSocketAddress("localhost", 43594);
-				@Cleanup Socket socket = new Socket();
-				try {
-					socket.connect(addr, 5_000);
-				} catch(IOException e) {
-					return "offline";
-				}
-				return "online";
-			});
 			for (Class<?> c : Utilities.getClasses("com.cryo.modules")) {
 				try {
 					if (!WebModule.class.isAssignableFrom(c)) continue;
