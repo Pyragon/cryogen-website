@@ -1,0 +1,27 @@
+mixin showContainer(forum)
+    div(class='forum-container '+((forum.getSubForums() != null && forum.getSubForums().size() > 0) ? '' : 'empty'), data-priority=forum.getPriority(), data-id=forum.getId())
+        div.forum-title
+            div.forum-info
+                div.forum-name= forum.getName()
+                    if forum.isLink()
+                        span.small= ' (Link: '+forum.getLink()+')'
+                p.forum-description.small= forum.getDescription()
+            div.forum-options
+                span(title='Add Forum')
+                    i.fa.fa-plus.add-forum
+                span(title='Move Up')
+                    i.fa.fa-chevron-up.move-up
+                span(title='Move Down')
+                    i.fa.fa-chevron-down.move-down
+                span(title='Edit')
+                    i.fa.fa-edit.edit-forum
+                span(title='Edit permissions')
+                    i.fa.fa-exclamation.edit-permissions
+            .clear
+        div.forum-sep
+    if forum.getSubForums() != null && forum.getSubForums().size() > 0
+        div.sub-forums.category
+            for subforum in forum.getSubForums()
+                div
+                    +showContainer(subforum)
+    .clear

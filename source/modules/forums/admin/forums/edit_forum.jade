@@ -1,0 +1,30 @@
+.noty_message
+    span.noty_text
+    .widget.register(style='margin-top: 5px')
+        .report_line
+            label.name Name
+            input#name(type='text', value=(forum == null ? '' : forum.getName()))
+        .clear
+        .report_line
+            label.name Description
+            input#description(type='text', value=(forum == null ? '' : forum.getDescription()))
+        .clear
+        .report_line
+            label.name Parent
+            input#parent(type='text', value=(forum == null ? (parent == null ? '' : parent) : forum.getParentId()))
+        .clear
+        .report_line
+            label.name Is Category
+            label.switch
+                input#is-category(type='checkbox', checked=(forum == null ? false : forum.isCategory()))
+                span.slider.round
+        .clear
+        .report_line
+            label.name Link
+            input#link(type='text', value=(forum == null ? '' : forum.getLink()))
+        .clear
+        .report_line
+            label.name Priority
+            input#priority(type='text', value=(forum == null ? '' : forum.getPriority()))
+        .clear
+.noty_close

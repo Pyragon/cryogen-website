@@ -44,9 +44,7 @@ public class Thread extends MySQLDao {
     private final Timestamp updated;
 
     public SubForum getSubForum() {
-        Object data = Website.instance().getCachingManager().getData("subforums-cache", forumId);
-        if(data == null) return null;
-        return (SubForum) data;
+        return ForumConnection.connection().selectClass("subforums", "id=?", SubForum.class, forumId);
     }
 
     public Post getLastPost() {

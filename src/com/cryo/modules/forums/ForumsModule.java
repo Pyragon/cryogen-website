@@ -55,7 +55,7 @@ public class ForumsModule extends WebModule {
         switch(endpoint) {
             case "/forums":
                 try {
-                    model.put("categories", Website.instance().getCachingManager().getData("category-list-cache"));
+                    model.put("categories", ForumConnection.connection().selectList("subforums", "parent_id=?", SubForum.class, -1));
                     ArrayList<String> breadcrumbs = new ArrayList<String>() {{
                         add("Home");
                     }};

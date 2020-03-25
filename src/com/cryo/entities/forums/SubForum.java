@@ -4,6 +4,9 @@ import com.cryo.Website;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
+import com.cryo.entities.MySQLRead;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -12,71 +15,58 @@ import java.util.Comparator;
 import java.util.Optional;
 
 @Data
-public class SubForum extends ForumParent {
+@AllArgsConstructor
+public class SubForum extends MySQLDao {
 
     @MySQLDefault
     private final int id;
-    private final String name;
-    private final String description;
-    private final int parentId;
-    private final boolean parentIsCategory;
-    private final boolean isCategory;
-    private final boolean isLink;
-    private final int permissionsId;
-    private final int priority;
-    private final String link;
+    @MySQLRead
+    private String name;
+    @MySQLRead
+    private String description;
+    @MySQLRead
+    private int parentId;
+    @MySQLRead
+    private boolean isCategory;
+    @MySQLRead
+    private int permissionsId;
+    @MySQLRead
+    private int priority;
+    @MySQLRead
+    private String link;
     @MySQLDefault
     private final Timestamp added;
     @MySQLDefault
     private final Timestamp updated;
 
-    public SubForum(int id, String name, String description, int parentId, boolean parentIsCategory, boolean isCategory, boolean isLink, 
-        int permissions, int priority, String link, Timestamp updated, Timestamp added) {
-            super(permissions);
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.parentId = parentId;
-            this.parentIsCategory = parentIsCategory;
-            this.isCategory = isCategory;
-            this.isLink = isLink;
-            this.permissionsId = permissions;
-            this.priority = priority;
-            this.link = link;
-            this.added = added;
-            this.updated = updated;
-            setParent(getParent());
-        }
-
     public ArrayList<SubForum> getSubForums() {
-        Object data = Website.instance().getCachingManager().getData("subforum-list-cache", false, id);
-        if(!(data instanceof ArrayList)) return null;
-        return (ArrayList<SubForum>) data;
+        return ForumConnection.connection().selectList("subforums", "parent_id=?", "ORDER BY priority ASC", SubForum.class, id);
+    }
+
+    public boolean isLink() {
+        return link != null && !link.equals("");
     }
 
     public Object[] createBreadcrumbs(ArrayList<String> crumbs, ArrayList<String> links) {
-        Object obj = this;
+        SubForum forum = this;
         if(crumbs == null || links == null) {
             crumbs = new ArrayList<>();
             links = new ArrayList<>();
         }
-        while(!(obj instanceof Category)) {
-            SubForum forum = (SubForum) obj;
+        while(forum.getParentId() != -1) {
             crumbs.add(forum.getName());
-            links.add("/forums/forum/"+forum.getId());
-            obj = forum.getParent();
+            links.add("/forums/forum/" + forum.getId());
+            forum = forum.getParent();
         }
-        Category category = (Category) obj;
-        crumbs.add(category.getName());
+        crumbs.add(forum.getName());
         links.add("/forums");
         crumbs.add("Home");
         links.add("/forums");
         return new Object[] { crumbs, links };
     }
 
-    public ForumParent getParent() {
-        if(parentIsCategory) return ForumConnection.connection().selectClass("categories", "id=?", Category.class, parentId);
-        else return ForumConnection.connection().selectClass("subforums", "id=?", SubForum.class, parentId);
+    public SubForum getParent() {
+        return ForumConnection.connection().selectClass("subforums", "id=?", SubForum.class, parentId);
     }
 
     public int getTotalViews() {
@@ -123,6 +113,16 @@ public class SubForum extends ForumParent {
 
     public ArrayList<Thread> getThreads() {
         return ForumConnection.connection().selectList("threads", "forum_id=?", Thread.class, id);
+    }
+
+    public Permissions getPermissions() {
+        if (permissionsId == -1) {
+            SubForum parent = getParent();
+            if (parent == null)
+                return ForumConnection.connection().selectClass("permissions", "id=?", Permissions.class, 2);
+            return parent.getPermissions();
+        }
+        return ForumConnection.connection().selectClass("permissions", "id=?", Permissions.class, permissionsId);
     }
 
 }

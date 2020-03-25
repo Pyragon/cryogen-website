@@ -1,0 +1,143 @@
+include ../../../utils/forum_container
+script.
+    $(document).ready(() => {
+
+        let edited = false;
+
+        function array_move(arr, old_index, new_index) {
+            if (new_index >= arr.length) {
+                var k = new_index - arr.length + 1;
+                while (k--) {
+                    arr.push(undefined);
+                }
+            }
+            arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+            return arr; // for testing
+        };
+
+        function moveElement(element, up) {
+            let list = [];
+            let results = [];
+            let lastPriority = 0;
+            let children = element.closest('.category').children('div');
+            children.each(function() {
+                let container = $(this).find('.forum-container');
+                list[container.data('priority')] = $(this);
+                lastPriority = container.data('priority');
+            });
+            let priority = element.closest('.forum-container').data('priority');
+            if(priority == (up ? 0 : lastPriority)) return false;
+            edited = true;
+            array_move(list, priority, priority+(up ? -1 : 1));
+            let cat = element.closest('.category');
+            cat.empty();
+            for(let i = 0; i < list.length; i++) {
+                let ele = list[i];
+                $(ele.find('.forum-container')[0]).data('priority', i);
+                cat.append(ele);
+            }
+        }
+
+        $(document).on('click', '.move-up', function() {
+            moveElement($(this), true);
+        });
+
+        $(document).on('click', '.move-down', function() {
+            moveElement($(this), false);
+        });
+
+        $(document).on('click', '.edit-forum', function() {
+            viewForumModal(false, $(this));
+        });
+
+        $(document).on('click', '#add-forum', function() {
+            viewForumModal(true);
+        });
+
+        $(document).on('click', '.add-forum', function() {
+            let parentId = $(this).closest('.forum-container').data('id');
+            viewForumModal(true, null, parentId);
+        });
+
+        function viewForumModal(add, element, parent) {
+            if(edited) {
+                sendAlert('Please save the arrangement of forums before editing one.');
+                return false;
+            }
+            let data = {};
+            let id;
+            if(!add) {
+                id = element.closest('.forum-container').data('id');
+                data.id = id;
+            } else if(parent)
+                data.parent = parent;
+            console.log(data);
+            $.post('/forums/admin/forums/view', data, (ret) => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                n = noty({
+                    text: (add ? 'Add' : 'Edit')+' BBCode',
+                    type: 'confirm',
+                    layout: 'center',
+                    template: data.html,
+                    dismissQueue: false,
+                    theme: 'cryogen',
+                    buttons: [
+                        {
+                            addClass: 'btn btn-primary submit-btn', text: add ? 'Add' : 'Edit', onClick: ($noty) => {
+                                let name = $('#name').val();
+                                let description = $('#description').val();
+                                let parent = $('#parent').val();
+                                let category = $('#is-category').is(':checked');
+                                let link = $('#link').val();
+                                let priority = $('#priority').val();
+                                if(!name || !description || parent == '' || priority == '') {
+                                    sendAlert('Not all required fields are filled out. Please try again.');
+                                    return false;
+                                }
+                                let vars = {
+                                    name,
+                                    description,
+                                    parent,
+                                    category,
+                                    link,
+                                    priority
+                                };
+                                if(!add) vars.id = id;
+                                $.post('/forums/admin/forums/save', vars, ret => {
+                                    let data = getJSON(ret);
+                                    if(data == null) return false;
+                                    closeNoty($noty);
+                                    $('#forum-list').html(data.html);
+                                    sendAlert('Forum saved.');
+                                });
+                            }
+                        },
+                        {
+                            addClass: 'btn btn-danger', text: 'Cancel', onClick: closeNoty
+                        }
+                    ]
+                });
+            });
+        }
+
+    });
+div#forums
+    h5 Forums
+    p.small.info The following is a list of forums and categories in Cryogen
+    p.small.info Add, Edit, and Rearrange as you please, then hit the 'Save' button to save
+    div.row
+        div.iactions
+            div
+                div(style='float: right; margin: 33.5px 5px;')
+                    div.link#save
+                        i.fa.fa-save
+                        span  Save
+                    div.link#add-forum
+                        i.fa.fa-plus
+                            span  Add Forum
+    div.row(style='padding: 15px;')
+        div.col-md-12(style='border: 1px solid #000; clear: both; margin-bottom: 10px;')
+        .widget.register#forum-list(style='margin-top: 5px; margin-left: 0px;')
+            include forums_list
+            .clear
