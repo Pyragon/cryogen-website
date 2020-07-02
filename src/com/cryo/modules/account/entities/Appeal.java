@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.cryo.Website;
-import com.cryo.comments.CommentList;
+import com.cryo.entities.CommentList;
 import com.cryo.db.impl.PunishmentsConnection;
 
 import lombok.Data;

@@ -26,11 +26,11 @@ p.t-center.grey= 'Registered Users: '+registeredUsers
 p.t-center.grey= 'Forum Users Online: '+onlineUsers
 p.t-center.grey= 'Most Users Online: '+mostOnline
 if latestPost != null
-    p.t-center
+    p.t-center(style='margin: 2px;')
         span.grey Latest Post: 
         //TODO - use hashtag to go to last post
         span.latest-post-title.link.white(data-link='/forums/thread/'+latestPost.getThread().getId())= latestPost.getThread().getTitle()
         span.grey  by 
-        span.latest-post-author.link(data-id=latestPost.getAuthor().getId())
+        span.latest-post-author.user-portal.link(data-link='/forums/user/'+latestPost.getAuthor().getId())
             +showName(latestPost.getAuthor(), 14, 15)
         span.grey= ', '+latestPost.getTimeRelative(null)

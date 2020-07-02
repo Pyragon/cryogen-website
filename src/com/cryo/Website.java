@@ -1,10 +1,12 @@
 package com.cryo;
 
 import com.cryo.cache.CachingManager;
-import com.cryo.comments.CommentsManager;
-import com.cryo.comments.CommentsModule;
+import com.cryo.managers.CommentsManager;
+import com.cryo.managers.NotificationManager;
+import com.cryo.modules.CommentsModule;
 import com.cryo.db.DBConnectionManager;
 import com.cryo.db.impl.ShopConnection;
+import com.cryo.managers.CookieManager;
 import com.cryo.modules.TestModule;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountModule;
@@ -21,12 +23,9 @@ import com.cryo.modules.login.LoginModule;
 import com.cryo.modules.login.LogoutModule;
 import com.cryo.modules.search.SearchManager;
 import com.cryo.modules.staff.StaffModule;
-import com.cryo.paypal.PaypalManager;
+import com.cryo.managers.PaypalManager;
 import com.cryo.tasks.TaskManager;
-import com.cryo.utils.CookieManager;
-import com.cryo.utils.CorsFilter;
-import com.cryo.utils.Utilities;
-import com.cryo.utils.UtilityModule;
+import com.cryo.utils.*;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -43,9 +42,6 @@ import spark.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.*;
 
 import static spark.Spark.*;
@@ -119,11 +115,13 @@ public class Website {
 			staticFiles.expireTime(0); // ten minutes
 			staticFiles.header("Access-Control-Allow-Origin", "*");
 			CorsFilter.apply();
+			DisplayNames.init();
 			APISections.loadSections();
 			AccountModule.registerEndpoints(this);
 			SearchManager.registerEndpoints(this);
 			StaffModule.registerEndpoints(this);
 			CommentsModule.registerEndpoints(this);
+			NotificationManager.registerEndpoints();
 			Utilities.registerEndpoints(UtilityModule.ENDPOINTS, UtilityModule.decodeRequest);
 			APIModule.registerEndpoints(this);
 			get(IndexModule.PATH, (req, res) -> new IndexModule(this).decodeRequest(req, res, RequestType.GET));
@@ -306,7 +304,11 @@ public class Website {
 		File file = new File("data/props.json");
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String json = reader.readLine();
+			String line;
+			StringBuilder builder = new StringBuilder();
+			while((line = reader.readLine()) != null)
+				builder.append(line);
+			String json = builder.toString();
 			properties = getGson().fromJson(json, Properties.class);
 			reader.close();
 		} catch (IOException e) {

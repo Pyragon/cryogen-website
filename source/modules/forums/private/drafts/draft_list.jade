@@ -1,0 +1,20 @@
+table.table.hs-table.table-condensed.table-responsive.users-table.widget(style='font-size: 12px;')
+    thead
+        tr
+            th.t-center ID
+            th.t-center To
+            th.t-center Subject
+            th.t-center Date
+            th.t-center Read
+            th.t-center Delete
+    tbody
+        for draft in drafts
+            tr(data-id=draft.getId())
+                td.b-right= draft.getId()
+                td.b-right= '$for-name='+draft.getRecipient().getUsername()+'$end'
+                td.b-right= draft.getSubject()
+                td.b-right= formatter.formatTimestamp(draft.getAdded(), 'EEEE, MMM dd, YYYY')
+                td.b-right.vis-link.message-read
+                    i.fa.fa-envelope
+                td.vis-link.draft-message-delete
+                    i.fa.fa-trash

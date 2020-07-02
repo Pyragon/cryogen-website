@@ -5,7 +5,7 @@ import com.cryo.Website.RequestType;
 import com.cryo.db.impl.EmailConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.AccountSection;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 import spark.Request;

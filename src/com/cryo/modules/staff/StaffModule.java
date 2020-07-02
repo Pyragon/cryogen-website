@@ -9,7 +9,7 @@ import com.cryo.Website.RequestType;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.entities.StaffSection;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 

@@ -1,12 +1,9 @@
 package com.cryo.modules.account.entities;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 import com.cryo.Website;
-import com.cryo.comments.Comment;
-import com.cryo.comments.CommentList;
-import com.cryo.db.impl.CommentsConnection;
+import com.cryo.entities.CommentList;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

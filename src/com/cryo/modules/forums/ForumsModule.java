@@ -3,13 +3,12 @@ package com.cryo.modules.forums;
 import com.cryo.Website;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
-import com.cryo.entities.forums.Post;
-import com.cryo.entities.forums.SubForum;
-import com.cryo.entities.forums.Thanks;
+import com.cryo.entities.forums.*;
 import com.cryo.entities.forums.Thread;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
+import com.cryo.utils.DisplayNames;
 import com.mysql.jdbc.StringUtils;
 import spark.Request;
 import spark.Response;
@@ -42,7 +41,9 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/post/:id/edit",
                 "POST", "/forums/post/:id/submit-edit",
                 "POST", "/forums/thread/:id/submit-new-post", //for posting post
-                "POST", "/forums/user" //for creating user, use recaptcha, email verification, and cooldowns
+                "POST", "/forums/user", //for creating user, use recaptcha, email verification, and cooldowns
+                "POST", "/forms/user/:id",
+                "POST", "/forums/user/:id/post-vmessage"
         };
     }
 
@@ -65,7 +66,7 @@ public class ForumsModule extends WebModule {
                     model.put("breadcrumbs", breadcrumbs);
                     model.put("links", links);
                     if(account != null)
-                        account.setStatus(1, 0, 0, 0);
+                        account.setStatus(1, -1, -1, -1);
                     if(request.requestMethod().equals("POST")) {
                         String html = render("./source/modules/forums/main.jade", model, request, response);
                         prop.put("success", true);
@@ -109,7 +110,7 @@ public class ForumsModule extends WebModule {
                 prop.put("breadcrumbs", crumbs);
                 prop.put("links", links);
                 if(account != null)
-                    account.setStatus(0, forum.getId(), 0, 0);
+                    account.setStatus(-1, forum.getId(), -1, -1);
                 if(request.requestMethod().equals("GET"))
                     return render("./source/modules/forums/forums.jade", model, request, response);
                 prop.put("success", true);
@@ -178,6 +179,87 @@ public class ForumsModule extends WebModule {
                     model.put("posts", thread.getPosts(page));
                     prop.put("html", render("./source/modules/forums/post_list.jade", model, request, response));
                 }
+                break;
+            case "/forums/user/:id":
+                //allow name or id
+                idString = request.params(":id");
+                boolean usingId;
+                boolean usingPost = request.requestMethod().equals("POST");
+                Account viewing = null;
+                try {
+                    id = Integer.parseInt(idString);
+                    usingId = true;
+                } catch(Exception e) {
+                    String username = DisplayNames.getUsername(idString);
+                    if(username == null) {
+                        if(usingPost)
+                            return error("Unable to find user with that ID.");
+                        else
+                            return redirect("/forums", "Unable to find user, redirecting you back to home.", 5, null, request, response);
+                    }
+                    viewing = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
+                    if(viewing == null) {
+                        if(usingPost)
+                            return error("Unable to find user with that ID.");
+                        else
+                            return redirect("/forums", "Unable to find user, redirecting you back to home.", 5, null, request, response);
+                    }
+                    id = viewing.getId();
+                    usingId = false;
+                }
+                if(usingId)
+                    viewing = GlobalConnection.connection().selectClass("player_data", "id=?", Account.class, id);
+                if(viewing == null) {
+                    if(usingPost)
+                        return error("Unable to find user with that ID.");
+                    else
+                        return redirect("/forums", "Unable to find user, redirecting you back to home.", 5, null, request, response);
+                }
+                if(account != null)
+                    account.setStatus(-1, -1, viewing.getId(), -1);
+                model.put("account", viewing);
+                model.put("vmessages", viewing.getVisitorMessages());
+                try {
+                    if (usingPost) {
+                        prop.put("success", true);
+                        prop.put("html", render("./source/modules/forums/user/user_profile.jade", model, request, response));
+                    } else return render("./source/modules/forums/forums.jade", model, request, response);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    return error("Error.");
+                }
+                break;
+            case "/forums/user/:id/post-vmessage":
+                //allow name or id
+                idString = request.params(":id");
+                viewing = null;
+                try {
+                    id = Integer.parseInt(idString);
+                    usingId = true;
+                } catch(Exception e) {
+                    String username = DisplayNames.getUsername(idString);
+                    if(username == null)
+                        return error("Unable to find user with that ID.");
+                    viewing = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
+                    if(viewing == null)
+                        return error("Unable to find user with that ID.");
+                    id = viewing.getId();
+                    usingId = false;
+                }
+                if(usingId)
+                    viewing = GlobalConnection.connection().selectClass("player_data", "id=?", Account.class, id);
+                if(viewing == null)
+                    return error("Unable to find user with that ID.");
+                //TODO - check permissions and shit. Can we post on their wall?
+                if(account == null) return error("You must be logged in to do this.");
+                String message = request.queryParams("message");
+                if(message.length() < 5 || message.length() > 250) return error("Message must be between 5 and 250 characters!");
+                VisitorMessage vMessage = new VisitorMessage(-1, viewing.getId(), account.getId(), message, null, null);
+                ForumConnection.connection().insert("visitor_messages", vMessage.data());
+                prop.put("success", true);
+                ArrayList<VisitorMessage> newMessages = ForumConnection.connection().selectList("visitor_messages", "account_id=?", "ORDER BY added DESC", VisitorMessage.class, viewing.getId());
+                model.put("vmessages", newMessages);
+                prop.put("html", WebModule.render("./source/modules/forums/user/visitor_messages.jade", model, request, response));
                 break;
             case "/forums/forum/:id/submit-new-thread":
                 int threadId;
@@ -380,7 +462,7 @@ public class ForumsModule extends WebModule {
         prop.put("breadcrumbs", crumbs);
         prop.put("links", links);
         if(account != null)
-            account.setStatus(0, 0, 0, thread.getId());
+            account.setStatus(-1, -1, -1, thread.getId());
         if(request.requestMethod().equals("GET"))
             return render("./source/modules/forums/forums.jade", model, request, response);
         thread.addView();

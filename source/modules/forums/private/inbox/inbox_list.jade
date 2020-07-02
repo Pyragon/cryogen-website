@@ -1,0 +1,28 @@
+table.table.hs-table.table-condensed.table-responsive.users-table.widget(style='font-size: 12px;')
+    thead
+        tr
+            th.t-center ID
+            th.t-center Status
+            th.t-center From
+            th.t-center Subject
+            th.t-center Date
+            th.t-center Read
+            th.t-center Mark Read/Unread
+            th.t-center Delete
+    tbody
+        for message in messages
+            tr(data-id=message.getId())
+                td.b-right= message.getId()
+                td.b-right= message.isRead() ? 'Read' : 'Unread'
+                td.b-right= '$for-name='+message.getAuthor().getUsername()+'$end'
+                td.b-right= message.getSubject()
+                td.b-right= formatter.formatTimestamp(message.getAdded(), 'EEEE, MMM dd, YYYY')
+                td.b-right.vis-link.message-read
+                    i.fa.fa-envelope
+                td.b-right.vis-link.message-mark-read
+                    if message.isRead()
+                        i.fa.fa-envelope(title='Mark Unread')
+                    else
+                        i.fa.fa-envelope-open(title='Mark Read')
+                td.vis-link.inbox-message-delete
+                    i.fa.fa-trash

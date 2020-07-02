@@ -40,22 +40,25 @@ div.container
         div#forum-header
             p#breadcrumbs.col-md-4.offset-md-8
     div.row
-        div.col-md-8
-            div#forum-content
-                if categories != null
-                    include category_list
-                else if forum != null
-                    include forum
-                else if thread != null
-                    include thread
-                else
-                    include new_thread
-        div.col-md-4
-            div.news-post(style='min-width: 540px;')
-                div.header
-                    p.title Forum Stats
-                        a.minimize
-                            span.fa.fa-minus
-                    p.description Real-Time stats about the forums
-                div.content#forum-stats-content
-                    include forum_stats
+        if account != null
+            include user/user_profile
+        else
+            div.col-md-8
+                div#forum-content
+                    if categories != null
+                        include category_list
+                    else if forum != null
+                        include forum
+                    else if thread != null
+                        include thread
+                    else
+                        include new_thread
+            div.col-md-4
+                div.news-post(style='min-width: 400px;')
+                    div.header
+                        p.title Forum Stats
+                            a.minimize
+                                span.fa.fa-minus
+                        p.description Real-Time stats about the forums
+                    div.content#forum-stats-content
+                        include forum_stats

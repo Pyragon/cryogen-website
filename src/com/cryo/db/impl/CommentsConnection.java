@@ -2,12 +2,11 @@ package com.cryo.db.impl;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.cryo.Website;
-import com.cryo.comments.Comment;
-import com.cryo.comments.CommentList;
+import com.cryo.entities.Comment;
+import com.cryo.entities.CommentList;
 import com.cryo.db.DBConnectionManager.Connection;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;

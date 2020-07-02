@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import com.cryo.Website;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 

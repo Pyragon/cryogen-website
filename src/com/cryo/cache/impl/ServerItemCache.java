@@ -1,8 +1,8 @@
 package com.cryo.cache.impl;
 
 import com.cryo.cache.CachedItem;
-import com.cryo.server.ServerConnection;
-import com.cryo.server.item.ServerItem;
+import com.cryo.managers.api.ServerConnection;
+import com.cryo.entities.ServerItem;
 
 import java.util.HashMap;
 

@@ -239,6 +239,7 @@ body {
 
 span {
     text-align: center;
+    vertical-align: middle;
 }
 
 .dropdwn-cnt {
@@ -343,21 +344,13 @@ span {
 
 .report_line label:first-of-type,
 .first {
-    padding: 5px !important;
+    padding: 5px;
     min-width: 130px;
     max-width: 130px;
     float: left !important;
 }
 
-.first {
-    min-width: 130px !important;
-    width: 100px !important;
-}
 
-.second {
-    min-width: 130px !important;
-    width: 100px !important;
-}
 
 .report_line input,
 .report_line textarea,
@@ -368,6 +361,24 @@ span {
     padding: 5px;
     float: right;
     max-width: 130px;
+}
+
+.message-author {
+    margin: 5px 5px 0px 5px;
+}
+
+.message-subject {
+    margin: 0px 5px 5px 5px;
+}
+
+.message-seperator {
+    border: 1px solid #aaa;
+    margin: auto;
+    width: 97%;
+}
+
+.message-body {
+    margin: 5px;
 }
 
 .report_line>.switch {
@@ -462,10 +473,6 @@ span {
 
 .forum-info {
     float: left;
-}
-
-.forum-name {
-    margin: 5px auto auto 5px;
 }
 
 .forum-description {
@@ -765,9 +772,22 @@ h4.title {
     border-radius: 5px;
     text-align: center;
     transition: all .3s;
-    margin: 0 10px 15px 10px !important;
+    margin: 0 10px 15px 0px !important;
     width: 100%;
     padding: 0;
+}
+
+#visitor-message-create {
+    width: 80%;
+    min-width: 80%;
+    max-width: 80%;
+    margin: auto;
+    display: block;
+    min-height: 50px;
+    height: 10%;
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
+    border: 1px solid #000;
+    border-radius: 5px;
 }
 
 .account-item:hover {
@@ -1026,6 +1046,113 @@ p.small {
 
 .post-block:not(:first-of-type) {
     border-top: 1px solid #000;
+}
+
+.user-avatar {
+    width: 75px;
+    height: 75px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    margin: 5px auto;
+}
+
+.user-avatar>img {
+    border-radius: 50%;
+}
+
+.user-page-actions {
+    float: right;
+    margin: 10px 5px auto auto;
+}
+
+.user-page-actions>i {
+    margin-right: 7px;
+}
+
+.user-page-actions>i:last-of-type {
+    margin-right: 0px;
+}
+
+.notification-icon-container {
+    min-width: 34px;
+    max-width: 34px;
+    min-height: 34px;
+    max-height: 34px;
+    float: left;
+    margin: 10px;
+    border: 1px solid #000;
+    border-radius: 50%;
+}
+
+.remove-notification {
+    position: absolute;
+    right: 3px;
+}
+
+.remove-notification:hover {
+    color: #f00
+}
+
+.notification-icon {
+    width: 20px;
+    margin-top: 4px;
+    font-size: 21px;
+}
+
+.notification-title {
+    text-align: left;
+    width: 219px;
+    margin-top: 7px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.notification-content {
+    text-align: left;
+    margin-left: 5px;
+    font-size: 13px;
+    margin-top: -4px;
+}
+
+.notification-content-container {
+    float: right;
+}
+
+.notification-block {
+    border-bottom: 1px solid #aaa;
+    cursor: pointer;
+}
+
+.notification-block:last-of-type {
+    border-bottom: none;
+}
+
+.notification-block:hover {
+    background-color: #333;
+}
+
+#notification-container {
+    width: 275px;
+    height: 225px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    position: absolute;
+    background-color: #1b1b1b;
+    z-index: 100;
+}
+
+#notification-center-icon {
+    float: right;
+    margin-top: 15px;
+}
+
+#notification-badge {
+    height: 7px;
+    width: 7px;
+    background-color: red;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .author-block {
@@ -1466,6 +1593,7 @@ input:checked+.slider:before {
 #submit-thread-btn,
 #edit-cancel,
 #edit-save,
+#submit-visitor-message,
 #submit-post-btn {
     margin: 100px auto 30px auto;
     display: block;
@@ -1483,8 +1611,25 @@ input:checked+.slider:before {
 #submit-thread-btn {
     margin: 10px 5px 5px auto;
 }
-#submit-post-btn {
-    margin: 0px 5px 5px auto;
+#submit-post-btn,
+#submit-visitor-message {
+    margin: 0px calc(10%) 5px auto;
+}
+
+.visitor-message-avatar {
+    float: left;
+}
+
+.visitor-message-author {
+    margin-top: 2px;
+}
+
+.visitor-message-info {
+    margin-left: 2px;
+}
+
+.visitor-message-time>span {
+    margin-left: 5px;
 }
 
 #edit-cancel, #edit-save {
@@ -1494,6 +1639,14 @@ input:checked+.slider:before {
     width: 70px;
     height: 40px;
     padding: inherit;
+}
+
+.visitor-message {
+    border-bottom: 1px solid #666;
+}
+
+.visitor-message:last-of-type {
+    border-bottom: none;
 }
 
 #new-thread-title-p,

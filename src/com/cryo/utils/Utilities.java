@@ -72,6 +72,26 @@ public class Utilities {
 		return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
 	}
 
+	public static String formatPlayerNameForDisplay(String name) {
+		if (name == null) return "";
+		name = name.replaceAll("_", " ");
+		name = name.toLowerCase();
+		StringBuilder newName = new StringBuilder();
+		boolean wasSpace = true;
+		for (int i = 0; i < name.length(); i++) {
+			if (wasSpace) {
+				newName.append(("" + name.charAt(i)).toUpperCase());
+				wasSpace = false;
+			} else {
+				newName.append(name.charAt(i));
+			}
+			if (name.charAt(i) == ' ') {
+				wasSpace = true;
+			}
+		}
+		return newName.toString();
+	}
+
 	public static long timePassed(long time) {
 		return System.currentTimeMillis() - time;
 	}

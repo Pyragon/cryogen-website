@@ -89,6 +89,7 @@ $.noty.themes.relax = {
             case 'bottomLeft':
             case 'bottomRight':
             case 'centerLeft':
+            case 'centerBig':
             case 'centerRight':
                 this.$bar.css({
                     border      : '1px solid #eee',

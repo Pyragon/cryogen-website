@@ -1,10 +1,11 @@
-package com.cryo.comments;
+package com.cryo.modules;
 
 import com.cryo.Website;
 import com.cryo.Website.RequestType;
-import com.cryo.modules.WebModule;
+import com.cryo.entities.CommentList;
+import com.cryo.managers.CommentsManager;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.google.gson.Gson;
 
 import spark.Request;

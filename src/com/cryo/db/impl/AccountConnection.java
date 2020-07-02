@@ -1,16 +1,13 @@
 package com.cryo.db.impl;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.cryo.Website;
 import com.cryo.db.DBConnectionManager.Connection;
-import com.cryo.security.SessionIDGenerator;
+import com.cryo.utils.SessionIDGenerator;
 import com.cryo.db.DatabaseConnection;
 import com.cryo.db.SQLQuery;
-import com.cryo.utils.Utilities;
-import com.google.gson.Gson;
 
 public class AccountConnection extends DatabaseConnection {
 

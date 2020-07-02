@@ -1,7 +1,7 @@
 package com.cryo.modules.api;
 
 import com.cryo.Website;
-import com.cryo.server.APIConnection;
+import com.cryo.managers.api.APIConnection;
 import com.mashape.unirest.http.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

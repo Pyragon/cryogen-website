@@ -1,4 +1,4 @@
-package com.cryo.server;
+package com.cryo.managers.api;
 
 import com.cryo.Website;
 import com.cryo.db.impl.AccountConnection;

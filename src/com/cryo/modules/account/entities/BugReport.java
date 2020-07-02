@@ -1,9 +1,6 @@
 package com.cryo.modules.account.entities;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-
-import com.cryo.comments.Comment;
 
 import lombok.Getter;
 

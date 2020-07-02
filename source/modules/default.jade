@@ -106,6 +106,11 @@ html
                     return false;
                 });
 
+                $(document).on('click', '.user-portal', function() {
+                    let link = $(this).data('link');
+                    window.location.href = link;
+                });
+
                 function checkIssue() {
                     var width = $(window).width();
                     $('.nav-items').css('margin-top', width < 751 ? '5px' : '105px');
@@ -150,7 +155,50 @@ html
                         else 
                             login()
                     }
-                })
+                });
+
+                $(document).on('click', '#notification-center-icon', function() {
+                    let hidden = $('#notification-container').css('display') == 'none';
+                    if(hidden) openNotificationPanel($(this));
+                    else closeNotificationPanel();
+                });
+
+                $(document).on('click', '.remove-notification', function() {
+                    let id = $(this).closest('.notification-block').data('id');
+                    $.post('/notifications/remove/'+id, { 'count': 4 }, ret => {
+                        let data = getJSON(ret);
+                        if(data == null) return false;
+                        $('#notification-container').html(data.html);
+                        sendAlert('Notification successfully deleted!');
+                    });
+                });
+
+                loadNotifications();
+
+                function openNotificationPanel(el) {
+                    let x = el.position().left;
+                    let y = el.position().top;
+                    let width = el.width();
+                    let height = el.height();
+                    $('#notification-container').css({ 
+                        top: (y+height+10)+'px', 
+                        left: (x-(width/2))+'px',
+                        display: ''
+                    });
+                }
+
+                function closeNotificationPanel() {
+                    $('#notification-container').css('display', 'none');
+                }
+
+                function loadNotifications() {
+                    console.log('posting')
+                    $.post('/notifications/get/4', { }, ret => {
+                        let data = getJSON(ret);
+                        if(data == null) return null;
+                        $('#notification-container').html(data.html);
+                    });
+                }
 
                 $(document).click(function(e) {
                     var target = e.target;
@@ -206,6 +254,10 @@ html
                                             li
                                                 a(href='/account') Account
                                             li
+                                                a(href='/forums/user/'+user.getId()) Profile
+                                            li
+                                                a(href='/forums/private/inbox') Inbox
+                                            li
                                                 a(href='/account/vote') Vote
                                             li
                                                 a(href='/account/shop') Shop
@@ -223,6 +275,12 @@ html
                                                     a(href='/staff') Staff
                                             li
                                                 a(href='/logout') Sign Out
+                                if loggedIn
+                                    div.link#notification-center-icon(title=notifications.getUnreadNotificationsCount()+' unread notifications, '+notifications.getNotifications().size()+' total')
+                                        i.fa.fa-bell
+                                        //-var badgeStyle = notifications.hasUnreadNotifications() ? '' : 'display: none;';
+                                        div#notification-badge
+                                    div#notification-container(style='display: none;')
                 div#main-content
                     block content
                 div(class='footer')
@@ -232,7 +290,7 @@ html
                                 h3 Cryogen
                                 ul
                                     li
-                                        a(href='http://142.44.160.156:8923/live/download/latest') Download JAR
+                                        a(href='http://api.cryogen-rsps.com/live/download/latest') Download JAR
                                     li
                                         a(href='http://github.com/Pyragon/cryogen-website') Open-Sourced
                                     li
@@ -252,6 +310,10 @@ html
                                     if loggedIn
                                         li
                                             a(href='/account') Account
+                                        li
+                                            a(href='/forums/user/'+user.getId()) Profile
+                                        li
+                                            a(href='/forums/private/inbox') Inbox
                                         if user.getRights() > 0
                                             li
                                                 a(href='/staff') Staff

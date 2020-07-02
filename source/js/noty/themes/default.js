@@ -16,6 +16,7 @@ $.noty.themes.defaultTheme = {
                     case 'bottomLeft':
                     case 'bottomRight':
                     case 'center':
+                    case 'centerBig':
                     case 'centerLeft':
                     case 'centerRight':
                     case 'inline':
@@ -121,6 +122,7 @@ $.noty.themes.defaultTheme = {
             case 'bottomLeft':
             case 'bottomRight':
             case 'centerLeft':
+            case 'centerBig':
             case 'centerRight':
                 this.$bar.css({
                     borderRadius: '5px',

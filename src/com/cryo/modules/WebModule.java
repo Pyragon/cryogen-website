@@ -6,10 +6,10 @@ import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.Misc;
 import com.cryo.entities.forums.Post;
+import com.cryo.managers.CookieManager;
+import com.cryo.managers.NotificationManager;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.modules.forums.ForumUser;
-import com.cryo.modules.forums.ForumUtils;
 import com.cryo.modules.highscores.HSUtils;
 import com.cryo.utils.*;
 import de.neuland.jade4j.Jade4J;
@@ -69,8 +69,10 @@ public abstract class WebModule {
         model.put("mostOnline", misc == null ? "N/A" : misc.asInt());
         Account account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
-		if(account != null)
+		if(account != null) {
 			model.put("user", account);
+			model.put("notifications", new NotificationManager(account));
+		}
 		model.put("isMobile", request.headers("User-Agent").toLowerCase().contains("mobile"));
 		try {
 			String html = Jade4J.render(file, model);

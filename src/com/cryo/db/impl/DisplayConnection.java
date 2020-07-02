@@ -78,7 +78,7 @@ public class DisplayConnection extends DatabaseConnection {
 				return new Object[] { data != null };
 			case "get-username":
 				name = (String) data[1];
-				data = select("current_names", "display_name LIKE ?", GET_USER_DISPLAY, name);
+				data = select("current_names", "display_name LIKE ? OR username LIKE ?", GET_USER_DISPLAY, name);
 				if(data == null) return null;
 				return new Object[] { (String) data[0] };
 			case "get-display":

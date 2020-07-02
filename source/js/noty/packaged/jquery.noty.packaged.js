@@ -742,6 +742,59 @@ $.noty.layouts.center = {
     },
     addClass : ''
 };
+$.noty.layouts.centerBig = {
+    name     : 'centerBig',
+    options  : { // overrides options
+
+    },
+    container: {
+        object  : '<ul id="noty_centerBig_layout_container" />',
+        selector: 'ul#noty_centerBig_layout_container',
+        style   : function() {
+            $(this).css({
+                position     : 'fixed',
+                width        : '510px',
+                height       : 'auto',
+                margin       : 0,
+                padding      : 0,
+                listStyleType: 'none',
+                zIndex       : 10000000
+            });
+
+            // getting hidden height
+            var dupe = $(this).clone().css({visibility: "hidden", display: "block", position: "absolute", top: 0, left: 0}).attr('id', 'dupe');
+            $("body").append(dupe);
+            dupe.find('.i-am-closing-now').remove();
+            dupe.find('li').css('display', 'block');
+            var actual_height = dupe.height();
+            dupe.remove();
+
+            if($(this).hasClass('i-am-new')) {
+                $(this).css({
+                    left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
+                    top : ($(window).height() - actual_height) / 2 + 'px'
+                });
+            }
+            else {
+                $(this).animate({
+                    left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
+                    top : ($(window).height() - actual_height) / 2 + 'px'
+                }, 500);
+            }
+
+        }
+    },
+    parent   : {
+        object  : '<li />',
+        selector: 'li',
+        css     : {}
+    },
+    css      : {
+        display: 'none',
+        width  : '510px'
+    },
+    addClass : ''
+};
 $.noty.layouts.centerLeft = {
     name     : 'centerLeft',
     options  : { // overrides options
@@ -1110,6 +1163,7 @@ $.noty.themes.defaultTheme = {
                     case 'bottomRight':
                     case 'center':
                     case 'centerLeft':
+                    case 'centerBig':
                     case 'centerRight':
                     case 'inline':
                         $(selector).css({borderRadius: '0px 0px 0px 0px'});
@@ -1214,6 +1268,7 @@ $.noty.themes.defaultTheme = {
             case 'bottomLeft':
             case 'bottomRight':
             case 'centerLeft':
+            case 'centerBig':
             case 'centerRight':
                 this.$bar.css({
                     borderRadius: '5px',
@@ -1367,6 +1422,7 @@ $.noty.themes.relax = {
             case 'bottomLeft':
             case 'bottomRight':
             case 'centerLeft':
+            case 'centerBig':
             case 'centerRight':
                 this.$bar.css({
                     border      : '1px solid #eee',

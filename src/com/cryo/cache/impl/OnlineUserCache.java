@@ -4,7 +4,7 @@ import com.cryo.cache.CachedItem;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.server.ServerConnection;
+import com.cryo.managers.api.ServerConnection;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>

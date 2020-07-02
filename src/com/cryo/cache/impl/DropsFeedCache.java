@@ -1,14 +1,10 @@
 package com.cryo.cache.impl;
 
-import java.util.HashMap;
 import java.util.Properties;
 
 import com.cryo.cache.CachedItem;
-import com.cryo.server.ServerConnection;
-import com.cryo.server.item.ServerItem;
+import com.cryo.managers.api.ServerConnection;
 import com.google.gson.Gson;
-
-import lombok.*;
 
 /**
  * @author Cody Thompson <eldo.imo.rs@hotmail.com>

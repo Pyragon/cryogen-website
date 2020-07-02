@@ -7,7 +7,7 @@ import com.cryo.Website;
 import com.cryo.entities.forums.ForumAdminSection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 
 import spark.Request;
 import spark.Response;

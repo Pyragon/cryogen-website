@@ -1,4 +1,4 @@
-package com.cryo.comments;
+package com.cryo.entities;
 
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.account.entities.Account;

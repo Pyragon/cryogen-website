@@ -9,7 +9,7 @@ import com.cryo.db.impl.PreviousConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.BCrypt;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
@@ -22,9 +22,6 @@ import org.joda.time.DateTime;
 import spark.Request;
 import spark.Response;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;

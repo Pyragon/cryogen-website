@@ -9,8 +9,7 @@ import com.cryo.db.impl.ShopConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
-import com.cryo.modules.account.entities.ShopItem;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.google.gson.Gson;
 
 import spark.Request;

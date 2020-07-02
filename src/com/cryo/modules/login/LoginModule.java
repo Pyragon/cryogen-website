@@ -6,7 +6,7 @@ import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;

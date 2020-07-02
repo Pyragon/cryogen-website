@@ -8,8 +8,8 @@ import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
 import com.cryo.modules.account.entities.Auth;
-import com.cryo.utils.CookieManager;
-import com.cryo.utils.VotingManager;
+import com.cryo.managers.CookieManager;
+import com.cryo.managers.VotingManager;
 import com.google.gson.Gson;
 
 import spark.Request;

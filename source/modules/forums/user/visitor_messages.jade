@@ -1,0 +1,25 @@
+include ../../utils/forum_name
+p.t-center.white(style='font-size: 14px;') Visitor Messages
+if loggedIn
+    textarea#visitor-message-create(type='text')
+    button.btn.btn-default#submit-visitor-message Create
+if vmessages.size() == 0
+    if loggedIn
+        p.t-center It seems there are no messages yet. Be the first to create one!
+    else
+        p.t-center It seems there are no messages yet. Login and be the first to create one!
+        //TODO - add pagination
+for message in vmessages
+    div.visitor-message
+        div.visitor-message-avatar.user-avatar
+            img(src=message.getAuthor().getAvatarUrl() == null ? '/images/default_avatar.png' : message.getAuthor().getAvatarUrl(), style='width: 75px; height: 75px;')
+        div.visitor-message-info
+            div.visitor-message-author
+                span(style='margin: 5px auto auto 5px;')
+                    span.white= 'By '
+                    +showName(message.getAuthor(), 14, 15)
+            div.visitor-message-time
+                span.white.small= formatter.formatTimestamp(message.getAdded(), 'MMMMM dd, YYYY @ hh:mm a')
+            div.visitor-message-body
+                span.grey(style='margin-left: 10px;')= message.getMessage()
+        .clear

@@ -7,7 +7,7 @@ import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.staff.entities.Recovery;
 import com.cryo.modules.staff.entities.StaffSection;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.DateUtils;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomStringUtils;

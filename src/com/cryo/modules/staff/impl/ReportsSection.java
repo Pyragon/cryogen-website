@@ -12,7 +12,7 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.Noty;
 import com.cryo.modules.account.entities.Report;
 import com.cryo.modules.staff.entities.StaffSection;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.google.gson.Gson;
 
 import spark.Request;

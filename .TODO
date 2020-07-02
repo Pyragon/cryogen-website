@@ -9,7 +9,20 @@ API:
   Login:
     ☐ Add counting of invalid attempts and lock account after certain amount within time limit
 Forums:
-  ☐ Get new forum logo + read/unread buttons
+  General:
+    ☐ Ensure all pages are working correctly
+    User profile:
+        ☐ Add stats for posts, threads
+        ☐ Add page for viewing all threads/posts
+        ☐ Add edit page
+    Private Messaging:
+        ☐ Create private messaging system
+Notifications:
+    ✔ Icon on right of nav bar shows notifications @done (4/24/2020, 4:54:32 AM)
+    ☐ Show badge on icon when there are new notifications
+    ☐ Shows all notifications with new ones highlighted (limit 10)
+    ☐ Button on bottom for viewing all notifications
+    ☐ Page to view all notifications
 Recoveries:
   ☐ Add expiry time to the new passes
 Bugs:

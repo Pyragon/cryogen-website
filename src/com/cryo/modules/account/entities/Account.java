@@ -11,6 +11,7 @@ import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
 import com.cryo.entities.forums.AccountStatus;
 import com.cryo.entities.forums.UserGroup;
+import com.cryo.entities.forums.VisitorMessage;
 import com.cryo.modules.highscores.HSUtils;
 
 import lombok.AllArgsConstructor;
@@ -98,8 +99,6 @@ public class Account extends MySQLDao {
 	public String getUserTitle() {
 		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
 			return getDisplayGroup().getUserTitle();
-		for (UserGroup group : getUsergroups())
-			if (group.getUserTitle() != null) return group.getUserTitle();
 		return null;
 	}
 
@@ -165,6 +164,10 @@ public class Account extends MySQLDao {
                     .map(i -> Integer.toString(i))
                     .collect(Collectors.joining(","));
     }
+
+    public ArrayList<VisitorMessage> getVisitorMessages() {
+		return ForumConnection.connection().selectList("visitor_messages", "account_id=?", "ORDER BY added DESC", VisitorMessage.class, id);
+	}
 
     public void setStatus(int index, int forumId, int userId, int threadId) {
         long millis = System.currentTimeMillis() + (1000 * 60 * 5);

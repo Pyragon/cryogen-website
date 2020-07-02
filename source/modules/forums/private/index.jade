@@ -1,0 +1,57 @@
+extend ../../default
+
+block head
+	script.
+		var loaded = [];
+		var section = "";
+
+		function loadSection(section) {
+			$.post('/forums/private/' + section, { action: 'load' }, function (ret) {
+				var data = getJSON(ret);
+				if (data == null) return false;
+				$('#' + section).html(data.html);
+				return true;
+			});
+		}
+		$(document).ready(function () {
+
+			section = "!{section.getName()}";
+
+			history.pushState({}, "ForumPrivateSection", "/forums/private/" + section)
+
+			loadSection(section);
+
+			loaded.push(section)
+
+			$('.nav-tabs a[href="#' + section + '"]').tab('show')
+
+			$('.nav-tabs a').click(function () {
+				$(this).tab('show');
+
+				section = $(this).attr('href').replace("#", "")
+				if (!loaded.includes(section)) {
+					if (loadSection(section))
+						loaded.push(section)
+				}
+				history.pushState({}, "ForumPrivateSection", "/forums/private/" + section)
+
+			})
+		});
+
+block content
+	div.container.account-area(style = 'min-height: 600px; min-width: 703px; padding: 20px 0;')
+		div.row
+			div.col-md-3
+				ul.nav.nav-tabs
+					li.nav.active.account-item
+						a(href='#inbox', data-toggle='tab') Inbox
+					li.nav.account-item
+						a(href='#sent', data-toggle='tab') Sent
+					li.nav.account-item
+						a(href='#drafts', data-toggle='tab') Drafts
+			div.col-md-9
+				div.widget
+					div.tab-content.content
+						div.tab-pane.fade.in.active(id='inbox')
+						div.tab-pane.fade.in(id='sent')
+						div.tab-pane.fade.in(id='drafts')

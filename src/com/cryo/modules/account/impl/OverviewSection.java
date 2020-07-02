@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import com.cryo.Website;
-import com.cryo.Website.RequestType;
 import com.cryo.db.impl.DisplayConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.EmailUtils;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;

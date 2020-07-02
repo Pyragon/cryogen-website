@@ -11,7 +11,7 @@ import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
 import com.cryo.modules.account.entities.Appeal;
 import com.cryo.modules.account.entities.Punishment;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 

@@ -1,0 +1,16 @@
+include forum_name
+mixin showStatus(account)
+    if account.getStatus() == null
+        span Offline
+    else if account.getStatus().getIndex() == 1
+        span Viewing Index
+    else if account.getStatus().getThreadId() != -1
+        span Viewing 
+        span.white.status-thread= ' '+account.getStatus().getThread().getTitle()
+    else if account.getStatus().getUserId() != -1
+        span= 'Viewing '
+        span
+            +showName(account.getStatus().getViewing(), 14, 15)
+    else if account.getStatus().getForum() != -1
+        span Viewing
+        span.white.status-forum= ' '+account.getStatus().getForum().getName()

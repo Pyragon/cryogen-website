@@ -2,6 +2,7 @@ package com.cryo.utils;
 
 import com.cryo.Website;
 import com.cryo.entities.Endpoint;
+import com.cryo.managers.CookieManager;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 

@@ -1,0 +1,71 @@
+include ../../utils/forum_name
+include ../../utils/account_status
+script.
+    $(document).ready(() => {
+
+        var userId = !{account.getId()};
+
+        $(document).on('click', '#submit-visitor-message', function() {
+            let message = $('#visitor-message-create').val();
+            if(message.length < 5 || message.length > 250) {
+                sendAlert('Message can only be between 5 and 250 characters.');
+                return false;
+            }
+            $.post('/forums/user/'+userId+'/post-vmessage', { message }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#vmessages').html(data.html);
+                sendAlert('Message successfully created!');
+            });
+        });
+
+    });
+.container.account-area(style = 'min-height: 600px; min-width: 703px; padding: 20px 0;')
+    .row
+        .col-md-3
+            .news-post 
+                .user-avatar
+                    img(src=account.getAvatarUrl() == null ? '/images/default_avatar.png' : account.getAvatarUrl(), style='width: 75px; height: 75px;')
+                div(style='text-align: center;')
+                    +showName(account, 14, 15)
+                p.t-center.small= account.getUserTitle()
+                p.t-center.small Status:
+                    +showStatus(account)
+                if account.getId() == user.getId()
+                    div.t-center.white.small
+                        i.fa.fa-edit
+                        span  Edit Profile
+                div.t-center.white.small
+                    i.fa.fa-paper-plane
+                    span  Send Private Message
+                div.t-center.post-count.small
+                    i.fa.fa-clipboard.link
+                        span  Post Count: 
+                        span= account.getPostCount()
+                div.t-center.thanks-received.small
+                    i.fa.fa-thumbs-up.link
+                        span  Thanks Received: 
+                        span= account.getThanksReceived()
+                div.t-center.thanks-given.small
+                    i.fa.fa-thumbs-up.link
+                        span  Thanks Given: 
+                        span= account.getThanksGiven()
+                if account.getHSData() != null
+                    div.t-center.ingame-total.link.small(style='margin-bottom: 10px;')
+                        img(src='/images/skills/overall.png')
+                        span  In-Game Total: 
+                        span= account.getHSData().getTotalLevel()
+            ul.nav.nav-tabs
+                li.nav.active.account-item
+                    a(href='#vmessages' data-toggle='tab') Visitor Messages
+                li.nav.account-item
+                    a(href='#threads' data-toggle='tab') Started Threads
+                li.nav.account-item
+                    a(href='#posts' data-toggle='tab') Posts
+        .col-md-9
+            .news-post
+                .tab-content.content
+                    .tab-pane.fade.in.active(id='vmessages')
+                        include visitor_messages
+                    .tab-pane.fade.in(id='threads')
+                    .tab-pane.fade.in(id='posts')

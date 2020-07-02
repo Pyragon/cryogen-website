@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 
-import com.cryo.Website;
-import com.cryo.comments.Comment;
 import com.cryo.db.impl.CommentsConnection;
 import com.cryo.db.impl.ReportsConnection;
 import com.cryo.modules.WebModule;
@@ -17,7 +14,7 @@ import com.cryo.modules.account.entities.BugReport;
 import com.cryo.modules.account.entities.Noty;
 import com.cryo.modules.account.entities.PlayerReport;
 import com.cryo.modules.account.entities.Report;
-import com.cryo.utils.CookieManager;
+import com.cryo.managers.CookieManager;
 import com.cryo.utils.Utilities;
 import com.google.gson.Gson;
 
