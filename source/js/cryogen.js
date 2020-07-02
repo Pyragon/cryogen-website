@@ -160,7 +160,7 @@ function checkRestart() {
         return;
     }
     $.ajax({
-        url: 'http://142.44.160.156:8085/utilities/get-restart-time',
+        url: 'http://70.35.204.165:8085/utilities/get-restart-time',
         type: 'POST',
         error: (error) => {
             clearInterval(restart_timer);
@@ -192,7 +192,7 @@ function decreaseRestart() {
 
 function reconnect() {
     $.ajax({
-        url: 'http://142.44.160.156:8085/',
+        url: 'http://70.35.204.165:8085/',
         type: 'GET',
         error: function(data) {
             setTimeout(reconnect, 1000);

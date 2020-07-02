@@ -53,7 +53,7 @@ import static spark.Spark.*;
  */
 public class Website {
 
-	public static String PATH = "http://142.44.160.156:8085/";
+	public static String PATH = "http://70.35.204.165:8085/";
 
 	private static Website INSTANCE;
 

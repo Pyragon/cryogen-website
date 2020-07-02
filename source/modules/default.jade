@@ -124,7 +124,7 @@ html
                 }
 
                 function loadOnlinePlayers() {
-                    $.post('http://142.44.160.156:8923/game/players/online', { }, (ret) => {
+                    $.post('http://70.35.204.165:8923/game/players/online', { }, (ret) => {
                         var data = getJSON(ret);
                         if(data == null) return false;
                         $('#p-online').text('Players Online: '+data.online.all);
@@ -239,7 +239,7 @@ html
                                         b.caret
                                     ul.dropdown-menu
                                         li
-                                            a(href='http://142.44.160.156:8923/live/download/latest') Download as JAR
+                                            a(href='http://70.35.204.165:8923/live/download/latest') Download as JAR
                                 li#spacer(class='spacer')
                                     a(href='/forums') Community
                                 li
