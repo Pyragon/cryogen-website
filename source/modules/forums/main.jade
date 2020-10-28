@@ -31,6 +31,16 @@ script.
             });
         }
 
+        $(document).on('click', '.forum-name', function() {
+            let id = $(this).data('id');
+            $.post('/forums/user/'+id, { }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#main-content').html(data.html);
+                history.pushState({}, 'ForumSection', '/forums/user/'+id);
+            })
+        });
+
         setInterval(loadStats, 1000);
 
     });
