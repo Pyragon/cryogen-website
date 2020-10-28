@@ -1,18 +1,17 @@
 include ../utils/forum_name
-if loggedIn && forum.getPermissions().canCreateThread(user)
-    button.btn.btn-default#new-thread-btn New Thread
-if forum.getSubForums().length > 0
+if forum.getSubForums().size() > 0
     div.news-post(style='min-width: 540px;')
-        div.header
-            p.title= forum.getName()
+        div.header(style='min-height: 50px;')
+            p.title= 'Subforums'
                 a.minimize
                     span.fa.fa-minus
-            p.description= forum.getDescription()
         div.content
             for subforum in forum.getSubForums()
                 if subforum.getPermissions().canSeeForum(user)
                     +showBlock(subforum)
                     div(style='clear: both;')
+if loggedIn && forum.getPermissions().canCreateThread(user)
+    button.btn.btn-default#new-thread-btn New Thread
 div.news-post(style='min-width: 540px;')
     div.header
         p.title= forum.getName()
