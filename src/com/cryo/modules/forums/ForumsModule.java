@@ -43,7 +43,10 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/thread/:id/submit-new-post", //for posting post
                 "POST", "/forums/user", //for creating user, use recaptcha, email verification, and cooldowns
                 "POST", "/forums/user/:id",
-                "POST", "/forums/user/:id/post-vmessage"
+                "POST", "/forums/user/:id/post-vmessage",
+                "POST", "/forums/thread/:id/pin",
+                "POST", "/forums/thread/:id/close",
+                "POST", "/forums/thread/:id/remove"
         };
     }
 
@@ -92,30 +95,7 @@ public class ForumsModule extends WebModule {
                 } catch(Exception e) {
                     return redirect("/forums", "Error loading page, redirecting you back to home.",5, null, request, response);
                 }
-                Object data = Website.instance().getCachingManager().getData("subforums-cache", id);
-                if(data == null) return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
-                SubForum forum = (SubForum) data;
-                if(!forum.getPermissions().canSeeForum(account))
-                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
-                model.put("forum", forum);
-                ArrayList<String> crumbs = new ArrayList<>();
-                ArrayList<String> links = new ArrayList<>();
-                Object[] cData = forum.createBreadcrumbs(crumbs, links);
-                crumbs = (ArrayList<String>) cData[0];
-                links = (ArrayList<String>) cData[1];
-                Collections.reverse(crumbs);
-                Collections.reverse(links);
-                model.put("breadcrumbs", crumbs);
-                model.put("links", links);
-                prop.put("breadcrumbs", crumbs);
-                prop.put("links", links);
-                if(account != null)
-                    account.setStatus(-1, forum.getId(), -1, -1);
-                if(request.requestMethod().equals("GET"))
-                    return render("./source/modules/forums/forums.jade", model, request, response);
-                prop.put("success", true);
-                prop.put("html", render("./source/modules/forums/forum.jade", model, request, response));
-                break;
+                return loadForum(account, id, request, response);
             case "/forums/forum/:id/new-thread":
                 if (account == null) {
                     if (request.requestMethod().equals("GET"))
@@ -128,17 +108,17 @@ public class ForumsModule extends WebModule {
                 } catch(Exception e) {
                     return redirect("/forums", "Error loading page, redirecting you back to home.",5, null, request, response);
                 }
-                data = Website.instance().getCachingManager().getData("subforums-cache", id);
+                Object data = Website.instance().getCachingManager().getData("subforums-cache", id);
                 if(data == null) return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
-                forum = (SubForum) data;
+                SubForum forum = (SubForum) data;
                 if (!forum.getPermissions().canCreateThread(account))
                     return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request,
                             response);
-                crumbs = new ArrayList<>();
-                links = new ArrayList<>();
+                ArrayList<String> crumbs = new ArrayList<>();
+                ArrayList<String> links = new ArrayList<>();
                 crumbs.add("New Thread");
                 links.add("");
-                cData = forum.createBreadcrumbs(crumbs, links);
+                Object[] cData = forum.createBreadcrumbs(crumbs, links);
                 crumbs = (ArrayList<String>) cData[0];
                 links = (ArrayList<String>) cData[1];
                 Collections.reverse(crumbs);
@@ -180,6 +160,46 @@ public class ForumsModule extends WebModule {
                     prop.put("html", render("./source/modules/forums/post_list.jade", model, request, response));
                 }
                 break;
+            case "/forums/thread/:id/pin":
+            case "/forums/thread/:id/close":
+            case "/forums/thread/:id/remove":
+                if(account == null || account.getRights() == 0)
+                    return error("Insufficient permissions.");
+                idString = request.params(":id");
+                try {
+                    id = Integer.parseInt(idString);
+                } catch(Exception e) {
+                    return error("Unable to parse ID.");
+                }
+                String action = endpoint.replace("/forums/thread/:id/", "");
+                if(!request.queryParams().contains("value") && !action.equals("remove"))
+                    return error("Invalid action.");
+                thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
+                if(thread == null) return error("Unable to find thread. Please reload the page and try again.");
+                if(!action.equals("remove")) {
+                    String valueString = request.queryParams("value");
+                    boolean value;
+                    try {
+                        value = Boolean.parseBoolean(valueString);
+                    } catch(Exception e) {
+                        return error("Error parsing value.");
+                    }
+                    pageString = request.queryParams("page");
+                    try {
+                        page = Integer.parseInt(pageString);
+                    } catch(Exception e) {
+                        if(request.requestMethod().equals("GET"))
+                            return redirect("/forums", "Invalid page found. Redirecting to home", 5, null, request, response);
+                        return error("Invalid page.");
+                    }
+                    if(action.equals("pin")) thread.updatePinned(value);
+                    else thread.setStatus(value);
+                    return loadThread(account, thread, page, request, response);
+                }
+                if(account.getRights() == 1 && thread.getAuthor().getRights() > 0 && account.getId() != thread.getAuthor().getId())
+                    return error("You cannot remove threads made by other staff.");
+                thread.archive();
+                return loadForum(account, thread.getForumId(), request, response);
             case "/forums/user/:id":
                 //allow name or id
                 idString = request.params(":id");
@@ -290,7 +310,7 @@ public class ForumsModule extends WebModule {
                         return error("Title must be between 5 and 50 characters long.");
                     if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
                         return error("Body must be between 5 and 10,000 characters long.");
-                    thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, -1, null, false, -1, true, false, 0, null, null);
+                    thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, -1, null, false, -1, true, false, 0, false, null, null);
                     threadId = ForumConnection.connection().insert("threads", thread.data());
                     thread.setId(threadId);
                     Post post = new Post(-1, threadId, account.getId(), body, null, null, null);
@@ -468,6 +488,36 @@ public class ForumsModule extends WebModule {
         thread.addView();
         prop.put("success", true);
         prop.put("html", render("./source/modules/forums/thread.jade", model, request, response));
+        return Website.getGson().toJson(prop);
+    }
+
+    public String loadForum(Account account, int id, Request request, Response response) {
+        HashMap<String, Object> model = new HashMap<>();
+        Properties prop = new Properties();
+        Object data = Website.instance().getCachingManager().getData("subforums-cache", id);
+        if(data == null) return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
+        SubForum forum = (SubForum) data;
+        if(!forum.getPermissions().canSeeForum(account))
+            return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
+        model.put("forum", forum);
+        ArrayList<String> crumbs = new ArrayList<>();
+        ArrayList<String> links = new ArrayList<>();
+        Object[] cData = forum.createBreadcrumbs(crumbs, links);
+        crumbs = (ArrayList<String>) cData[0];
+        links = (ArrayList<String>) cData[1];
+        Collections.reverse(crumbs);
+        Collections.reverse(links);
+        model.put("breadcrumbs", crumbs);
+        model.put("links", links);
+        prop.put("breadcrumbs", crumbs);
+        prop.put("links", links);
+        prop.put("id", forum.getId());
+        if(account != null)
+            account.setStatus(-1, forum.getId(), -1, -1);
+        if(request.requestMethod().equals("GET"))
+            return render("./source/modules/forums/forums.jade", model, request, response);
+        prop.put("success", true);
+        prop.put("html", render("./source/modules/forums/forum.jade", model, request, response));
         return Website.getGson().toJson(prop);
     }
 

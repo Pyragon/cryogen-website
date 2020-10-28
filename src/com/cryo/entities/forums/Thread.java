@@ -37,7 +37,15 @@ public class Thread extends MySQLDao {
     private final boolean hasPoll;
     private final int pollId;
     @MySQLRead
+    @MySQLDefault
+    private boolean open;
+    @MySQLRead
+    private boolean pinned;
+    @MySQLRead
     private int views;
+    @MySQLDefault
+    @MySQLRead
+    private boolean archived;
     @MySQLDefault
     private final Timestamp added;
     @MySQLDefault
@@ -68,6 +76,11 @@ public class Thread extends MySQLDao {
         ForumConnection.connection().set("threads", "views=?", "id=?", views, id);
     }
 
+    public void setStatus(boolean open) {
+        this.open = open;
+        ForumConnection.connection().set("threads", "open=?", "id=?", open, id);
+    }
+
     public void updateLastPost(Post post) {
         lastPostId = post.getId();
         lastPostAuthor = post.getAuthorId();
@@ -78,6 +91,16 @@ public class Thread extends MySQLDao {
     public void updateFirstPost(Post post) {
         firstPostId = post.getId();
         ForumConnection.connection().set("threads", "first_post_id=?", "id=?", firstPostId, id);
+    }
+
+    public void updatePinned(boolean pinned) {
+        this.pinned = pinned;
+        ForumConnection.connection().set("threads", "pinned=?", "id=?", pinned, id);
+    }
+
+    public void archive() {
+        this.archived = true;
+        ForumConnection.connection().set("threads", "archived=?", "id=?", archived, id);
     }
 
     public int getPostCount() {

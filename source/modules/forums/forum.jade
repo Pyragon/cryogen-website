@@ -24,7 +24,14 @@ div.news-post(style='min-width: 540px;')
                 if thread.getSubForum().getPermissions().canReadThread(thread, user)
                     div.forum(style='height: 40px;')
                         div.forum-namedesc
-                            div.name.link(data-link='/forums/thread/'+thread.getId())= thread.getTitle()
+                            div.name.link(data-link='/forums/thread/'+thread.getId())
+                                if thread.isPinned()
+                                    span.fa.fa-thumb-tack(style='color: #00FF00;', title='This thread has been pinned.')
+                                    span= ' '
+                                if !thread.isOpen()
+                                    span.fa.fa-lock(style='color: red;', title='This thread has been locked.')
+                                    span= ' '
+                                span= thread.getTitle()
                             p.forum-description.small.grey= 'Started by '
                                 span
                                     +showName(thread.getAuthor(), 14, 15)

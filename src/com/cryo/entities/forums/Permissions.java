@@ -58,6 +58,7 @@ public class Permissions extends MySQLDao {
 
     public boolean canReply(Thread thread, Account account) {
         loadCanReply();
+        if(!thread.isOpen()) return account.getRights() > 0;
         if(matching(canReplyList, account)) return true;
         if (thread.getAuthorId() == account.getId() && canReplyList.contains(-3))
             return true;
@@ -66,6 +67,7 @@ public class Permissions extends MySQLDao {
 
     public boolean canEdit(Post post, Account account) {
         loadCanEdit();
+        if(!post.getThread().isOpen()) return account.getRights() > 0;
         if (matching(canEditList, account))
             return true;
         if (post.getAuthorId() == account.getId() && canEditList.contains(-3))

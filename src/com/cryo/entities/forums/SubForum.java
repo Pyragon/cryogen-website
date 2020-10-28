@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -112,7 +113,11 @@ public class SubForum extends MySQLDao {
     }
 
     public ArrayList<Thread> getThreads() {
-        return ForumConnection.connection().selectList("threads", "forum_id=?", Thread.class, id);
+        ArrayList<Thread> results = new ArrayList<>();
+        ArrayList<Thread> list = ForumConnection.connection().selectList("threads", "forum_id=? && archived=0", Thread.class, id);
+        results.addAll(list.stream().filter(t -> t.isPinned()).sorted(Comparator.comparing(Thread::getAdded)).collect(Collectors.toList()));
+        results.addAll(list.stream().filter(t -> !t.isPinned()).sorted(Comparator.comparing(Thread::getLastPostTime).reversed()).collect(Collectors.toList()));
+        return results;
     }
 
     public Permissions getPermissions() {

@@ -24,6 +24,8 @@ script.
         let page = "!{page}";
         let threadId = "!{thread.getId()}";
         if(!page) page = 1;
+        let canClose = true;
+        let rThreadNoty;
 
         function loadPage(page) {
             let regex = /page\/\d/;
@@ -70,10 +72,125 @@ script.
             });
         });
 
+        $(document).on('click', '#admin-options>span', function() {
+            $(this).removeClass('fa-rotate-90');
+            let position = $(this).position();
+            buildOptionsMenu(position.left, position.top);
+        });
+
+        $('#pin-thread').click(function() {
+            let value = !("!{thread.isPinned()}" == 'true');
+            $.post('/forums/thread/'+threadId+'/pin', { value, page }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                sendAlert('Thread has been successfully '+(!value ? 'un' : '')+'pinned. Page will reload in 5 seconds.');
+                setTimeout(() => {
+                    $('#forum-content').html(data.html);
+                    sendAlert('Reloaded!');
+                }, 5000);
+            });
+        });
+
+        $('#close-thread').click(function() {
+            let value = !("!{thread.isOpen()}" == 'true');
+            $.post('/forums/thread/'+threadId+'/close', { value, page }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                sendAlert('Thread has been successfully '+(!value ? '' : 'un')+'locked. Page will reload in 5 seconds.');
+                setTimeout(() => {
+                    $('#forum-content').html(data.html);
+                    sendAlert('Reloaded!');
+                }, 5000);
+            });
+        });
+
+        $('#remove-thread').click(function() {
+            canClose = false;
+            setTimeout(() => {
+                canClose = true;
+            }, 500);
+            rThreadNoty = noty({
+                text: 'Are you sure you wish to remove this thread?',
+                type: 'confirm',
+                layout: 'center',
+                dismissQueue: true,
+                theme: 'cryogen',
+                buttons: [
+                    {
+                        addClass: 'btn btn-success', text: 'Remove', onClick: function($noty) {
+                            closeNoty($noty);
+                            rThreadNoty = null;
+                            $.post('/forums/thread/'+threadId+'/remove', { }, ret => {
+                                let data = getJSON(ret);
+                                if(data == null) return false;
+                                sendAlert('Thread has been successfully deleted. Redirecting you to the parent forum in 5 seconds.');
+                                setTimeout(() => {
+                                    $('#forum-content').html(data.html);
+                                    setBreadCrumbs(data.breadcrumbs, data.links);
+                                    history.pushState({}, "ForumSection", '/forums/forum/'+data.id);
+                                }, 5000);
+                            });
+                        }
+                    },
+                    {
+                        addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                            closeNoty($noty);
+                            rThreadNoty = null;
+                        }
+                    }
+                ]
+            })
+        });
+
+        function buildOptionsMenu(x, y) {
+            let menu = $('#thread-admin-options');
+            if(!menu) return;
+            menu.css({
+                'position': 'absolute',
+                'left': (x-138)+'px',
+                'top': (y+15)+'px',
+                'display': ''
+            });
+            canClose = false;
+            setTimeout(() => {
+                canClose = true;
+            }, 500);
+        }
+
+        function closeOptionsMenu() {
+            let menu = $('#thread-admin-options');
+            if(!menu || menu.css('display') == 'none') return;
+            menu.css('display', 'none');
+            $('#admin-options>span').addClass('fa-rotate-90');
+        }
+
+        $(document).click(function(e) {
+            var target = e.target;
+            let menu = $('#thread-admin-options');
+            if(!menu || menu.css('display') == 'none' || !canClose) return;
+            if($(e.target).closest('#thread-admin-options').length) {
+
+            } else {
+                closeOptionsMenu();
+            }
+            if(rThreadNoty == null) return;
+            let id = rThreadNoty.options.id;
+            if($(e.target).closest('#'+id).length) {
+
+            } else {
+                rThreadNoty.close();
+                rThreadNoty = null;
+            }
+        });
+
     });
 div.news-post
     div.header
         p.single-title= thread.getTitle()
+        if loggedIn && user.getRights() > 0
+            p#admin-options Thread Options 
+                span.fa.fa-chevron-down.fa-rotate-90.link
+        div.clear
     div.content
         div#post-list
             include post_list
@@ -95,3 +212,17 @@ if loggedIn && thread.getSubForum().getPermissions().canReply(thread, user)
         div.content
             textarea#quick-reply-text(type='text')
             button.btn.btn-default#submit-post-btn Submit Post
+div#thread-admin-options(style='display: none;')
+    div.thread-admin-option.link#pin-thread
+        span.fa.fa-thumb-tack.option-icon
+        span.option-title= thread.isPinned() ? ' Unpin Post' : ' Pin Post'
+    div.thread-admin-option.link#close-thread
+        if thread.isOpen()
+            span.fa.fa-lock.option-icon
+        else
+            span.fa.fa-unlock.option-icon
+        span.option-title= thread.isOpen() ? ' Lock Post' : ' Unlock Post'
+    div.thread-admin-option.link#remove-thread
+        span.fa.fa-times.option-icon
+        span.option-title  Remove Thread
+        
