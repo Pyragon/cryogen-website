@@ -42,7 +42,7 @@ public class ForumsModule extends WebModule {
                 "POST", "/forums/post/:id/submit-edit",
                 "POST", "/forums/thread/:id/submit-new-post", //for posting post
                 "POST", "/forums/user", //for creating user, use recaptcha, email verification, and cooldowns
-                "POST", "/forms/user/:id",
+                "POST", "/forums/user/:id",
                 "POST", "/forums/user/:id/post-vmessage"
         };
     }
@@ -290,7 +290,7 @@ public class ForumsModule extends WebModule {
                         return error("Title must be between 5 and 50 characters long.");
                     if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
                         return error("Body must be between 5 and 10,000 characters long.");
-                    thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, -1, null, false, -1, 0, null, null);
+                    thread = new Thread(-1, forum.getId(), title, account.getId(), -1, -1, -1, null, false, -1, true, false, 0, null, null);
                     threadId = ForumConnection.connection().insert("threads", thread.data());
                     thread.setId(threadId);
                     Post post = new Post(-1, threadId, account.getId(), body, null, null, null);
