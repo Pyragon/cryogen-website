@@ -55,7 +55,7 @@ block head
                     let data = getJSON(ret);
                     if(data == null) return false;
                     console.log(data);
-                    $('#forum-content').html(data.html);
+                    $('#main-content').html(data.html);
                     setBreadCrumbs(data.breadcrumbs, data.links);
                     history.pushState({}, "ForumSection", link);
                     console.log(link);
