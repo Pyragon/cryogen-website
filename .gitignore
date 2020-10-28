@@ -7,3 +7,4 @@ data/props.json
 .settings/*
 .classpath
 launch.json
+source/images/avatars/
