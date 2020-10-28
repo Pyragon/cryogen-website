@@ -30,7 +30,7 @@ div.news-post(style='min-width: 540px;')
                                 span
                                     +showName(thread.getAuthor(), 14, 15)
                                 span , 
-                                span= thread.getLastPost().getTimeRelative(null)
+                                span= thread.getFirstPost().getTimeRelative(null)
                         div.forum-lastpost
                             div.author-name.small
                                 span by 

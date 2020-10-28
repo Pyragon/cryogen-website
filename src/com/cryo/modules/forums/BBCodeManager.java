@@ -63,7 +63,7 @@ public class BBCodeManager {
                 }
                 replacement = replacement.replace(group, groups.get(groupId));
             }
-            post = post.substring(0, startPos) + replacement + post.substring(endPos, post.length());
+            post = post.substring(0, startPos) + replacement + post.substring(endPos);
         } catch(Exception e) {
             e.printStackTrace();
         }

@@ -47,6 +47,10 @@ public class Thread extends MySQLDao {
         return ForumConnection.connection().selectClass("subforums", "id=?", SubForum.class, forumId);
     }
 
+    public Post getFirstPost() {
+        return ForumConnection.connection().selectClass("posts", "id=?", Post.class, firstPostId);
+    }
+
     public Post getLastPost() {
         return ForumConnection.connection().selectClass("posts", "id=?", Post.class, lastPostId);
     }
