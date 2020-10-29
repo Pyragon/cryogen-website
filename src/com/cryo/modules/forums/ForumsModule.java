@@ -130,8 +130,8 @@ public class ForumsModule extends WebModule {
                 model.put("breadcrumbs", crumbs);
                 model.put("links", links);
                 String defaultMessage = "";
-                if(request.queryParams().contains("default"))
-                    defaultMessage = request.queryParams("default");
+                if(request.queryParams().contains("defaultMessage"))
+                    defaultMessage = request.queryParams("defaultMessage");
                 model.put("defaultMessage", defaultMessage);
                 prop.put("breadcrumbs", crumbs);
                 prop.put("links", links);

@@ -139,7 +139,7 @@ script.
                 }, 500)
                 return false;
             } else if(type == 'thread') return false;
-            $.post('/forums/forum/'+id+'/new-thread', { type, id, body }, ret => {
+            $.post('/forums/forum/'+id+'/new-thread', { type, id, defaultMessage: body }, ret => {
                 let data = getJSON(ret);
                 if(data == null) return false;
                 $('#forum-content').html(data.html);
