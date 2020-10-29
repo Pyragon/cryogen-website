@@ -192,7 +192,6 @@ html
                 }
 
                 function loadNotifications() {
-                    console.log('posting')
                     $.post('/notifications/get/4', { }, ret => {
                         let data = getJSON(ret);
                         if(data == null) return null;

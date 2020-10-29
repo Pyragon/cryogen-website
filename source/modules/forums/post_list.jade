@@ -39,8 +39,8 @@ script.
         });
 
         $(document).on('click', '.quote-id', function() {
-            let threadId = $(this).data('threadid');
-            let postId = $(this).data('postid');
+            let threadId = $(this).data('threadId');
+            let postId = $(this).data('postId');
             $.post('/forums/thread/'+threadId+'#'+postId, {}, ret => {
                 let data = getJSON(ret);
                 if(data == null) return false;

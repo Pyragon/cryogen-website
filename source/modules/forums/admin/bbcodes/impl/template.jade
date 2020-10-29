@@ -1,0 +1,12 @@
+include ../../../../utils/forum_name
+div.template
+    div.template-info.white
+        span Template by
+        span.link.template-author
+            +showName(template.getAuthor(), 14, 15)
+        span  for 
+        span.link.forum-link.ital(data-type=template.getType(), data-id=template.getId())= template.getName(user) 
+    button.template-btn(data-type=template.getType(), data-id=template.getId(), data-body=template.getBody(), title=template.getTitle(user), disabled=!template.hasPermissions(user)) Use template
+    .clear
+    div.template-body= template.getBody()
+    .clear

@@ -407,17 +407,13 @@ span {
 }
 
 .quote {
+    max-width: 400px;
+    max-height: 350px;
     padding: 10px;
     margin: 10px;
     border: 1px solid #000;
     border-radius: 5px;
     background: rgb(15, 47, 64);
-}
-
-#css {
-    min-width: 130px;
-    min-height: 30px;
-    max-height: 100px;
 }
 
 .quote-info {
@@ -431,6 +427,55 @@ span {
 }
 
 .quote-body {
+    margin-top: 5px;
+}
+
+.template {
+    max-width: 350px;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background: rgb(15, 47, 64);
+}
+
+#css {
+    min-width: 130px;
+    min-height: 30px;
+    max-height: 100px;
+}
+
+.template-btn {
+    float: right;
+    border-radius: 5px;
+    border: 1px solid #000;
+    width: 78px;
+    height: 18px;
+    font-size: 11px;
+    background: #124D70;
+    color: white;
+}
+
+.template-btn:disabled {
+    color: red;
+    cursor: not-allowed;
+}
+
+.template-btn:hover:not(:disabled) {
+    color: #bbb;
+}
+
+.template-info {
+    float: left;
+    font-size: 12px;
+}
+
+.template-id {
+    float: right;
+    font-size: 10px;
+}
+
+.template-body {
     margin-top: 5px;
 }
 
@@ -877,6 +922,10 @@ p.small {
     font-size: 11px;
 }
 
+.ital {
+    font-style: italic;
+}
+
 .package-options a .glyphicon {
     font-size: 12px;
     color: #FFF;
@@ -1158,7 +1207,6 @@ p.small {
     padding: 0px;
     height: 210px;
     float: left;
-    border-right: 1px solid #000;
     width: 23%;
 }
 
@@ -1171,7 +1219,7 @@ p.small {
 
 .body-block {
     width: 77%;
-    min-height: 200px;
+    min-height: 210px;
     border-left: 1px solid #000;
     float: right;
     padding: 0px;
@@ -1211,7 +1259,7 @@ p.small {
     margin-block-start: 14px;
     margin: 0px auto 0px 5px;
     margin-top: 0px;
-    height: 150px;
+    /* height: 150px; */
     white-space: pre;
 }
 

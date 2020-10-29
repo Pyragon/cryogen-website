@@ -1,5 +1,7 @@
 package com.cryo.modules.forums;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.entities.forums.Post;
+import com.cryo.entities.forums.Template;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.Utilities;
 
@@ -81,8 +84,8 @@ public class BBCodeManager {
         return list;
     }
 
-    public String getFormattedPost(Account account, String post) {
-        post = StringEscapeUtils.escapeHtml4(post);
+    public String getFormattedPost(Account account, Post post) {
+        String message = StringEscapeUtils.escapeHtml4(post.getPost());
         ArrayList<Integer[]> noBetween = new ArrayList<>();
         ArrayList<Integer> noCheck = new ArrayList<>();
         wh: while(true) {
@@ -90,8 +93,8 @@ public class BBCodeManager {
             int endPos = -1;
             BBCode useCode = null;
             for(BBCode code : bbcodes) {
-                Pattern pattern = Pattern.compile(code.getRegex(), Pattern.CASE_INSENSITIVE);
-                Matcher matcher = pattern.matcher(post);
+                Pattern pattern = Pattern.compile(code.getRegex(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                Matcher matcher = pattern.matcher(message);
                 if(matcher.find()) {
                     if(isBetween(noBetween, matcher.start(), matcher.end())) continue;
                     if(noCheck.contains(matcher.start())) continue;
@@ -104,8 +107,8 @@ public class BBCodeManager {
             }
             if(startPos == -1) break;
             HashMap<Integer, String> groups = new HashMap<>();
-            Pattern pattern = Pattern.compile(useCode.getRegex(), Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(post);
+            Pattern pattern = Pattern.compile(useCode.getRegex(), Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(message);
             if(matcher.find()) {
                 for(int i = 1; i < matcher.groupCount()+1; i++)
                     groups.put(i-1, matcher.group(i));
@@ -135,7 +138,7 @@ public class BBCodeManager {
                     HashMap<String, Object> model = new HashMap<>();
                     model.put("post", postDao);
                     String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/quote.jade", model);
-                    post = post.substring(0, startPos) + html + post.substring(endPos, post.length());
+                    message = message.substring(0, startPos) + html + message.substring(endPos);
                     continue wh;
                 } catch(Exception e) {
                     e.printStackTrace();
@@ -144,23 +147,56 @@ public class BBCodeManager {
                 }
             } else if(useCode.getName().equals("Post Count")) {
                 try {
-                String postCountString = groups.get(0);
-                int postCount;
-                try {
-                    postCount = Integer.parseInt(postCountString);
+                    String postCountString = groups.get(0);
+                    int postCount;
+                    try {
+                        postCount = Integer.parseInt(postCountString);
+                    } catch(Exception e) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    HashMap<String, Object> model = new HashMap<>();
+                    model.put("count", postCount);
+                    model.put("post", groups.get(1));
+                    model.put("user", account);
+                    String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/post_count.jade", model);
+                    message = message.substring(0, startPos) + html + message.substring(endPos);
+                    continue wh;
                 } catch(Exception e) {
+                    e.printStackTrace();
                     noCheck.add(startPos);
                     continue wh;
                 }
+            } else if(useCode.getName().equals("Template")) {
+                String type = "thread";
+                int id = post.getThreadId();
+                String body;
+                if(groups.size() > 1) {
+                    String typeString = groups.get(0);
+                    String[] split = typeString.split("-");
+                    if(!split[0].equals("forum")) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    type = split[0];
+                    try {
+                        id = Integer.parseInt(split[1]);
+                    } catch(Exception e) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    body = groups.get(1);
+                } else
+                    body = groups.get(0);
+                Template template = new Template(post.getAuthor(), id, type, body);
                 HashMap<String, Object> model = new HashMap<>();
-                model.put("count", postCount);
-                model.put("post", groups.get(1));
+                model.put("template", template);
                 model.put("user", account);
-                String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/post_count.jade", model);
-                post = post.substring(0, startPos) + html + post.substring(endPos, post.length());
-                continue wh;
+                try {
+                    String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/template.jade", model);
+                    message = message.substring(0, startPos) + html + message.substring(endPos);
+                    continue wh;
                 } catch(Exception e) {
-                    e.printStackTrace();
                     noCheck.add(startPos);
                     continue wh;
                 }
@@ -180,13 +216,13 @@ public class BBCodeManager {
                 replacement = replacement.replace(group, groups.get(groupId));
             }
             if(!useCode.isAllowNested()) noBetween.add(new Integer[] { startPos, startPos+replacement.length() });
-            post = post.substring(0, startPos)
+            message = message.substring(0, startPos)
                 +replacement
-                +post.substring(endPos, post.length());
+                +message.substring(endPos);
         }
-        if(post.contains("{{name}}"))
-            post = post.replaceAll("\\{\\{name\\}\\}", account == null ? "Guest" : ForumUtils.crownUser(account, 14, 15));
-        return post;
+        if(message.contains("{{name}}"))
+            message = message.replaceAll("\\{\\{name\\}\\}", account == null ? "Guest" : ForumUtils.crownUser(account, 14, 15));
+        return message;
     }
 
 }

@@ -2,6 +2,7 @@ if post.getCSS() != null
     for css in post.getCSS()
         style= css
 div.post!= post.getFormattedPost(user)
+.clear
 div.edit-options
     if post.hasBeenEdited()
         p= 'Last Edited: '+post.getTimeRelative(post.getEdited())

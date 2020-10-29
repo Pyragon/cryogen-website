@@ -109,6 +109,60 @@ script.
             });
         });
 
+        function insertAtCursor(myField, myValue) {
+            //IE support
+            if (document.selection) {
+                myField.focus();
+                sel = document.selection.createRange();
+                sel.text = myValue;
+            }
+            //MOZILLA and others
+            else if (myField.selectionStart || myField.selectionStart == '0') {
+                var startPos = myField.selectionStart;
+                var endPos = myField.selectionEnd;
+                myField.value = myField.value.substring(0, startPos)
+                    + myValue
+                    + myField.value.substring(endPos, myField.value.length);
+            } else {
+                myField.value += myValue;
+            }
+        }
+
+        $(document).on('click', '.template-btn', function() {
+            let type = $(this).data('type');
+            let id = $(this).data('id');
+            let body = $(this).data('body');
+            if(type == 'thread' && id == threadId) {
+                insertAtCursor($('#quick-reply-text')[0], body);
+                $('html, body').animate({
+                    scrollTop: $("#quick-reply-text").offset().top
+                }, 500)
+                return false;
+            } else if(type == 'thread') return false;
+            $.post('/forums/forum/'+id+'/new-thread', { type, id, body }, ret => {
+                let data = getJSON(ret);
+                if(data == null) return false;
+                $('#forum-content').html(data.html);
+                setBreadCrumbs(data.breadcrumbs, data.links);
+                history.pushState({}, 'ForumSection', '/forums/forum/'+id+'/new-thread');
+            });
+        });
+
+        $(document).on('click', '.forum-link', function() {
+            let type = $(this).data('type');
+            let id = $(this).data('id');
+            if(type == 'forum' || type == 'thread') {
+                $.post('/forums/'+type+'/'+id, {}, ret => {
+                    let data = getJSON(ret);
+                    if(data == null) return false;
+                    $('#forum-content').html(data.html);
+                    setBreadCrumbs(data.breadcrumbs, data.links);
+                    history.pushState({}, 'ForumSection', '/forums/'+type+'/'+id);
+                });
+            }
+            return false;
+        });
+
         $('#remove-thread').click(function() {
             canClose = false;
             setTimeout(() => {

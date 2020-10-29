@@ -62,7 +62,7 @@ public class Post extends MySQLDao {
     }
 
     public String getFormattedPost(Account account) {
-        return Website.instance().getBBCodeManager().getFormattedPost(account, post);
+        return Website.instance().getBBCodeManager().getFormattedPost(account, this);
     }
 
     public ArrayList<String> getCSS() {

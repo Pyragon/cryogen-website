@@ -106,14 +106,18 @@ public class ForumsModule extends WebModule {
                 try {
                     id = Integer.parseInt(idString);
                 } catch(Exception e) {
-                    return redirect("/forums", "Error loading page, redirecting you back to home.",5, null, request, response);
+                    if(request.requestMethod().equals("GET"))
+                        return redirect("/forums", "Error loading page, redirecting you back to home.",5, null, request, response);
+                    else return error("Invalid Forum ID.");
                 }
                 Object data = Website.instance().getCachingManager().getData("subforums-cache", id);
                 if(data == null) return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
                 SubForum forum = (SubForum) data;
-                if (!forum.getPermissions().canCreateThread(account))
-                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request,
-                            response);
+                if (!forum.getPermissions().canCreateThread(account)) {
+                    if(request.requestMethod().equals("GET"))
+                        return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
+                    else return error("Invalid permissions to create new thread.");
+                }
                 ArrayList<String> crumbs = new ArrayList<>();
                 ArrayList<String> links = new ArrayList<>();
                 crumbs.add("New Thread");
@@ -125,6 +129,10 @@ public class ForumsModule extends WebModule {
                 Collections.reverse(links);
                 model.put("breadcrumbs", crumbs);
                 model.put("links", links);
+                String defaultMessage = "";
+                if(request.queryParams().contains("default"))
+                    defaultMessage = request.queryParams("default");
+                model.put("defaultMessage", defaultMessage);
                 prop.put("breadcrumbs", crumbs);
                 prop.put("links", links);
                 if(request.requestMethod().equals("GET"))
