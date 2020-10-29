@@ -73,6 +73,11 @@ script.
         });
 
         $(document).on('click', '#admin-options>span', function() {
+            let menu = $('#thread-admin-options');
+            if(menu && menu.css('display') != 'none') {
+                closeOptionsMenu();
+                return false;
+            }
             $(this).removeClass('fa-rotate-90');
             let position = $(this).position();
             buildOptionsMenu(position.left, position.top);
