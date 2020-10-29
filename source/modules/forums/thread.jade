@@ -215,13 +215,13 @@ if loggedIn && thread.getSubForum().getPermissions().canReply(thread, user)
 div#thread-admin-options(style='display: none;')
     div.thread-admin-option.link#pin-thread
         span.fa.fa-thumb-tack.option-icon
-        span.option-title= thread.isPinned() ? ' Unpin Post' : ' Pin Post'
+        span.option-title= thread.isPinned() ? ' Unpin Thread' : ' Pin Thread'
     div.thread-admin-option.link#close-thread
         if thread.isOpen()
             span.fa.fa-lock.option-icon
         else
             span.fa.fa-unlock.option-icon
-        span.option-title= thread.isOpen() ? ' Lock Post' : ' Unlock Post'
+        span.option-title= thread.isOpen() ? ' Lock Thread' : ' Unlock Thread'
     div.thread-admin-option.link#remove-thread
         span.fa.fa-times.option-icon
         span.option-title  Remove Thread
