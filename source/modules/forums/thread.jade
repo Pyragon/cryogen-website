@@ -148,21 +148,6 @@ script.
             });
         });
 
-        $(document).on('click', '.forum-link', function() {
-            let type = $(this).data('type');
-            let id = $(this).data('id');
-            if(type == 'forum' || type == 'thread') {
-                $.post('/forums/'+type+'/'+id, {}, ret => {
-                    let data = getJSON(ret);
-                    if(data == null) return false;
-                    $('#forum-content').html(data.html);
-                    setBreadCrumbs(data.breadcrumbs, data.links);
-                    history.pushState({}, 'ForumSection', '/forums/'+type+'/'+id);
-                });
-            }
-            return false;
-        });
-
         $('#remove-thread').click(function() {
             canClose = false;
             setTimeout(() => {

@@ -44,6 +44,12 @@ public class SubForum extends MySQLDao {
         return ForumConnection.connection().selectList("subforums", "parent_id=?", "ORDER BY priority ASC", SubForum.class, id);
     }
 
+    public SubForum getSubForum(int index) {
+        index--;
+        if(getSubForums().size() < index+1) return null;
+        return getSubForums().get(index);
+    }
+
     public boolean isLink() {
         return link != null && !link.equals("");
     }

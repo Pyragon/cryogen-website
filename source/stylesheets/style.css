@@ -1350,6 +1350,16 @@ p.small {
     min-height: 100%;
 }
 
+.forum-subforum {
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.forum-subforum-desc { 
+    margin-left: 75px;
+    display: inline-block;
+}
+
 .view-info {
     float: right;
     margin-right: 20px;
