@@ -6,8 +6,8 @@ mixin showBlock(forum)
             else
                 div.name.link(data-link='/forums/forum/'+forum.getId())= forum.getName()
             p.forum-description.small.grey= forum.getDescription()
-            p.forum-subforum-desc.small Subforums: 
             if forum.getSubForums().size() > 0
+                p.forum-subforum-desc.small Subforums: 
                 for i in [1,2,3,4]
                     if forum.getSubForum(i) != null
                         p.forum-subforum.small.link.white.forum-link(data-type='forum', data-id=forum.getSubForum(i).getId())= forum.getSubForum(i).getName()
