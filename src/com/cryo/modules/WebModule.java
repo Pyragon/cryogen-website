@@ -20,6 +20,7 @@ import spark.Response;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -73,6 +74,9 @@ public abstract class WebModule {
 			model.put("user", account);
 			model.put("notifications", new NotificationManager(account));
 		}
+		model.put("totalThreads", ForumConnection.connection().selectCount("threads", "archived=0"));
+		List<Post> posts = ForumConnection.connection().selectList("posts", Post.class);
+		model.put("totalPosts", posts.stream().filter(p -> !p.getThread().isArchived()).count());
 		model.put("isMobile", request.headers("User-Agent").toLowerCase().contains("mobile"));
 		try {
 			String html = Jade4J.render(file, model);

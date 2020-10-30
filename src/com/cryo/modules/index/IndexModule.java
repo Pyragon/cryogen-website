@@ -41,8 +41,6 @@ public class IndexModule extends WebModule {
 		if(cache == null)
 			return Website.error("Error loading HS Cache.");
 		model.put("hsusers", cache.getCachedData("mini-list"));
-		//Latest threads
-		//List of 'Post' (first post of last... 4/5 threads?)
 		List<Post> posts = ForumConnection.connection()
 				.selectList("threads", "archived=0 AND forum_id IN (1,2)", "ORDER BY added DESC LIMIT 4", com.cryo.entities.forums.Thread.class)
 				.stream()

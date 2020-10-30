@@ -557,6 +557,20 @@ span {
     font-size: 11px;
 }
 
+.forum-stats-name {
+    float: left;
+    text-align: right;
+    margin-right: 5px;
+    width: calc(50% - 5px);
+}
+
+.forum-stats-value {
+    float: right;
+    text-align: left;
+    margin-left: 5px;
+    width: calc(50% - 5px);
+}
+
 .input:focus {
     outline: 0 none !important;
 }
