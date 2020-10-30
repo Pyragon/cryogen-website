@@ -446,6 +446,7 @@ span {
 }
 
 .template-btn {
+    white-space: pre;
     float: right;
     border-radius: 5px;
     border: 1px solid #000;
@@ -477,6 +478,7 @@ span {
 
 .template-body {
     margin-top: 5px;
+    white-space: pre-wrap;
 }
 
 .report-options select {
