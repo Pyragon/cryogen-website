@@ -85,7 +85,7 @@ public class ForumsModule extends WebModule {
                 }
             case "/forums/stats":
                 prop.put("success", true);
-                prop.put("html", render("./source/modules/forums/forum_stats.jade", model, request, response));
+                prop.put("html", render("./source/modules/forums/widgets/forum_stats.jade", model, request, response));
                 break;
             case "/forums/forum/:id":
                 String idString = request.params(":id");
