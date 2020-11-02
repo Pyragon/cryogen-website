@@ -41,7 +41,7 @@ public class AccountUtils {
 			img = "donator_ing.png";
 		}
 		if(colour != "")
-			display += "<span style=\"color: "+colour+";\"><strong><img src=\""+Website.PATH+"/images/crowns/"+img+"\"/> ";
+			display += "<span style=\"color: "+colour+";\"><strong><img src=\""+Website.getProperties().getProperty("path")+"/images/crowns/"+img+"\"/> ";
 		display += getDisplayName(account);
 		if(colour != "")
 			display += "</span></strong>";

@@ -32,7 +32,7 @@ public class PaypalTransaction {
 	
 	private HashMap<ShopItem, Integer> items;
 	
-	private static String ERROR_LINK = Website.PATH+"paypal_error";
+	private static String ERROR_LINK = Website.getProperties().getProperty("path")+"paypal_error";
 
 	private String link;
 	
@@ -122,8 +122,8 @@ public class PaypalTransaction {
 		//figure something out as these are GET requests, and I only use GET request to load index pages.
 		//Will have to have special case for these 2 endpoints, or just leave the ones already in place.
 		redirect = new RedirectUrls();
-		redirect.setCancelUrl(Website.PATH+"process_payment?action=cancel");
-		redirect.setReturnUrl(Website.PATH+"process_payment?action=process");
+		redirect.setCancelUrl(Website.getProperties().getProperty("path")+"process_payment?action=cancel");
+		redirect.setReturnUrl(Website.getProperties().getProperty("path")+"process_payment?action=process");
 	}
 	
 	public void createItemList() {
