@@ -84,8 +84,8 @@ public class BBCodeManager {
         return list;
     }
 
-    public String getFormattedPost(Account account, Post post) {
-        String message = StringEscapeUtils.escapeHtml4(post.getPost());
+    public String getFormattedPost(Account account, Object post) {
+        String message = StringEscapeUtils.escapeHtml4(post instanceof Post ? ((Post) post).getPost() : (String) post);
         ArrayList<Integer[]> noBetween = new ArrayList<>();
         ArrayList<Integer> noCheck = new ArrayList<>();
         wh: while(true) {
@@ -167,9 +167,9 @@ public class BBCodeManager {
                     noCheck.add(startPos);
                     continue wh;
                 }
-            } else if(useCode.getName().equals("Template")) {
+            } else if(useCode.getName().equals("Template") && post instanceof Post) {
                 String type = "thread";
-                int id = post.getThreadId();
+                int id = ((Post) post).getThreadId();
                 String body;
                 if(groups.size() > 1) {
                     String typeString = groups.get(0);
@@ -188,7 +188,7 @@ public class BBCodeManager {
                     body = groups.get(1);
                 } else
                     body = groups.get(0);
-                Template template = new Template(post.getAuthor(), id, type, body);
+                Template template = new Template(id, type, body);
                 HashMap<String, Object> model = new HashMap<>();
                 model.put("template", template);
                 model.put("user", account);
