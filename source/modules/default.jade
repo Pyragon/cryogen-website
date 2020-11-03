@@ -124,10 +124,7 @@ html
                 }
 
                 function loadOnlinePlayers() {
-                    if(blurred === true) {
-                        console.log('Not loading as we are not focused');
-                        return;
-                    }
+                    if(blurred === true) return;
                     $.post('http://api.cryogen-rsps.com/game/players/online', { }, (ret) => {
                         var data = getJSON(ret);
                         if(data == null) return false;

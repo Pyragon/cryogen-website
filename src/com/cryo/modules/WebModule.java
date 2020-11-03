@@ -6,6 +6,7 @@ import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.Misc;
 import com.cryo.entities.forums.Post;
+import com.cryo.entities.forums.Thread;
 import com.cryo.managers.CookieManager;
 import com.cryo.managers.NotificationManager;
 import com.cryo.modules.account.AccountUtils;
@@ -19,6 +20,7 @@ import spark.Request;
 import spark.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -60,23 +62,31 @@ public abstract class WebModule {
 		model.put("acutils", new AccountUtils());
 		model.put("shutdown", Website.SHUTDOWN_TIME);
 		model.put("tools", new Tools());
-        //forums
-        model.put("registeredUsers", GlobalConnection.connection().selectCount("player_data", null));
-        Post post = ForumConnection.connection().selectClass("posts", null, "ORDER BY added DESC LIMIT 1", Post.class, new Object[] { });
-		if(post != null)
-            model.put("latestPost", post);
-        model.put("onlineUsers", ForumConnection.connection().selectCount("account_statuses", "expiry > CURRENT_TIMESTAMP()"));
-        Misc misc = GlobalConnection.connection().selectClass("misc_data", "name=?", Misc.class, "most_online");
-        model.put("mostOnline", misc == null ? "N/A" : misc.asInt());
-        Account account = CookieManager.getAccount(request);
+		Account account = CookieManager.getAccount(request);
 		model.put("loggedIn", account != null);
 		if(account != null) {
 			model.put("user", account);
 			model.put("notifications", new NotificationManager(account));
 		}
-		model.put("totalThreads", ForumConnection.connection().selectCount("threads", "archived=0"));
-		List<Post> posts = ForumConnection.connection().selectList("posts", Post.class);
-		model.put("totalPosts", posts.stream().filter(p -> !p.getThread().isArchived()).count());
+        //forum stats
+        model.put("registeredUsers", GlobalConnection.connection().selectCount("player_data", null));
+        model.put("onlineUsers", ForumConnection.connection().selectCount("account_statuses", "expiry > CURRENT_TIMESTAMP()"));
+        Misc misc = GlobalConnection.connection().selectClass("misc_data", "name=?", Misc.class, "most_online");
+        model.put("mostOnline", misc == null ? "N/A" : misc.asInt());
+
+        Object[] data = (Object[]) Website.instance().getCachingManager().getData("forum-stats", account);
+		if(data == null) {
+			model.put("totalThreads", "N/A");
+			model.put("totalPosts", "N/A");
+			model.put("latestPosts", new ArrayList<Post>());
+			model.put("latestThreads", new ArrayList<Thread>());
+		} else {
+			model.put("totalThreads", data[0]);
+			model.put("totalPosts", data[1]);
+			model.put("latestPosts", data[2]);
+			model.put("latestThreads", data[3]);
+		}
+
 		model.put("isMobile", request.headers("User-Agent").toLowerCase().contains("mobile"));
 		try {
 			String html = Jade4J.render(file, model);
