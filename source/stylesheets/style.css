@@ -1506,6 +1506,16 @@ p.small {
     border: 1px solid #000;
 }
 
+.thread-admin-option:first-of-type {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.thread-admin-option:last-of-type {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 .thread-admin-option:hover {
     background: #13435F;
 }
