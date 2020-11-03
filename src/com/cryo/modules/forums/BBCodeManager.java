@@ -2,12 +2,14 @@ package com.cryo.modules.forums;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.Template;
@@ -122,16 +124,16 @@ public class BBCodeManager {
                     int postId;
                     try {
                         postId = Integer.parseInt(postString);
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         noCheck.add(startPos);
                         continue wh;
                     }
                     Post postDao = ForumConnection.connection().selectClass("posts", "id=?", Post.class, postId);
-                    if(postDao == null) {
+                    if (postDao == null) {
                         noCheck.add(startPos);
                         continue wh;
                     }
-                    if(!postDao.getThread().getSubForum().getPermissions().canReadThread(postDao.getThread(), account)) {
+                    if (!postDao.getThread().getSubForum().getPermissions().canReadThread(postDao.getThread(), account)) {
                         noCheck.add(startPos);
                         continue wh;
                     }
@@ -140,10 +142,33 @@ public class BBCodeManager {
                     String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/quote.jade", model);
                     message = message.substring(0, startPos) + html + message.substring(endPos);
                     continue wh;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     noCheck.add(startPos);
                     continue wh;
+                }
+            } else if(useCode.getName().equals("User")) {
+                try {
+                    int userId;
+                    try {
+                        userId = Integer.parseInt(groups.get(0));
+                    } catch(Exception e) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    Account user = GlobalConnection.connection().selectClass("player_data", "id=?", Account.class, userId);
+                    if(user == null) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    //TODO - user setting disallowing being mentioned
+                    HashMap<String, Object> model = new HashMap<>();
+                    model.put("user", user);
+                    String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/show_user.jade", model);
+                    message = message.substring(0, startPos) + html + message.substring(endPos);
+                    continue wh;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             } else if(useCode.getName().equals("Post Count")) {
                 try {
