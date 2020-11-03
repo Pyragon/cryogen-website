@@ -154,13 +154,31 @@ var restart_timer = null;
 
 var reconnect_timer = null;
 
+let blurred = false;
+
+function onBlur() {
+    blurred = true;
+};
+function onFocus(){
+	blurred = false;
+};
+
+if (/*@cc_on!@*/false) { // check for Internet Explorer
+	document.onfocusin = onFocus;
+	document.onfocusout = onBlur;
+} else {
+	window.onfocus = onFocus;
+	window.onblur = onBlur;
+}
+
 function checkRestart() {
     if (shutdown_timer) {
         clearInterval(restart_timer);
         return;
     }
+    if(blurred === true) return;
     $.ajax({
-        url: 'http://70.35.204.165:8085/utilities/get-restart-time',
+        url: 'http://51.161.35.76:8085/utilities/get-restart-time',
         type: 'POST',
         error: (error) => {
             clearInterval(restart_timer);
@@ -192,7 +210,7 @@ function decreaseRestart() {
 
 function reconnect() {
     $.ajax({
-        url: 'http://70.35.204.165:8085/',
+        url: 'http://51.161.35.76:8085/',
         type: 'GET',
         error: function(data) {
             setTimeout(reconnect, 1000);
