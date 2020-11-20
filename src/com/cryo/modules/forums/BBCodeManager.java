@@ -13,6 +13,7 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.Template;
+import com.cryo.managers.NotificationManager;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.Utilities;
 
@@ -86,6 +87,16 @@ public class BBCodeManager {
         return list;
     }
 
+    public HashMap<Integer, String> getBBCode(String post, String regex) {
+        HashMap<Integer, String> groups = new HashMap<>();
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(post);
+        if(!matcher.find()) return null;
+        for(int i = 1; i < matcher.groupCount()+1; i++)
+            groups.put(i-1, matcher.group(i));
+        return groups;
+    }
+
     public String getFormattedPost(Account account, Object post) {
         String message = StringEscapeUtils.escapeHtml4(post instanceof Post ? ((Post) post).getPost() : (String) post);
         ArrayList<Integer[]> noBetween = new ArrayList<>();
@@ -147,7 +158,7 @@ public class BBCodeManager {
                     noCheck.add(startPos);
                     continue wh;
                 }
-            } else if(useCode.getName().equals("User")) {
+            } else if(useCode.getName().equals("User") && post instanceof Post) {
                 try {
                     int userId;
                     try {
@@ -161,7 +172,6 @@ public class BBCodeManager {
                         noCheck.add(startPos);
                         continue wh;
                     }
-                    //TODO - user setting disallowing being mentioned
                     HashMap<String, Object> model = new HashMap<>();
                     model.put("user", user);
                     String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/show_user.jade", model);
