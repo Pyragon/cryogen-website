@@ -1,6 +1,6 @@
 # README #
 
-The Cryogen Website was built by Cody Thompson and Clayton Williams using some open-source templates found online.
+This website was built by Cody Thompson for the Cryogen Runescape Private Server.
 
 ### Built in Spark ###
 
