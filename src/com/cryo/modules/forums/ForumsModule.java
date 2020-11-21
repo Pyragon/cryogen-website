@@ -1,10 +1,13 @@
 package com.cryo.modules.forums;
 
 import com.cryo.Website;
+import com.cryo.db.impl.AccountConnection;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.db.impl.GlobalConnection;
+import com.cryo.entities.Notified;
 import com.cryo.entities.forums.*;
 import com.cryo.entities.forums.Thread;
+import com.cryo.managers.NotificationManager;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.managers.CookieManager;
@@ -85,7 +88,7 @@ public class ForumsModule extends WebModule {
                 }
             case "/forums/stats":
                 prop.put("success", true);
-                prop.put("html", render("./source/modules/forums/forum_stats.jade", model, request, response));
+                prop.put("html", render("./source/modules/forums/widgets/forum_stats.jade", model, request, response));
                 break;
             case "/forums/forum/:id":
                 String idString = request.params(":id");
@@ -333,23 +336,16 @@ public class ForumsModule extends WebModule {
                 return redirect("/forums/thread/"+thread.getId(), "You are now being redirected to your new thread.", 5, null, request, response);
             case "/forums/thread/:id/submit-new-post":
                 if (request.requestMethod().equals("GET"))
-                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request,
-                            response);
-                if (account == null) {
-                    if (request.requestMethod().equals("GET"))
-                        return redirect("/forums", "Not logged in. Redirecting you back to home.", 5, null, request,
-                                response);
-                    else
-                        return error("Not logged in. Please refresh the page and try again.");
-                }
+                    return redirect("/forums", "Invalid request. Redirecting you back to home.", 5, null, request, response);
+                if (account == null)
+                    return error("Not logged in. Please refresh the page and try again.");
                 idString = request.params(":id");
                 pageString = request.queryParams("page");
                 try {
                     id = Integer.parseInt(idString);
                     page = Integer.parseInt(pageString);
                 } catch (Exception e) {
-                    return redirect("/forums", "Error loading page, redirecting you back to home.", 5, null, request,
-                            response);
+                    return error("Error parsing id or page.");
                 }
                 thread = ForumConnection.connection().selectClass("threads", "id=?", Thread.class, id);
                 if(thread == null) return error("Error finding thread. Please refresh and try again.");
@@ -358,11 +354,24 @@ public class ForumsModule extends WebModule {
                 String body = request.queryParams("body");
                 if (StringUtils.isNullOrEmpty(body) || body.length() < 5 || body.length() > 10_000)
                     return error("Body must be between 5 and 10,000 characters long.");
-                System.out.println(body);
                 Post post = new Post(-1, id, account.getId(), body, null, null, null);
                 int insertId = ForumConnection.connection().insert("posts", post.data());
                 post = ForumConnection.connection().selectClass("posts", "id=?", Post.class, insertId);
                 thread.updateLastPost(post);
+                HashMap<Integer, String> groups = Website.instance().getBBCodeManager().getBBCode(post.getPost(), "\\[USER=(.+?(?=\\]))]");
+                if(groups != null) {
+                    int userId = Integer.parseInt(groups.get(0));
+                    Account user = GlobalConnection.connection().selectClass("player_data", "id=?", Account.class, userId);
+                    if(user != null)
+                        NotificationManager.addNotification(user, "New Mention!", "Mentioned in "+thread.getTitle(), "fa fa-quote-left", "", "/forums/thread/"+thread.getId());
+                }
+                groups = Website.instance().getBBCodeManager().getBBCode(post.getPost(), "\\[QUOTE=(.+?(?=\\]))]");
+                if(groups != null) {
+                    int postId = Integer.parseInt(groups.get(0));
+                    Post quoted = ForumConnection.connection().selectClass("posts", "id=?", Post.class, postId);
+                    if(quoted != null)
+                        NotificationManager.addNotification(quoted.getAuthor(), "Quoted!", "Quoted in "+thread.getTitle(), "fa fa-quote-left", "", "/forums/thread/"+thread.getId());
+                }
                 prop.put("success", true);
                 model.put("posts", thread.getPosts(page));
                 prop.put("html", render("./source/modules/forums/post_list.jade", model, request, response));

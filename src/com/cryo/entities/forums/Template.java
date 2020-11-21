@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class Template {
 
-    private final Account author;
     private final int id;
     private final String type;
     private final String body;

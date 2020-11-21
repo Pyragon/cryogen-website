@@ -52,9 +52,7 @@ public class Post extends MySQLDao {
 
     public boolean hasBeenThankedBy(int id) {
         return getThanks().stream()
-                        .filter(a -> a.getId() == id)
-                        .findFirst()
-                        .isPresent();
+                        .anyMatch(a -> a.getId() == id);
     }
 
     public boolean hasBeenEdited() {

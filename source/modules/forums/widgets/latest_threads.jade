@@ -1,0 +1,8 @@
+for thread in latestThreads
+    div.latest-thread
+        div.latest-thread-title.white.link.forum-link(data-type='thread', data-id=thread.getId())= thread.getTitle()
+        div.latest-thread-author.small By 
+            span
+                +showName(thread.getAuthor(), 14, 15)
+            span , 
+            span= thread.getFirstPost().getTimeRelative(null)

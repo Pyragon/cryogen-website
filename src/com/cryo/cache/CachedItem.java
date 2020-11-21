@@ -40,7 +40,7 @@ public abstract class CachedItem {
 		return this.cacheTime <= System.currentTimeMillis();
 	}
 	
-	private void refreshTime() {
+	protected void refreshTime() {
 		this.cacheTime = System.currentTimeMillis() + getCacheTimeLimit();
 	}
 	

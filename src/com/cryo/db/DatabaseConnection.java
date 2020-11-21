@@ -70,7 +70,8 @@ public abstract class DatabaseConnection {
 					.append(update).append(" WHERE ").append(clause+";");
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
 			try {
-				setParams(stmt, params);
+				if(params != null)
+					setParams(stmt, params);
 				stmt.execute();
 			} finally {
 				stmt.close();
@@ -91,7 +92,8 @@ public abstract class DatabaseConnection {
 			builder.append("UPDATE ").append(database).append(" SET ")
 					.append(update).append(" WHERE ").append(clause+";");
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			setParams(stmt, params);
+			if(params != null)
+				setParams(stmt, params);
 			stmt.execute();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -177,7 +179,8 @@ public abstract class DatabaseConnection {
 			if (condition != null && !condition.equals("")) builder.append(" WHERE ").append(condition);
 			if (order != null && !order.equals("")) builder.append(" " + order);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			setParams(stmt, values);
+			if(values != null)
+				setParams(stmt, values);
 			ResultSet set = stmt.executeQuery();
 			ArrayList<T> list = new ArrayList<>();
 			if (wasNull(set)) return list;
@@ -206,7 +209,8 @@ public abstract class DatabaseConnection {
 			if (condition != null && !condition.equals("")) builder.append(" WHERE ").append(condition);
 			if (order != null && !order.equals("")) builder.append(" " + order);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			setParams(stmt, values);
+			if(values != null)
+				setParams(stmt, values);
 			ResultSet set = stmt.executeQuery();
 			if (empty(set)) return null;
 			return loadClass(set, c);
@@ -276,7 +280,8 @@ public abstract class DatabaseConnection {
 			if(condition != null && !condition.equals(""))
 				builder.append(" WHERE ").append(condition);
 			PreparedStatement stmt = connection.prepareStatement(builder.toString());
-			setParams(stmt, values);
+			if(values != null)
+				setParams(stmt, values);
 			ResultSet set = stmt.executeQuery();
 			if(!set.next()) return 0;
 			int count = set.getInt(1);
@@ -295,8 +300,9 @@ public abstract class DatabaseConnection {
 			ResultSet set = null;
 			Object[] result;
 			try {
-				stmt = connection.prepareStatement(builder.toString());
-				setParams(stmt, values);
+				stmt = connection.prepareStatement(builder);
+				if(values != null)
+					setParams(stmt, values);
 				set = stmt.executeQuery();
 				result = query.handleResult(set);
 			} finally {

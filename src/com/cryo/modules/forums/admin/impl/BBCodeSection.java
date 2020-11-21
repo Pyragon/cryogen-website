@@ -74,8 +74,7 @@ public class BBCodeSection implements ForumAdminSection {
                     model.put("code", code);
                 }
                 model.put("manager", Website.instance().getBBCodeManager());
-                html = WebModule.render("./source/modules/forums/admin/bbcodes/edit_bbcode.jade", model, request,
-                        response);
+                html = WebModule.render("./source/modules/forums/admin/bbcodes/edit_bbcode.jade", model, request, response);
                 prop.put("success", true);
                 prop.put("html", html);
                 break;

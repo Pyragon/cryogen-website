@@ -53,8 +53,6 @@ import static spark.Spark.*;
  */
 public class Website {
 
-	public static String PATH = "http://70.35.204.165:8085/";
-
 	private static Website INSTANCE;
 
 	public static @Getter @Setter int SHUTDOWN_TIME = -1;
@@ -93,8 +91,6 @@ public class Website {
 
 	public void load() {
 		try {
-			if(System.getProperty("os.name").equals("Windows 10"))
-				PATH = "http://localhost:8085/";
 			Gson = buildGson();
 			loadProperties();
 			FAVICON = new File(properties.getProperty("favico"));
@@ -290,7 +286,7 @@ public class Website {
 	public static String getRandomImageLink() {
 		File[] files = new File("./source/images/404/").listFiles();
 		File random = files[new Random().nextInt(files.length)];
-		return String.format("%simages/404/%s", PATH, random.getName());
+		return String.format("%simages/404/%s", Website.getProperties().getProperty("path"), random.getName());
 	}
 
 	public static String error(String error) {

@@ -86,4 +86,12 @@ div.container
                                 span.fa.fa-minus
                         p.description Real-Time stats about the forums
                     div.content#forum-stats-content
-                        include forum_stats
+                        include widgets/forum_stats
+                div.news-post(style='min-width: 400px;')
+                    div.header
+                        p.title Latest Threads
+                            a.minimize
+                                span.fa.fa-minus
+                        p.description The latest threads posted to Cryogen
+                    div.content#latest-threads-content
+                        include widgets/latest_threads

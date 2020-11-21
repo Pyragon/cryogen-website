@@ -2,15 +2,18 @@ package com.cryo.modules.forums;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.cryo.db.impl.ForumConnection;
+import com.cryo.db.impl.GlobalConnection;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.Template;
+import com.cryo.managers.NotificationManager;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.utils.Utilities;
 
@@ -84,8 +87,18 @@ public class BBCodeManager {
         return list;
     }
 
-    public String getFormattedPost(Account account, Post post) {
-        String message = StringEscapeUtils.escapeHtml4(post.getPost());
+    public HashMap<Integer, String> getBBCode(String post, String regex) {
+        HashMap<Integer, String> groups = new HashMap<>();
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(post);
+        if(!matcher.find()) return null;
+        for(int i = 1; i < matcher.groupCount()+1; i++)
+            groups.put(i-1, matcher.group(i));
+        return groups;
+    }
+
+    public String getFormattedPost(Account account, Object post) {
+        String message = StringEscapeUtils.escapeHtml4(post instanceof Post ? ((Post) post).getPost() : (String) post);
         ArrayList<Integer[]> noBetween = new ArrayList<>();
         ArrayList<Integer> noCheck = new ArrayList<>();
         wh: while(true) {
@@ -122,16 +135,16 @@ public class BBCodeManager {
                     int postId;
                     try {
                         postId = Integer.parseInt(postString);
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         noCheck.add(startPos);
                         continue wh;
                     }
                     Post postDao = ForumConnection.connection().selectClass("posts", "id=?", Post.class, postId);
-                    if(postDao == null) {
+                    if (postDao == null) {
                         noCheck.add(startPos);
                         continue wh;
                     }
-                    if(!postDao.getThread().getSubForum().getPermissions().canReadThread(postDao.getThread(), account)) {
+                    if (!postDao.getThread().getSubForum().getPermissions().canReadThread(postDao.getThread(), account)) {
                         noCheck.add(startPos);
                         continue wh;
                     }
@@ -140,10 +153,32 @@ public class BBCodeManager {
                     String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/quote.jade", model);
                     message = message.substring(0, startPos) + html + message.substring(endPos);
                     continue wh;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     noCheck.add(startPos);
                     continue wh;
+                }
+            } else if(useCode.getName().equals("User") && post instanceof Post) {
+                try {
+                    int userId;
+                    try {
+                        userId = Integer.parseInt(groups.get(0));
+                    } catch(Exception e) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    Account user = GlobalConnection.connection().selectClass("player_data", "id=?", Account.class, userId);
+                    if(user == null) {
+                        noCheck.add(startPos);
+                        continue wh;
+                    }
+                    HashMap<String, Object> model = new HashMap<>();
+                    model.put("user", user);
+                    String html = Jade4J.render("./source/modules/forums/admin/bbcodes/impl/show_user.jade", model);
+                    message = message.substring(0, startPos) + html + message.substring(endPos);
+                    continue wh;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             } else if(useCode.getName().equals("Post Count")) {
                 try {
@@ -167,9 +202,9 @@ public class BBCodeManager {
                     noCheck.add(startPos);
                     continue wh;
                 }
-            } else if(useCode.getName().equals("Template")) {
+            } else if(useCode.getName().equals("Template") && post instanceof Post) {
                 String type = "thread";
-                int id = post.getThreadId();
+                int id = ((Post) post).getThreadId();
                 String body;
                 if(groups.size() > 1) {
                     String typeString = groups.get(0);
@@ -188,7 +223,7 @@ public class BBCodeManager {
                     body = groups.get(1);
                 } else
                     body = groups.get(0);
-                Template template = new Template(post.getAuthor(), id, type, body);
+                Template template = new Template(id, type, body);
                 HashMap<String, Object> model = new HashMap<>();
                 model.put("template", template);
                 model.put("user", account);

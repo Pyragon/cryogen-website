@@ -557,14 +557,27 @@ span {
     font-size: 11px;
 }
 
-.forum-stats-name {
-    float: left;
-    text-align: right;
-    margin-right: 5px;
-    width: calc(50% - 5px);
+.latest-thread {
+    padding: 2px;
 }
 
-.forum-stats-value {
+.latest-thread-title {
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.latest-thread-author {
+    margin-left: 25px;
+}
+
+.forum-widget-name {
+    float: left;
+    text-align: left;
+    margin-left: 82px;
+    width: calc(50% - 82px);
+}
+
+.forum-widget-value {
     float: right;
     text-align: left;
     margin-left: 5px;
@@ -1275,7 +1288,7 @@ p.small {
     margin-block-start: 14px;
     margin: 0px auto 0px 5px;
     margin-top: 0px;
-    /* height: 150px; */
+    height: 160px;
     white-space: pre;
 }
 
@@ -1491,6 +1504,16 @@ p.small {
     background: #09212F;
     border-radius: 5px;
     border: 1px solid #000;
+}
+
+.thread-admin-option:first-of-type {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.thread-admin-option:last-of-type {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .thread-admin-option:hover {

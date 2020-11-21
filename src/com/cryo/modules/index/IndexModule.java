@@ -10,6 +10,7 @@ import com.cryo.Website.RequestType;
 import com.cryo.cache.CachedItem;
 import com.cryo.db.impl.ForumConnection;
 import com.cryo.entities.forums.Post;
+import com.cryo.entities.forums.Thread;
 import com.cryo.modules.WebModule;
 import com.cryo.utils.DateUtils;
 
@@ -42,7 +43,7 @@ public class IndexModule extends WebModule {
 			return Website.error("Error loading HS Cache.");
 		model.put("hsusers", cache.getCachedData("mini-list"));
 		List<Post> posts = ForumConnection.connection()
-				.selectList("threads", "archived=0 AND forum_id IN (1,2)", "ORDER BY added DESC LIMIT 4", com.cryo.entities.forums.Thread.class)
+				.selectList("threads", "archived=0 AND forum_id IN (1,2)", "ORDER BY added DESC LIMIT 4", Thread.class)
 				.stream()
 				.map(t -> t.getFirstPost())
 				.collect(Collectors.toList());
@@ -56,29 +57,6 @@ public class IndexModule extends WebModule {
 			return error("Error loading.");
 		}
 		return html;
-	}
-	
-	@RequiredArgsConstructor
-	public static class PostDAO {
-		
-		private final @Getter String subject, message, username;
-		
-		private final @Getter long dateline;
-		
-	}
-	
-	public static class PostList {
-		
-		private final @Getter ArrayList<PostDAO> list;
-		
-		public PostList() {
-			list = new ArrayList<>();
-		}
-		
-		public void add(PostDAO thread) {
-			list.add(thread);
-		}
-		
 	}
 	
 }
