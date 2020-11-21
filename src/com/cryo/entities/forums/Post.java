@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -79,11 +80,18 @@ public class Post extends MySQLDao {
         SimpleDateFormat format = new SimpleDateFormat("hh:mm a");
         String timeF = format.format(stamp);
         format = new SimpleDateFormat("MM/dd/yyyy");
-        diff = Math.abs(diff);
         String result = "";
-        if (diff == 0)
-            result = "Today @ ";
-        else if (diff == 1)
+        diff = Math.abs(diff);
+        if (diff == 0) {
+            Calendar t = Calendar.getInstance();
+            t.setTimeInMillis(stamp.getTime());
+            Calendar n = Calendar.getInstance();
+            n.setTime(now);
+            if(n.get(Calendar.DAY_OF_YEAR) != t.get(Calendar.DAY_OF_YEAR))
+                result = "Yesterday @ ";
+            else
+                result = "Today @ ";
+        } else if (diff == 1)
             result = "Yesterday @ ";
         else if (diff <= 7)
             result = diff + " days ago @ ";
