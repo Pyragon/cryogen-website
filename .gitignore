@@ -8,3 +8,4 @@ data/props.json
 .classpath
 launch.json
 source/images/avatars/
+CryoWeb.*
