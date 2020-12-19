@@ -22,7 +22,7 @@ public class CommentsConnection extends DatabaseConnection {
 	}
 
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		switch(opcode) {
 		case "get-list":

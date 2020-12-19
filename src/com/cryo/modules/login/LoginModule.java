@@ -7,10 +7,14 @@ import com.cryo.db.impl.GlobalConnection;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.managers.CookieManager;
+import com.cryo.utils.BCrypt;
+import com.cryo.utils.SessionIDGenerator;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -56,27 +60,21 @@ public class LoginModule extends WebModule {
 		case "login":
 			String username = request.queryParams("username");
 			String password = request.queryParams("password");
-			Object[] data = GlobalConnection.connection().handleRequest("compare", username, password);
-			boolean success = data == null ? false : (boolean) data[0];
-			if(!success) {
-				prop.put("success", false);
-				prop.put("error", "Invalid username or password.");
-				break;
-			}
-			Account account = GlobalConnection.connection().selectClass("player_data", "username=?", Account.class, username);
-			if (account == null) {
-				prop.put("success", false);
-				prop.put("error", "Error loading account!");
-				break;
-			}
-			data = AccountConnection.connection().handleRequest("add-sess", username);
-			if(data == null) {
-				prop.put("success", false);
-				prop.put("error", "Error adding new session.");
-				break;
-			}
-			String session = (String) data[0];
-			response.cookie("cryo-sess", session, 604_800);
+			Account account = Website.getConnection("cryogen_global").selectClass("player_data", "username=?", Account.class, username);
+			if(account == null)
+				return error("Invalid username or password.");
+			String salt = account.getSalt();
+			String hashed = BCrypt.hashPassword(password, salt);
+			if(!hashed.equals(account.getPassword()))
+				return error("Invalid username or password.");
+			//Insert sessionId
+			String sessionId = SessionIDGenerator.getInstance().getSessionId();
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.DAY_OF_YEAR, 30);
+			Timestamp stamp = new Timestamp(c.getTime().getTime());
+			Website.getConnection("cryogen_accounts").insert("sessions", username, sessionId, stamp);
+
+			response.cookie("cryo-sess", sessionId, 604_800);
 			String redirect = redirect(request.queryParams("redirect"), request, response);
 			prop.put("success", true);
 			prop.put("html", redirect);

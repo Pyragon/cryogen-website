@@ -66,7 +66,7 @@ public class HighscoresConnection extends DatabaseConnection {
 	};
 
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		switch(opcode) {
 			case "get-rank":
@@ -80,7 +80,7 @@ public class HighscoresConnection extends DatabaseConnection {
 				data = select("highscores", "username=?", GET_HS_DATA, name);
 				if(data == null) {
 					DisplayConnection connection = (DisplayConnection) Website.instance().getConnectionManager().getConnection(Connection.DISPLAY);
-					Object[] disp = connection.handleRequest("get-username", name);
+					Object[] disp = connection.handleRequest2("get-username", name);
 					if(disp == null) return null;
 					name = (String) disp[0];
 					data = select("highscores", "username=?", GET_HS_DATA, name);

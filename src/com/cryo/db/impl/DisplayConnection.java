@@ -27,7 +27,7 @@ public class DisplayConnection extends DatabaseConnection {
 	}
 
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		switch(opcode) {
 			case "create":
@@ -44,12 +44,12 @@ public class DisplayConnection extends DatabaseConnection {
 				username = (String) data[1];
 				display = (String) data[2];
 				String next = (String) data[3];
-				data = handleRequest("get-last-display", username);
+				data = handleRequest2("get-last-display", username);
 				if(data != null)
 					delete("last_names", "username='"+username+"'");
 				if(!Utilities.formatNameForProtocol(display).equals(username))
 					insert("last_names", username, display);
-				data = handleRequest("get-time", username);
+				data = handleRequest2("get-time", username);
 				Calendar c = Calendar.getInstance();
 				c.add(Calendar.HOUR, 7*24);
 				long time = c.getTimeInMillis();

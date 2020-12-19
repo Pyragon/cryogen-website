@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import com.cryo.Website;
 import com.cryo.db.impl.ShopConnection;
+import com.cryo.entities.shop.ShoppingCart;
 import com.cryo.modules.WebModule;
 import com.cryo.modules.account.entities.Account;
 import com.cryo.modules.account.entities.AccountSection;
@@ -17,6 +18,8 @@ import com.google.gson.Gson;
 
 import spark.Request;
 import spark.Response;
+
+import static com.cryo.Website.error;
 
 public class ShopSection implements AccountSection {
 
@@ -54,73 +57,55 @@ public class ShopSection implements AccountSection {
 				prop.put("error", "No filter provided.");
 				break;
 			}
-			Object[] data = ShopConnection.getShopItems(filter, page);
-			if(data == null) {
-				prop.put("success", false);
-				prop.put("error", "Error loading shop items.");
-				break;
-			}
+			Object[] data = ShoppingCart.getShopItems(filter, page);
+			if(data == null)
+				return error("Error loading shop items.");
 			HashMap<Integer, ShopItem> items = (HashMap<Integer, ShopItem>) data[0];
 			int totalResults = (int) data[1];
 			ArrayList<ShopItem> list = new ArrayList<ShopItem>(items.values());
 			model.put("shopItems", list);
-			data = ShopConnection.connection().handleRequest("get-cart", account.getUsername());
-			if(data == null) {
-				prop.put("success", false);
-				prop.put("error", "Error loading cart data!");
-				break;
-			}
-			HashMap<String, String> cart = (HashMap<String, String>) data[0];
+			ShoppingCart cart = Website.getConnection("cryogen_shop").selectClass("cart_data", "username=?", ShoppingCart.class, account.getUsername());
+			if(cart == null)
+				return error("Error loading shopping cart.");
 			String html = WebModule.render("./source/modules/account/sections/shop/shop_list.jade", model, request, response);
 			prop.put("success", true);
 			prop.put("html", html);
-			System.out.println(totalResults+" "+Utilities.roundUp(totalResults, 9));
 			prop.put("pageTotal", Utilities.roundUp(totalResults, 9));
 			int totalPrice = 0;
 			int totalItems = 0;
-			for(String id : cart.keySet()) {
+			for(String id : cart.getItems().keySet()) {
 				ShopItem item = ShopConnection.getShopItem(Integer.parseInt(id));
 				if(item == null)
 					continue;
-				totalPrice += item.getPrice() * Integer.parseInt(cart.get(id));
-				totalItems += Integer.parseInt(cart.get(id));
+				totalPrice += item.getPrice() * Integer.parseInt(cart.getItems().get(id));
+				totalItems += Integer.parseInt(cart.getItems().get(id));
 			}
 			prop.put("totalPrice", totalPrice);
 			prop.put("totalItems", totalItems);
 			prop.put("items", gson.toJson(cart));
 			break;
 		case "load-review":
-			try {
-				data = ShopConnection.connection().handleRequest("get-cart", account.getUsername());
-				if(data == null) {
-					prop.put("success", false);
-					prop.put("error", "Error loading cart data!");
-					break;
-				}
-				cart = (HashMap<String, String>) data[0];
-				if(cart.size() == 0) {
-					prop.put("success", false);
-					prop.put("error", "You don't have any items currently in your cart!");
-					break;
-				}
-				model.put("cart", cart);
-				model.put("items", ShopConnection.getShopItems(null, -1));
-				html = WebModule.render("./source/modules/account/sections/shop/review_cart.jade", model, request, response);
-				prop.put("success", true);
-				prop.put("html", html);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+			cart = Website.getConnection("cryogen_shop").selectClass("cart_data", "username=?", ShoppingCart.class, account.getUsername());
+			if(cart == null)
+				return error("Error loading shopping cart.");
+			if(cart.getItems().size() == 0)
+				return error("Your cart is empty!");
+			model.put("cart", cart.getItems());
+			model.put("items", ShoppingCart.getShopItems(null, -1));
+			html = WebModule.render("./source/modules/account/sections/shop/review_cart.jade", model, request, response);
+			prop.put("success", true);
+			prop.put("html", html);
 			break;
 		case "set-cart":
-			String cart_data = request.queryParams("cart");
-			if(cart_data == null) {
-				prop.put("success", false);
-				prop.put("error", "No cart data provided.");
-				break;
-			}
-			HashMap<String, String> cartItems = gson.fromJson(cart_data, HashMap.class);
-			ShopConnection.connection().handleRequest("set-cart", account.getUsername(), cartItems);
+			String cartData = request.queryParams("cart");
+			if(cartData == null)
+				return error("Unable to parse cart data.");
+			HashMap<String, String> cartItems = gson.fromJson(cartData, HashMap.class);
+			cart = Website.getConnection("cryogen_shop").selectClass("cart_data", "username=?", ShoppingCart.class, account.getUsername());
+			if(cart == null)
+				return error("Error loading shopping cart.");
+			cart.setItems(cartData);
+			Website.getConnection("cryogen_shop").set("cart_data", "items=?", "id=?", cartData, cart.getId());
 			totalPrice = 0;
 			totalItems = 0;
 			for(String id : cartItems.keySet()) {
@@ -135,21 +120,14 @@ public class ShopSection implements AccountSection {
 			prop.put("totalItems", totalItems);
 			break;
 		case "checkout":
-			data = ShopConnection.connection().handleRequest("get-cart", account.getUsername());
-			if(data == null) {
-				prop.put("success", false);
-				prop.put("error", "Error loading cart data!");
-				break;
-			}
-			cart = (HashMap<String, String>) data[0];
-			if(cart.size() == 0) {
-				prop.put("success", false);
-				prop.put("error", "You don't have any items currently in your cart!");
-				break;
-			}
+			cart = Website.getConnection("cryogen_shop").selectClass("cart_data", "username=?", ShoppingCart.class, account.getUsername());
+			if(cart == null)
+				return error("Error loading shopping cart.");
+			if(cart.getItems().size() == 0)
+				return error("Your cart is empty!");
 			HashMap<Integer, Integer> finalItems = new HashMap<Integer, Integer>();
-			for(String id : cart.keySet()) {
-				String quant = cart.get(id);
+			for(String id : cart.getItems().keySet()) {
+				String quant = cart.getItems().get(id);
 				finalItems.put(Integer.parseInt(id), Integer.parseInt(quant));
 			}
 			PaypalTransaction transaction = new PaypalTransaction(account.getUsername(), finalItems);

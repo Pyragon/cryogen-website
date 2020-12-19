@@ -36,7 +36,7 @@ public class GlobalConnection extends DatabaseConnection {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = ((String) data[0]).toLowerCase();
 		try {
 			switch (opcode) {
@@ -67,7 +67,7 @@ public class GlobalConnection extends DatabaseConnection {
 			case "set-misc-data":
 				String name = (String) data[1];
 				String value = (String) data[2];
-				data = handleRequest("get-misc-data", name);
+				data = handleRequest2("get-misc-data", name);
 				if (data == null)
 					insert("misc_data", name, value);
 				else
@@ -82,7 +82,7 @@ public class GlobalConnection extends DatabaseConnection {
 														.getTimeInMillis());
 				insert("player_data", "DEFAULT", username, hash, salt, 0, 0, null, date);
 				DisplayConnection	.connection()
-									.handleRequest("create", username, Utilities.formatName(username));
+									.handleRequest2("create", username, Utilities.formatName(username));
 				return new Object[] { salt, hash };
 			case "search-players":
 				String text = (String) data[1];
@@ -99,7 +99,7 @@ public class GlobalConnection extends DatabaseConnection {
 					}
 				}
 				data = DisplayConnection.connection()
-										.handleRequest("search", "%" + text + "%");
+										.handleRequest2("search", "%" + text + "%");
 				if (data != null) {
 					ArrayList<String> users = (ArrayList<String>) data[0];
 					for (String user : users) {
@@ -128,7 +128,7 @@ public class GlobalConnection extends DatabaseConnection {
 				if (data.length == 5)
 					toCompare = (boolean) data[4];
 				if (toCompare) {
-					data = handleRequest("compare", username, current);
+					data = handleRequest2("compare", username, current);
 					if (data == null)
 						return new Object[] { false, "Invalid username." };
 					boolean compare = (boolean) data[0];
@@ -136,7 +136,7 @@ public class GlobalConnection extends DatabaseConnection {
 						return new Object[] { false, "Invalid current password." };
 					salt = (String) data[1];
 				} else {
-					data = handleRequest("get-salt", username);
+					data = handleRequest2("get-salt", username);
 					if (data == null)
 						return new Object[] { false, "Invalid username." };
 					salt = (String) data[0];
@@ -144,13 +144,13 @@ public class GlobalConnection extends DatabaseConnection {
 				hash = BCrypt.hashPassword(password, salt);
 				set("player_data", "password=?", "username=?", hash, username);
 				AccountConnection	.connection()
-									.handleRequest("remove-all-sess", username);
+									.handleRequest2("remove-all-sess", username);
 				String sess = (String) AccountConnection.connection()
-														.handleRequest("add-sess", username)[0];
+														.handleRequest2("add-sess", username)[0];
 				Website	.instance()
 						.getConnectionManager()
 						.getConnection(Connection.PREVIOUS)
-						.handleRequest("add-prev-hash", salt, hash);
+						.handleRequest2("add-prev-hash", salt, hash);
 				return new Object[] { true, sess };
 			case "add-prev-all":
 				data = select("player_data", null, GET_USERNAMES);
@@ -159,7 +159,7 @@ public class GlobalConnection extends DatabaseConnection {
 				ArrayList<String> usernames = (ArrayList<String>) data[0];
 				for (String user : usernames) {
 					Logger.log(this.getClass(), "Adding previous password for: " + user);
-					handleRequest("add-prev", user);
+					handleRequest2("add-prev", user);
 				}
 				break;
 			case "get-salt":
@@ -178,7 +178,7 @@ public class GlobalConnection extends DatabaseConnection {
 				Website	.instance()
 						.getConnectionManager()
 						.getConnection(Connection.PREVIOUS)
-						.handleRequest("add-prev-hash", salt, hash);
+						.handleRequest2("add-prev-hash", salt, hash);
 				break;
 			case "get-announcement":
 				int id = (int) data[1];

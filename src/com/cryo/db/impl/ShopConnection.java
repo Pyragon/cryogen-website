@@ -34,7 +34,7 @@ public class ShopConnection extends DatabaseConnection {
 	
 	@SuppressWarnings("unchecked")
 	public static void load(Website website) {
-		Object[] data = connection(website).handleRequest("get-items");
+		Object[] data = connection(website).handleRequest2("get-items");
 		if(data == null) {
 			cached = new HashMap<>();
 			return;
@@ -148,7 +148,7 @@ public class ShopConnection extends DatabaseConnection {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
 			case "search-results":
@@ -212,7 +212,7 @@ public class ShopConnection extends DatabaseConnection {
 				if(inactive) {
 					//We are claiming the invoice (finished paying)
 					set("invoices", "active=0", "id=?", invoice_id);
-					handleRequest("set-cart", username, new HashMap<Integer, Integer>());
+					handleRequest2("set-cart", username, new HashMap<Integer, Integer>());
 				}
 				return new Object[] { invoice };
 			case "get-package":

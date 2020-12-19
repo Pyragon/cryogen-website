@@ -54,7 +54,7 @@ public class ReportsSection implements AccountSection {
 				String filter = request.queryParams("filters");
 				int page = Integer.parseInt(request.queryParams("page"));
 				boolean archived = Boolean.parseBoolean(request.queryParams("archive"));
-				ArrayList<Report> reports = new ArrayList<Report>();
+				ArrayList<Report> reports;
 				HashMap<String, String> filters = gson.fromJson(filter, HashMap.class);
 				if(filters.size() == 0) {
 					Object[] data = ReportsConnection.connection().handleRequest("get-reports", type, page, account.getUsername(), archived);

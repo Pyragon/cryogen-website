@@ -111,7 +111,7 @@ public class ReportsConnection extends DatabaseConnection {
 	}
 
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = (String) data[0];
 		switch (opcode) {
 		case "search-results":
@@ -191,7 +191,7 @@ public class ReportsConnection extends DatabaseConnection {
 					int reportType = getInt(set, "type");
 					int id = getInt(set, "id");
 					String comm = reportType == 0 ? "get-bug-report" : "get-player-report";
-					data = handleRequest(comm, id);
+					data = handleRequest2(comm, id);
 					if(data == null)
 						continue;
 					Report report = (Report) data[0];
@@ -243,18 +243,18 @@ public class ReportsConnection extends DatabaseConnection {
 					int reportType = getInt(set, "type");
 					int id = getInt(set, "id");
 					String comm = reportType == 0 ? "get-bug-report" : "get-player-report";
-					data = handleRequest(comm, id);
+					data = handleRequest2(comm, id);
 					if(data == null)
 						continue;
 					Report report = (Report) data[0];
 					reports.add(report);
 				}
 			} else if(typeName.equalsIgnoreCase("bugs")) {
-				data = handleRequest("get-bug-reports", archived, page, username);
+				data = handleRequest2("get-bug-reports", archived, page, username);
 				ArrayList<BugReport> brep = (ArrayList<BugReport>) data[0];
 				reports.addAll(brep);
 			} else {
-				data = handleRequest("get-player-reports", archived, page, username);
+				data = handleRequest2("get-player-reports", archived, page, username);
 				ArrayList<PlayerReport> prep = (ArrayList<PlayerReport>) data[0];
 				reports.addAll(prep);
 			}
@@ -263,7 +263,7 @@ public class ReportsConnection extends DatabaseConnection {
 			int id = (int) data[1];
 			String lastAction = (String) data[2];
 			int reportType = (int) data[3];
-			data = handleRequest("get-"+(reportType == 0 ? "bug" : "player")+"-report", id);
+			data = handleRequest2("get-"+(reportType == 0 ? "bug" : "player")+"-report", id);
 			if(data == null) return null;
 			set(reportType == 0 ? "bug_reports" : "player_reports", "last_action=?", "id=?", lastAction, id);
 			return new Object[] {};
@@ -319,7 +319,7 @@ public class ReportsConnection extends DatabaseConnection {
 			String table = (String) data[2];
 			username = (String) data[3];
 			try {
-				data = table.contains("bug") ? handleRequest("get-bug-report", id) : handleRequest("get-player-report", id);
+				data = table.contains("bug") ? handleRequest2("get-bug-report", id) : handleRequest2("get-player-report", id);
 				if(data == null) return null;
 				set(table, "active=0,last_action=?,archiver=?,archived=DEFAULT", "id=?", "Archived by $for-name="+username+"$end", username, id);
 			} catch(Exception e) {

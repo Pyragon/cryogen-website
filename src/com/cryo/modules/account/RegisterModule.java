@@ -76,7 +76,6 @@ public class RegisterModule extends WebModule {
 				e.printStackTrace();
 				return error(e.getMessage());
 			}
-			//Check recaptcha result
 			Object[] data = DisplayConnection.connection().handleRequest("name-exists", username, username);
 			if(data == null)
 				return error("Error retrieving display name details");

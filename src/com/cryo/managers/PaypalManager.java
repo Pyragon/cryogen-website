@@ -61,7 +61,7 @@ public class PaypalManager extends WebModule {
 		return context;
 	}
 	
-	public String sendRedeem(String username, com.cryo.modules.account.entities.Package p) throws IOException {
+	public String sendRedeem(String username, com.cryo.modules.account.entities.Package p) {
 		Properties prop = new Properties();
 		prop.put("username", username);
 		prop.put("package_id", p.getId());

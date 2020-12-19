@@ -82,14 +82,14 @@ public class PreviousConnection extends DatabaseConnection {
 	}
 
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = (String) data[0];
 		switch (opcode) {
 		case "add-new-ip":
 			String username = (String) data[1];
 			String ip = (String) data[2];
 			PreviousIP previous = new PreviousIP(username, ip, new Timestamp(new Date().getTime()));
-			data = handleRequest("get-ip-data", username);
+			data = handleRequest2("get-ip-data", username);
 			if (data == null) {
 				HashMap<String, PreviousIP> list = new HashMap<>();
 				list.put(ip, previous);
@@ -128,7 +128,7 @@ public class PreviousConnection extends DatabaseConnection {
 			String[] compare = (String[]) data[1];
 			username = (String) data[2];
 			data = GlobalConnection	.connection()
-									.handleRequest("get-salt", username);
+									.handleRequest2("get-salt", username);
 			if (data == null)
 				return null;
 			salt = (String) data[0];
@@ -152,7 +152,7 @@ public class PreviousConnection extends DatabaseConnection {
 
 	@SuppressWarnings("unchecked")
 	public static HashMap<String, PreviousIP> getIPData(String username) {
-		Object[] data = connection().handleRequest("get-ip-data", username);
+		Object[] data = connection().handleRequest2("get-ip-data", username);
 		if (data == null)
 			return null;
 		return (HashMap<String, PreviousIP>) data[0];

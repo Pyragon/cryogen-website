@@ -38,7 +38,7 @@ public abstract class DatabaseConnection {
 		}
 	}
 
-	public abstract Object[] handleRequest(Object... data);
+	public abstract Object[] handleRequest2(Object... data);
 
 	public void ping() {
 		try {

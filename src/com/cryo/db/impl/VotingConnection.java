@@ -55,7 +55,7 @@ public class VotingConnection extends DatabaseConnection {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = (String) data[0];
 		switch(opcode) {
 			case "remove-auth":

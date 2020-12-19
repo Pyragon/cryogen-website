@@ -75,7 +75,7 @@ public class PunishmentsConnection extends DatabaseConnection {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = (String) data[0];
 		switch (opcode) {
 		case "get-total-punish-results":
@@ -326,7 +326,7 @@ public class PunishmentsConnection extends DatabaseConnection {
 	}
 
 	public static Appeal getAppeal(int id) {
-		Object[] data = connection().handleRequest("get-appeal", id);
+		Object[] data = connection().handleRequest2("get-appeal", id);
 		if (data == null)
 			return null;
 		return (Appeal) data[0];

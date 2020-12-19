@@ -16,16 +16,6 @@ public class DisplayNames {
 		cachedLast = new TreeBidiMap<String, String>();
 	}
 
-	public static boolean nameInUse(String name) {
-		name = Utilities.formatNameForProtocol(name);
-		if (cachedDisplays.containsKey(name) || cachedDisplays.containsValue(name) || cachedLast.containsValue(name))
-			return true;
-		Object[] data = DisplayConnection.connection().handleRequest("name_in_use", name);
-		if (data == null)
-			return true;
-		return (boolean) data[0];
-	}
-
 	public static String getUsername(String displayName) {
 		if(displayName == null) return null;
 		String username = Utilities.formatNameForProtocol(displayName);

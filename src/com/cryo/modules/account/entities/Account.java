@@ -61,15 +61,14 @@ public class Account extends MySQLDao {
 	}
 	
 	public String getEmail() {
-		Object[] data = EmailConnection.connection().handleRequest("get-email", username);
-		if(data == null)
-			return "";
-		return (String) data[0];
+		Email email = Website.getConnection("cryogen_email").selectClass("linked", "username=?", Email.class, username);
+		if(email == null) return "";
+		return email.getEmail();
 	}
 
     public void setEmail(String email) {
         if(email.equals("")) {
-            EmailConnection.connection().delete("linked", "username=?", username);
+			Website.getConnection("cryogen_email").delete("linked", "username=?", username);
             return;
         }
         Email dao = EmailConnection.connection().selectClass("linked", "username=?", Email.class, username);

@@ -84,7 +84,7 @@ public class RecoveryConnection extends DatabaseConnection {
 	}
 
 	@Override
-	public Object[] handleRequest(Object... data) {
+	public Object[] handleRequest2(Object... data) {
 		String opcode = (String) data[0];
 		switch (opcode) {
 		case "search-results":
@@ -183,7 +183,7 @@ public class RecoveryConnection extends DatabaseConnection {
             case "set-forums-status":
 			id = (String) data[1];
 			status = (int) data[2];
-                data = handleRequest("has-" + (opcode.contains("email") ? "email" : "forums") + "-rec", id);
+                data = handleRequest2("has-" + (opcode.contains("email") ? "email" : "forums") + "-rec", id);
 			if (data == null)
 				return null;
 			set("instant", "status=?", "id=? AND method=?", status, id,

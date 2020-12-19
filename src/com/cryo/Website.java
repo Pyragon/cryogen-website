@@ -1,6 +1,7 @@
 package com.cryo;
 
 import com.cryo.cache.CachingManager;
+import com.cryo.entities.shop.ShoppingCart;
 import com.cryo.managers.CommentsManager;
 import com.cryo.managers.NotificationManager;
 import com.cryo.modules.CommentsModule;
@@ -76,6 +77,9 @@ public class Website {
 	private @Getter
 	SearchManager searchManager;
 
+	private @Getter
+	ConnectionManager nConnectionManager;
+
     @Getter
     private BBCodeManager BBCodeManager;
 
@@ -95,6 +99,7 @@ public class Website {
 			loadProperties();
 			FAVICON = new File(properties.getProperty("favico"));
 			connectionManager = new DBConnectionManager();
+			nConnectionManager = new ConnectionManager();
 			commentsManager = new CommentsManager();
 			paypalManager = new PaypalManager(this);
 			cachingManager = new CachingManager();
@@ -103,7 +108,7 @@ public class Website {
 			searchManager = new SearchManager();
             BBCodeManager = new BBCodeManager();
             BBCodeManager.load();
-			ShopConnection.load(this);
+			ShoppingCart.loadShopItems();
 			searchManager.load();
 			port(Integer.parseInt(properties.getProperty("port")));
 			PaypalManager.createAPIContext();
@@ -238,6 +243,10 @@ public class Website {
 			throw new RuntimeException(e);
 		}
 		System.out.println("Listening on port: "+properties.getProperty("port"));
+	}
+
+	public static DBConnection getConnection(String schema) {
+		return INSTANCE.getNConnectionManager().getConnection(schema);
 	}
 
 	public static Gson buildGson() {
