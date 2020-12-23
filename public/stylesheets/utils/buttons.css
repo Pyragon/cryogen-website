@@ -1,0 +1,16 @@
+.btn {
+    margin: 100px auto 30px auto;
+    display: block;
+    padding: 10px 50px;
+    background: #111;
+    border: 2px solid #222;
+    color: #777;
+    transition: border .3s, color .3s;
+}
+
+.btn:hover,
+.btn:active {
+    background: #181818;
+    border-color: #000;
+    color: #999;
+}

@@ -1,0 +1,14 @@
+script.
+    //Hack to prevent browsers overwriting styles due to autocomplete
+    setTimeout(() => {
+        $('.login-input').attr('readonly', false);
+    }, 500);
+
+p Username:
+input.username.login-input(type='text', placeholder='Enter username', readonly)
+p Password:
+input.password.login-input(type='password', placeholder='Enter password', readonly)
+.login-node-buttons
+    button.btn.btn-default#login-btn Login
+    button.btn.btn-default#forgot-btn Forgot Password
+    .clear

@@ -1,0 +1,128 @@
+h4 {
+    color: #000;
+}
+
+h4.title {
+    border-bottom: 1px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.widget,
+.mini-hs-header .content {
+    //background: rgb(35,35,35);
+    //background: -moz-linear-gradient(top,  rgba(35,35,35,1) 0%, rgba(19,19,19,1) 100%); /* FF3.6+ */
+    //background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(35,35,35,1)), color-stop(100%,rgba(19,19,19,1))); /* Chrome,Safari4+ */
+    //background: -webkit-linear-gradient(top,  rgba(35,35,35,1) 0%,rgba(19,19,19,1) 100%); /* Chrome10+,Safari5.1+ */
+    //background: -o-linear-gradient(top,  rgba(35,35,35,1) 0%,rgba(19,19,19,1) 100%); /* Opera 11.10+ */
+    //background: -ms-linear-gradient(top,  rgba(35,35,35,1) 0%,rgba(19,19,19,1) 100%); /* IE10+ */
+    //background: linear-gradient(to bottom,  rgba(35,35,35,1) 0%,rgba(19,19,19,1) 100%); /* W3C */
+    //filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#232323', endColorstr='#131313',GradientType=0 ); /* IE6-9 */
+    background: #1C1C1C;
+    border: 1px solid #111;
+    border-radius: 5px;
+    margin: 0 0 20px 5px;
+    -webkit-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 1);
+    -moz-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 1);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 1);
+}
+
+#mini-hs-input {
+    background: #111;
+    border: 1px solid #000;
+    font-size: 11px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#mini-hs-btn {
+    background: #111;
+    border: 1px solid #000;
+    margin: 0px;
+    border-left: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.chevron {
+    font-size: 15px;
+    color: #222;
+    text-align: center;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.mini-hs-header {
+    padding: 10px 20px 0 20px;
+    margin: 0;
+}
+
+.mini-hs-header .content {
+    padding: 10px 20px;
+}
+
+.widget>.header {
+    border-bottom: 1px solid #124d70;
+    padding: 8px 10px;
+}
+
+.widget>.header>h4 {
+    margin: 2px 0;
+    font-size: 13px;
+}
+
+.widget>.header>h5 {
+    font-size: 11px;
+    padding-left: 10px;
+    font-family: none;
+    margin: 0;
+    margin-top: 8px;
+}
+
+.mini-login>.content>p {
+    margin-left: 10px;
+    color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.login-input {
+    min-width: 90%;
+    min-height: 30px;
+    margin-left: 10px;
+    border-radius: 3px;
+    background: #111 !important;
+    border: 1px solid #000;
+    padding: 5px;
+}
+
+.login-node-buttons {
+    padding: 20px;
+}
+
+.login-node-buttons>button {
+    font-size: 10px;
+    text-align: center;
+    padding: 6px 0px;
+    margin: auto;
+    border: 1px solid #111;
+}
+
+#login-btn {
+    float: left;
+    width: 45%;
+}
+
+#forgot-btn {
+    float: right;
+    width: 45%;
+}
+
+.sidebar-btn {
+    margin: 10px auto !important;
+    width: 95%;
+    border: 3px solid #333;
+    border-radius: 40px;
+    font-size: 13px;
+}

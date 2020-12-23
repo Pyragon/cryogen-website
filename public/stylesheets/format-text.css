@@ -1,0 +1,27 @@
+.color-white {
+    color: #FFF !important;
+}
+
+.color-grey {
+    color: #999 !important;
+}
+
+.color-red {
+    color: #FF0000 !important;
+}
+
+.color-green {
+    color: #129a11 !important;
+}
+
+.color-yellow {
+    color: rgb(192, 205, 38) !important;
+}
+
+.t-center {
+    text-align: center;
+}
+
+p.small {
+    font-size: 11px;
+}

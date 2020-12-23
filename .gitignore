@@ -1,10 +1,8 @@
 .idea/
-*.iml
+.settings/
 target/
-data/props.json
+.classpath
 .factorypath
 .project
-.settings/*
-.classpath
-launch.json
-source/images/avatars/
+*.iml
+data/props.json

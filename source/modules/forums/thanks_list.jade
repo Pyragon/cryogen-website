@@ -1,9 +1,0 @@
-include ../utils/forum_name
-if post.getThanks().size() > 0
-    div.thanks-block
-        p.thanks-about Users who have thanked this post:
-        div.thanks
-            for account in post.getThanks()
-                span
-                    +showName(account, 15, 16)
-                span , 

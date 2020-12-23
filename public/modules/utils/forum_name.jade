@@ -1,0 +1,8 @@
+//TODO - Add 'noBlock' variable to have print with display: inline-block or w/e to have it all on same line
+mixin renderName(user, height=14, width=15)
+    span.user.link(data-id=user.getId())
+        if user.getImageBefore() != null && user.getImageBefore() != ''
+            img.forum-name(src=user.getImageBefore(), style='height: '+height+'px; width: '+width+'px; vertical-align: middle;')
+        span(style=user.getNameColour() == null ? '' : 'color: '+user.getNameColour()+';')= user.getDisplayName()
+        if user.getImageAfter() != null && user.getImageAfter() != ''
+            img.forum-name(src=user.getImageAfter(), style='height: '+height+'px; width: '+width+'px; vertical-align: middle;')

@@ -1,0 +1,16 @@
+script.
+    $(document).ready(() => {
+
+        $('.mini-hs-header').slideToggle(500);
+
+    });
+
+.mini-hs-header
+    .content
+        .input-group.input-group-sm
+            input.form-control#mini-hs-input(type='text', placeholder='Search Player')
+            span.input-group-btn
+                button.btn.btn-default#mini-hs-btn
+                    span.fa.fa-search
+    span.chevron.fa.fa-chevron-down
+include mini-global
