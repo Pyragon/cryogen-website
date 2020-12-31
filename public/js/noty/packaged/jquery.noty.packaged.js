@@ -118,6 +118,14 @@
             if(self.options.theme && self.options.theme.style)
                 self.options.theme.callback.onShow.apply(this);
 
+            if(self.options.callback.onClick) {
+                self.$bar.css('cursor', 'pointer').one('click', function(evt) {
+                    self.stopPropagation(evt);
+                    if(self.options.callback.onClick(evt))
+                        self.close();
+                });
+            }
+
             if($.inArray('click', self.options.closeWith) > -1)
                 self.$bar.css('cursor', 'pointer').one('click', function(evt) {
                     self.stopPropagation(evt);
@@ -519,6 +527,7 @@
         callback    : {
             onShow      : function() {
             },
+            onClick      : undefined,
             afterShow   : function() {
             },
             onClose     : function() {
