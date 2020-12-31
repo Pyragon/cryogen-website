@@ -1,0 +1,25 @@
+.widget>.header {
+    border-bottom: 1px solid #124d70;
+    padding: 8px 10px;
+}
+
+.widget>.header>h4 {
+    margin: 2px 0;
+    font-size: 13px;
+}
+
+.widget>.header>h5 {
+    font-size: 11px;
+    padding-left: 10px;
+    font-family: none;
+    margin: 0;
+    margin-top: 8px;
+}
+
+
+
+.widget .content .row img {
+    margin: 0 auto;
+    max-width: 50px;
+    min-height: 50px;
+}

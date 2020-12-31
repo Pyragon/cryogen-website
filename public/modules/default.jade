@@ -1,152 +1,160 @@
 include utils/stylesheet
 include utils/script
 
-doctype html
-html
-    head
-        title Cryogen Website
-        meta(name='description', content='Cryogen RSPS. Runescape cloned.')
-        meta(name='keywords', content='Cryogen, Runescape, RSPS')
-        meta(charset='utf-8')
-        meta(http-equiv='X-UA-Compatible', content='IE=edge')
-        meta(http-equiv='X-UA-Compatible', content='IE=9')
-        meta(name='viewport', content='width=device-width, initial-scale=1')
+if useDefault
+    doctype html
+    html
+        head
+            title Cryogen Website
+            meta(name='description', content='Cryogen RSPS. Runescape cloned.')
+            meta(name='keywords', content='Cryogen, Runescape, RSPS')
+            meta(charset='utf-8')
+            meta(http-equiv='X-UA-Compatible', content='IE=edge')
+            meta(http-equiv='X-UA-Compatible', content='IE=9')
+            meta(name='viewport', content='width=device-width, initial-scale=1')
 
-        +includeScript('ui/jquery/jquery')
-        +includeScript('/ui/jquery-ui.min')
-        +includeScript('jquery.nicescroll')
-        +includeScript('noty/packaged/jquery.noty.packaged.min')
-        +includeScript('noty/themes/cryogen')
-        script(src='/bootstrap/js/bootstrap.min.js')
-        script(src='/bootstrap/js/bootbox.min.js')
+            +includeScript('ui/jquery/jquery')
+            +includeScript('ui/jquery-ui.min')
+            +includeScript('jquery.nicescroll')
+            +includeScript('noty/packaged/jquery.noty.packaged')
+            +includeScript('noty/themes/cryogen')
+            +includeScript('utils/alerts')
+            +includeScript('utils/spa')
+            script(src='/bootstrap/js/bootstrap.min.js')
+            script(src='/bootstrap/js/bootbox.min.js')
 
-        link(rel='icon', href='/images/favicon.ico')
-        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
-        link(rel='stylesheet', href='http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css')
-        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
-        link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css', media='screen')
-        link(rel='stylesheet', href='/js/ui/jquery-ui.min.css')
-        +includeStylesheet('default')
-        +includeStylesheet('format-text')
-        block head
-    bod
-        input#shutdown(type='hidden', value=shutdown)
-        div#page-container
-            div.color-white.header-right#p-online Players Online: Loading...
-            div.color-white.header-right#shutdown-timer
-            nav(class='navbar navbar-default cryogen-nav', role='navigation')
-                div(class='navbar-header')
-                    button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar-collapse-1')
-                        span(class='sr-only') Toggle navigation
-                        for i in [1,2,3]
-                            span(class='icon-bar')
-                div(class='navbar-brand')
-                    img(class='img-responsive logo', src='/images/logo.png')
-                div#center-div
-                    div(class='collapse navbar-collapse', id='navbar-collapse-1')
-                        ul(class='nav navbar-nav nav-items')
-                            li
-                                a(href='/') Homepage
-                            li.dropdown
-                                a.link.dropdown-toggle(data-toggle='dropdown') Play
-                                    b.caret
-                                ul.dropdown-menu
+            link(rel='icon', href='/images/favicon.ico')
+            link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+            link(rel='stylesheet', href='http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css')
+            link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
+            link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css', media='screen')
+            link(rel='stylesheet', href='/js/ui/jquery-ui.min.css')
+            +includeStylesheet('default')
+            +includeStylesheet('format-text')
+            block head
+        body
+            input#shutdown(type='hidden', value=shutdown)
+            div#page-container
+                div.color-white.header-right#p-online Players Online: Loading...
+                div.color-white.header-right#shutdown-timer
+                nav(class='navbar navbar-default cryogen-nav', role='navigation')
+                    div(class='navbar-header')
+                        button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar-collapse-1')
+                            span(class='sr-only') Toggle navigation
+                            for i in [1,2,3]
+                                span(class='icon-bar')
+                    div(class='navbar-brand')
+                        img(class='img-responsive logo', src='/images/logo.png')
+                    div#center-div
+                        div(class='collapse navbar-collapse', id='navbar-collapse-1')
+                            ul(class='nav navbar-nav nav-items')
+                                li
+                                    a.link.spa-link(data-link='/') Homepage
+                                li.dropdown
+                                    a.link.dropdown-toggle(data-toggle='dropdown') Play
+                                        b.caret
+                                    ul.dropdown-menu
+                                        li
+                                            a(href='http://api.cryogen-rsps.com/live/download/latest') Download as JAR
+                                li#spacer(class='spacer')
+                                    a(href='/forums') Community
+                                li
+                                    a(href='/highscores') Highscores
+                                li
+                                    a(href='/account#vote') Vote
+                                li(class='dropdown')
+                                    a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
+                                        b(class='caret')
+                                    ul(class='dropdown-menu')
+                                        if loggedIn
+                                            //- TODO - Add SPA functionality instead of href
+                                            li
+                                                a(href='/account') Account
+                                            li
+                                                a.user(data-id=user.getId()) Profile
+                                            li
+                                                a(href='/forums/private/inbox') Inbox
+                                            li
+                                                a(href='/account/vote') Vote
+                                            li
+                                                a(href='/account/shop') Shop
+                                        else
+                                            li
+                                                a.signin(href='#') Sign In
+                                            li
+                                                a(href='/recover') Forgot my Password
+                                            li
+                                                a(href='/register') Register
+                                        li(class='divider')
+                                        if loggedIn
+                                            if user.getRights() > 0
+                                                li
+                                                    a(href='/staff') Staff
+                                            li
+                                                a(href='/logout') Sign Out
+                                if loggedIn
+                                    div.link#notification-center-icon(title=notifications.getUnreadNotificationsCount()+' unread notifications, '+notifications.getNotifications().size()+' total')
+                                        i.fa.fa-bell
+                                        //-var badgeStyle = notifications.hasUnreadNotifications() ? '' : 'display: none;';
+                                        div#notification-badge
+                                    div#notification-container(style='display: none;')
+                div#main-content
+                    block content
+                div(class='footer')
+                    div(class='container')
+                        div(class='row')
+                            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
+                                h3 Cryogen
+                                ul
                                     li
-                                        a(href='http://api.cryogen-rsps.com/live/download/latest') Download as JAR
-                            li#spacer(class='spacer')
-                                a(href='/forums') Community
-                            li
-                                a(href='/highscores') Highscores
-                            li
-                                a(href='/account#vote') Vote
-                            li(class='dropdown')
-                                a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
-                                    b(class='caret')
-                                ul(class='dropdown-menu')
+                                        a(href='http://api.cryogen-rsps.com/live/download/latest') Download JAR
+                                    li
+                                        a(href='http://github.com/Pyragon/cryogen-website') Open-Sourced
+                                    li
+                                        a(href='/api') API Documentation
+                            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
+                                h3 Community
+                                ul
+                                    li
+                                        a(href='/forums') Forums
+                                    li
+                                        a(href='/highscores') Highscores
+                                    li
+                                        a(href='/discord', target='_blank') Discord
+                                    li
+                                        a(href='/account/vote') Vote
+                            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
+                                h3 Account
+                                ul
                                     if loggedIn
-                                        //- TODO - Add SPA functionality instead of href
                                         li
                                             a(href='/account') Account
                                         li
                                             a(href='/forums/user/'+user.getId()) Profile
                                         li
                                             a(href='/forums/private/inbox') Inbox
-                                        li
-                                            a(href='/account/vote') Vote
-                                        li
-                                            a(href='/account/shop') Shop
-                                    else
-                                        li
-                                            a.signin(href='#') Sign In
-                                        li
-                                            a(href='/recover') Forgot my Password
-                                        li
-                                            a(href='/register') Register
-                                    li(class='divider')
-                                    if loggedIn
                                         if user.getRights() > 0
                                             li
                                                 a(href='/staff') Staff
                                         li
                                             a(href='/logout') Sign Out
-                            if loggedIn
-                                div.link#notification-center-icon(title=notifications.getUnreadNotificationsCount()+' unread notifications, '+notifications.getNotifications().size()+' total')
-                                    i.fa.fa-bell
-                                    //-var badgeStyle = notifications.hasUnreadNotifications() ? '' : 'display: none;';
-                                    div#notification-badge
-                                div#notification-container(style='display: none;')
-            div#main-content
-                block content
-            div(class='footer')
-                div(class='container')
-                    div(class='row')
-                        div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
-                            h3 Cryogen
-                            ul
-                                li
-                                    a(href='http://api.cryogen-rsps.com/live/download/latest') Download JAR
-                                li
-                                    a(href='http://github.com/Pyragon/cryogen-website') Open-Sourced
-                                li
-                                    a(href='/api') API Documentation
-                        div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
-                            h3 Community
-                            ul
-                                li
-                                    a(href='/forums') Forums
-                                li
-                                    a(href='/highscores') Highscores
-                                li
-                                    a(href='/account/vote') Vote
-                        div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
-                            h3 Account
-                            ul
-                                if loggedIn
-                                    li
-                                        a(href='/account') Account
-                                    li
-                                        a(href='/forums/user/'+user.getId()) Profile
-                                    li
-                                        a(href='/forums/private/inbox') Inbox
-                                    if user.getRights() > 0
+                                    else
                                         li
-                                            a(href='/staff') Staff
-                                    li
-                                        a(href='/logout') Sign Out
-                                else
-                                    li
-                                        a(href='/support') Support
-                                    li
-                                        a.signin(href='#') Sign In
-                                    li
-                                        a(href="/register") Register
-                                    li
-                                        a(href='/recover') Forgot my Password
-                        if loggedIn && user.getRights() > 1
-                            div.col-md-3
-                                h3 Admin
-                                ul 
-                                    li
-                                        a#clear-cache(href='#') Clear Cache
-                                    li
-                                        a(href='/forums/admin') Forums Admin Panel
+                                            a(href='/support') Support
+                                        li
+                                            a.signin(href='#') Sign In
+                                        li
+                                            a(href="/register") Register
+                                        li
+                                            a(href='/recover') Forgot my Password
+                            if loggedIn && user.getRights() > 1
+                                div.col-md-3
+                                    h3 Admin
+                                    ul 
+                                        li
+                                            a#clear-cache(href='#') Clear Cache
+                                        li
+                                            a(href='/forums/admin') Forums Admin Panel
+else
+    block head
+    block content

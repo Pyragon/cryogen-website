@@ -1,7 +1,10 @@
 script.
-    //Hack to prevent browsers overwriting styles due to autocomplete
+    //Hack to prevent browsers overwriting styles due to autocomplete.
+    //Unfortunately prevents LastPass (and probably others) filling in username field for some reason. Still works for password field
     setTimeout(() => {
-        $('.login-input').attr('readonly', false);
+        $('.login-input').each(function() {
+            $(this).attr('readonly', false);
+        });
     }, 500);
 
 p Username:

@@ -1,10 +1,7 @@
 package com.cryo.utils;
 
 import com.cryo.Website;
-import com.cryo.entities.Endpoint;
-import com.cryo.entities.EndpointSubscriber;
-import com.cryo.entities.WebStart;
-import com.cryo.entities.WebStartSubscriber;
+import com.cryo.entities.*;
 import com.google.common.reflect.ClassPath;
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
@@ -22,12 +19,14 @@ import java.util.*;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+@EndpointSubscriber
 public class Utilities {
 
     public static String renderPage(String module, HashMap<String, Object> model, Request request, Response response) {
         if(model == null)
             model = new HashMap<>();
         model.put("format", new FormatUtils());
+        model.put("useDefault", request.requestMethod().equals("GET"));
         module = "./public/modules/"+module+".jade";
         try {
             return Jade4J.render(module, model);
@@ -85,6 +84,12 @@ public class Utilities {
         };
     }
 
+    @Endpoint(method = "GET", endpoint = "/discord")
+    public static String discordRedirect(Request request, Response response) {
+        response.redirect("https://discord.gg/SxHFJdhq5N");
+        return "";
+    }
+
     public static String render500(Request request, Response response) {
         return "";
     }
@@ -93,6 +98,7 @@ public class Utilities {
         response.status(404);
         HashMap<String, Object> model = new HashMap<>();
         model.put("random", getRandomImageLink());
+        model.put("useDefault", true);
         try {
             return Jade4J.render("./public/modules/utils/404.jade", model);
         } catch (JadeCompilerException | IOException e) {
@@ -103,8 +109,16 @@ public class Utilities {
 
     public static String getRandomImageLink() {
         File[] files = new File("./public/images/404/").listFiles();
+        assert files != null : "Unable to find 404 images folder.";
         File random = files[new Random().nextInt(files.length)];
         return String.format("%simages/404/%s", Website.getProperties().getProperty("path"), random.getName());
+    }
+
+    public static String success(String html) {
+        Properties properties = new Properties();
+        properties.put("success", true);
+        properties.put("html", html);
+        return Website.getGson().toJson(properties);
     }
 
     public static String error(String error) {
@@ -124,7 +138,7 @@ public class Utilities {
                 if(!clazz.isAnnotationPresent(EndpointSubscriber.class)) continue;
                 for(Method method : clazz.getMethods()) {
                     int count = method.getParameterCount();
-                    if((count != 2 && count != 3) || !method.isAnnotationPresent(Endpoint.class)) continue;
+                    if((count != 2 && count != 3) || (!method.isAnnotationPresent(Endpoint.class) && !method.isAnnotationPresent(SPAEndpoint.class))) continue;
                     if(!Modifier.isStatic(method.getModifiers())) {
                         Logger.log("EndpointInitializer", "Expected method to be static in order for endpoint to work! "+method.getName());
                         throw new RuntimeException();
@@ -132,6 +146,29 @@ public class Utilities {
                     if(method.getReturnType() != String.class) {
                         Logger.log("EndpointInitializer", "Expected endpoint to return a String! "+method.getName());
                         throw new RuntimeException();
+                    }
+                    if (method.isAnnotationPresent(SPAEndpoint.class)) {
+                        SPAEndpoint endpoint = method.getAnnotation(SPAEndpoint.class);
+                        assert !endpoint.value().equals("") : "Invalid endpoint: "+method.getName()+" in "+method.getDeclaringClass().getSimpleName();
+                        get++;
+                        post++;
+                        get(endpoint.value(), (req, res) -> {
+                            Object[] parameters = new Object[count];
+                            parameters[0] = count == 3 ? endpoint.value() : req;
+                            parameters[1] = count == 3 ? req : res;
+                            if(count == 3)
+                                parameters[2] = res;
+                            return method.invoke(null, parameters);
+                        });
+                        post(endpoint.value(), (req, res) -> {
+                            Object[] parameters = new Object[count];
+                            parameters[0] = count == 3 ? endpoint.value() : req;
+                            parameters[1] = count == 3 ? req : res;
+                            if(count == 3)
+                                parameters[2] = res;
+                            return method.invoke(null, parameters);
+                        });
+                        continue;
                     }
                     Endpoint endpoint = method.getAnnotation(Endpoint.class);
                     if(!endpoint.values()[0].equals("")) {

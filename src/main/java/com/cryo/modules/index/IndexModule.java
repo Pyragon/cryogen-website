@@ -2,6 +2,8 @@ package com.cryo.modules.index;
 
 import com.cryo.entities.Endpoint;
 import com.cryo.entities.EndpointSubscriber;
+import com.cryo.entities.SPAEndpoint;
+import com.cryo.entities.accounts.HSData;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.Thread;
@@ -19,8 +21,8 @@ import java.util.stream.Collectors;
 @EndpointSubscriber
 public class IndexModule {
 
-    @Endpoint(method = "GET", endpoint = "/")
-    public static String load(String endpoint, Request request, Response response) {
+    @SPAEndpoint("/")
+    public static String load(Request request, Response response) {
         HashMap<String, Object> model = new HashMap<>();
 
         List<Post> posts = getConnection("cryogen_forum")
@@ -28,6 +30,14 @@ public class IndexModule {
                 .stream()
                 .map(t -> t.getFirstPost())
                 .collect(Collectors.toList());
+
+        //highscores users, this seriously needs to be fixed before release
+        //most servers just order by level, then xp
+        //this way, once multiple people have the same total level and xp, it'll order by id
+        //runescape's highscores order by first person to reach that xp, regardless of id
+        List<HSData> hsdata = getConnection("cryogen_global").selectList("highscores", null, "ORDER BY total_level, total_xp, total_xp_stamp DESC LIMIT 10", HSData.class, null);
+        model.put("hsdata", hsdata);
+
         model.put("newsPosts", posts);
         model.put("redirect", "/");
         String html;
@@ -36,7 +46,9 @@ public class IndexModule {
         } catch(Exception e) {
             return render500(request, response);
         }
-        return html;
+        if(request.requestMethod().equals("GET"))
+            return html;
+        return success(html);
     }
 
 }

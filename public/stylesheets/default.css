@@ -270,3 +270,7 @@ div#main-content {
 .clear {
     clear: both;
 }
+
+.link {
+    cursor: pointer;
+}

@@ -1,6 +1,14 @@
--var name = hsdata == null ? 'Mini Highscores' : 'Viewing Player: '+hsdata.getName()
-h4.color-white.mini-title= name
-  a(href='/highscores')
-    img.img-responsive.pull-right(src='images/skills/overall.png')
-  a.mini-search(href='#', title='Search for a Player')
-    span.fa.fa-search.pull-right(style='margin-right: 10px;')
+if personal == null
+  h4.color-white.mini-title Mini Highscores
+    a.link.spa-link(data-link='/highscores')
+      img.img-responsive.pull-right(src='images/skills/overall.png')
+    a.mini-search(href='#', title='Search for a Player')
+      span.fa.fa-search.pull-right(style='margin-right: 10px;')
+else
+  h4.color-white.mini-title
+    span
+      +renderName(personal.getUser())
+    a.link.spa-link(data-link='/highscores')
+      img.img-responsive.pull-right(src='images/skills/overall.png')
+    a.mini-search(href='#', title='Search for a Player')
+      span.fa.fa-search.pull-right(style='margin-right: 10px;')

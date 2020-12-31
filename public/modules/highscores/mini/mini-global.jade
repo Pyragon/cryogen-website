@@ -1,0 +1,18 @@
+div.header
+    include mini-title
+div.content
+    table.table.mini-hs-table
+        thead
+            tr
+                th Rank
+                th Name
+                th Total Level
+                th Total XP
+        tbody
+            for data in hsdata
+                tr
+                    td.b-right= data.getOverallRank()
+                    td.b-right.user.link(data-id=data.getUser().getId())
+                        +renderName(data.getUser())
+                    td.b-right= data.getTotalLevel()
+                    td.b-right= data.getTotalXp()
