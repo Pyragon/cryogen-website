@@ -2,14 +2,13 @@ package com.cryo.entities.accounts;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.modules.accounts.AccountUtils;
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-import static com.cryo.Website.getConnection;
 
 @RequiredArgsConstructor
 @Data
@@ -24,7 +23,7 @@ public class HSData extends MySQLDao {
     private final Timestamp[] stamps;
 
     public int getOverallRank() {
-        return 1;
+        return AccountUtils.getOverallRanks().get(username);
     }
 
     public Account getUser() {
@@ -40,7 +39,7 @@ public class HSData extends MySQLDao {
             double[] xp = new double[25];
             Timestamp[] stamps = new Timestamp[25];
             for(int i = 0; i < 25; i++)
-                xp[i] = set.getInt("skill_"+id);
+                xp[i] = set.getDouble("skill_" + i);
             for(int i = 0; i < 25; i++)
                 stamps[i] = set.getTimestamp("skill_"+i+"_stamp");
             return new HSData(id, username, totalLevel, totalXp, xp, stamps);

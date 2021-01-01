@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.github.Pyragon</groupId>
             <artifactId>CryoConnection</artifactId>
-            <version>f4edd78</version>
+            <version>c067bad</version>
         </dependency>
         <dependency>
             <groupId>de.neuland-bfi</groupId>

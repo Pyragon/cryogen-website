@@ -11,8 +11,9 @@ div.content
         tbody
             for data in hsdata
                 tr
-                    td.b-right= data.getOverallRank()
-                    td.b-right.user.link(data-id=data.getUser().getId())
+                    td.b-right= format.formatNumber(data.getOverallRank())
+                    //- Should we link to user's profile or main highscores page?
+                    td.b-right.spa-link.link(data-link='/user/'+data.getUser().getId())
                         +renderName(data.getUser())
-                    td.b-right= data.getTotalLevel()
-                    td.b-right= data.getTotalXp()
+                    td.b-right= format.formatNumber(data.getTotalLevel())
+                    td.b-right= format.formatNumber(data.getTotalXp())

@@ -2,6 +2,8 @@ package com.cryo.utils;
 
 import com.cryo.Website;
 import com.cryo.entities.*;
+import com.cryo.entities.accounts.Account;
+import com.cryo.modules.accounts.AccountUtils;
 import com.google.common.reflect.ClassPath;
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
@@ -14,12 +16,12 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.*;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-@EndpointSubscriber
 public class Utilities {
 
     public static String renderPage(String module, HashMap<String, Object> model, Request request, Response response) {
@@ -27,6 +29,10 @@ public class Utilities {
             model = new HashMap<>();
         model.put("format", new FormatUtils());
         model.put("useDefault", request.requestMethod().equals("GET"));
+        Account account = AccountUtils.getAccount(request);
+        model.put("loggedIn", account != null);
+        if(account != null)
+            model.put("user", account);
         module = "./public/modules/"+module+".jade";
         try {
             return Jade4J.render(module, model);
@@ -84,10 +90,27 @@ public class Utilities {
         };
     }
 
-    @Endpoint(method = "GET", endpoint = "/discord")
-    public static String discordRedirect(Request request, Response response) {
-        response.redirect("https://discord.gg/SxHFJdhq5N");
-        return "";
+    public static String redirect(String redirect, Request request, Response response) {
+        return redirect(redirect, 5, request, response);
+    }
+
+    public static String redirect(String redirect, int time, Request request, Response response) {
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("redirect", redirect);
+        model.put("time", time);
+        model.put("useDefault", true);
+        Properties prop = new Properties();
+        prop.put("success", true);
+        try {
+            String html = Jade4J.render("./public/modules/utils/redirect.jade", model);
+            if(request.requestMethod().equals("GET"))
+                return html;
+            prop.put("redirect", html);
+            return Website.getGson().toJson(prop);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return error("Error redirecting! Please refresh your page!");
     }
 
     public static String render500(Request request, Response response) {
@@ -240,7 +263,7 @@ public class Utilities {
                 for(Method method : clazz.getMethods()) {
                     if(method.getParameterCount() != 0 || !method.isAnnotationPresent(WebStart.class)) continue;
                     if(!Modifier.isStatic(method.getModifiers())) {
-                        Logger.log("WebStartInitializer", "Expected startup method to be static! "+method.getName());
+                        Logger.log("WebStartInitializer", "Expected startup method to be static! "+method.getName()+" in "+clazz.getSimpleName());
                         throw new RuntimeException();
                     }
                     if(method.getReturnType() != void.class) {
@@ -256,6 +279,59 @@ public class Utilities {
         }
         long end = System.currentTimeMillis();
         Logger.log("WebStartInitializer", "Executed "+startup+" startup methods in "+(end-start)+"ms.");
+    }
+
+    @SuppressWarnings({ "rawtypes" })
+    public static Class[] getClasses(String packageName) throws ClassNotFoundException, IOException {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        assert classLoader != null;
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> resources = classLoader.getResources(path);
+        List<File> dirs = new ArrayList<File>();
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            dirs.add(new File(resource.getFile().replaceAll("%20", " ")));
+        }
+        ArrayList<Class> classes = new ArrayList<Class>();
+        for (File directory : dirs) {
+            classes.addAll(findClasses(directory, packageName));
+        }
+        return classes.toArray(new Class[classes.size()]);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static List<Class> findClasses(File directory, String packageName) {
+        List<Class> classes = new ArrayList<Class>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                try {
+                    classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+                } catch (Throwable e) {
+
+                }
+            }
+        }
+        return classes;
+    }
+
+    public static int getLevelForXp(int skill, double exp) {
+        int points = 0;
+        int output = 0;
+        for (int lvl = 1; lvl <= (skill == 24 ? 120 : 99); lvl++) {
+            points += Math.floor(lvl + 300.0 * Math.pow(2.0, lvl / 7.0));
+            output = (int) Math.floor(points / 4);
+            if ((output - 1) >= exp) {
+                return lvl;
+            }
+        }
+        return skill == 24 ? 120 : 99;
     }
 
 }

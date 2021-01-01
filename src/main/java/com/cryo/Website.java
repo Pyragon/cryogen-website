@@ -2,6 +2,7 @@ package com.cryo;
 
 import com.cryo.entities.Endpoint;
 import com.cryo.entities.EndpointSubscriber;
+import com.cryo.managers.TaskManager;
 import com.cryo.utils.CorsFilter;
 import com.cryo.utils.Logger;
 import com.cryo.utils.Utilities;
@@ -20,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.Timer;
 
 import static spark.Spark.*;
 
@@ -38,6 +40,8 @@ public class Website {
     @Getter
     private ConnectionManager connectionManager;
 
+    private Timer fastExecutor;
+
     public void load() {
         buildGson();
         loadProperties();
@@ -49,9 +53,11 @@ public class Website {
         CorsFilter.apply();
 
         connectionManager = new ConnectionManager();
+        fastExecutor = new Timer();
 
         Utilities.initializeEndpoints();
 
+        redirect.get("/discord", "https://discord.gg/SxHFJdhq5N");
         get("*", Utilities::render404);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Logger.log(Website.class, "Shutdown hook caught. Website shutting down!");
@@ -59,6 +65,7 @@ public class Website {
         }));
 
         Utilities.sendStartupHooks();
+        fastExecutor.schedule(new TaskManager(), 1000, 1000);
         Logger.log(Website.class, "Website is now listening on port: "+properties.getProperty("port"));
     }
 

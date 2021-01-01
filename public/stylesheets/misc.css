@@ -25,3 +25,7 @@
 p.small {
     font-size: 11px;
 }
+
+.b-right {
+    border-right: 1px solid #111;
+}

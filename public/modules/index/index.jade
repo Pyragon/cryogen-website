@@ -17,7 +17,8 @@ block content
                     .header
                         if loggedIn
                             h4.color-white#login-welcome Welcome, 
-                                span.user.link(data-id=user.getId())= format.formatUser(user.getUsername())+'!'
+                                span.user.link(data-id=user.getId())
+                                    +renderName(user)
                         else
                             h4.color-white#login-welcome Account Login
                     .content

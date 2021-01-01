@@ -97,6 +97,11 @@ h4.title {
     padding: 5px;
 }
 
+#remember-me {
+    margin: 10px 15px 0px;
+    text-align: center;
+}
+
 .login-node-buttons {
     padding: 20px;
 }
@@ -125,4 +130,23 @@ h4.title {
     border: 3px solid #333;
     border-radius: 40px;
     font-size: 13px;
+}
+
+.account-node-btns button {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 150px;
+    height: 25px;
+    padding: 0px;
+    border-radius: 5px
+}
+
+.account-node-btns .left {
+    float: left;
+    margin-left: 10px;
+}
+
+.account-node-btns .right {
+    float: right;
+    margin-right: 10px;
 }

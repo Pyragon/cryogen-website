@@ -7,10 +7,36 @@ script.
         });
     }, 500);
 
+    $(document).ready(() => {
+
+        $('#login-btn').click(() => {
+
+            let username = $('.username').val();
+            let password = $('.password').val();
+            let remember = $('#remember-me>input').val();
+            //TODO - https with SPA?
+
+            post('/login', { username, password, remember });
+
+        });
+
+        $('#forgot-btn').click(() => {
+
+            let username = $('.username').val();
+            post('/forgot', name);
+
+        });
+
+    });
+
 p Username:
 input.username.login-input(type='text', placeholder='Enter username', readonly)
 p Password:
 input.password.login-input(type='password', placeholder='Enter password', readonly)
+.clear
+div#remember-me
+    input(type='checkbox')
+    span  Keep me logged in
 .login-node-buttons
     button.btn.btn-default#login-btn Login
     button.btn.btn-default#forgot-btn Forgot Password

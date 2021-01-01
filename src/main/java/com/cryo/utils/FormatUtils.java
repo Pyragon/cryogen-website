@@ -4,6 +4,7 @@ import com.cryo.entities.accounts.Account;
 import com.cryo.modules.accounts.AccountUtils;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +53,14 @@ public class FormatUtils {
 		Date d = c.getTime();
 		SimpleDateFormat f = new SimpleDateFormat(format);
 		return f.format(d);
+	}
+
+	public String formatNumber(double num) {
+		return formatNumber(num, "###,###,###");
+	}
+
+	public String formatNumber(double num, String format) {
+		return new DecimalFormat(format).format(num);
 	}
 	
 }

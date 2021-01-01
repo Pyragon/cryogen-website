@@ -35,11 +35,10 @@ public class IndexModule {
         //most servers just order by level, then xp
         //this way, once multiple people have the same total level and xp, it'll order by id
         //runescape's highscores order by first person to reach that xp, regardless of id
-        List<HSData> hsdata = getConnection("cryogen_global").selectList("highscores", null, "ORDER BY total_level, total_xp, total_xp_stamp DESC LIMIT 10", HSData.class, null);
+        List<HSData> hsdata = getConnection("cryogen_global").selectList("highscores", null, "ORDER BY total_level DESC, total_xp DESC, total_xp_stamp DESC LIMIT 10", HSData.class, null);
         model.put("hsdata", hsdata);
 
         model.put("newsPosts", posts);
-        model.put("redirect", "/");
         String html;
         try {
             html = renderPage("index/index", model, request, response);
