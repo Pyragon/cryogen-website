@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 
 import javax.management.RuntimeErrorException;
 import java.io.BufferedReader;
@@ -38,11 +40,15 @@ public class Website {
     private static Gson gson;
 
     @Getter
+    private static JDA JDA;
+
+    @Getter
     private ConnectionManager connectionManager;
 
     private Timer fastExecutor;
 
     public void load() {
+        long start = System.currentTimeMillis();
         buildGson();
         loadProperties();
         port(Integer.parseInt(properties.getProperty("port", "8085")));
@@ -54,6 +60,7 @@ public class Website {
 
         connectionManager = new ConnectionManager();
         fastExecutor = new Timer();
+        buildJDA();
 
         Utilities.initializeEndpoints();
 
@@ -66,7 +73,7 @@ public class Website {
 
         Utilities.sendStartupHooks();
         fastExecutor.schedule(new TaskManager(), 1000, 1000);
-        Logger.log(Website.class, "Website is now listening on port: "+properties.getProperty("port"));
+        Logger.log(Website.class, "Website started in "+(System.currentTimeMillis()-start)+"ms and is now listening on port: "+properties.getProperty("port"));
     }
 
     public static DBConnection getConnection(String schema) {
@@ -81,6 +88,17 @@ public class Website {
                 .setPrettyPrinting()
                 .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
                 .create();
+    }
+
+    public static void buildJDA() {
+        try {
+            JDA = JDABuilder
+                    .createDefault(properties.getProperty("discord_token"))
+                    .build();
+            JDA.awaitReady();
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void loadProperties() {

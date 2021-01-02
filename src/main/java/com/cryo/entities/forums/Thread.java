@@ -5,7 +5,7 @@ import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.AccountStatus;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

@@ -7,6 +7,8 @@ script.
         });
     }, 500);
 
+    let redirect = '!{redirect}';
+
     $(document).ready(() => {
 
         $('#login-btn').click(() => {
@@ -16,23 +18,23 @@ script.
             let remember = $('#remember-me>input').val();
             //TODO - https with SPA?
 
-            post('/login', { username, password, remember });
+            post('/login', { username, password, remember, redirect });
 
         });
 
         $('#forgot-btn').click(() => {
 
             let username = $('.username').val();
-            post('/forgot', name);
+            post('/forgot', { username });
 
         });
 
     });
 
 p Username:
-input.username.login-input(type='text', placeholder='Enter username', readonly)
+input.username.login-input.input(type='text', placeholder='Enter username', readonly)
 p Password:
-input.password.login-input(type='password', placeholder='Enter password', readonly)
+input.password.login-input.input(type='password', placeholder='Enter password', readonly)
 .clear
 div#remember-me
     input(type='checkbox')

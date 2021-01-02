@@ -1,11 +1,11 @@
-package com.cryo.modules.accounts;
+package com.cryo.modules.account;
 
 import com.cryo.entities.Endpoint;
 import com.cryo.entities.EndpointSubscriber;
 import com.cryo.entities.SPAEndpoint;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.Session;
-import com.cryo.modules.index.IndexModule;
+import com.cryo.modules.index.Index;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.SessionIDGenerator;
 import com.cryo.utils.Utilities;
@@ -13,20 +13,26 @@ import spark.Request;
 import spark.Response;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 
 import static com.cryo.Website.getConnection;
 import static com.cryo.utils.Utilities.error;
 import static com.cryo.utils.Utilities.renderPage;
 
 @EndpointSubscriber
-public class LoginModule {
+public class Login {
 
     @Endpoint(method = "GET", endpoint = "/login")
-    public static String loadLoginPage(Request request, Response response) {
+    public static String renderLoginPage(Request request, Response response) {
+        return renderLoginPage("/", request, response);
+    }
+    public static String renderLoginPage(String redirect, Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(account != null)
-            return IndexModule.load(request, response);
-        return renderPage("account/login", null, request, response);
+            return Index.renderIndexPage(request, response);
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("redirect", redirect);
+        return renderPage("account/login", model, request, response);
     }
 
     @Endpoint(method = "POST", endpoint = "/login")
@@ -49,14 +55,17 @@ public class LoginModule {
         Session session = new Session(-1, username, sessionId, new Timestamp(expiry));
         getConnection("cryogen_accounts").insert("sessions", session.data());
         request.session().attribute("cryo_sess", sessionId);
+        if(remember)
+            response.cookie("cryo_sess", sessionId);
         return Utilities.redirect(redirect, request, response);
     }
 
     @SPAEndpoint("/logout")
     public static String logout(Request request, Response response) {
         if(AccountUtils.getAccount(request) == null)
-            return IndexModule.load(request, response);
+            return Index.renderIndexPage(request, response);
         request.session().removeAttribute("cryo_sess");
+        response.removeCookie("cryo_sess");
         String redirect = request.queryParamOrDefault("redirect", "/");
         return Utilities.redirect(redirect, request, response);
     }

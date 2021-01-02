@@ -5,6 +5,6 @@ import spark.Request;
 import spark.Response;
 
 @EndpointSubscriber
-public class HighscoresModule {
+public class Highscores {
 
 }

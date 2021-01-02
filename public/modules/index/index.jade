@@ -1,9 +1,20 @@
 extend ../default
+include ../utils/name
+
 
 block head
     +includeStylesheet('index')
+    +includeStylesheet('utils/login')
     +includeStylesheet('utils/buttons')
+    +includeStylesheet('/utils/input')
     +includeStylesheet('utils/news-posts')
+    script.
+        $(document).ready(() => {
+            $('#register-btn').click(function() {
+                let username = $('.username').val();
+                post('/register', { username });
+            });
+        });
 
 block content
     .container

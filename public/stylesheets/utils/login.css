@@ -1,0 +1,40 @@
+.mini-login>.content>p {
+    margin-left: 10px;
+    color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.login-input {
+    min-width: 90%;
+    min-height: 30px;
+    margin-left: 10px;
+}
+
+#remember-me {
+    margin: 10px 15px 0px;
+    text-align: center;
+}
+
+.login-node-buttons {
+    padding: 20px;
+}
+
+.login-node-buttons>button {
+    font-size: 10px;
+    text-align: center;
+    padding: 6px 0px;
+    margin: auto;
+    border: 1px solid #111;
+}
+
+#login-btn {
+    float: left;
+    width: 45%;
+}
+
+#forgot-btn {
+    float: right;
+    width: 45%;
+}

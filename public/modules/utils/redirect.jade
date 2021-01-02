@@ -7,7 +7,6 @@ block head
         setTimeout(() => {
             window.location.href = link;
         }, time * 1000);
-    +includeStylesheet('index')
 
 block content
     .container
@@ -16,9 +15,9 @@ block content
                 .widget.redirect
                     .header(style='border-bottom: none;')
                         if title
-                            h4(style='color: '+(title_colour ? title_colour : 'white'))= title
+                            h4(style='color: '+(titleColour ? titleColour : 'white'))= title
                         else
                             h4.color-white Redirecting
-                        if extra_info
-                            h5.color-grey= extra_info
+                        if extraInfo
+                            h5.color-grey= extraInfo
                         h5.color-grey You are currently being redirected. Click #[a(href=redirect) here] if you do not wish to wait.

@@ -33,21 +33,20 @@ if useDefault
             +includeStylesheet('misc')
             block head
         body
-            input#shutdown(type='hidden', value=shutdown)
+            //- TODO - block in top right displaying info
+            //- Uptime, next restart, players online, forum viewers
             div#page-container
-                div.color-white.header-right#p-online Players Online: Loading...
-                div.color-white.header-right#shutdown-timer
-                nav(class='navbar navbar-default cryogen-nav', role='navigation')
-                    div(class='navbar-header')
-                        button(type='button', class='navbar-toggle collapsed', data-toggle='collapse', data-target='#navbar-collapse-1')
-                            span(class='sr-only') Toggle navigation
+                nav.navbar.navbar-default.cryogen-nav(role='navigation')
+                    div.navbar-header
+                        button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar-collapse-1')
+                            span.sr-only Toggle navigation
                             for i in [1,2,3]
-                                span(class='icon-bar')
-                    div(class='navbar-brand')
-                        img(class='img-responsive logo', src='/images/logo.png')
+                                span.icon-bar
+                    div.navbar-brand
+                        img.img-responsive.logo(src='/images/logo.png')
                     div#center-div
-                        div(class='collapse navbar-collapse', id='navbar-collapse-1')
-                            ul(class='nav navbar-nav nav-items')
+                        div.collapse.navbar-collapse#navbar-collapse-1
+                            ul.nav.navbar-nav.nav-items(style='margin-left: 22px;')
                                 li
                                     a.link.spa-link(href='/', data-link='/') Homepage
                                 li.dropdown
@@ -61,30 +60,28 @@ if useDefault
                                 li
                                     a(href='/highscores') Highscores
                                 li
-                                    a(href='/api') API
-                                li(class='dropdown')
-                                    a(href='#', class='dropdown-toggle', data-toggle='dropdown') Account
-                                        b(class='caret')
-                                    ul(class='dropdown-menu')
+                                    a.spa-link(href='/account/vote') Vote
+                                li.dropdown
+                                    a.dropdown-toggle(href='/account', data-toggle='dropdown') Account
+                                        b.caret
+                                    ul.dropdown-menu
                                         if loggedIn
                                             //- TODO - Add SPA functionality instead of href
                                             li
-                                                a(href='/account') Account
+                                                a.spa-link(href='/account') Overview
                                             li
                                                 a.user(data-id=user.getId()) Profile
                                             li
                                                 a(href='/forums/private/inbox') Inbox
                                             li
-                                                a(href='/account/vote') Vote
-                                            li
-                                                a(href='/account/shop') Shop
+                                                a.spa-link(href='/account/shop') Shop
                                         else
                                             li
                                                 a.signin(href='#') Sign In
                                             li
-                                                a(href='/recover') Forgot my Password
+                                                a.spa-link(href='/forgot') Forgot my Password
                                             li
-                                                a(href='/register') Register
+                                                a.spa-link(href='/register') Register
                                         li(class='divider')
                                         if loggedIn
                                             if user.getRights() > 0
@@ -92,6 +89,11 @@ if useDefault
                                                     a(href='/staff') Staff
                                             li
                                                 a.spa-link(href='/logout') Sign Out
+                                li.dropdown
+                                    a.dropdown-toggle(href='/notifications', data-toggle='dropdown')
+                                        span
+                                            i.fa.fa-bell
+                                    .dropdown-menu#notification-menu
                 div#main-content
                     block content
                 div(class='footer')
@@ -122,7 +124,7 @@ if useDefault
                                 ul
                                     if loggedIn
                                         li
-                                            a(href='/account') Account
+                                            a.spa-link(href='/account') Account
                                         li
                                             a(href='/forums/user/'+user.getId()) Profile
                                         li
@@ -138,9 +140,9 @@ if useDefault
                                         li
                                             a.signin(href='#') Sign In
                                         li
-                                            a(href="/register") Register
+                                            a.spa-link(href="/register") Register
                                         li
-                                            a(href='/recover') Forgot my Password
+                                            a.spa-link(href='/forgot') Forgot my Password
                             if loggedIn && user.getRights() > 1
                                 div.col-md-3
                                     h3 Admin

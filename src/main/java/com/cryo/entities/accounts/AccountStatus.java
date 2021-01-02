@@ -1,11 +1,10 @@
 package com.cryo.entities.accounts;
 
-import com.cryo.Website;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.forums.SubForum;
 import com.cryo.entities.forums.Thread;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
 import lombok.Data;
 
 import java.sql.Timestamp;

@@ -1,0 +1,31 @@
+.input {
+    border-radius: 3px;
+    background: #111 !important;
+    border: 1px solid #000;
+    padding: 5px;
+}
+
+.input-placeholder {
+    position: relative;
+}
+
+.input-placeholder input {
+    padding: 10px;
+    font-size: 25px;
+}
+
+.input-placeholder input:valid + .placeholder {
+    display: none;
+}
+  
+.placeholder {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    bottom: 0;
+    height: 25px;
+    font-size: 25px;
+    left: 10px;
+    margin: auto;
+    color: #ccc;
+}

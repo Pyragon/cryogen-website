@@ -1,22 +1,17 @@
 package com.cryo.managers;
 
-import com.cryo.Website;
 import com.cryo.entities.WebStart;
 import com.cryo.entities.WebStartSubscriber;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.forums.BBCode;
 import com.cryo.entities.forums.Post;
 import com.cryo.entities.forums.Template;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.forums.ForumModule;
-import com.cryo.utils.Logger;
 import de.neuland.jade4j.Jade4J;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;

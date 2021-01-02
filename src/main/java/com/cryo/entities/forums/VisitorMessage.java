@@ -3,7 +3,7 @@ package com.cryo.entities.forums;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.accounts.Account;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
 import lombok.Data;
 
 import java.sql.Timestamp;

@@ -1,7 +1,7 @@
 package com.cryo.entities.accounts;
 
 import com.cryo.entities.MySQLDao;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

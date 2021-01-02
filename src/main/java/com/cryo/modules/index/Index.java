@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @EndpointSubscriber
-public class IndexModule {
+public class Index {
 
     @SPAEndpoint("/")
-    public static String load(Request request, Response response) {
+    public static String renderIndexPage(Request request, Response response) {
         HashMap<String, Object> model = new HashMap<>();
 
         List<Post> posts = getConnection("cryogen_forum")
@@ -39,15 +39,7 @@ public class IndexModule {
         model.put("hsdata", hsdata);
 
         model.put("newsPosts", posts);
-        String html;
-        try {
-            html = renderPage("index/index", model, request, response);
-        } catch(Exception e) {
-            return render500(request, response);
-        }
-        if(request.requestMethod().equals("GET"))
-            return html;
-        return success(html);
+        return renderPage("index/index", model, request, response);
     }
 
 }

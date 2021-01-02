@@ -1,0 +1,106 @@
+include ../../utils/stylesheet
+include ../../utils/name
+
++includeStylesheet('forums/post')
++includeStylesheet('account/overview')
++includeStylesheet('utils/input')
++includeStylesheet('utils/buttons')
+
+script.
+    $(document).ready(() => {
+
+        $('#purchase').click(() => {
+            showTab('shop');
+        });
+
+        $('#revoke').click(() => {
+            post('/account/revoke');
+        });
+
+        $('#save').click(() => {
+
+            let display = $('#display').val();
+            let userTitle = $('#user-title').val();
+            let email = $('#email').val();
+            let discord = $('#discord').val();
+
+            post('/account/overview/save', { display, userTitle, email, discord }, null, data => {
+                sendAlert('Your settings have been saved. More information will follow if needed.');
+                if(data.display)
+                    $('#display').val(data.display);
+                if(data.email)
+                    sendAlert('An email has been sent to the email entered. Please view it and click the link provided to finish linking your email.');
+                if(data.discord)
+                    $('#discord').val(data.discord);
+            });
+
+            return false;
+
+        });
+
+    });
+
+.row
+    .col-md-4#post-look
+        include ../../utils/forums/post_look
+    .col-md-8#overview
+        h3 Overview
+        .row
+            .col-md-6
+                p Display Name
+            .col-md-6
+                input.input#display(type='text', value=user.getDisplayName())
+        .row
+            .col-md-6
+                p Forum User Title 
+                    span(title="This user title will be displayed under your name in posts and on your profile page. Example to the left.")
+                        i.fa.fa-info-circle
+            .col-md-6
+                if user.getDonator() > 0
+                    input.input#user-title(type='text', value=user.getUserTitle())
+                else
+                    p= user.getUserTitle()
+        .row
+            .col-md-6
+                p Forum Displaygroup
+            .col-md-6
+                p= user.getDisplayGroup().getName()
+        .row
+            .col-md-6
+                p Forum Usergroups
+            .col-md-6
+                p= user.getUsergroupsJoined(', ')
+        .row
+            .col-md-6
+                p Email 
+                    span(title="You will be emailed a confirmation link that will need to be clicked before you email is verified.")
+                        i.fa.fa-info-circle
+            .col-md-6
+                input.input#email(type='text', value=user.getEmail())
+                //- TODO - show email currently being verified with a progress symbol next to it
+        .row
+            .col-md-6
+                p Account Status
+            .col-md-6
+                p= user.getMemberStatus()+' '
+                    span.link#purchase
+                        i.fa.fa-plus-circle
+        .row
+            .col-md-6
+                p Discord 
+                    span(title="Use the command .link via discord to get a code that you can put in this input to link your accounts.")
+                        i.fa.fa-info-circle
+            .col-md-6
+                input.input#discord(type='text', placeholder=discord ? discord.getIdString() : "")
+        .row
+            .col-md-6
+                p Revoke Existing Logins 
+                    span(title="This will not revoke your own login. Only logins other than this browser.")
+                        i.fa.fa-info-circle
+            .col-md-6
+                button.btn.btn-default#revoke Revoke
+        .row
+            .col-md-6
+            .col-md-6
+                button.btn.btn-default#save Save Settings
+.clear

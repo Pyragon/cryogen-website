@@ -1,7 +1,7 @@
 package com.cryo.utils;
 
 import com.cryo.entities.accounts.Account;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;

@@ -1,4 +1,4 @@
-package com.cryo.entities.accounts;
+package com.cryo.entities.discord;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
@@ -7,15 +7,13 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
-public class CurrentDisplayName extends MySQLDao {
+public class Verify extends MySQLDao {
 
     @MySQLDefault
     private final int id;
-    private final String username;
-    private final String displayName;
+    private final long discordId;
+    private final String random;
     @MySQLDefault
     private final Timestamp added;
-    @MySQLDefault
-    private final Timestamp updated;
 
 }

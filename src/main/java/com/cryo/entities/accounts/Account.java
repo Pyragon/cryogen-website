@@ -33,6 +33,8 @@ public class Account extends MySQLDao {
 	private int donator;
     @MySQLRead
 	private String avatarUrl;
+    @MySQLRead
+	private String customUserTitle;
 	@MySQLDefault
     @MySQLRead
 	private int displayGroup;
@@ -65,13 +67,14 @@ public class Account extends MySQLDao {
     }
 
 	public String getUserTitle() {
+		if(customUserTitle != null) return customUserTitle;
 		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
 			return getDisplayGroup().getUserTitle();
 		return null;
 	}
 
 	public String getDisplayName() {
-		CurrentDisplayName name = getConnection("cryogen_display").selectClass("current_names", "username=?", CurrentDisplayName.class, username);
+		DisplayName name = getConnection("cryogen_display").selectClass("current_names", "username=?", DisplayName.class, username);
 		if (name == null) return username;
 		return name.getDisplayName();
 	}
@@ -127,12 +130,12 @@ public class Account extends MySQLDao {
 		return groups;
 	}
 
-    public String getUsergroupsJoined() {
+    public String getUsergroupsJoined(String delimiter) {
         return getUsergroups()
                     .stream()
                     .map(UserGroup::getId)
                     .map(i -> Integer.toString(i))
-                    .collect(Collectors.joining(","));
+                    .collect(Collectors.joining(delimiter));
     }
 
     public ArrayList<VisitorMessage> getVisitorMessages() {
@@ -149,5 +152,13 @@ public class Account extends MySQLDao {
     public AccountStatus getStatus() {
         return getConnection("cryogen_forum").selectClass("account_statuses", "account_id=? && expiry > CURRENT_TIMESTAMP()", AccountStatus.class, id);
     }
+
+    public String getMemberStatus() {
+		if(donator == 0) return "Regular Player";
+		if(donator == 1) return "Donator";
+		if(donator == 2) return "Contributor";
+		if(donator == 3) return "VIP";
+		return "";
+	}
 	
 }

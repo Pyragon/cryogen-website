@@ -1,4 +1,4 @@
-package com.cryo.modules.accounts;
+package com.cryo.modules.account;
 
 import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
@@ -25,8 +25,10 @@ public class AccountUtils {
     }
 
     public static Account getAccount(Request request) {
-        if(!request.session().attributes().contains("cryo_sess")) return null;
-        String sessionId = request.session().attribute("cryo_sess");
+        if(!request.session().attributes().contains("cryo_sess") && request.cookie("cryo_sess") == null) return null;
+        String sessionId = request.cookie("cryo_sess");
+        if(sessionId == null)
+            request.session().attribute("cryo_sess");
         Session session = getConnection("cryogen_accounts").selectClass("sessions", "session_id=?", Session.class, sessionId);
         if(session == null) return null;
         if(session.getExpiry().getTime() < System.currentTimeMillis()) return null;

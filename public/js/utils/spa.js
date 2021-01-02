@@ -28,19 +28,33 @@ $(document).on('click', '.spa-link', function() {
     return false;
 });
 
-function post(link, data, selector) {
+function post(link, data, selector, cb) {
     selector = selector || $('#main-content');
-    if(typeof data !== 'object') data = { data };
     $.post(link, data, ret => {
         data = parseJSON(ret);
         if(!data) return false;
-        $(selector).html(data.html);
-        history.pushState({}, 'CryogenSPA', link);
+        if(cb)
+            cb(data);
+        else {
+            $(selector).html(data.html);
+            history.pushState({}, 'CryogenSPA', link);
+            console.log('pushing state: '+link);
+        }
     });
 }
 
 function parseJSON(data) {
-    if(!data || !(data = JSON.parse(data))) {
+    if(!data) {
+        sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
+            window.open('https://github.com/pyragon/cryogen-website/issues');
+        });
+        return null;
+    }
+    try {
+        data = JSON.parse(data);
+    } catch(e) {
+        console.error('Error from server: '+e);
+        console.error(data);
         sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
             window.open('https://github.com/pyragon/cryogen-website/issues');
         });

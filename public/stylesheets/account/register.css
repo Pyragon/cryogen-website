@@ -1,0 +1,45 @@
+.register-label {
+    margin-left: 10px;
+    color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.register-input {
+    min-width: 90%;
+    min-height: 30px;
+    margin-left: 10px;
+}
+
+.g-recaptcha {
+    margin: 15px 100px;
+}
+
+#register {
+    margin-top: 5px;
+}
+
+.register-info {
+    padding: 22px 120px;
+    text-align: center;
+}
+
+.register-info .glyphicon {
+    font-size: 22px;
+}
+
+.register-info h3 {
+    font-size: 17px;
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+.register-info ul {
+    padding: 0;
+    text-align: left;
+}
+
+.register-info ul li {
+    margin: 15px 0;
+}

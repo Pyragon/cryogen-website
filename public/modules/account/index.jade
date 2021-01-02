@@ -1,0 +1,18 @@
+extend ../default
+
+block head
+    +includeScript('/utils/tabs')
+    script.
+        $(document).ready(() => {
+
+            buildPage({
+                'overview': 'Overview',
+                'packages': 'Purchased Items',
+                'vote': 'Vote',
+                'shop': 'Cryogen Shop'
+            }, '!{active}');
+
+        });
+
+block content
+    include ../utils/tabs

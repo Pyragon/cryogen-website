@@ -3,10 +3,15 @@ package com.cryo.utils;
 import com.cryo.Website;
 import com.cryo.entities.*;
 import com.cryo.entities.accounts.Account;
-import com.cryo.modules.accounts.AccountUtils;
+import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.Login;
 import com.google.common.reflect.ClassPath;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.HttpRequestWithBody;
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
+import org.joda.time.DateTime;
 import spark.ExceptionHandler;
 import spark.Request;
 import spark.Response;
@@ -18,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -25,20 +31,29 @@ import static spark.Spark.post;
 public class Utilities {
 
     public static String renderPage(String module, HashMap<String, Object> model, Request request, Response response) {
+        return renderPage(module, model, null, request, response);
+    }
+
+    public static String renderPage(String module, HashMap<String, Object> model, String endpoint, Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(endpoint != null && account == null)
+            return Login.renderLoginPage(endpoint, request, response);
         if(model == null)
             model = new HashMap<>();
         model.put("format", new FormatUtils());
         model.put("useDefault", request.requestMethod().equals("GET"));
-        Account account = AccountUtils.getAccount(request);
         model.put("loggedIn", account != null);
         if(account != null)
             model.put("user", account);
         module = "./public/modules/"+module+".jade";
         try {
-            return Jade4J.render(module, model);
+            String html = Jade4J.render(module, model);
+            if(request.requestMethod().equals("GET"))
+                return html;
+            return success(html);
         } catch(Exception e) {
             e.printStackTrace();
-            return render404(request, response);
+            return render500(request, response);
         }
     }
 
@@ -91,14 +106,23 @@ public class Utilities {
     }
 
     public static String redirect(String redirect, Request request, Response response) {
-        return redirect(redirect, 5, request, response);
+        return redirect(redirect, 5, null, null, null, request, response);
     }
 
-    public static String redirect(String redirect, int time, Request request, Response response) {
+    public static String redirect(String redirect, String title, String titleColour, String extraInfo, Request request, Response response) {
+        return redirect(redirect, 5, title, titleColour, extraInfo, request, response);
+    }
+
+    public static String redirect(String redirect, int time, String title, String titleColour, String extraInfo, Request request, Response response) {
         HashMap<String, Object> model = new HashMap<>();
         model.put("redirect", redirect);
         model.put("time", time);
         model.put("useDefault", true);
+        if(title != null || extraInfo != null) {
+            model.put("title", title);
+            model.put("titleColour", titleColour);
+            model.put("extraInfo", extraInfo);
+        }
         Properties prop = new Properties();
         prop.put("success", true);
         try {
@@ -161,7 +185,7 @@ public class Utilities {
                 if(!clazz.isAnnotationPresent(EndpointSubscriber.class)) continue;
                 for(Method method : clazz.getMethods()) {
                     int count = method.getParameterCount();
-                    if((count != 2 && count != 3) || (!method.isAnnotationPresent(Endpoint.class) && !method.isAnnotationPresent(SPAEndpoint.class))) continue;
+                    if((count != 2 && count != 3) || (!method.isAnnotationPresent(Endpoint.class) && !method.isAnnotationPresent(SPAEndpoint.class) && !method.isAnnotationPresent(SPAEndpoints.class))) continue;
                     if(!Modifier.isStatic(method.getModifiers())) {
                         Logger.log("EndpointInitializer", "Expected method to be static in order for endpoint to work! "+method.getName());
                         throw new RuntimeException();
@@ -169,6 +193,31 @@ public class Utilities {
                     if(method.getReturnType() != String.class) {
                         Logger.log("EndpointInitializer", "Expected endpoint to return a String! "+method.getName());
                         throw new RuntimeException();
+                    }
+                    if(method.isAnnotationPresent(SPAEndpoints.class)) {
+                        SPAEndpoints endpoint = method.getAnnotation(SPAEndpoints.class);
+                        assert !endpoint.value().equals("") : "Invalid endpoint: "+method.getName()+" in "+method.getDeclaringClass().getSimpleName();
+                        for(String endpointString : endpoint.value().split(", ")) {
+                            get++;
+                            post++;
+                            get(endpointString, (req, res) -> {
+                                Object[] parameters = new Object[count];
+                                parameters[0] = count == 3 ? endpointString : req;
+                                parameters[1] = count == 3 ? req : res;
+                                if(count == 3)
+                                    parameters[2] = res;
+                                return method.invoke(null, parameters);
+                            });
+                            post(endpointString, (req, res) -> {
+                                Object[] parameters = new Object[count];
+                                parameters[0] = count == 3 ? endpointString : req;
+                                parameters[1] = count == 3 ? req : res;
+                                if(count == 3)
+                                    parameters[2] = res;
+                                return method.invoke(null, parameters);
+                            });
+                        }
+                        continue;
                     }
                     if (method.isAnnotationPresent(SPAEndpoint.class)) {
                         SPAEndpoint endpoint = method.getAnnotation(SPAEndpoint.class);
@@ -332,6 +381,24 @@ public class Utilities {
             }
         }
         return skill == 24 ? 120 : 99;
+    }
+
+    public static String checkCaptchaResult(String response) {
+        HttpRequestWithBody body = Unirest.post("https://www.google.com/recaptcha/api/siteverify?secret="+Website.getProperties().getProperty("captcha_secret_key")+"&response="+response);
+        try {
+            HashMap<String, Object> obj = Website.getGson().fromJson(body.asString().getBody(), HashMap.class);
+            if (obj == null) return error("Error loading recaptcha response. Please refresh the page and try again.");
+            if (!obj.containsKey("success") || !obj.containsKey("challenge_ts"))
+                return error("Error loading recaptcha response. Please refresh the page and try again.");
+            boolean success = (boolean) obj.get("success");
+            if(!success) return error("You failed the recaptcha. Please refresh the page and try again.");
+            DateTime dt = new DateTime((String) obj.get("challenge_ts"));
+            if(DateUtils.getDateDiff(dt.toDate(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            return error(e.getMessage());
+        }
+        return null;
     }
 
 }
