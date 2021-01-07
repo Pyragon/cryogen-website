@@ -1,8 +1,6 @@
 package com.cryo.modules.highscores;
 
-import com.cryo.entities.EndpointSubscriber;
-import spark.Request;
-import spark.Response;
+import com.cryo.entities.annotations.EndpointSubscriber;
 
 @EndpointSubscriber
 public class Highscores {

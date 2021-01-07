@@ -1,4 +1,4 @@
-package com.cryo.entities.discord;
+package com.cryo.entities.accounts.discord;
 
 import com.cryo.Website;
 import com.cryo.entities.MySQLDao;

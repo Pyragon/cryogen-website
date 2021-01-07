@@ -1,0 +1,25 @@
+include ../name
+
+table.table.table-condensed.table-responsive.widget.hs-table
+    thead
+        tr 
+            for col in columns
+                td= col.getValue()
+    tbody
+        for row in rows
+            tr(data-id=row.getId())
+                for value in row.getValues()
+                    if value.shouldFormatAsTime()
+                        td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatTime(value.getValue())
+                    else if value.shouldFormatAsTimestamp()
+                        td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatTimestamp(value.getValue())
+                    else if value.shouldFormatAsNumber()
+                        td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatNumber(value.getValue())
+                    else if value.shouldFormatAsUser() && value.getUser() != null
+                        td(class=value.getClassName() == null ? '' : value.getClassName())
+                            +renderName(value.getUser())
+                    else if value.isButton()
+                        td
+                            button(class='btn btn-default small-btn '+(value.getClassName() == null ? '' : value.getClassName()))= value.getValue()
+                    else
+                        td(class=value.getClassName() == null ? '' : value.getClassName())= value.getValue()

@@ -1,10 +1,10 @@
 package com.cryo.modules.misc;
 
 import com.cryo.Website;
-import com.cryo.entities.Endpoint;
-import com.cryo.entities.EndpointSubscriber;
-import com.cryo.entities.WebStart;
-import com.cryo.entities.WebStartSubscriber;
+import com.cryo.entities.annotations.Endpoint;
+import com.cryo.entities.annotations.EndpointSubscriber;
+import com.cryo.entities.annotations.WebStart;
+import com.cryo.entities.annotations.WebStartSubscriber;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 import lombok.Cleanup;

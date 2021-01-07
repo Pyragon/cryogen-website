@@ -1,10 +1,10 @@
 let tabs = [];
 
-function buildPage(tabs, activeKey) {
+function buildPage(module, tabs, activeKey) {
     for (let key in tabs) {
         let active = key == activeKey;
         if (active)
-            history.pushState({}, 'CryogenSPA', '/account/' + key);
+            history.pushState({}, 'CryogenSPA', `/${module}/${key}`);
         let link = $('<a></a>');
         link.attr('href', '#' + key);
         link.data('toggle', 'tab');
@@ -19,24 +19,25 @@ function buildPage(tabs, activeKey) {
             div.addClass('active');
         $('.tab-content').append(div);
     }
-    $('.nav-tabs a').click(function () {
-        showTab($(this).attr('href').replace('#', ''));
+    $('.nav-tabs a').click(function() {
+        showTab(module, $(this).attr('href').replace('#', ''));
         return false;
     });
-    showTab(activeKey);
+    showTab(module, activeKey);
 }
 
-function showTab(key) {
+function showTab(module, key) {
     if (!tabs[key]) {
-        post('/account/' + key + '/load', {}, null, data => {
+        post(`/${module}/${key}/load`, {}, null, data => {
             tabs[key] = true;
+            console.log(data);
             $('#' + key).html(data.html);
             $('.nav-tabs a[href="#' + key + '"]').tab('show');
-            history.pushState({}, 'CryogenSPA', '/account/' + key);
+            history.pushState({}, 'CryogenSPA', `/${module}/${key}`);
             return;
         });
         return;
     }
     $('.nav-tabs a[href="#' + key + '"]').tab('show');
-    history.pushState({}, 'CryogenSPA', '/account/' + key);
+    history.pushState({}, 'CryogenSPA', `/${module}/${key}`);
 }

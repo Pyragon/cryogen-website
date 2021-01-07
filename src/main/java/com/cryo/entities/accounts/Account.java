@@ -2,6 +2,7 @@ package com.cryo.entities.accounts;
 
 import com.cryo.Website;
 import com.cryo.entities.*;
+import com.cryo.entities.accounts.email.Email;
 import com.cryo.entities.forums.UserGroup;
 import com.cryo.entities.forums.VisitorMessage;
 import lombok.AllArgsConstructor;

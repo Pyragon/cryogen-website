@@ -1,8 +1,8 @@
 package com.cryo.utils;
 
 import com.cryo.Website;
-import com.cryo.entities.*;
 import com.cryo.entities.accounts.Account;
+import com.cryo.entities.annotations.*;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
 import com.google.common.reflect.ClassPath;
@@ -30,11 +30,15 @@ import static spark.Spark.post;
 
 public class Utilities {
 
-    public static String renderPage(String module, HashMap<String, Object> model, Request request, Response response) {
-        return renderPage(module, model, null, request, response);
+    public static String renderPage(String module, HashMap<String, Object> model, String endpoint, Request request, Response response) {
+        return renderPage(module, model, endpoint, request.requestMethod(), request, response);
     }
 
-    public static String renderPage(String module, HashMap<String, Object> model, String endpoint, Request request, Response response) {
+    public static String renderPage(String module, HashMap<String, Object> model, Request request, Response response) {
+        return renderPage(module, model, null, request.requestMethod(), request, response);
+    }
+
+    public static String renderPage(String module, HashMap<String, Object> model, String endpoint, String method, Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(endpoint != null && account == null)
             return Login.renderLoginPage(endpoint, request, response);
@@ -48,12 +52,31 @@ public class Utilities {
         module = "./public/modules/"+module+".jade";
         try {
             String html = Jade4J.render(module, model);
-            if(request.requestMethod().equals("GET"))
+            if(method.equals("GET"))
                 return html;
             return success(html);
         } catch(Exception e) {
             e.printStackTrace();
             return render500(request, response);
+        }
+    }
+
+    public static String renderList(HashMap<String, Object> model, Request request, Response response) {
+        try {
+            String sorted = renderPage("utils/list/sort", model, null, "GET", request, response);
+            String filtered = renderPage("utils/list/filter", model, null, "GET", request, response);
+            String list = renderPage("utils/list/list", model, null, "GET", request, response);
+            Properties prop = new Properties();
+            prop.put("success", true);
+            prop.put("html", list);
+            prop.put("sort", sorted);
+            prop.put("filter", filtered);
+            if(model.containsKey("activeFilter"))
+                prop.put("activeFilter", true);
+            return Website.getGson().toJson(prop);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return error("Error loading list. Please report this bug via Github.");
         }
     }
 
@@ -179,10 +202,13 @@ public class Utilities {
         long start = System.currentTimeMillis();
         int get = 0;
         int post = 0;
+        int classCount = 0;
+        boolean classChecked = false;
         try {
             ArrayList<Class<?>> classes = Utilities.getClassesWithAnnotation("com.cryo", EndpointSubscriber.class);
             for(Class<?> clazz : classes) {
                 if(!clazz.isAnnotationPresent(EndpointSubscriber.class)) continue;
+                classChecked = false;
                 for(Method method : clazz.getMethods()) {
                     int count = method.getParameterCount();
                     if((count != 2 && count != 3) || (!method.isAnnotationPresent(Endpoint.class) && !method.isAnnotationPresent(SPAEndpoint.class) && !method.isAnnotationPresent(SPAEndpoints.class))) continue;
@@ -193,6 +219,10 @@ public class Utilities {
                     if(method.getReturnType() != String.class) {
                         Logger.log("EndpointInitializer", "Expected endpoint to return a String! "+method.getName());
                         throw new RuntimeException();
+                    }
+                    if(!classChecked) {
+                        classCount++;
+                        classChecked = true;
                     }
                     if(method.isAnnotationPresent(SPAEndpoints.class)) {
                         SPAEndpoints endpoint = method.getAnnotation(SPAEndpoints.class);
@@ -299,7 +329,7 @@ public class Utilities {
             Logger.handle(e);
         }
         long end = System.currentTimeMillis();
-        Logger.log("EndpointInitializer", "Loaded "+get+" GET and "+post+" POST endpoints in "+(end-start)+"ms.");
+        Logger.log("EndpointInitializer", "Loaded "+get+" GET and "+post+" POST endpoints from "+classCount+" classes in "+(end-start)+"ms.");
     }
 
     public static void sendStartupHooks() {

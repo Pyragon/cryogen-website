@@ -1,0 +1,8 @@
+for filter in filterValues
+    .filterable
+        p.filter-name= filter.getName()
+        .filter-input
+            input.input(type='text', value=filter.getValue())
+        .clear
+button.btn.btn-default.small-btn(id=moduleId+'-filter-reset-btn') Reset
+button.btn.btn-default.small-btn(id=moduleId+'-filter-btn') Filter

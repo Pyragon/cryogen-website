@@ -1,18 +1,12 @@
 package com.cryo.modules.account;
 
-import com.cryo.Website;
-import com.cryo.entities.Endpoint;
-import com.cryo.entities.EndpointSubscriber;
-import com.cryo.entities.SPAEndpoints;
-import com.cryo.entities.discord.Discord;
-import com.cryo.entities.discord.Verify;
-import com.cryo.utils.DisplayNames;
-import com.cryo.utils.Utilities;
+import com.cryo.entities.annotations.Endpoint;
+import com.cryo.entities.annotations.EndpointSubscriber;
+import com.cryo.entities.annotations.SPAEndpoints;
 import spark.Request;
 import spark.Response;
 
 import java.util.HashMap;
-import java.util.Properties;
 
 import static com.cryo.Website.getConnection;
 import static com.cryo.utils.Utilities.*;

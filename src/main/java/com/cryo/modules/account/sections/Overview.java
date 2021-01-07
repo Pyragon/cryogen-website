@@ -1,11 +1,11 @@
 package com.cryo.modules.account.sections;
 
 import com.cryo.Website;
-import com.cryo.entities.Endpoint;
-import com.cryo.entities.EndpointSubscriber;
+import com.cryo.entities.annotations.Endpoint;
+import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.accounts.Account;
-import com.cryo.entities.discord.Discord;
-import com.cryo.entities.discord.Verify;
+import com.cryo.entities.accounts.discord.Discord;
+import com.cryo.entities.accounts.discord.Verify;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
 import com.cryo.utils.DisplayNames;
@@ -89,7 +89,7 @@ public class Overview {
         }
         if(changeDisplay) {
             if(!DisplayNames.changeName(account.getUsername(), displayName))
-                System.out.println("Cannot change name.");
+                return error("We encountered an error trying to change your display name. Please post an issue via Github if this problem persists.");
             prop.put("display", displayName);
         }
         if(changeUserTitle)

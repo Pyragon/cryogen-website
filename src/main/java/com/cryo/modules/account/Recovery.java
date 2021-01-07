@@ -1,7 +1,7 @@
 package com.cryo.modules.account;
 
-import com.cryo.entities.EndpointSubscriber;
-import com.cryo.entities.SPAEndpoint;
+import com.cryo.entities.annotations.EndpointSubscriber;
+import com.cryo.entities.annotations.SPAEndpoint;
 import com.cryo.modules.index.Index;
 import spark.Request;
 import spark.Response;

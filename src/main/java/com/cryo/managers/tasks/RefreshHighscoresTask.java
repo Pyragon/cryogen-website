@@ -1,8 +1,8 @@
 package com.cryo.managers.tasks;
 
 import com.cryo.entities.Task;
-import com.cryo.entities.WebStart;
-import com.cryo.entities.WebStartSubscriber;
+import com.cryo.entities.annotations.WebStart;
+import com.cryo.entities.annotations.WebStartSubscriber;
 import com.cryo.entities.accounts.HSData;
 import com.cryo.modules.account.AccountUtils;
 

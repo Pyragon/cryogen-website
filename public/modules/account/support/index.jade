@@ -1,0 +1,19 @@
+extend ../../default
+
+block head
+    +includeScript('/utils/tabs')
+    script.
+        $(document).ready(() => {
+
+            buildPage('support', {
+                'player-reports': 'Player Reports',
+                'bug-reports': 'Bug Reports',
+                'punishments': 'Punishments',
+                'appeals': 'Appeals',
+                'recoveries': 'Recoveries'
+            }, '!{active}');
+
+        });
+
+block content
+    include ../../utils/tabs

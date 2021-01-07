@@ -1,8 +1,8 @@
 package com.cryo.modules.account;
 
-import com.cryo.entities.Endpoint;
-import com.cryo.entities.EndpointSubscriber;
-import com.cryo.entities.SPAEndpoint;
+import com.cryo.entities.annotations.Endpoint;
+import com.cryo.entities.annotations.EndpointSubscriber;
+import com.cryo.entities.annotations.SPAEndpoint;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.Session;
 import com.cryo.modules.index.Index;

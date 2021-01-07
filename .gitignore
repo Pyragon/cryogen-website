@@ -1,6 +1,7 @@
 .idea/
 .settings/
 target/
+log/
 .classpath
 .factorypath
 .project

@@ -1,7 +1,5 @@
 package com.cryo;
 
-import com.cryo.entities.Endpoint;
-import com.cryo.entities.EndpointSubscriber;
 import com.cryo.managers.TaskManager;
 import com.cryo.utils.CorsFilter;
 import com.cryo.utils.Logger;
@@ -14,14 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
-import javax.management.RuntimeErrorException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Timer;
 
@@ -49,6 +43,7 @@ public class Website {
 
     public void load() {
         long start = System.currentTimeMillis();
+
         buildGson();
         loadProperties();
         port(Integer.parseInt(properties.getProperty("port", "8085")));

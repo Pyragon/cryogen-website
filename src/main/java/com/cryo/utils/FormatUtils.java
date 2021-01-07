@@ -42,9 +42,19 @@ public class FormatUtils {
 		} catch(Exception e) { }
 		return false;
 	}
+
+	public String formatTimestamp(Timestamp time) {
+		return formatTimestamp(time, "MMMMM dd, YYYY");
+	}
 	
 	public String formatTimestamp(Timestamp time, String format) {
+		if(time == null) return "N/A";
 		return format(time.getTime(), format);
+	}
+
+	public String formatTime(Timestamp time) {
+		if(time == null) return "N/A";
+		return format(time.getTime(), "MMMMM dd, YYYY @ hh:mm a");
 	}
 	
 	public String format(long dateline, String format) {

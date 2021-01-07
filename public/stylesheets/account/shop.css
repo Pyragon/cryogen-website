@@ -1,0 +1,85 @@
+.items {
+    background: #111;
+    border: 1px solid #333;
+    color: #666;
+    margin: 10px 0;
+    padding: 10px 30px;
+}
+
+.items .row {
+    min-width: 650px;
+}
+
+.item {
+    background: #151515;
+    border: 1px solid #010101;
+    border-radius: 5px;
+    min-height: 340px;
+}
+
+.item h3 {
+    color: #FFF;
+    font-size: 15px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.item img {
+    padding: 10px 10px;
+    height: 115px;
+    width: 115px;
+    margin: 10px auto;
+    background: #111;
+    border: 1px solid #222;
+}
+
+.item .info {
+    background: #111;
+    padding: 5px 5px;
+    text-align: center;
+    overflow: hidden;
+    border: 1px solid #222;
+    margin: 5px 5px;
+}
+
+.item .price {
+    width: 75px;
+    margin: 0px auto;
+}
+
+.add-item {
+    margin-left: calc(calc(100% / 2) - 50px);
+}
+
+.shop-quantity {
+    width: 100px;
+    margin: auto;
+    border: 1px solid #000;
+}
+
+.shop-quantity span {
+    color: white;
+    margin-left: 12px;
+}
+
+.shop-quantity input {
+    border-top: none;
+    border-bottom: none;
+    min-width: 30px;
+    max-width: 30px;
+    margin-left: 12px;
+    text-align: center;
+}
+
+.cart-items p {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+#paypal-confirmation {
+    font-size: 11px;
+    text-align: center;
+    margin-top: 10px;
+}

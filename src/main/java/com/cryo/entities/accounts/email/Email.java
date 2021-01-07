@@ -1,4 +1,4 @@
-package com.cryo.entities.accounts;
+package com.cryo.entities.accounts.email;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;

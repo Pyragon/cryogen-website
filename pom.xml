@@ -47,7 +47,18 @@
         <dependency>
             <groupId>com.github.Pyragon</groupId>
             <artifactId>CryoConnection</artifactId>
-            <version>c067bad</version>
+            <version>bc6d870</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.0-alpha1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>2.0.0-alpha0</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>de.neuland-bfi</groupId>
@@ -95,6 +106,16 @@
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>4.2.0_225</version>
+        </dependency>
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>rest-api-sdk</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>

@@ -1,7 +1,6 @@
-package com.cryo.entities.discord;
+package com.cryo.entities.accounts.email;
 
 import com.cryo.entities.MySQLDao;
-import com.cryo.entities.MySQLDefault;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -9,11 +8,9 @@ import java.sql.Timestamp;
 @Data
 public class Verify extends MySQLDao {
 
-    @MySQLDefault
     private final int id;
-    private final long discordId;
+    private final String username;
     private final String random;
-    @MySQLDefault
-    private final Timestamp added;
-
+    private final String email;
+    private final Timestamp expiry;
 }

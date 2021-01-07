@@ -1,5 +1,11 @@
-.btn {
-    margin: 100px auto 30px auto;
+.btn:hover,
+.btn:active {
+    background: #181818;
+    border: 2px solid #000;
+    color: #999;
+}
+
+.sidebar-btn {
     display: block;
     padding: 10px 50px;
     background: #111;
@@ -8,12 +14,13 @@
     transition: border .3s, color .3s;
 }
 
-.btn:hover,
-.btn:active,
-.btn:link,
-.btn:visited,
-.btn:focus {
-    background: #181818;
-    border: 2px solid #000;
-    color: #999;
+.small-btn {
+    padding: 0px;
+    height: 25px;
+    width: 100px;
+    display: block;
+    background: #111;
+    border: 2px solid #222;
+    color: #777;
+    transition: border .3s, color .3s;
 }

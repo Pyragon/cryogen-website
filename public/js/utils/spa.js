@@ -29,7 +29,7 @@ $(document).on('click', '.spa-link', function() {
 });
 
 function post(link, data, selector, cb) {
-    selector = selector || $('#main-content');
+    selector = selector || '#main-content';
     $.post(link, data, ret => {
         data = parseJSON(ret);
         if(!data) return false;
@@ -37,8 +37,8 @@ function post(link, data, selector, cb) {
             cb(data);
         else {
             $(selector).html(data.html);
-            history.pushState({}, 'CryogenSPA', link);
-            console.log('pushing state: '+link);
+            if(selector == '#main-content')
+                history.pushState({}, 'CryogenSPA', link);
         }
     });
 }

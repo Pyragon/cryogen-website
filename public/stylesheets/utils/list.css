@@ -1,0 +1,128 @@
+.info {
+    text-align: center;
+    font-size: 11px;
+    margin: 0px;
+}
+
+.iactions {
+    margin-top: 25px;
+    margin-left: calc(100% - 150px);
+    width: 150px;
+}
+
+h3 {
+    text-align: center;
+}
+
+.hs-table {
+    margin-top: 40px;
+    text-align: center;
+    background: #111;
+}
+
+.hs-table>tbody {
+    min-height: 100px;
+}
+
+.hs-table>tbody>tr>td {
+    color: #666;
+    text-align: center;
+}
+
+.hs-table>tbody>tr>td.rank {
+    text-align: center;
+    font-weight: 600;
+    color: #FFF;
+    max-width: 50px;
+}
+
+.hs-table>thead>tr {
+    font-size: 12px;
+    color: #FFF;
+}
+
+.hs-table>thead>tr>th,
+.hs-table>tbody>tr>th,
+.hs-table>tfoot>tr>th,
+.hs-table>thead>tr>td,
+.hs-table>tbody>tr>td,
+.hs-table>tfoot>tr>td {
+    border-bottom: 1px solid #333;
+}
+
+.hs-table>tbody>tr>td>button {
+    display: inline-block;
+}
+
+.list-table {
+    margin-top: 25px;
+}
+
+.sorted,
+.filtered {
+    display: none;
+    position: absolute;
+    width: 175px;
+    background: #1C1C1C;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.filtered {
+    width: 200px;
+}
+
+.filter-name {
+    float: left;
+    text-align: left;
+    font-size: 11px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.sort-name {
+    float: left;
+    text-align: left;
+    font-size: 11px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+.sort-input {
+    float: right;
+    padding: 5px;
+}
+
+.sort-input input {
+    width: 40px;
+    height: 20px;
+}
+
+.filter-input {
+    float: right;
+    padding: 5px;
+}
+
+.filter-input input {
+    width: 90px;
+    height: 20px;
+    font-size: 12px;
+}
+
+select {
+    width: 70px;
+}
+
+.sortable {
+    cursor: grab;
+}
+
+button {
+    margin: 2px auto 10px auto !important;
+}
+
+.active-filter {
+    display: none;
+    font-size: 13px;
+    color: red;
+}

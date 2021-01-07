@@ -1,0 +1,21 @@
+include ../../../utils/stylesheet
+
++includeStylesheet('account/shop')
++includeStylesheet('utils/input')
+.shop-items
+    for item in items
+        .col-md-4
+            .item(data-id=item.getId())
+                h3.white= item.getName()
+                img.img-responsive(src=item.getImageLink())
+                p.info.color-white= 'Type: '+item.getType()
+                p.info.price.color-white= '$'+item.getPrice()
+                p.info.small.color-grey= item.getDescription()
+                button.btn.btn-default.small-btn.add-item(style=cart.getQuantity(item.getId()) > 0 ? 'display: none;' : '') Add to Cart
+                .shop-quantity(style=cart.getQuantity(item.getId()) <= 0 ? 'display: none;' : '')
+                    span.decrease-quantity.link
+                        i.fa.fa-minus
+                    input.input(type='text', value=cart.getQuantity(item.getId()))
+                    span.increase-quantity.link
+                        i.fa.fa-plus
+    .clear

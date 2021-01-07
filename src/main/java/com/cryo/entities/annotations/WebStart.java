@@ -1,4 +1,4 @@
-package com.cryo.entities;
+package com.cryo.entities.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SPAEndpoint {
-
-    String value();
-
+public @interface WebStart {
 }

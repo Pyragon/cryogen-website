@@ -1,0 +1,20 @@
+for sort in sortValues
+    .sortable
+        p.sort-name= sort.getName()
+        .sort-input
+            select.input
+                if sort.getValue() == 'none'
+                    option.input(value='none', selected) None
+                else
+                    option.input(value='none') None
+                if sort.getValue() == 'asc'
+                    option.input(value='asc', selected) ASC
+                else
+                    option.input(value='asc') ASC
+                if sort.getValue() == 'desc'
+                    option.input(value='desc', selected) DESC
+                else
+                    option.input(value='desc') DESC
+        .clear
+button.btn.btn-default.small-btn(id=moduleId+'-sort-reset-btn') Reset
+button.btn.btn-default.small-btn(id=moduleId+'-sort-btn') Sort
