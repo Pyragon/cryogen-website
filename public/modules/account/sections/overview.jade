@@ -1,5 +1,6 @@
 include ../../utils/stylesheet
 include ../../utils/name
+include ../../utils/account/recovery_questions
 
 +includeStylesheet('forums/post')
 +includeStylesheet('account/overview')
@@ -24,7 +25,15 @@ script.
             let email = $('#email').val();
             let discord = $('#discord').val();
 
-            post('/account/overview/save', { display, userTitle, email, discord }, null, data => {
+            let questions = [];
+
+            $('.question').each(function(i) {
+                let selected = parseInt($(this).find('option:selected').val());
+                let input = $(this).find('input').val();
+                questions.push([ selected, input ]);
+            });
+
+            post('/account/overview/save', { display, userTitle, email, discord, questions: JSON.stringify(questions) }, null, data => {
                 sendAlert('Your settings have been saved. More information will follow if needed.');
                 if(data.display)
                     $('#display').val(data.display);
@@ -99,6 +108,12 @@ script.
                         i.fa.fa-info-circle
             .col-md-6
                 button.btn.btn-default.small-btn#revoke Revoke
+        .row
+            .col-md-6
+                p(style='margin-top: 50px;') Recovery questions
+            .col-md-6
+                for i in [0, 1, 2]
+                    +showQuestion(null, null, i)
         .row
             .col-md-6
             .col-md-6

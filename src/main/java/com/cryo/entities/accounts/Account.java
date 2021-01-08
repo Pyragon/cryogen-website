@@ -2,22 +2,25 @@ package com.cryo.entities.accounts;
 
 import com.cryo.Website;
 import com.cryo.entities.*;
+import com.cryo.entities.accounts.discord.Discord;
 import com.cryo.entities.accounts.email.Email;
+import com.cryo.entities.accounts.support.RecoveryQuestion;
 import com.cryo.entities.forums.UserGroup;
 import com.cryo.entities.forums.VisitorMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.entities.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import static com.cryo.Website.getConnection;
 
 @RequiredArgsConstructor
 @Data
-@AllArgsConstructor
 public class Account extends MySQLDao {
 
 	@MySQLDefault
@@ -32,6 +35,9 @@ public class Account extends MySQLDao {
 	private int rights;
     @MySQLRead
 	private int donator;
+    @MySQLDefault
+    @MySQLRead("recovery_questions")
+    private String questions;
     @MySQLRead
 	private String avatarUrl;
     @MySQLRead
@@ -41,9 +47,29 @@ public class Account extends MySQLDao {
 	private int displayGroup;
     @MySQLRead
 	private String usergroups;
+    @MySQLRead("creation_ip")
+    private String creationIP;
 	@MySQLDefault
-	private final Timestamp creationDate;
-	
+	private final Timestamp added;
+
+	private HashMap<Integer, ArrayList<Object>> recoveries;
+
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String customUserTitle, int displayGroup, String usergroups, String creationIP, Timestamp added) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.salt = salt;
+		this.rights = rights;
+		this.donator = donator;
+		this.questions = questions;
+		this.avatarUrl = avatarUrl;
+		this.customUserTitle = customUserTitle;
+		this.displayGroup = displayGroup;
+		this.usergroups = usergroups;
+		this.creationIP = creationIP;
+		this.added = added;
+	}
+
 	public String getEmail() {
 		Email email = getConnection("cryogen_email").selectClass("linked", "username=?", Email.class, username);
 		if(email == null) return "";
@@ -72,6 +98,34 @@ public class Account extends MySQLDao {
 		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
 			return getDisplayGroup().getUserTitle();
 		return null;
+	}
+
+	public HashMap<Integer, ArrayList<Object>> getRecoveryQuestions() {
+		if(questions == null) return null;
+		if(recoveries != null) return recoveries;
+		HashMap<String, ArrayList<Object>> recoveries = Website.getGson().fromJson(questions, HashMap.class);
+		if(recoveries == null) return null;
+		HashMap<Integer, ArrayList<Object>> real = new HashMap<>();
+		recoveries.keySet().forEach(key -> real.put(Integer.parseInt(key), recoveries.get(key)));
+		this.recoveries = real;
+		return real;
+	}
+
+	public ArrayList<Object> getQuestion(int index) {
+		if(getRecoveryQuestions() == null || !getRecoveryQuestions().containsKey(index) || getRecoveryQuestions().get(index) == null)
+			return null;
+		return getRecoveryQuestions().get(index);
+	}
+
+	public ArrayList<Object> getQuestionById(int id) {
+		for(ArrayList<Object> obj : getRecoveryQuestions().values()) {
+			if ((int) Math.floor((double) obj.get(0)) == id) return obj;
+		}
+		return null;
+	}
+
+	public PreviousPassList getPreviousPasswords() {
+		return getConnection("cryogen_previous").selectClass("passwords", "username=?", PreviousPassList.class, username);
 	}
 
 	public String getDisplayName() {
@@ -129,6 +183,12 @@ public class Account extends MySQLDao {
 			}
 		}
 		return groups;
+	}
+
+	public User getDiscordUser() {
+		Discord discord = getConnection("cryogen_discord").selectClass("linked", "username=?", Discord.class, username);
+		if(discord == null) return null;
+		return Website.getJDA().retrieveUserById(discord.getDiscordId()).complete();
 	}
 
     public String getUsergroupsJoined(String delimiter) {

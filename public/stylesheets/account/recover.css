@@ -1,0 +1,25 @@
+p,
+select {
+    margin: 5px 15px;
+    color: white;
+}
+
+select {
+    min-width: 350px;
+    max-width: 350px;
+}
+
+input,
+textarea {
+    margin: 5px 20px;
+    display: block;
+}
+
+.large-btn {
+    margin: 10px auto;
+}
+
+.captcha-container {
+    margin: 5px auto;
+    width: 304px;
+}

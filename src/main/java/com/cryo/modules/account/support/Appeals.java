@@ -70,7 +70,7 @@ public class Appeals {
         List<Appeal> appeals = getConnection("cryogen_punish").selectList("appeals", query, order, Appeal.class, values.toArray());
         if(appeals == null)
             return error("Error loading player reports. Please try again.");
-        ListManager.buildTable(model, appeals, Appeal.class, account, sortValues, filterValues, archived);
+        ListManager.buildTable(model, "account", appeals, Appeal.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
     }
 }

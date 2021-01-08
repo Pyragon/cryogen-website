@@ -75,7 +75,7 @@ public class Packages {
         List<Package> packages = getConnection("cryogen_shop").selectList("packages", query, order, Package.class, values.toArray());
         if(packages == null)
             return error("Error loading packages. Please try again.");
-        ListManager.buildTable(model, packages, Package.class, account, sortValues, filterValues, archived);
+        ListManager.buildTable(model, "account", packages, Package.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
     }
 

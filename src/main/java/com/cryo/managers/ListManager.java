@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class ListManager {
 
-    public static <T> void buildTable(HashMap<String, Object> model, List<T> list, Class<?> clazz, Account account, ArrayList<ArrayList<Object>> sortValues, ArrayList<ArrayList<Object>> filterValues, boolean archive) {
+    public static <T> void buildTable(HashMap<String, Object> model, String module, List<T> list, Class<?> clazz, Account account, ArrayList<ArrayList<Object>> sortValues, ArrayList<ArrayList<Object>> filterValues, boolean archive) {
         try {
             List<ListRowValue> columns = new ArrayList<>();
             List<ListRow> rows = new ArrayList<>();
@@ -24,6 +24,7 @@ public class ListManager {
                     ListValue annotation = field.getAnnotation(ListValue.class);
                     if (annotation.onArchive() && !archive) continue;
                     if (annotation.notOnArchive() && archive) continue;
+                    if(!annotation.requiresModule().equals("") && !annotation.requiresModule().equals(module)) continue;
                     ListRowValue value = new ListRowValue(annotation.value());
                     if (columns.contains(value)) continue;
                     if (annotation.order() != -1) {
@@ -37,6 +38,7 @@ public class ListManager {
                     ListValue annotation = method.getAnnotation(ListValue.class);
                     if (annotation.onArchive() && !archive) continue;
                     if (annotation.notOnArchive() && archive) continue;
+                    if(!annotation.requiresModule().equals("") && !annotation.requiresModule().equals(module)) continue;
                     ListRowValue value = new ListRowValue(annotation.value());
                     if (columns.contains(value)) continue;
                     if (annotation.order() != -1) {
@@ -62,6 +64,7 @@ public class ListManager {
                     ListValue annotation = field.getAnnotation(ListValue.class);
                     if (annotation.onArchive() && !archive) continue;
                     if (annotation.notOnArchive() && archive) continue;
+                    if(!annotation.requiresModule().equals("") && !annotation.requiresModule().equals(module)) continue;
                     ListRowValue value = new ListRowValue(annotation.value());
                     if (!columns.contains(value)) {
                         if (annotation.order() != -1) {
@@ -84,6 +87,7 @@ public class ListManager {
                     ListValue annotation = method.getAnnotation(ListValue.class);
                     if (annotation.onArchive() && !archive) continue;
                     if (annotation.notOnArchive() && archive) continue;
+                    if(!annotation.requiresModule().equals("") && !annotation.requiresModule().equals(module)) continue;
                     ListRowValue value = new ListRowValue(annotation.value());
                     if (!columns.contains(value)) {
                         if (annotation.order() != -1) {

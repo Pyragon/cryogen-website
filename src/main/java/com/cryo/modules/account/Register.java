@@ -1,6 +1,7 @@
 package com.cryo.modules.account;
 
 import com.cryo.Website;
+import com.cryo.entities.accounts.PreviousPassList;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.annotations.SPAEndpoint;
@@ -16,6 +17,7 @@ import spark.Request;
 import spark.Response;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.cryo.Website.getConnection;
@@ -54,9 +56,13 @@ public class Register {
         String salt = BCrypt.generate_salt();
         String hash = BCrypt.hashPassword(password, salt);
         String sessionId = SessionIDGenerator.getInstance().getSessionId();
-        Account account = new Account(-1, username, hash, salt, 0, 0, "", null, -1, "", null);
+        Account account = new Account(-1, username, hash, salt, 0, 0, null, "", null, -1, "", request.ip(), null);
         long expiry = (1000 * 60 * 60 * 24) + System.currentTimeMillis();
         Session session = new Session(-1, username, sessionId, new Timestamp(expiry));
+        ArrayList<String> list = new ArrayList<>();
+        list.add(hash);
+        PreviousPassList previous = new PreviousPassList(-1, username, list, null, null);
+        getConnection("cryogen_previous").insert("passwords", previous.data());
         getConnection("cryogen_global").insert("player_data", account.data());
         getConnection("cryogen_accounts").insert("sessions", session.data());
         request.session().attribute("cryo_sess", sessionId);

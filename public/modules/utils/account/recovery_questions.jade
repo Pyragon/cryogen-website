@@ -1,0 +1,29 @@
+script.
+    $('select').change(function() {
+        let option = $(this).find('option:selected').val();
+        let input = $(this).closest('.question').find('input');
+        if(option == -1 && input.length) {
+            input.remove();
+        } else if(option != -1 && !input.length) {
+            let createdInput = $('<input class="input" type="text"></input>');
+            post('/account/overview/question', { id: option }, null, data => {
+                createdInput.val(data.question);
+                $(this).closest('.question').append(createdInput);
+            });
+        }
+    });
+
+mixin showQuestion(question, answer, i)
+    .question
+        select.input
+            if user.getQuestion(i) == null
+                option(value=-1, selected) None
+            else
+                option(value=-1) None
+            for recoveryQuestion in questions
+                if user.getQuestion(i) == null || user.getQuestion(i).get(0) != recoveryQuestion.getId()
+                    option(value=recoveryQuestion.getId())= recoveryQuestion.getQuestion()
+                else
+                    option(value=recoveryQuestion.getId(), selected)= recoveryQuestion.getQuestion()
+        if user.getQuestion(i) != null
+            input.input(type='text', value=user.getQuestion(i).get(1))

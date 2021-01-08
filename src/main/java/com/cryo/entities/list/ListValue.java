@@ -22,6 +22,8 @@ public @interface ListValue {
 
     boolean returnsValue() default false;
 
+    String requiresModule() default "";
+
     String className() default "";
 
     boolean isButton() default false;

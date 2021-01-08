@@ -25,7 +25,7 @@ script.
         $('#forgot-btn').click(() => {
 
             let username = $('.username').val();
-            post('/forgot', { username });
+            post('/recover', { username });
 
         });
 

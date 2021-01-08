@@ -422,13 +422,26 @@ public class Utilities {
                 return error("Error loading recaptcha response. Please refresh the page and try again.");
             boolean success = (boolean) obj.get("success");
             if(!success) return error("You failed the recaptcha. Please refresh the page and try again.");
-            DateTime dt = new DateTime((String) obj.get("challenge_ts"));
+            DateTime dt = new DateTime(obj.get("challenge_ts"));
             if(DateUtils.getDateDiff(dt.toDate(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
         } catch (UnirestException e) {
             e.printStackTrace();
             return error(e.getMessage());
         }
         return null;
+    }
+
+    public static String generateRandomString(int length) {
+        String SALTCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < length) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
     }
 
 }

@@ -41,7 +41,7 @@ public class Vote {
         if(account == null) return error("Session has expired. Please refresh the page and try again.");
         HashMap<String, Object> model = new HashMap<>();
         List<VoteSite> sites = getConnection("cryogen_vote").selectList("vote_sites", VoteSite.class);
-        ListManager.buildTable(model, sites, VoteSite.class, account, new ArrayList<>(), new ArrayList<>(),false);
+        ListManager.buildTable(model, "account", sites, VoteSite.class, account, new ArrayList<>(), new ArrayList<>(),false);
         return renderList(model, request, response);
     }
 

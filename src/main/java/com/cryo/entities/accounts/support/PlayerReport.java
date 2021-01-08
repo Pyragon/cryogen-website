@@ -18,18 +18,19 @@ public class PlayerReport extends MySQLDao {
     @ListValue(value = "ID", order=0)
     private final int id;
 
+    @ListValue(value = "Reporter", requiresModule = "staff", order = 1, formatAsUser = true)
     private final String username;
 
     @Filterable("Title")
-    @ListValue(value = "Title", order=1)
+    @ListValue(value = "Title", order=2)
     private final String title;
 
     @Filterable("Offender")
-    @ListValue(value = "Offender", order=2, formatAsUser = true)
+    @ListValue(value = "Offender", order=3, formatAsUser = true)
     private final String offender;
 
     @Filterable("Rule")
-    @ListValue(value = "Rule", order=3)
+    @ListValue(value = "Rule", order=4)
     private final String rule;
 
     private final String info;
@@ -37,29 +38,29 @@ public class PlayerReport extends MySQLDao {
 
     @MySQLDefault
     @Filterable("Last Action")
-    @ListValue(value = "Last Action", order=4)
+    @ListValue(value = "Last Action", order=5)
     private final String lastAction;
 
     @SortAndFilter("Date of Offence")
-    @ListValue(value = "Date of Offence", order=5, formatAsTimestamp = true)
+    @ListValue(value = "Date of Offence", order=6, formatAsTimestamp = true)
     private final Timestamp date;
 
     @SortAndFilter(value = "Archived On", onArchive = true)
-    @ListValue(value = "Archived On", order=6, formatAsTimestamp = true, onArchive = true)
+    @ListValue(value = "Archived On", order=7, formatAsTimestamp = true, onArchive = true)
     private final Timestamp archived;
 
     @Filterable(value = "Archived By", onArchive = true)
-    @ListValue(value = "Archived By", order=7, formatAsUser = true, onArchive = true)
+    @ListValue(value = "Archived By", order=8, formatAsUser = true, onArchive = true)
     private final String archiver;
 
     @MySQLDefault
     @SortAndFilter("Reported On")
-    @ListValue(value = "Reported On", order=8, formatAsTimestamp = true)
+    @ListValue(value = "Reported On", order=9, formatAsTimestamp = true)
     private final Timestamp added;
 
     @MySQLDefault
     private final Timestamp updated;
 
-    @ListValue(value = "View", className="view-offence", order=9, isButton = true)
+    @ListValue(value = "View", className="view-offence", order=10, isButton = true)
     private Object viewButton = "View";
 }

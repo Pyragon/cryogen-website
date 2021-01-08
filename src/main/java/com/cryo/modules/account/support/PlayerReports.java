@@ -35,7 +35,7 @@ public class PlayerReports {
         model.put("module", "/support/player-reports");
         model.put("moduleId", "player-reports");
         model.put("info", new ArrayList<String>() {{
-            add("The following page lists all reports you have made against other players on Cryogen.");
+            add("The following page lists all player reports you have made against other players on Cryogen.");
             add("You can filter this list using the buttons on the right.");
             add("To create a new report, click 'New' on the right.");
         }});
@@ -70,7 +70,7 @@ public class PlayerReports {
         List<PlayerReport> reports = getConnection("cryogen_reports").selectList("player_reports", query, order, PlayerReport.class, values.toArray());
         if(reports == null)
             return error("Error loading player reports. Please try again.");
-        ListManager.buildTable(model, reports, PlayerReport.class, account, sortValues, filterValues, archived);
+        ListManager.buildTable(model, "support", reports, PlayerReport.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
     }
 

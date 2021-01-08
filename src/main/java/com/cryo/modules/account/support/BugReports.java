@@ -71,7 +71,7 @@ public class BugReports {
         List<BugReport> reports = getConnection("cryogen_reports").selectList("bug_reports", query, order, BugReport.class, values.toArray());
         if(reports == null)
             return error("Error loading player reports. Please try again.");
-        ListManager.buildTable(model, reports, BugReport.class, account, sortValues, filterValues, archived);
+        ListManager.buildTable(model, "account", reports, BugReport.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
     }
 

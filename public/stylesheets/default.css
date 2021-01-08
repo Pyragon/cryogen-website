@@ -326,3 +326,8 @@ h4.title {
     width: 200px;
     height: 200px;
 }
+
+select {
+    max-width: 182px;
+    margin-top: 5px;
+}

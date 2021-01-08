@@ -1,6 +1,7 @@
 package com.cryo.modules.account.sections;
 
 import com.cryo.Website;
+import com.cryo.entities.accounts.support.RecoveryQuestion;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.accounts.Account;
@@ -10,9 +11,12 @@ import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
 import com.cryo.utils.DisplayNames;
 import com.cryo.utils.Utilities;
+import com.mysql.cj.util.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -31,7 +35,28 @@ public class Overview {
         Discord discord = getConnection("cryogen_discord").selectClass("linked", "username=?", Discord.class, account.getUsername());
         if(discord != null)
             model.put("discord", discord);
+        model.put("questions", RecoveryQuestion.getQuestions().values());
         return renderPage("account/sections/overview", model, "/account/overview", request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/account/overview/question")
+    public static String getQuestion(Request request, Response response) {
+        com.cryo.entities.accounts.Account account = AccountUtils.getAccount(request);
+        if(account == null)
+            return Login.renderLoginPage("/account/overview", request, response);
+        String idString = request.queryParams("id");
+        if(!NumberUtils.isDigits(idString))
+            return error("Could not parse id. "+idString);
+        int id = Integer.parseInt(idString);
+        if(id == -1)
+            return error("Could not parse id.");
+        Properties prop = new Properties();
+        if(account.getRecoveryQuestions() == null || account.getRecoveryQuestions().size() < id-1 || account.getRecoveryQuestions().get(id) == null)
+            prop.put("question", "");
+        else
+            prop.put("question", account.getRecoveryQuestions().get(id));
+        prop.put("success", true);
+        return Website.getGson().toJson(prop);
     }
 
     @Endpoint(method = "POST", endpoint = "/account/overview/save")
@@ -43,10 +68,12 @@ public class Overview {
         String userTitle = request.queryParams("userTitle");
         String email = request.queryParams("email");
         String discord = request.queryParams("discord");
+        String questions = request.queryParams("questions");
         boolean changeDiscord = false;
         boolean changeDisplay = false;
         boolean changeUserTitle = false;
         boolean changeEmail = false;
+        boolean changeQuestions = false;
         Verify verify = null;
         if(displayName != null && !displayName.equalsIgnoreCase(account.getDisplayName())) {
             displayName = Utilities.formatNameForDisplay(displayName);
@@ -77,7 +104,42 @@ public class Overview {
                 return error("Invalid discord random provided. Please double check and try again.");
             changeDiscord = true;
         }
-        if(!changeDiscord && !changeDisplay && !changeEmail && !changeUserTitle)
+        ArrayList<ArrayList<Object>> recoveryQuestions = null;
+        try {
+            if (questions != null) {
+                recoveryQuestions = Website.getGson().fromJson(questions, ArrayList.class);
+                if (recoveryQuestions != null) {
+                    int index = -1;
+                    ArrayList<Integer> used = new ArrayList<>();
+                    for(ArrayList<Object> values : recoveryQuestions) {
+                        index++;
+                        if (index == 3)
+                            return error("Too many recovery questions. Please report this bug via Github.");
+                        int id = (int) Math.floor((double) values.get(0));
+                        String value = (String) values.get(1);
+                        if (id == -1 || StringUtils.isNullOrEmpty(value))
+                            continue;
+                        if(value.length() < 5)
+                            return error("Recovery answers must be at least 5 characters.");
+                        if (!RecoveryQuestion.getQuestions().containsKey(id))
+                            return error("Invalid recovery question selected. Please report this bug via Github.");
+                        if(used.contains(id))
+                            return error("You cannot have duplicate recovery questions!");
+                        used.add(id);
+                        for(int i = 0; i < 3; i++) {
+                            if(i == index) continue;
+                            if(account.getQuestion(i) != null && (int) Math.floor((double) account.getQuestion(i).get(0)) == id && (int) Math.floor((double) recoveryQuestions.get(index).get(0)) == (int) Math.floor((double) account.getQuestion(index).get(0)))
+                                return error("You cannot have duplicate recovery questions!");
+                        }
+                    }
+                    changeQuestions = true;
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            return error("Error parsing recovery questions. Please report this bug via Github if it persists.");
+        }
+        if(!changeDiscord && !changeDisplay && !changeEmail && !changeUserTitle && !changeQuestions)
             return error("No settings have been changed.");
         Properties prop = new Properties();
         prop.put("success", true);
@@ -96,6 +158,40 @@ public class Overview {
             getConnection("cryogen_global").set("player_data", "custom_user_title=?", "username=?", userTitle, account.getUsername());
         if(changeEmail) {
             //TODO - todo once new domain is purchased
+        }
+        if(changeQuestions) {
+            try {
+                int index = -1;
+                for(ArrayList<Object> values : recoveryQuestions) {
+                    index++;
+                    int id = (int) Math.floor((double) values.get(0));
+                    String value = (String) values.get(1);
+                    if (id == -1 || StringUtils.isNullOrEmpty(value)) {
+                        account.getRecoveryQuestions().put(index, null);
+                        continue;
+                    }
+                    if (!RecoveryQuestion.getQuestions().containsKey(id))
+                        return error("Invalid recovery question selected. Please report this bug via Github.");
+                    if(account.getRecoveryQuestions() == null) {
+                        account.setQuestions("");
+                        account.setRecoveries(new HashMap<>());
+                    }
+                    account.getRecoveryQuestions().put(index, new ArrayList<Object>() {{
+                        add(id);
+                        add(value);
+                    }});
+                }
+                HashMap<String, Object[]> wtf = null;
+                if(account.getRecoveryQuestions() != null) {
+                    wtf = new HashMap<>();
+                    for(Integer key : account.getRecoveryQuestions().keySet())
+                        wtf.put(Integer.toString(key), account.getRecoveryQuestions().get(key) == null ? null : new Object[] { account.getRecoveryQuestions().get(key).get(0), account.getRecoveryQuestions().get(key).get(1) });
+                }
+                getConnection("cryogen_global").set("player_data", "recovery_questions=?", "username=?", Website.getGson().toJson(wtf), account.getUsername());
+            } catch(Exception e) {
+                e.printStackTrace();
+                return error("Error setting recovery questions. Please report this problem via Github if it persists.");
+            }
         }
         return Website.getGson().toJson(prop);
     }
