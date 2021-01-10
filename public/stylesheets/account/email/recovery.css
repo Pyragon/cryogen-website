@@ -1,0 +1,18 @@
+.content>p {
+    margin-left: 10px;
+    color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+p,
+.content a {
+    text-align: center;
+    font-size: 16px;
+    display: block;
+}
+
+#link-info {
+    margin-bottom: 2px;
+}

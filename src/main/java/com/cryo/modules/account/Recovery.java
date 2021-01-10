@@ -17,15 +17,12 @@ import net.dv8tion.jda.api.entities.User;
 import spark.Request;
 import spark.Response;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.cryo.Website.getConnection;
 import static com.cryo.utils.Utilities.error;
@@ -136,6 +133,7 @@ public class Recovery {
                 if (email.equalsIgnoreCase(account.getEmail())) {
                     emailKey = Utilities.generateRandomString(10);
                     emailStatus = 3;
+                    sendRecoveryEmail(account.getEmail(), emailKey, account, request, response);
                 } else if (account.getEmail() == null || account.getEmail().equals(""))
                     emailStatus = 2;
                 else
@@ -177,6 +175,16 @@ public class Recovery {
         }
     }
 
+    @Endpoint(method = "GET", endpoint = "/recover/email/:key")
+    public static String renderRecoveryEmail(Request request, Response response) {
+        String key = request.params(":key");
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("key", key);
+        model.put("user", AccountUtils.getAccount("cody"));
+        model.put("link", Website.getProperties().getProperty("path")+"recover/check?key="+key);
+        return renderPage("account/support/recovery/recovery_email", model, request, response);
+    }
+
     public static boolean allNull(ArrayList<ArrayList<Object>> questions, ArrayList<String> previous, String... strings) {
         for(String str : strings) {
             if (!StringUtils.isNullOrEmpty(str))
@@ -207,6 +215,26 @@ public class Recovery {
         for(String message : DISCORD_RECOVERY_MESSAGE) {
             message = message.replace("{{name}}", account.getDisplayName()).replace("{{key}}", discordKey);
             channel.sendMessage(message).queue();
+        }
+    }
+
+    public static void sendRecoveryEmail(String email, String key, Account account, Request request, Response response) {
+        try {
+            String link = Website.getProperties().getProperty("path") + "recover/check?key=" + key;
+            HashMap<String, Object> model = new HashMap<>();
+            model.put("user", account);
+            model.put("key", key);
+            model.put("link", link);
+            String message = renderPage("account/support/recovery/recovery_email", model, null,"GET", request, response);
+            message += "<br><br><br>" +
+                    "Hello, " + account.getDisplayName() + "!<br>" +
+                    "A password recovery request has been made for your account.<br>" +
+                    "If you did not make this request, please click LINK for information on how to secure your account.<br>" +
+                    "If you did make this request, simply follow the link below to continue with resetting your password.<br>" +
+                    link;
+            Utilities.sendEmail(email, "Cryogen Password Recovery", message);
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 

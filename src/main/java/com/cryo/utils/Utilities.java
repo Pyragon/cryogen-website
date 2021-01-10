@@ -16,6 +16,9 @@ import spark.ExceptionHandler;
 import spark.Request;
 import spark.Response;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -39,18 +42,18 @@ public class Utilities {
     }
 
     public static String renderPage(String module, HashMap<String, Object> model, String endpoint, String method, Request request, Response response) {
-        Account account = AccountUtils.getAccount(request);
-        if(endpoint != null && account == null)
-            return Login.renderLoginPage(endpoint, request, response);
-        if(model == null)
-            model = new HashMap<>();
-        model.put("format", new FormatUtils());
-        model.put("useDefault", request.requestMethod().equals("GET"));
-        model.put("loggedIn", account != null);
-        if(account != null)
-            model.put("user", account);
-        module = "./public/modules/"+module+".jade";
         try {
+            Account account = AccountUtils.getAccount(request);
+            if(endpoint != null && account == null)
+                return Login.renderLoginPage(endpoint, request, response);
+            if(model == null)
+                model = new HashMap<>();
+            model.put("format", new FormatUtils());
+            model.put("useDefault", request.requestMethod().equals("GET"));
+            model.put("loggedIn", account != null);
+            if(account != null)
+                model.put("user", account);
+            module = "./public/modules/"+module+".jade";
             String html = Jade4J.render(module, model);
             if(method.equals("GET"))
                 return html;
@@ -441,7 +444,51 @@ public class Utilities {
         }
         String saltStr = salt.toString();
         return saltStr;
+    }
 
+    public static void sendEmail(String email, String subject, String message) {
+        Session session = null;
+        final String email_user = (String) Website.getProperties().get("email");
+        final String password = (String) Website.getProperties().get("email_pass");
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.debug", true);
+
+            Authenticator auth = new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(email_user, password);
+                }
+            };
+
+            session = Session.getDefaultInstance(props, auth);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try {
+
+            Message mime = new MimeMessage(session);
+            mime.setFrom(new InternetAddress(email_user));
+            mime.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(email));
+            mime.setSubject(subject);
+            mime.setContent(message, "text/html");
+
+
+            try {
+                Transport.send(mime);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
