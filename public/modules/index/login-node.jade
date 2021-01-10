@@ -11,22 +11,36 @@ script.
 
     $(document).ready(() => {
 
-        $('#login-btn').click(() => {
+        $('#login-btn').click(login);
 
+        function login() {
             let username = $('.username').val();
             let password = $('.password').val();
             let remember = $('#remember-me>input').val();
             //TODO - https with SPA?
 
             post('/login', { username, password, remember, redirect });
-
-        });
+        }
 
         $('#forgot-btn').click(() => {
 
             let username = $('.username').val();
             post('/recover', { username });
 
+        });
+
+        $('.password').keydown(e => {
+            if(e.which == 13) {
+                let value = $('.password').val();
+                if(!value) $('.username').focus();
+                else login();
+                return false;
+            }
+        });
+
+        $('.username').keydown(e => {
+            if(e.which == 13)
+                $('.password').focus();
         });
 
     });
@@ -40,6 +54,6 @@ div#remember-me
     input(type='checkbox')
     span  Keep me logged in
 .login-node-buttons
-    button.btn.btn-default#login-btn Login
-    button.btn.btn-default#forgot-btn Forgot Password
+    button.btn.btn-default.small-btn#login-btn Login
+    button.btn.btn-default.small-btn#forgot-btn Forgot Password
     .clear
