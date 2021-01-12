@@ -48,6 +48,12 @@
             <groupId>com.github.nielsbasjes</groupId>
             <artifactId>yauaa</artifactId>
             <version>ad8907d</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.nielsbasjes.yauaa</groupId>
+                    <artifactId>yauaa-nifi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.Pyragon</groupId>
