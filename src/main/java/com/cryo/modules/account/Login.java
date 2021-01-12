@@ -45,6 +45,8 @@ public class Login {
         String password = request.queryParams("password");
         String rememberS = request.queryParams("remember");
         String redirect = request.queryParamOrDefault("redirect", "/");
+        if(redirect.equals(""))
+            redirect = "/";
         String otp = request.queryParamOrDefault("otp", null);
         String visitorId = request.queryParams("visitorId");
         if(StringUtils.isNullOrEmpty(visitorId))
@@ -84,6 +86,8 @@ public class Login {
         request.session().removeAttribute("cryo_sess");
         response.removeCookie("cryo_sess");
         String redirect = request.queryParamOrDefault("redirect", "/");
+        if(redirect.equals(""))
+            redirect = "/";
         return Utilities.redirect(redirect, request, response);
     }
 }
