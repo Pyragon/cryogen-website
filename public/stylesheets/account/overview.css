@@ -28,3 +28,76 @@ h3 {
 .question input {
     margin: 5px 0px;
 }
+
+.switch {
+    margin-left: 52px;
+    margin-top: 5px;
+}
+
+#qr-code {
+    margin-left: 46px;
+}
+
+#view-logins {
+    width: 75px;
+    margin-left: 31px;
+}
+
+#revoke {
+    width: 75px;
+    margin-left: 2px;
+}
+
+.login-block {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.browser-icon {
+    float: left;
+}
+
+.browser-icon>img {
+    max-width: 40px;
+    max-height: 40px;
+}
+
+.login-info {
+    float: left;
+}
+
+.login-info>p {
+    margin: 0 0 0 5px;
+    font-size: 13px;
+}
+
+.revoke-btn {
+    float: right;
+}
+
+.revoke-btn>button {
+    width: 63px;
+    margin-top: 12px;
+}
+
+.current {
+    font-size: 11px;
+    color: red;
+}
+
+.tfa-info {
+    padding: 10px;
+    font-size: 13px;
+    margin: auto;
+    height: auto;
+}
+
+.tfa-img {
+    width: 100%;
+}
+
+.tfa-img>img {
+    margin-left: 79px;
+    margin-bottom: 5px;
+    width: 150px;
+}

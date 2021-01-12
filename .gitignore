@@ -7,3 +7,4 @@ log/
 .project
 *.iml
 data/props.json
+data/qr_codes/*

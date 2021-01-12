@@ -8,7 +8,9 @@ import com.cryo.entities.accounts.Session;
 import com.cryo.modules.index.Index;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.SessionIDGenerator;
+import com.cryo.utils.TFA;
 import com.cryo.utils.Utilities;
+import com.mysql.cj.util.StringUtils;
 import spark.Request;
 import spark.Response;
 
@@ -43,6 +45,10 @@ public class Login {
         String password = request.queryParams("password");
         String rememberS = request.queryParams("remember");
         String redirect = request.queryParamOrDefault("redirect", "/");
+        String otp = request.queryParamOrDefault("otp", null);
+        String visitorId = request.queryParams("visitorId");
+        if(StringUtils.isNullOrEmpty(visitorId))
+            return error("Invalid visitor id!");
         boolean remember = rememberS.equals("on");
         Account account = getConnection("cryogen_global").selectClass("player_data", "username=?", Account.class, username);
         if(account == null)
@@ -50,9 +56,16 @@ public class Login {
         String hashed = BCrypt.hashPassword(password, account.getSalt());
         if(!hashed.equals(account.getPassword()))
             return error("Invalid username or password.");
+        if(account.getTFAKey() != null) {
+            if(otp == null)
+                return error("You have Two-Factor Authentication enabled. Please enter your one-time password into the provided area.");
+            String code = TFA.getTOTPCode(account.getTFAKey());
+            if(!code.equals(otp))
+                return error("One-Time password was incorrect. Please try again.");
+        }
         String sessionId = SessionIDGenerator.getInstance().getSessionId();
         long expiry = (remember ? (1000 * 60 * 60 * 24 * 60) : (1000 * 60 * 60 * 24 * 1)) + System.currentTimeMillis();
-        Session session = new Session(-1, username, sessionId, new Timestamp(expiry));
+        Session session = new Session(-1, username, sessionId, request.userAgent(), visitorId, new Timestamp(expiry), null);
         getConnection("cryogen_accounts").insert("sessions", session.data());
         request.session().attribute("cryo_sess", sessionId);
         if(remember)
@@ -64,6 +77,10 @@ public class Login {
     public static String logout(Request request, Response response) {
         if(AccountUtils.getAccount(request) == null)
             return Index.renderIndexPage(request, response);
+        String sessionId = request.cookie("cryo_sess");
+        if(sessionId == null)
+            sessionId = request.session().attribute("cryo_sess");
+        getConnection("cryogen_accounts").delete("sessions", "session_id=?", sessionId);
         request.session().removeAttribute("cryo_sess");
         response.removeCookie("cryo_sess");
         String redirect = request.queryParamOrDefault("redirect", "/");

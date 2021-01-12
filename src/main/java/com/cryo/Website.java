@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import nl.basjes.parse.useragent.UserAgentAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,6 +38,9 @@ public class Website {
     private static JDA JDA;
 
     @Getter
+    private static UserAgentAnalyzer userAgentAnalyzer;
+
+    @Getter
     private ConnectionManager connectionManager;
 
     private Timer fastExecutor;
@@ -56,6 +60,7 @@ public class Website {
         connectionManager = new ConnectionManager();
         fastExecutor = new Timer();
         buildJDA();
+        buildUserAgentAnalyzer();
 
         Utilities.initializeEndpoints();
 
@@ -96,8 +101,21 @@ public class Website {
         }
     }
 
+    public static void buildUserAgentAnalyzer() {
+        userAgentAnalyzer = UserAgentAnalyzer
+                .newBuilder()
+                .withCache(1234)
+                .withField("DeviceClass")
+                .withAllFields()
+                .build();
+    }
+
     public static void loadProperties() {
-        File file = new File("data/props.json");
+        loadProperties("data/props.json");
+    }
+
+    public static void loadProperties(String fileName) {
+        File file = new File(fileName);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;

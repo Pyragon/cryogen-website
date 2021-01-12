@@ -1,0 +1,16 @@
+include ../utils/script
+
++includeScript('/utils/tabs')
+script.
+    $(document).ready(() => {
+
+        buildPage('staff', {
+            'player-reports': 'Player Reports',
+            'bug-reports': 'Bug Reports',
+            'appeals': 'Appeals',
+            'recoveries': 'Recoveries'
+        }, '!{active}');
+
+    });
+
+include ../utils/tabs

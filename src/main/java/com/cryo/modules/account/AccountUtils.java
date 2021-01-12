@@ -4,7 +4,9 @@ import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.Session;
 import com.cryo.utils.DisplayNames;
+import com.mysql.cj.util.StringUtils;
 import lombok.Getter;
+import org.eclipse.jetty.util.StringUtil;
 import spark.Request;
 
 import java.util.HashMap;
@@ -27,9 +29,12 @@ public class AccountUtils {
     public static Account getAccount(Request request) {
         if(!request.session().attributes().contains("cryo_sess") && request.cookie("cryo_sess") == null) return null;
         String sessionId = request.cookie("cryo_sess");
+        String visitorId = request.queryParams("visitorId");
+        if(StringUtils.isNullOrEmpty(visitorId))
+            return null;
         if(sessionId == null)
-            request.session().attribute("cryo_sess");
-        Session session = getConnection("cryogen_accounts").selectClass("sessions", "session_id=?", Session.class, sessionId);
+            sessionId = request.session().attribute("cryo_sess");
+        Session session = getConnection("cryogen_accounts").selectClass("sessions", "session_id=? AND visitor_id=?", Session.class, sessionId, visitorId);
         if(session == null) return null;
         if(session.getExpiry().getTime() < System.currentTimeMillis()) return null;
         return getAccount(session.getUsername());

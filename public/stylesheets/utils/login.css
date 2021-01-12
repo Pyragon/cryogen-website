@@ -38,3 +38,25 @@
     float: right;
     width: 45%;
 }
+
+#toggle-tfa {
+    margin: 5px 0 0 11px;
+}
+
+#tfa-op {
+    font-size: 12px;
+}
+
+#tfa-block {
+    margin-top: 5px;
+    display: none;
+}
+
+#tfa-block>div {
+    margin: auto;
+    width: 145px;
+}
+
+#tfa-block input {
+    width: 100px;
+}

@@ -1,0 +1,91 @@
++includeStylesheet('account/recover')
++includeStylesheet('utils/input')
++includeStylesheet('utils/buttons')
+script(src='https://www.google.com/recaptcha/api.js')
+
+script.
+    let captchaCompleted = false;
+
+    $(document).ready(() => {
+            
+        $('#submit').click(() => {
+
+            let response = grecaptcha.getResponse ? grecaptcha.getResponse() : null;
+            let username = $('.username').val();
+            let email = $('#email').val();
+            let discord = $('#discord').val();
+            let creation = $('#creation').val();
+            let cico = $('#cico').val();
+            let isp = $('#isp').val();
+
+            if(!captchaCompleted || !response) {
+                sendAlert('Captcha must be completed!');
+                return false;
+            }
+
+            let questions = [];
+
+            $('.question').each(function(i) {
+                let selected = parseInt($(this).find('option:selected').val());
+                let input = $(this).find('input').val();
+                questions.push([ selected, input ]);
+            });
+            let previous = [ $('#previous-pass1').val(), $('#previous-pass2').val(), $('#previous-pass3').val() ];
+            let additional = $('#additional').val();
+            if(!username) {
+                sendAlert('Username must be filled out.');
+                return false;
+            }
+
+            post('/recover/submit', { username, email, discord, creation, cico, isp, questions: JSON.stringify(questions), previous: JSON.stringify(previous), additional, response });
+
+
+        });
+        
+    });
+
+    function completeRecaptcha() {
+        captchaCompleted = true;
+    }
+
+.container
+    .widget
+        .header
+            h4.color-white Forgot Password
+            h5.color-grey Use this page to recover your account due to a forgotten or stolen password.
+            h5.color-grey At least 1 field other than username must be filled out. The more that are filled out, the better your chances of recovery.
+            h5.color-grey For more information on recovering with your email or discord, or more information on the recovery process in general, click #[a(href='', target='_blank') here].
+        .content
+            .row
+                .col-md-6
+                    p Account Username: (This is the name you login with, not your display name.)
+                    input.input.username(type='text', placeholder='Enter username', value=username, maxlength='12')
+                    p Account Email: (More information on recovering via email can be found #[a(href='', target='_blank') here].)
+                    input.input#email(type='text', placeholder='Enter email')
+                    p Discord Tag: (More information on recovering via discord can be found #[a(href='', target='_blank') here].)
+                    input.input#discord(type='text', placeholder='Enter discord tag')
+                    p Creation Date: (Please get as close as possible.)
+                    input.input#creation(type='date', placeholder='')
+                    p City/Country you lived in when you created the account
+                    input.input#cico(type='text', placeholder='Enter City/Country')
+                    p ISP you used when you created the account
+                    input.input#isp(type='text', placeholder='Enter ISP')
+                .col-md-6
+                    p Recovery Questions
+                    for i in [0, 1, 2]
+                        .question
+                            select.input
+                                option(value=-1) None
+                                for question in questions
+                                    option(value=question.getId())= question.getQuestion()
+                            input.input(type='text', placeholder='Enter answer')
+                    p Previous Passwords (These passwords are not seen by staff. Click #[a(href='', target='_blank') here] for more information)
+                    input.input#previous-pass1(type='text', placeholder='Enter previous password')
+                    input.input#previous-pass2(type='text', placeholder='Enter previous password')
+                    input.input#previous-pass3(type='text', placeholder='Enter previous password')
+                    p Additional Information (Any additional information you may think is relevant. Please avoid using any passwords or personal information in this field.)
+                    textarea.input#additional(rows='4', cols='50', placeholder='Enter additional information')
+            div
+                .captcha-container
+                    .g-recaptcha(data-sitekey=sitekey, data-callback='completeRecaptcha')
+                button.btn.btn-default.large-btn#submit Submit

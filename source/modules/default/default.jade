@@ -1,0 +1,53 @@
+include ../utils/stylesheet
+include ../utils/script
+
+doctype html
+html
+    head
+        title Cryogen Website
+        meta(name='description', content='Cryogen RSPS. Runescape cloned.')
+        meta(name='keywords', content='Cryogen, Runescape, RSPS')
+        meta(name='google-site-verification', content='MdGWQ9EXaryDgWAfU8slKcH0JWYpDLz3ze4mETQ0F4s')
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(http-equiv='X-UA-Compatible', content='IE=9')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        script(src='/js/ui/jquery/jquery.js', type='text/javascript')
+        script(src='/js/ui/jquery-ui.min.js', type='text/javascript')
+        script(src='/js/jquery.nicescroll.js', type='text/javascript')
+        script(src='/js/noty/packaged/jquery.noty.packaged.js', type='text/javascript')
+        script(src='/js/utils/spa.js', type='text/javascript')
+        script(async, src='//cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js', onload='initFingerprintJS()')
+
+        +includeScript('noty/themes/cryogen')
+        +includeScript('utils/alerts')
+        +includeScript('default')
+        script(src='/bootstrap/js/bootstrap.min.js')
+        script(src='/bootstrap/js/bootbox.min.js')
+
+        link(rel='icon', href='/images/favicon.ico')
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+        link(rel='stylesheet', href='http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css')
+        link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Open+Sans', type='text/css')
+        link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css', media='screen')
+        link(rel='stylesheet', href='/js/ui/jquery-ui.min.css')
+        +includeStylesheet('default')
+        +includeStylesheet('misc')
+        script.
+            $(document).ready(() => {
+
+                post(window.location.pathname, { first: true }, null, data => {
+
+                    $('#body').html(data.body);
+                    $('#footer').html(data.footer);
+                    $('#main-content').html(data.html);
+
+                    return false;
+
+                });
+                
+
+            });
+    body
+        #body
+        #footer

@@ -30,7 +30,6 @@ function showTab(module, key) {
     if (!tabs[key]) {
         post(`/${module}/${key}/load`, {}, null, data => {
             tabs[key] = true;
-            console.log(data);
             $('#' + key).html(data.html);
             $('.nav-tabs a[href="#' + key + '"]').tab('show');
             history.pushState({}, 'CryogenSPA', `/${module}/${key}`);

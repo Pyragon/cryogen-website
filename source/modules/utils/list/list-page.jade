@@ -104,7 +104,6 @@ script.
                 if(data.filter)
                     $(`#${id}-filter`).html(data.filter);
                 
-                console.log(data.activeFilter);
                 $(`#${id}-active-filter`).css('display', data.activeFilter ? 'inline' : 'none');
 
                 if(cb) cb(data);

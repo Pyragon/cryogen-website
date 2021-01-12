@@ -18,12 +18,21 @@ script.
             post('/account/revoke');
         });
 
+        $('#view-logins').click(() => {
+            postNoty('/account/logins', {}, 'Account Logins', [ closeButton() ]);
+        });
+
+        $('#qr-code').click(() => {
+            postNoty('/account/tfa/noty', {}, 'QR Code', [ closeButton() ]);
+        });
+
         $('#save').click(() => {
 
             let display = $('#display').val();
             let userTitle = $('#user-title').val();
             let email = $('#email').val();
             let discord = $('#discord').val();
+            let tfa = $('#tfa-switch').is(':checked');
 
             let questions = [];
 
@@ -33,7 +42,7 @@ script.
                 questions.push([ selected, input ]);
             });
 
-            post('/account/overview/save', { display, userTitle, email, discord, questions: JSON.stringify(questions) }, null, data => {
+            post('/account/overview/save', { display, userTitle, email, discord, questions: JSON.stringify(questions), tfa }, null, data => {
                 sendAlert('Your settings have been saved. More information will follow if needed.');
                 if(data.display)
                     $('#display').val(data.display);
@@ -41,6 +50,9 @@ script.
                     sendAlert('An email has been sent to the email entered. Please view it and click the link provided to finish linking your email.');
                 if(data.discord)
                     $('#discord').val(data.discord);
+                $('#qr-code').css('visibility', data.tfa ? 'visibile' : 'hidden');
+                if(data.tfa)
+                    postNoty('/account/tfa/noty', {}, 'QR Code', [ closeButton() ]);
             });
 
             return false;
@@ -103,11 +115,24 @@ script.
                 input.input#discord(type='text', placeholder=discord ? discord.getIdString() : "")
         .row
             .col-md-6
-                p Revoke Existing Logins 
-                    span(title="This will not revoke your own login. Only logins other than this browser.")
+                p Saved Logins
+            .col-md-6
+                .row
+                    .col-md-6
+                        button.btn.btn-default.small-btn#view-logins View
+                    .col-md-6
+                        button.btn.btn-default.small-btn#revoke(title="This will not revoke your own login. Only logins other than this browser.") Revoke
+        .row
+            .col-md-6
+                p Two-Factor Authentication 
+                    a(href='', title='Turn on to enable TFA for your account. Click here for more information.')
                         i.fa.fa-info-circle
             .col-md-6
-                button.btn.btn-default.small-btn#revoke Revoke
+                .row
+                    button.btn.btn-default.small-btn.col-md-6#qr-code(title='Display the QR code to be added to Google Authenticator.', style=(user.getTFAKey() == null ? 'visibility: hidden;' : 'visibility: visible;')) Get QR Code
+                    label.switch.col-md-6
+                        input#tfa-switch(type='checkbox', checked=(user.getTFAKey() == null ? false : true))
+                        span.slider.round
         .row
             .col-md-6
                 p(style='margin-top: 50px;') Recovery questions

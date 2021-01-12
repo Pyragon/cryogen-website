@@ -1,0 +1,19 @@
+include ../utils/stylesheet
+
+script.
+    $(document).ready(function() {
+        $('.user').focus();
+    });
++includeStylesheet('utils/login')
++includeStylesheet('utils/buttons')
++includeStylesheet('utils/input')
+
+.container
+    .row
+        .col-md-6.col-md-offset-3
+            .widget.mini-login
+                .header
+                    h4.color-white Login to Cryogen
+                        h5.color-grey Use this form to login to Cryogen. If you have lost your password. Please click the link provided.
+                .content
+                    include ../index/login-node

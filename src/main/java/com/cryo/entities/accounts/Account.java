@@ -41,6 +41,8 @@ public class Account extends MySQLDao {
     @MySQLRead
 	private String avatarUrl;
     @MySQLRead
+    private String tfaKey;
+    @MySQLRead
 	private String customUserTitle;
 	@MySQLDefault
     @MySQLRead
@@ -54,7 +56,7 @@ public class Account extends MySQLDao {
 
 	private HashMap<Integer, ArrayList<Object>> recoveries;
 
-	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String customUserTitle, int displayGroup, String usergroups, String creationIP, Timestamp added) {
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, Timestamp added) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -63,6 +65,7 @@ public class Account extends MySQLDao {
 		this.donator = donator;
 		this.questions = questions;
 		this.avatarUrl = avatarUrl;
+		this.tfaKey = tfaKey;
 		this.customUserTitle = customUserTitle;
 		this.displayGroup = displayGroup;
 		this.usergroups = usergroups;
@@ -98,6 +101,10 @@ public class Account extends MySQLDao {
 		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
 			return getDisplayGroup().getUserTitle();
 		return null;
+	}
+
+	public String getTFAKey() {
+		return tfaKey;
 	}
 
 	public HashMap<Integer, ArrayList<Object>> getRecoveryQuestions() {

@@ -1,0 +1,27 @@
+script.
+    $(document).ready(() => {
+        $('.revoke').click(function() {
+            let id = $(this).closest('.login-block').data('id');
+            post('/account/revoke', { session: id });
+        });
+    });
+.noty_message
+    span.noty_text
+for login in logins
+    .login-block(data-id=login.getSessionId())
+        .browser-icon
+            img(src=login.getIconPath())
+        .login-info
+            p.os= login.getUserAgent().get('OperatingSystemNameVersion').value+' ('+login.getUserAgent().get('DeviceCpu').value+')'
+            p.browser= login.getUserAgent().get('AgentNameVersion').value
+            p.added= format.formatTimestamp(login.getAdded())
+            if login.isCurrent()
+                p.current Current Session!
+        .revoke-btn
+            if login.isCurrent()
+                button.btn.btn-default.small-btn.revoke(disabled, title='This is your current session. Therefor you cannot revoke its login.') Revoke
+            else
+                button.btn.btn-default.small-btn.revoke Revoke
+        .clear
+    .clear
+.noty_close

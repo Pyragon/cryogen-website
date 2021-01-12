@@ -10,6 +10,7 @@ import com.cryo.entities.accounts.discord.Verify;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
 import com.cryo.utils.DisplayNames;
+import com.cryo.utils.TFA;
 import com.cryo.utils.Utilities;
 import com.mysql.cj.util.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -69,11 +70,13 @@ public class Overview {
         String email = request.queryParams("email");
         String discord = request.queryParams("discord");
         String questions = request.queryParams("questions");
+        String tfa = request.queryParams("tfa");
         boolean changeDiscord = false;
         boolean changeDisplay = false;
         boolean changeUserTitle = false;
         boolean changeEmail = false;
         boolean changeQuestions = false;
+        boolean changeTFA = false;
         Verify verify = null;
         if(displayName != null && !displayName.equalsIgnoreCase(account.getDisplayName())) {
             displayName = Utilities.formatNameForDisplay(displayName);
@@ -103,6 +106,17 @@ public class Overview {
             if(verify == null)
                 return error("Invalid discord random provided. Please double check and try again.");
             changeDiscord = true;
+        }
+        boolean tfaEnabled = false;
+        if(tfa != null) {
+            try {
+                tfaEnabled = Boolean.parseBoolean(tfa);
+            } catch(Exception e) {
+                System.out.println(tfa);
+                return error("Error parsing TFA. Please refresh the page and try again.");
+            }
+            if(tfaEnabled == (account.getTFAKey() == null))
+                changeTFA = true;
         }
         ArrayList<ArrayList<Object>> recoveryQuestions = null;
         try {
@@ -158,6 +172,21 @@ public class Overview {
             getConnection("cryogen_global").set("player_data", "custom_user_title=?", "username=?", userTitle, account.getUsername());
         if(changeEmail) {
             //TODO - todo once new domain is purchased
+        }
+        if(changeTFA) {
+            if(!tfaEnabled) {
+                account.setTfaKey(null);
+                getConnection("cryogen_global").set("player_data", "tfa_key=NULL", "username=?", account.getUsername());
+            } else {
+                String key = TFA.generateSecretKey();
+                String sessionId = request.cookie("cryo_sess");
+                if(sessionId == null)
+                    sessionId = request.session().attribute("cryo_sess");
+                account.setTfaKey(key);
+                getConnection("cryogen_accounts").delete("sessions", "username = ? AND session_id != ?", account.getUsername(), sessionId);
+                getConnection("cryogen_global").set("player_data", "tfa_key=?", "username=?", key, account.getUsername());
+            }
+            prop.put("tfa", tfaEnabled);
         }
         if(changeQuestions) {
             try {

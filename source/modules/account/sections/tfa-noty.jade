@@ -1,0 +1,15 @@
+script.
+    $(document).ready(() => {
+
+        post('/account/tfa/code', {}, null, data => {
+            $('.tfa-img>img').attr('src', 'data:image/png;base64,'+data.image);
+        });
+
+    });
+.noty_message
+    span.noty_text
+p.tfa-info The following is your QR Code that you must add to Google Authenticator.
+p.tfa-info This MUST be done before you logout next, or you will not be able to login again.
+.tfa-img
+    img
+.noty_close

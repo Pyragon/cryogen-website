@@ -1,3 +1,12 @@
+function closeButton(text) {
+    text = text || 'Close';
+    return {
+        addClass: 'btn btn-danger',
+        text,
+        onClick: ($noty) => closeNoty($noty.options.id)
+    }
+}
+
 function sendAlert(text, onClick) {
     let options = {
         text: text,
@@ -31,6 +40,12 @@ function closeNoty(id) {
     return true;
 }
 
+function postNoty(endpoint, data, title, buttons) {
+    post(endpoint, data, null, data => {
+        openNoty(title, data.html, buttons);
+    });
+}
+
 function openNoty(title, html, buttons) {
     n = noty({
         text: title,
@@ -57,11 +72,7 @@ function openConfirmationNoty(title, yes) {
             onClick: ($noty) => {
                 yes($noty.options.id);
             }
-        }, {
-            addClass: 'btn btn-danger',
-            text: 'No',
-            onClick: ($noty) => closeNoty($noty.options.id)
-        }]
+        }, closeButton('No')]
     });
     return n.options.id;
 }

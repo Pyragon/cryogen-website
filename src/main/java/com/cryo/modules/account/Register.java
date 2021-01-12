@@ -44,6 +44,9 @@ public class Register {
         String username = request.queryParams("username");
         String password = request.queryParams("password");
         String gresponse = request.queryParams("response");
+        String visitorId = request.queryParams("visitorId");
+        if(StringUtils.isNullOrEmpty(visitorId))
+            return error("Invalid visitor id!");
         if(StringUtils.isNullOrEmpty(username) || username.length() < 3 || username.length() > 12)
             return error("Username must be between 3 and 12 characters.");
         if(StringUtils.isNullOrEmpty(password) || password.length() < 6 || password.length() > 20)
@@ -56,9 +59,9 @@ public class Register {
         String salt = BCrypt.generate_salt();
         String hash = BCrypt.hashPassword(password, salt);
         String sessionId = SessionIDGenerator.getInstance().getSessionId();
-        Account account = new Account(-1, username, hash, salt, 0, 0, null, "", null, -1, "", request.ip(), null);
+        Account account = new Account(-1, username, hash, salt, 0, 0, null, "", null, null, -1, "", request.ip(), null);
         long expiry = (1000 * 60 * 60 * 24) + System.currentTimeMillis();
-        Session session = new Session(-1, username, sessionId, new Timestamp(expiry));
+        Session session = new Session(-1, username, sessionId, request.userAgent(), visitorId, new Timestamp(expiry), null);
         ArrayList<String> list = new ArrayList<>();
         list.add(hash);
         PreviousPassList previous = new PreviousPassList(-1, username, list, null, null);

@@ -21,7 +21,6 @@ public class Index {
     @SPAEndpoint("/")
     public static String renderIndexPage(Request request, Response response) {
         HashMap<String, Object> model = new HashMap<>();
-
         List<Post> posts = getConnection("cryogen_forum")
                 .selectList("threads", "archived=0 AND forum_id IN (1,2)", "ORDER BY added DESC LIMIT 4", Thread.class)
                 .stream()

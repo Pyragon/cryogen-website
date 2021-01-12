@@ -1,0 +1,14 @@
+include ../utils/script
+
++includeScript('/utils/tabs')
+script.
+    $(document).ready(() => {
+        buildPage('account', {
+            'overview': 'Overview',
+            'packages': 'Purchased Items',
+            'vote': 'Vote',
+            'shop': 'Cryogen Shop'
+        }, '!{active}');
+    });
+
+include ../utils/tabs

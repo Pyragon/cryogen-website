@@ -1,0 +1,55 @@
+div(class='footer')
+    div(class='container')
+        div(class='row')
+            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
+                h3 Cryogen
+                ul
+                    li
+                        a(href='http://api.cryogen-rsps.com/live/download/latest') Download JAR
+                    li
+                        a(href='http://github.com/Pyragon/cryogen-website', target='_blank') Open-Sourced
+                    li
+                        a.spa-link(href='/api') API Documentation
+            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
+                h3 Community
+                ul
+                    li
+                        a.spa-link(href='/forums') Forums
+                    li
+                        a.spa-link(href='/highscores') Highscores
+                    li
+                        a.spa-link(href='/discord', target='_blank') Discord
+                    li
+                        a.spa-link(href='/account/vote') Vote
+            div(class='col-md-'+(loggedIn && user.getRights() > 1 ? '3' : '4'))
+                h3 Account
+                ul
+                    if loggedIn
+                        li
+                            a.spa-link(href='/account') Account
+                        li
+                            a.spa-link(href='/forums/user/'+user.getId()) Profile
+                        li
+                            a.spa-link(href='/forums/private/inbox') Inbox
+                        if user.getRights() > 0
+                            li
+                                a.spa-link(href='/staff') Staff
+                        li
+                            a.spa-link(href='/logout') Sign Out
+                    else
+                        li
+                            a.spa-link(href='/support') Support
+                        li
+                            a.signin(href='#') Sign In
+                        li
+                            a.spa-link(href="/register") Register
+                        li
+                            a.spa-link(href='/recover') Forgot my Password
+            if loggedIn && user.getRights() > 1
+                div.col-md-3
+                    h3 Admin
+                    ul 
+                        li
+                            a#clear-cache(href='#') Clear Cache
+                        li
+                            a.spa-link(href='/forums/admin') Forums Admin Panel

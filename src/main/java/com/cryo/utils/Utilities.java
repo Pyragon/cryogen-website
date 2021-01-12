@@ -46,18 +46,26 @@ public class Utilities {
             Account account = AccountUtils.getAccount(request);
             if(endpoint != null && account == null)
                 return Login.renderLoginPage(endpoint, request, response);
+            if(request.requestMethod().equals("GET"))
+                return Jade4J.render("./source/modules/default/default.jade", model);
             if(model == null)
                 model = new HashMap<>();
             model.put("format", new FormatUtils());
-            model.put("useDefault", request.requestMethod().equals("GET"));
+            Properties prop = new Properties();
+            prop.put("success", true);
             model.put("loggedIn", account != null);
             if(account != null)
                 model.put("user", account);
-            module = "./public/modules/"+module+".jade";
+            if(Boolean.parseBoolean(request.queryParamOrDefault("first", "false"))) {
+                prop.put("body", Jade4J.render("./source/modules/default/body.jade", model));
+                prop.put("footer", Jade4J.render("./source/modules/default/footer.jade", model));
+            }
+            module = "./source/modules/"+module+".jade";
             String html = Jade4J.render(module, model);
             if(method.equals("GET"))
                 return html;
-            return success(html);
+            prop.put("html", html);
+            return Website.getGson().toJson(prop);
         } catch(Exception e) {
             e.printStackTrace();
             return render500(request, response);
@@ -143,24 +151,12 @@ public class Utilities {
         HashMap<String, Object> model = new HashMap<>();
         model.put("redirect", redirect);
         model.put("time", time);
-        model.put("useDefault", true);
         if(title != null || extraInfo != null) {
             model.put("title", title);
             model.put("titleColour", titleColour);
             model.put("extraInfo", extraInfo);
         }
-        Properties prop = new Properties();
-        prop.put("success", true);
-        try {
-            String html = Jade4J.render("./public/modules/utils/redirect.jade", model);
-            if(request.requestMethod().equals("GET"))
-                return html;
-            prop.put("redirect", html);
-            return Website.getGson().toJson(prop);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return error("Error redirecting! Please refresh your page!");
+        return renderPage("utils/redirect", model, request, response);
     }
 
     public static String render500(Request request, Response response) {
@@ -173,7 +169,7 @@ public class Utilities {
         model.put("random", getRandomImageLink());
         model.put("useDefault", true);
         try {
-            return Jade4J.render("./public/modules/utils/404.jade", model);
+            return Jade4J.render("./source/modules/utils/404.jade", model);
         } catch (JadeCompilerException | IOException e) {
             e.printStackTrace();
         }

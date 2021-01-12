@@ -1,0 +1,42 @@
+include ../utils/name
+include ../utils/stylesheet
+
+
++includeStylesheet('index')
++includeStylesheet('utils/login')
++includeStylesheet('utils/buttons')
++includeStylesheet('/utils/input')
++includeStylesheet('utils/news-posts')
+script.
+    $(document).ready(() => {
+        $('#register-btn').click(function() {
+            let username = $('.username').val();
+            post('/register', { username });
+        });
+    });
+
+.container
+    .row
+        .col-md-8
+            h4.title Recent News:
+            include latest-threads
+        .col-md-4
+            h4.title.t-center Account & Community
+            .widget.mini-login
+                .header
+                    if loggedIn
+                        h4.color-white#login-welcome Welcome, 
+                            span.user.link(data-id=user.getId())
+                                +renderName(user)
+                    else
+                        h4.color-white#login-welcome Account Login
+                .content
+                    if loggedIn
+                        include account-node
+                    else
+                        include login-node
+            if !loggedIn
+                button.sidebar-btn.btn.btn-default#register-btn Create Account
+            a(href='http://api.cryogen-rsps.com/live/download/latest')
+                button.sidebar-btn.btn.btn-default Download Cryogen
+            include ../highscores/mini/mini-widget
