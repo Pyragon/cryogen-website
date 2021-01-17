@@ -1,8 +1,9 @@
 script.
     let time = parseInt('!{time}');
     let link = '!{redirect}';
-    setTimeout(() => {
+    let timeout = setTimeout(redirect, time * 1000);
 
+    function redirect() {
         post(link, { first: true }, null, data => {
 
             $('#body').html(data.body);
@@ -14,8 +15,15 @@ script.
             return false;
 
         });
+        clearTimeout(timeout);
+        return false;
+    }
 
-    }, time * 1000);
+    $(document).ready(() => {
+
+        $('#redirect-link').click(redirect);
+
+    });
 
 .container
     .row
@@ -28,4 +36,4 @@ script.
                         h4.color-white Redirecting
                     if extraInfo
                         h5.color-grey= extraInfo
-                    h5.color-grey You are currently being redirected. Click #[a(href=redirect) here] if you do not wish to wait.
+                    h5.color-grey You are currently being redirected. Click #[a#redirect-link(href=redirect) here] if you do not wish to wait.

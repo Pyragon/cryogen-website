@@ -1,6 +1,11 @@
 include ../utils/script
+include ../utils/stylesheet
+
+script.
+    window.rights = parseInt('!{user.getRights()}');
 
 +includeScript('/utils/tabs')
++includeStylesheet('account/recover')
 script.
     $(document).ready(() => {
 
@@ -8,7 +13,10 @@ script.
             'player-reports': 'Player Reports',
             'bug-reports': 'Bug Reports',
             'appeals': 'Appeals',
-            'recoveries': 'Recoveries'
+            'recoveries': {
+                title: 'Recoveries',
+                rights: 2
+            }
         }, '!{active}');
 
     });

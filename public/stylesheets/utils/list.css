@@ -118,7 +118,7 @@ select {
 }
 
 button {
-    margin: 2px auto 10px auto !important;
+    margin: 2px auto 10px auto;
 }
 
 .active-filter {

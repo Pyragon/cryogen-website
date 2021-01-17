@@ -5,6 +5,9 @@ import com.cryo.entities.accounts.Session;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.annotations.SPAEndpoints;
+import com.cryo.modules.index.Index;
+import com.cryo.utils.BCrypt;
+import com.cryo.utils.Utilities;
 import nl.basjes.parse.useragent.UserAgent;
 import spark.Request;
 import spark.Response;
@@ -69,5 +72,27 @@ public class Account {
         }
         getConnection("cryogen_accounts").delete("sessions", "username = ? AND session_id != ?", account.getUsername(), sessionId);
         return error("Your logins have been successfully revoked.");
+    }
+
+    @Endpoint(method = "POST", endpoint = "/account/password/reset")
+    public static String resetPassword(Request request, Response response) {
+        com.cryo.entities.accounts.Account account = AccountUtils.getAccount(request);
+        if(account == null)
+            return Index.renderIndexPage(request, response);
+        boolean forced = Boolean.parseBoolean(request.queryParamOrDefault("forced", "false"));
+        if(forced && !account.isPasswordResetRequired())
+            return error("A password reset is not required for your account. Please refresh the page and try again.");
+        else if(!forced) {
+            String current = request.queryParams("current");
+            String hash = BCrypt.hashPassword(current, account.getSalt());
+            if(!hash.equals(account.getPassword()))
+                return error("Invalid current password. Please try again.");
+        }
+        String password = request.queryParams("password");
+        if(password.length() < 6 || password.length() > 20)
+            return error("Password must be between 6 and 20 characters.");
+        String hash = BCrypt.hashPassword(password, account.getSalt());
+        getConnection("cryogen_global").set("player_data", "password=?", "username=?", hash, account.getUsername());
+        return Utilities.redirect("/", "Password "+(forced ? "reset" : "change")+" successful.", null, null, request, response);
     }
 }

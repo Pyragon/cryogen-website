@@ -1,0 +1,124 @@
+include ../../../utils/name
+include ../../../utils/stylesheet
+
++includeStylesheet('misc')
+
+script.
+    $(document).ready(() => {
+
+        $('#recover-container .row').each(function(i, value) {
+            let mds = $(this).find('.col-md-6');
+            let left = $(mds[0]);
+            let right = $(mds[1]);
+            let rHeight = parseInt(right.css('height').replace('px', ''));
+            let lHeight = parseInt(left.css('height').replace('px', ''));
+            left.css('margin-top', (rHeight-lHeight)/2+'px');
+        });
+
+    });
+
+.noty_message
+    span.noty_text
+    span  for 
+        +renderName(user)
+.container#recover-container(style='width: 100%; padding-bottom: 15px;')
+    //- View Key
+    .row
+        .col-md-6
+            p.recover-info View Key:
+        .col-md-6
+            p.recover-info= recovery.getViewKey()
+    //- Email entered
+    .row
+        .col-md-6
+            p.recover-info Email entered:
+        .col-md-6
+            p.recover-info= recovery.getEmailEntered() == null || recovery.getEmailEntered() == '' ? 'Nothing entered ' : recovery.getEmailEntered()+' '
+                span
+                    i(class="fa fa-times-circle-o color-"+((recovery.getEmailStatus() == 3 || recovery.getEmailStatus() == -2) ? 'green' : 'red'), title=recovery.getEDTitle(true))
+    //- Discord entered
+    .row
+        .col-md-6
+            p.recover-info Discord entered:
+        .col-md-6
+            p.recover-info= recovery.getDiscordEntered() == null || recovery.getDiscordEntered() == '' ? 'Nothing entered ' : recovery.getDiscordEntered()+' '
+                span
+                    i(class="fa fa-times-circle-o color-"+((recovery.getDiscordStatus() == 3 || recovery.getDiscordStatus() == -2) ? 'green' : 'red'), title=recovery.getEDTitle(false))
+    //- Creation Date Set/Date Difference if is set
+    .row
+        .col-md-6
+            p.recover-info Creation Date:
+        .col-md-6
+            if recovery.getCreationDate() == null
+                p.recover-info Nothing Entered
+            else
+                p.recover-info= 'Difference: '+format.stampToTerm(recovery.getAccount().getAdded(), recovery.getCreationDate())
+    //- City/Country
+    .row
+        .col-md-6
+            p.recover-info City/Country:
+        .col-md-6
+            if recovery.getCityCountry() == null || recovery.getCityCountry() == ''
+                p.recover-info Nothing Entered
+            else
+                p.recover-info= 'Entered: '+recovery.getCityCountry()
+                p.recover-info= 'Actual: '+recovery.getRealCityCountry()
+    //- ISP
+    .row
+        .col-md-6
+            p.recover-info ISP:
+        .col-md-6
+            if recovery.getISP() == null || recovery.getISP() == ''
+                p.recover-info Nothing Entered
+            else
+                p.recover-info= 'Entered: '+recovery.getISP()
+                p.recover-info= 'Actual: '+recovery.getRealISP()
+    //- Previous Passwords
+    .row
+        .col-md-6
+            p.recover-info Previous Passwords:
+        .col-md-6
+            p.recover-info= 'Password 1: '+recovery.getPreviousPasswordStatus(0)+' '
+                span
+                    i(class=recovery.getPasswordIconClass(0))
+            p.recover-info= 'Password 2: '+recovery.getPreviousPasswordStatus(1)+' '
+                span
+                    i(class=recovery.getPasswordIconClass(1))
+            p.recover-info= 'Password 3: '+recovery.getPreviousPasswordStatus(2)+' '
+                span
+                    i(class=recovery.getPasswordIconClass(2))
+    //- Recovery Questions Entered
+    .row
+        .col-md-6
+            p.recover-info Correct Recovery Questions Entered:
+        .col-md-6
+            p.recover-info(class=recovery.getCorrectRecoveryQuestions() > 2 ? 'color-green' : recovery.getCorrectRecoveryQuestions() > 1 ? 'color-yellow' : 'color-red')= recovery.getCorrectRecoveryQuestions()
+    //- Additional
+    .row
+        .col-md-6
+            p.recover-info Additional:
+        .col-md-6
+            .recover-info#additional
+                span= recovery.getAdditional() == null ? '' : recovery.getAdditional()
+    if recovery.isArchived()
+        //- Status
+        .row
+            .col-md-6
+                p.recover-info Status:
+            .col-md-6
+                p(class='recover-info '+recovery.getStatusClass())= recovery.getStatusStr()
+        //- Decider
+        .row
+            .col-md-6
+                p.recover-info Decider:
+            .col-md-6
+                p.recover-info
+                    span
+                        +renderName(recovery.getDecider())
+        //- Reason
+        .row
+            .col-md-6
+                p.recover-info Reason:
+            .col-md-6
+                p.recover-info#additional= recovery.getReason()
+.noty_close

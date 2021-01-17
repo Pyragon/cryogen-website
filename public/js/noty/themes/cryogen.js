@@ -21,6 +21,7 @@ $.noty.themes.cryogen = {
                     case 'bottomRight':
                     case 'center':
                     case 'centerBig':
+                    case 'centerReallyBig':
                     case 'centerLeft':
                     case 'centerRight':
                     case 'inline':
@@ -144,6 +145,7 @@ $.noty.themes.cryogen = {
             case 'bottomRight':
             case 'centerLeft':
             case 'centerBig':
+            case 'centerReallyBig':
             case 'centerRight':
                 this.$bar.css({
                     borderRadius: '5px',

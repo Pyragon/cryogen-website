@@ -40,17 +40,18 @@ function closeNoty(id) {
     return true;
 }
 
-function postNoty(endpoint, data, title, buttons) {
+function postNoty(endpoint, data, title, buttons, layout) {
     post(endpoint, data, null, data => {
-        openNoty(title, data.html, buttons);
+        openNoty(title, data.html, buttons, layout);
     });
 }
 
-function openNoty(title, html, buttons) {
+function openNoty(title, html, buttons, layout) {
+    layout = layout || 'center';
     n = noty({
         text: title,
         type: 'confirm',
-        layout: 'center',
+        layout,
         template: html,
         dismissQueue: false,
         theme: 'cryogen',

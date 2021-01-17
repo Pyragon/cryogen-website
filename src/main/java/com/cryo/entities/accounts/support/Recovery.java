@@ -3,18 +3,27 @@ package com.cryo.entities.accounts.support;
 import com.cryo.Website;
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
-import lombok.AllArgsConstructor;
+import com.cryo.entities.MySQLRead;
+import com.cryo.entities.accounts.Account;
+import com.cryo.entities.list.ListValue;
+import com.cryo.modules.account.AccountUtils;
+import com.mysql.cj.util.StringUtils;
+import io.ipinfo.api.model.IPResponse;
 import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class Recovery extends MySQLDao {
 
     @MySQLDefault
+    @ListValue(value = "ID", order = 0)
     private final int id;
 
+    @ListValue(value = "User", order = 1, formatAsUser = true)
     private final String username;
 
     private final String viewKey;
@@ -29,21 +38,23 @@ public class Recovery extends MySQLDao {
     private final int discordStatus;
     private final String discordEntered;
 
-    private final boolean creationDateSet;
-    private final int creationDateDifference;
+    private final Timestamp creationDate;
 
     private final String cityCountry;
 
-    private final String isp;
+    @MySQLRead("isp")
+    private final String ISP;
 
     //-1 = nothing entered, 0 = entered but incorrect, 1 = entered and correct
-    private ArrayList<Integer> previousPasswordStatuses;
+    private List<Integer> previousPasswordStatuses;
+    @MySQLRead("previous_passwords")
     private final String previousPasswordString;
 
     private final int correctRecoveryQuestions;
 
     private final String additional;
 
+    //1 = submitted, nothing else. 2 = denied, 3 = accepted by email/discord, 4 = accepted by staff
     private final int status;
     @MySQLDefault
     private final String decider;
@@ -54,14 +65,171 @@ public class Recovery extends MySQLDao {
     @MySQLDefault
     private final Timestamp decided;
     @MySQLDefault
+    @ListValue(value = "Added", order = 7, formatAsTimestamp = true)
     private final Timestamp added;
     @MySQLDefault
     private final Timestamp updated;
 
-    public ArrayList<Integer> getPreviousPasswordStatuses() {
-        if(previousPasswordStatuses == null)
-            previousPasswordStatuses = Website.getGson().fromJson(previousPasswordString, ArrayList.class);
+    @ListValue(value = "View", order = 8, isButton = true, className = "view-recovery")
+    private Object viewButton = "View";
+
+    public List<Integer> getPreviousPasswordStatuses() {
+        if(previousPasswordStatuses == null) {
+            ArrayList<Double> doubles = Website.getGson().fromJson(previousPasswordString, ArrayList.class);
+            previousPasswordStatuses = doubles.stream().map(d -> (int) Math.floor(d)).collect(Collectors.toList());
+        }
         return previousPasswordStatuses;
+    }
+
+    public String getPreviousPasswordStatus(int index) {
+        switch(getPreviousPasswordStatuses().get(index)) {
+            case -1:
+                return "Nothing Entered";
+            case 0:
+                return "Incorrect value entered";
+            case 1:
+                return "Correct value entered";
+        }
+        return "N/A";
+    }
+
+    public String getPasswordIconClass(int index) {
+        switch(getPreviousPasswordStatuses().get(index)) {
+            case -1:
+            case 0:
+                return "fa fa-times-circle-o color-red";
+            case 1:
+                return "fa fa-check color-green";
+        }
+        return "";
+    }
+
+    @ListValue(value = "Email Status", order = 2)
+    public String getEmailTableStatus() {
+        return emailStatus == 3 ? "Email Sent" : "Email Not Sent";
+    }
+
+    @ListValue(value = "Discord Status", order = 3)
+    public String getDiscordTableStatus() {
+        return discordStatus == 3 ? "Discord Message Sent" : "Discord Message Not Sent";
+    }
+
+    @ListValue(value = "Likeliness", order = 5, notOnArchive = true)
+    public String getLikeliness() {
+        return "TODO";
+    }
+
+    @ListValue(value = "Status", order = 6, onArchive = true)
+    public String getTableStatus() {
+        return status == 2 ? "Denied" : status == 3 ? "Reset via Email/Discord" : "Accepted";
+    }
+
+    @ListValue(value = "Fields Entered", order = 4)
+    public String getFieldsSet() {
+        int total = 0;
+        if(!StringUtils.isNullOrEmpty(emailEntered))
+            total++;
+        if(!StringUtils.isNullOrEmpty(discordEntered))
+            total++;
+        if(creationDate != null)
+            total++;
+        if(!StringUtils.isNullOrEmpty(cityCountry))
+            total++;
+        if(!StringUtils.isNullOrEmpty(ISP))
+            total++;
+        for(int status : getPreviousPasswordStatuses()) {
+            if (status != -1)
+                total++;
+        }
+        total += correctRecoveryQuestions;
+        if(!StringUtils.isNullOrEmpty(additional))
+            total++;
+        return Integer.toString(total);
+    }
+
+    public String getRealCityCountry() {
+        try {
+            IPResponse response = Website.getIPLookup().lookupIP(getAccount().getCreationIP());
+            if(response == null) return "N/A";
+            return response.getCity()+", "+response.getRegion()+", "+response.getCountryCode();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return "N/A";
+    }
+
+    public String getRealISP() {
+        try {
+            IPResponse response = Website.getIPLookup().lookupIP(getAccount().getCreationIP());
+            if(response == null) return "N/A";
+            if(response.getCarrier() != null)
+                return response.getCarrier().getName();
+            if(response.getAsn() != null)
+                return response.getAsn().getName();
+            if(response.getCompany() != null)
+                return response.getCompany().getName();
+            if(response.getOrg() != null)
+                return response.getOrg();
+            return "N/A";
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return "N/A";
+    }
+
+    public String getEDTitle(boolean email) {
+        int status = email ? emailStatus : discordStatus;
+        String key = email ? "an email" : "a discord";
+        switch(status) {
+            case -1:
+                return "User entered no value. Account has value associated. Look at lists to see what is currently linked.";
+            case -2:
+                return "User entered no value. Account does not have a value associated.";
+            case 1:
+                return "User entered value. Account does have value. Entered value was incorrect.";
+            case 2:
+                return "User entered value. Account does not have a value associated.";
+            case 3:
+                return "User entered value during recovery. Value was correct. A password recovery has been sent to "+(email ? "email" : "discord")+".";
+        }
+        return "";
+    }
+
+    public String getStatusClass() {
+        switch(status) {
+            case 1: return "color-yellow";
+            case 2: return "color-red";
+            case 3:
+            case 4:
+                return "color-green";
+        }
+        return "";
+    }
+
+    public String getStatusStr() {
+        switch(status) {
+            case 1:
+                return "Submitted";
+            case 2:
+                return "Denied";
+            case 3:
+                return "Recovered via email/discord";
+            case 4:
+                return "Recovered via staff member";
+        }
+        return "N/A";
+    }
+
+    public boolean isArchived() {
+        return decided != null;
+    }
+
+    public Account getAccount() {
+        return AccountUtils.getAccount(username);
+    }
+
+    public Account getDecider() {
+        return AccountUtils.getAccount(decider);
     }
 
 }

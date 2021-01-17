@@ -1,3 +1,5 @@
+include ../../../utils/stylesheet
+
 +includeStylesheet('account/recover')
 +includeStylesheet('utils/input')
 +includeStylesheet('utils/buttons')
@@ -80,9 +82,9 @@ script.
                                     option(value=question.getId())= question.getQuestion()
                             input.input(type='text', placeholder='Enter answer')
                     p Previous Passwords (These passwords are not seen by staff. Click #[a(href='', target='_blank') here] for more information)
-                    input.input#previous-pass1(type='text', placeholder='Enter previous password')
-                    input.input#previous-pass2(type='text', placeholder='Enter previous password')
-                    input.input#previous-pass3(type='text', placeholder='Enter previous password')
+                    input.input#previous-pass1(type='password', placeholder='Enter previous password', autocomplete='new-password')
+                    input.input#previous-pass2(type='password', placeholder='Enter previous password', autocomplete='new-password')
+                    input.input#previous-pass3(type='password', placeholder='Enter previous password', autocomplete='new-password')
                     p Additional Information (Any additional information you may think is relevant. Please avoid using any passwords or personal information in this field.)
                     textarea.input#additional(rows='4', cols='50', placeholder='Enter additional information')
             div

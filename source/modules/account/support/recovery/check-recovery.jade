@@ -1,0 +1,84 @@
+include ../../../utils/name
+include ../../../utils/stylesheet
+
++includeStylesheet('account/recover')
++includeStylesheet('utils/input')
++includeStylesheet('utils/buttons')
+
+script.
+    $(document).ready(() => {
+
+        $('#reset').click(() => {
+
+            let password = $('#password').val();
+            let retype = $('#retype-password').val();
+            let key = '!{key}';
+
+            if(!password || !retype) {
+                sendAlert('You must enter both fields.');
+                return false;
+            }
+
+            if(password != retype) {
+                sendAlert('Passwords do not match up.');
+                return false;
+            }
+
+            if(password.length < 6 || password.length > 20) {
+                sendAlert('Password must be between 6 and 20 characters.');
+                return false;
+            }
+
+            console.log('Key: '+key);
+            post('/recover/reset', { key, password });
+
+        });
+
+    });
+
+.container
+    .spacer
+    .widget
+        .header
+            h4.color-white= (email || discord) ? 'Reset Password' : 'Password Recovery Status'
+                h5.color-grey Hello, 
+                    span
+                        if user == null
+                            span= name
+                        else
+                            +renderName(user)
+                if email || discord
+                    h5.color-grey You can reset your password with the following page. Once reset, your recovery will be deleted.
+                else
+                    h5.color-grey Here is the status on your recovery.
+                    h5.color-grey If your recovery is accepted, you will be provided with an auto-generated password.
+                    h5.color-grey This password will not be seen by the staff member that accepts your recovery, but for added security, the following will happen:
+                    h5.color-grey On your first login in-game or on the website, you will be asked to change your password.
+                    h5.color-grey If you login in-game and are in an area where a dialogue cannot be displayed, you will be teleported home.
+                    h5.color-grey To avoid any abusing, if your account is online at the time, your account unfortunately will not be logged off until all actions are completed and regular logoff would be allowed.
+        .content
+            .recovery-content
+                if email || discord
+                    p New Password:
+                    input.input#password(type='password', placeholder='Enter Password', autocomplete='new-password')
+                    p Retype New Password:
+                    input.input#retype-password(type='password', placeholder='Enter Password', autocomplete='new-password')
+                    button.btn.btn-default.small-btn#reset Reset Password
+                    .lg-spacer
+                else
+                    p Recovery Status
+                    p.recovery-info Status: 
+                        if recovery.getStatus() == 1
+                            span.color-grey Nothing yet.
+                        else if recovery.getStatus() == 2
+                            span.color-red Denied.
+                        else
+                            span.color-green= recovery.getReason()
+                    if recovery.getStatus() == 2
+                        h3 Reason:
+                        p.recovery-info= recovery.getReason()
+                    else if recovery.getStatus() == 4
+                        p.recovery-info New Password: 
+                            span.color-yellow= recovery.getNewPassword()
+                        p.recovery-info You will be asked to change this password on first login.
+    .clear

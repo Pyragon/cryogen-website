@@ -73,11 +73,23 @@ public class Login {
             request.session().attribute("cryo_sess", sessionId);
             if (remember)
                 response.cookie("cryo_sess", sessionId);
+            if(account.isPasswordResetRequired())
+                redirect = "/account/force-reset";
             return Utilities.redirect(redirect, request, response);
         } catch(Exception e) {
             e.printStackTrace();
             return error("Error logging in. Please report this error via Github.");
         }
+    }
+
+    @Endpoint(method = "POST", endpoint = "/account/force-reset")
+    public static String forcePasswordRest(Request request, Response response) {
+        Account account;
+        if((account = AccountUtils.getAccount(request)) == null)
+            return Login.renderLoginPage("/", request, response);
+        if(!account.isPasswordResetRequired())
+            return Index.renderIndexPage(request, response);
+        return renderPage("account/force-reset", null, request, response);
     }
 
     @SPAEndpoint("/logout")

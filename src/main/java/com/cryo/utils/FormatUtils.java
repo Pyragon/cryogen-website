@@ -2,6 +2,10 @@ package com.cryo.utils;
 
 import com.cryo.entities.accounts.Account;
 import com.cryo.modules.account.AccountUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -41,6 +45,23 @@ public class FormatUtils {
 			return date != null;
 		} catch(Exception e) { }
 		return false;
+	}
+
+	public String stampToTerm(Timestamp startStamp, Timestamp endStamp) {
+		DateTime start = new DateTime(Math.min(startStamp.getTime(), endStamp.getTime()));
+		DateTime end = new DateTime(Math.max(startStamp.getTime(), endStamp.getTime()));
+
+		Period period = new Period(start, end);
+
+		PeriodFormatter formatter = new PeriodFormatterBuilder()
+				.appendYears().appendSuffix(" year", " years")
+				.appendMonths().appendSuffix(" month", " months")
+				.appendSeparator(" and ")
+				.appendDays().appendSuffix(" day", " days")
+				.printZeroNever()
+				.toFormatter();
+
+		return formatter.print(period);
 	}
 
 	public String formatTimestamp(Timestamp time) {

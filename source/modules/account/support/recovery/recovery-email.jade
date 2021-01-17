@@ -75,9 +75,13 @@ html
                         h5.color-grey A password recovery request has been made for your account.
                         h5.color-grey If you did not make this request, please follow #[a(href='http://cryogen-rsps.com/forums/', target='_blank') this] link for information on how to secure your account.
                         h5.color-grey If you did make this request, simply follow the link below to continue with resetting your password.
+                        h5.color-grey Please keep in mind, this key will expire in 24 hours. After that, you will need to either resubmit your recovery, or rely on an admin accepting the recovery based on the information provided.
                 .content
                     .recovery-content
                         p.color-yellow= 'Reset Password Key: '+key
+                        p.color-yellow= 'View Recovery Key: '+viewKey
                         p.color-grey#link-info Reset Password Link:
                         a.color-white#link(href=link)= link
+                        p.color-grey#link-info View Recovery Link:
+                        a.color-white#link(href=viewLink)= viewLink
             .clear

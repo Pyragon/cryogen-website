@@ -59,7 +59,7 @@ public class Register {
         String salt = BCrypt.generate_salt();
         String hash = BCrypt.hashPassword(password, salt);
         String sessionId = SessionIDGenerator.getInstance().getSessionId();
-        Account account = new Account(-1, username, hash, salt, 0, 0, null, "", null, null, -1, "", request.ip(), null);
+        Account account = new Account(-1, username, hash, salt, 0, 0, null, "", null, null, -1, "", request.ip(), false, null, null);
         long expiry = (1000 * 60 * 60 * 24) + System.currentTimeMillis();
         Session session = new Session(-1, username, sessionId, request.userAgent(), visitorId, new Timestamp(expiry), null);
         ArrayList<String> list = new ArrayList<>();

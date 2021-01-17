@@ -307,6 +307,7 @@ h4.title {
 .widget>.header {
     border-bottom: 1px solid #124d70;
     padding: 8px 10px;
+    text-align: center;
 }
 
 .widget>.header>h4 {
@@ -330,4 +331,12 @@ h4.title {
 select {
     max-width: 182px;
     margin-top: 5px;
+}
+
+.spacer {
+    height: 1px;
+}
+
+.lg-spacer {
+    height: 10px;
 }

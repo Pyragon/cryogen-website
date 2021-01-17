@@ -34,6 +34,10 @@ $(document).on('click', '.spa-link', function() {
 });
 
 function post(link, data, selector, cb) {
+    if (typeof selector === 'function') {
+        cb = selector;
+        selector = null;
+    }
     selector = selector || '#main-content';
     data.visitorId = visitorId;
     if (!visitorId) {

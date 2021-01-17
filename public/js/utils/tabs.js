@@ -8,7 +8,15 @@ function buildPage(module, tabs, activeKey) {
         let link = $('<a></a>');
         link.attr('href', '#' + key);
         link.data('toggle', 'tab');
-        link.html(tabs[key]);
+        let title = tabs[key];
+        let rightsReq = 0;
+        if (typeof title == 'object') {
+            rightsReq = title.rights;
+            title = title.title;
+        }
+        if (rights < rightsReq)
+            continue;
+        link.html(title);
         let item = $('<li class="nav tab-item"></li>');
         if (active)
             item.addClass('active');

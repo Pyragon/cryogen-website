@@ -7,6 +7,8 @@ import com.cryo.utils.Utilities;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.ipinfo.api.IPInfo;
+import io.ipinfo.api.IPInfoBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -43,6 +45,9 @@ public class Website {
     @Getter
     private ConnectionManager connectionManager;
 
+    @Getter
+    private static IPInfo IPLookup;
+
     private Timer fastExecutor;
 
     public void load() {
@@ -59,6 +64,9 @@ public class Website {
 
         connectionManager = new ConnectionManager();
         fastExecutor = new Timer();
+        IPLookup = new IPInfoBuilder()
+                    .setToken(properties.getProperty("ip_info_token"))
+                    .build();
         buildJDA();
         buildUserAgentAnalyzer();
 

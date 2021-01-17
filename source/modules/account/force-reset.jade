@@ -1,0 +1,56 @@
+include ../../../utils/name
+include ../../../utils/stylesheet
+
++includeStylesheet('account/recover')
++includeStylesheet('utils/input')
++includeStylesheet('utils/buttons')
+
+script.
+    $(document).ready(() => {
+
+        $('#reset').click(() => {
+
+            let password = $('#password').val();
+            let retype = $('#retype-password').val();
+            let key = '!{key}';
+
+            if(!password || !retype) {
+                sendAlert('You must enter both fields.');
+                return false;
+            }
+
+            if(password != retype) {
+                sendAlert('Passwords do not match up.');
+                return false;
+            }
+
+            if(password.length < 6 || password.length > 20) {
+                sendAlert('Password must be between 6 and 20 characters.');
+                return false;
+            }
+
+            post('/account/password/reset', { password, forced: true });
+
+        });
+
+    });
+
+.container
+    .spacer
+    .widget
+        .header
+            h4.color-white= 'Reset Password'
+                h5.color-grey Hello, 
+                    span
+                        +renderName(user)
+                h5.color-grey Due to a recovery, a password reset has been forced on your account.
+                h5.color-grey Please note, this password is saved in plain text in our database so that we can show it to you.
+                h5.color-grey We STRONGLY suggest you change your password via this page rather than nagivate away.
+        .content
+            .recovery-content
+                p New Password:
+                input.input#password(type='password', placeholder='Enter Password', autocomplete='new-password')
+                p Retype New Password:
+                input.input#retype-password(type='password', placeholder='Enter Password', autocomplete='new-password')
+                button.btn.btn-default.small-btn#reset Reset Password
+                .lg-spacer

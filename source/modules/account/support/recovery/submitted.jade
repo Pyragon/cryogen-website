@@ -1,0 +1,24 @@
+include ../../../utils/name
+include ../../../utils/stylesheet
+
++includeStylesheet('account/recover')
+
+.container
+    .spacer
+    .widget
+        .header
+            h4.color-white Password Recovery
+                h5.color-grey Hello, 
+                    span
+                        if user == null
+                            span= name
+                        else
+                            +renderName(user)
+                h5.color-grey Your password recovery has been successfully submitted. To view the status of your recovery, use the links below.
+                h5.color-grey Once you have written down your key, you can click #[a.spa-link(href='/') here] to return to the index page.
+        .content
+            .recovery-content
+                p.color-yellow= 'View Recovery Key: '+key
+                p.color-grey#link-info View Recovery Link:
+                a.color-white#link(href=link)= link
+    .clear
