@@ -52,11 +52,6 @@ public class FormatUtils {
 		DateTime start = new DateTime(Math.min(startStamp.getTime(), endStamp.getTime()));
 		DateTime end = new DateTime(Math.max(startStamp.getTime(), endStamp.getTime()));
 
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-
-		System.out.println(format.format(new Date(startStamp.getTime())));
-		System.out.println(format.format(new Date(endStamp.getTime())));
-
 		Period period = new Period(start, end);
 
 		PeriodFormatter formatter = new PeriodFormatterBuilder()
@@ -67,9 +62,7 @@ public class FormatUtils {
 				.appendDays().appendSuffix(" day", " days")
 				.toFormatter();
 
-		String formatted = formatter.print(period.normalizedStandard(PeriodType.yearMonthDay()));
-		System.out.println("Formatted: "+formatted);
-		return formatted;
+		return formatter.print(period.normalizedStandard(PeriodType.yearMonthDay()));
 	}
 
 	public static long getDateDiff(Date date1, Date date2) {
