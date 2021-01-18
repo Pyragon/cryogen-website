@@ -29,9 +29,9 @@ function closeNoty(id) {
         if (id.options)
             id = id.options.id;
         let noty = $.noty.store[id];
-        noty.close();
-        if (id == n.options.id)
+        if (n && id == n.options.id)
             n = null;
+        noty.close();
         return true;
     }
     if (!n) return false;
@@ -56,11 +56,14 @@ function openNoty(title, html, buttons, layout) {
         dismissQueue: false,
         theme: 'cryogen',
         buttons
-    })
+    });
+    return n.options.id;
 }
 
-function openConfirmationNoty(title, yes) {
+function openConfirmationNoty(title, yes, yesTitle, noTitle) {
     title = title || 'Are you sure?';
+    yesTitle = yesTitle || 'Yes';
+    noTitle = noTitle || 'No';
     n = noty({
         text: title,
         type: 'confirm',
@@ -69,11 +72,11 @@ function openConfirmationNoty(title, yes) {
         theme: 'cryogen',
         buttons: [{
             addClass: 'btn btn-primary',
-            text: 'Yes',
+            text: yesTitle,
             onClick: ($noty) => {
                 yes($noty.options.id);
             }
-        }, closeButton('No')]
+        }, closeButton(noTitle)]
     });
     return n.options.id;
 }

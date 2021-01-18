@@ -92,7 +92,9 @@ public class Account {
         if(password.length() < 6 || password.length() > 20)
             return error("Password must be between 6 and 20 characters.");
         String hash = BCrypt.hashPassword(password, account.getSalt());
-        getConnection("cryogen_global").set("player_data", "password=?", "username=?", hash, account.getUsername());
+        if(hash.equals(account.getPassword()))
+            return error("That is your current password. Please choose a different password.");
+        getConnection("cryogen_global").set("player_data", "password=?,password_reset_required=0", "username=?", hash, account.getUsername());
         return Utilities.redirect("/", "Password "+(forced ? "reset" : "change")+" successful.", null, null, request, response);
     }
 }

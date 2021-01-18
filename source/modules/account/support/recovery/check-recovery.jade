@@ -29,7 +29,6 @@ script.
                 return false;
             }
 
-            console.log('Key: '+key);
             post('/recover/reset', { key, password });
 
         });
@@ -66,17 +65,18 @@ script.
                     button.btn.btn-default.small-btn#reset Reset Password
                     .lg-spacer
                 else
-                    p Recovery Status
-                    p.recovery-info Status: 
+                    p Recovery Status: 
                         if recovery.getStatus() == 1
                             span.color-grey Nothing yet.
                         else if recovery.getStatus() == 2
                             span.color-red Denied.
+                        else if recovery.getStatus() == 4
+                            span.color-green Accepted by Staff.
                         else
                             span.color-green= recovery.getReason()
                     if recovery.getStatus() == 2
-                        h3 Reason:
-                        p.recovery-info= recovery.getReason()
+                        p Reason:
+                        .recovery-info#denied-reason= recovery.getReason()
                     else if recovery.getStatus() == 4
                         p.recovery-info New Password: 
                             span.color-yellow= recovery.getNewPassword()

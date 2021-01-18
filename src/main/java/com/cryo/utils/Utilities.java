@@ -164,16 +164,10 @@ public class Utilities {
     }
 
     public static String render404(Request request, Response response) {
-        response.status(404);
+        response.status(200);
         HashMap<String, Object> model = new HashMap<>();
         model.put("random", getRandomImageLink());
-        model.put("useDefault", true);
-        try {
-            return Jade4J.render("./source/modules/utils/404.jade", model);
-        } catch (JadeCompilerException | IOException e) {
-            e.printStackTrace();
-        }
-        return error("Error rendering 404 page! Don't worry, we have put the hamsters back on their wheels! Shouldn't be long...");
+        return renderPage("utils/404", model, request, response);
     }
 
     public static String getRandomImageLink() {
@@ -422,7 +416,7 @@ public class Utilities {
             boolean success = (boolean) obj.get("success");
             if(!success) return error("You failed the recaptcha. Please refresh the page and try again.");
             DateTime dt = new DateTime(obj.get("challenge_ts"));
-            if(DateUtils.getDateDiff(dt.toDate(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
+            if(FormatUtils.getDateDiff(dt.toDate(), new Date(), TimeUnit.MINUTES) > 10) return error("Token has expired. Please refresh the page and try again.");
         } catch (UnirestException e) {
             e.printStackTrace();
             return error(e.getMessage());

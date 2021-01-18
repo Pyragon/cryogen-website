@@ -10,7 +10,9 @@ import com.cryo.entities.annotations.SPAEndpoint;
 import com.cryo.managers.ListManager;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
+import com.cryo.utils.BCrypt;
 import com.cryo.utils.Utilities;
+import com.mysql.cj.util.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
@@ -98,5 +100,67 @@ public class Recoveries {
         model.put("recovery", recovery);
         model.put("user", user);
         return renderPage("account/support/recovery/view-recovery", model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/recoveries/respond/noty")
+    public static String viewRecoveryRespond(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 2) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        HashMap<String, Object> model = new HashMap<>();
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse ID.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        Recovery recovery = getConnection("cryogen_recovery").selectClass("recoveries", "id=?", Recovery.class, id);
+        if(recovery == null)
+            return error("Unable to find recovery. Please refresh the page and try again.");
+        if(recovery.isArchived())
+            return error("This recovery has already been archived. Please refresh the page and try again.");
+        return renderPage("account/support/recovery/respond-recovery", model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/recoveries/respond")
+    public static String submitRecoveryResponse(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 2) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        HashMap<String, Object> model = new HashMap<>();
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse ID.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        Recovery recovery = getConnection("cryogen_recovery").selectClass("recoveries", "id=?", Recovery.class, id);
+        if(recovery == null)
+            return error("Unable to find recovery. Please refresh the page and try again.");
+        if(recovery.isArchived())
+            return error("This recovery has already been archived. Please refresh the page and try again.");
+        String reason = request.queryParams("reason");
+        if(StringUtils.isNullOrEmpty(reason) || reason.length() < 6 || reason.length() > 200)
+            return error("Your reason must be between 6 and 200 characters.");
+        String type = request.queryParams("type");
+        if(StringUtils.isNullOrEmpty(type) || !(type.equals("decline") || type.equals("accept")))
+            return error("Invalid type. Please refresh the page and try again.");
+        int nStatus = type.equals("accept") ? 4 : 2;
+        String set = "status=?, decider=?, reason=?, decided=NOW()";
+        ArrayList<Object> values = new ArrayList<Object>() {{
+            add(nStatus);
+            add(account.getUsername());
+            add(reason);
+        }};
+        String newPass;
+        if(nStatus == 4) {
+            newPass = Utilities.generateRandomString(8);
+            set += ", new_password=?";
+            values.add(newPass);
+            Account user = AccountUtils.getAccount(recovery.getUsername());
+            if(user == null)
+                return error("Unable to find recovery account. Please refresh the page and try again.");
+            String salt = user.getSalt();
+            newPass = BCrypt.hashPassword(newPass, salt);
+            getConnection("cryogen_global").set("player_data", "password=?,password_reset_required=1", "username=?", newPass, recovery.getUsername());
+            getConnection("cryogen_accounts").delete("sessions", "username=?", recovery.getUsername());
+        }
+        values.add(id);
+        getConnection("cryogen_recovery").set("recoveries", set, "id=?", values.toArray());
+        return success("");
     }
 }

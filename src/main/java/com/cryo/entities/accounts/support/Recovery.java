@@ -62,7 +62,7 @@ public class Recovery extends MySQLDao {
     private final String newPassword;
     @MySQLDefault
     private final String reason;
-    @MySQLDefault
+
     private final Timestamp decided;
     @MySQLDefault
     @ListValue(value = "Added", order = 7, formatAsTimestamp = true)
@@ -99,7 +99,7 @@ public class Recovery extends MySQLDao {
             case 0:
                 return "fa fa-times-circle-o color-red";
             case 1:
-                return "fa fa-check color-green";
+                return "fa fa-check-circle-o color-green";
         }
         return "";
     }
@@ -221,7 +221,7 @@ public class Recovery extends MySQLDao {
     }
 
     public boolean isArchived() {
-        return decided != null;
+        return status != 1;
     }
 
     public Account getAccount() {

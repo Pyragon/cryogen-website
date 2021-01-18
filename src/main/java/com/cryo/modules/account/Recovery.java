@@ -9,7 +9,6 @@ import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.annotations.SPAEndpoint;
 import com.cryo.modules.index.Index;
 import com.cryo.utils.BCrypt;
-import com.cryo.utils.DateUtils;
 import com.cryo.utils.Utilities;
 import com.mysql.cj.util.StringUtils;
 import net.dv8tion.jda.api.entities.PrivateChannel;
@@ -23,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 import static com.cryo.Website.getConnection;
 import static com.cryo.utils.Utilities.*;
@@ -100,7 +98,7 @@ public class Recovery {
         }
         if(recovery.getStatus() != 1)
             return redirect("/", "Invalid key.", null, "Invalid key. Redirecting you to home. Please recheck your link and try again.", request, response);
-        Account account = AccountUtils.getAccount(recovery.getUsername());
+        Account account = recovery.getAccount();
         if(account == null)
             return redirect("/", "Invalid key.", null, "Invalid key. Redirecting you to home. Please recheck your link and try again.", request, response);
         String password = request.queryParams("password");
@@ -108,6 +106,8 @@ public class Recovery {
             return error("Password must be between 6 and 20 characters.");
         String salt = account.getSalt();
         String hash = BCrypt.hashPassword(password, salt);
+        if(hash.equals(account.getPassword()))
+            return error("That is your current password. Please choose a different password.");
         account.setPassword(hash);
         getConnection("cryogen_accounts").delete("sessions", "username=?", account.getUsername());
         getConnection("cryogen_global").set("player_data", "password=?", "username=?", hash, account.getUsername());

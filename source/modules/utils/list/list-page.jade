@@ -10,6 +10,34 @@ script.
     const module = '!{module}';
     const id = '!{moduleId}';
     let archived = false;
+
+    function loadList(cb) {
+        let sortValues = [];
+        $('.sortable').each(function(i, value) {
+            let name = $(this).find('.sort-name').html();
+            let optionValue = $(this).find('option:selected').attr('value');
+            sortValues.push([name, optionValue, i]);
+        });
+
+        let filterValues = [];
+        $('.filterable').each(function(i, value) {
+            let name = $(this).find('.filter-name').html();
+            let filterValue = $(this).find('input').val();
+            filterValues.push([name, filterValue, i]);
+        });
+
+        post(module+'/table', { archived, sortValues: JSON.stringify(sortValues), filterValues: JSON.stringify(filterValues) }, null, data => {
+            $(`#${id}-table`).html(data.html);
+            if(data.sort)
+                $(`#${id}-sort`).html(data.sort);
+            if(data.filter)
+                $(`#${id}-filter`).html(data.filter);
+            
+            $(`#${id}-active-filter`).css('display', data.activeFilter ? 'inline' : 'none');
+            
+            if(cb) cb(data);
+        });
+    }
     $(document).ready(() => {
 
         loadList();
@@ -81,34 +109,6 @@ script.
             loadList();
             $('.sorted').css('display', 'none');
         });
-
-        function loadList(cb) {
-            let sortValues = [];
-            $('.sortable').each(function(i, value) {
-                let name = $(this).find('.sort-name').html();
-                let optionValue = $(this).find('option:selected').attr('value');
-                sortValues.push([name, optionValue, i]);
-            });
-
-            let filterValues = [];
-            $('.filterable').each(function(i, value) {
-                let name = $(this).find('.filter-name').html();
-                let filterValue = $(this).find('input').val();
-                filterValues.push([name, filterValue, i]);
-            });
-
-            post(module+'/table', { archived, sortValues: JSON.stringify(sortValues), filterValues: JSON.stringify(filterValues) }, null, data => {
-                $(`#${id}-table`).html(data.html);
-                if(data.sort)
-                    $(`#${id}-sort`).html(data.sort);
-                if(data.filter)
-                    $(`#${id}-filter`).html(data.filter);
-                
-                $(`#${id}-active-filter`).css('display', data.activeFilter ? 'inline' : 'none');
-
-                if(cb) cb(data);
-            });
-        }
 
     });
 

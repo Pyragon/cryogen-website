@@ -22,6 +22,12 @@ script.
     span  for 
         +renderName(user)
 .container#recover-container(style='width: 100%; padding-bottom: 15px;')
+    //- ID
+    .row
+        .col-md-6
+            p.recover-info ID:
+        .col-md-6
+            p.recover-info= recovery.getId()
     //- View Key
     .row
         .col-md-6
@@ -35,7 +41,7 @@ script.
         .col-md-6
             p.recover-info= recovery.getEmailEntered() == null || recovery.getEmailEntered() == '' ? 'Nothing entered ' : recovery.getEmailEntered()+' '
                 span
-                    i(class="fa fa-times-circle-o color-"+((recovery.getEmailStatus() == 3 || recovery.getEmailStatus() == -2) ? 'green' : 'red'), title=recovery.getEDTitle(true))
+                    i(class="fa color-"+((recovery.getEmailStatus() == 3 || recovery.getEmailStatus() == -2) ? 'green fa-check-circle-o' : 'red fa-times-circle-o'), title=recovery.getEDTitle(true))
     //- Discord entered
     .row
         .col-md-6
@@ -43,16 +49,28 @@ script.
         .col-md-6
             p.recover-info= recovery.getDiscordEntered() == null || recovery.getDiscordEntered() == '' ? 'Nothing entered ' : recovery.getDiscordEntered()+' '
                 span
-                    i(class="fa fa-times-circle-o color-"+((recovery.getDiscordStatus() == 3 || recovery.getDiscordStatus() == -2) ? 'green' : 'red'), title=recovery.getEDTitle(false))
+                    i(class="fa color-"+((recovery.getDiscordStatus() == 3 || recovery.getDiscordStatus() == -2) ? 'green fa-check-circle-o' : 'red fa-times-circle-o'), title=recovery.getEDTitle(false))
     //- Creation Date Set/Date Difference if is set
     .row
         .col-md-6
             p.recover-info Creation Date:
         .col-md-6
             if recovery.getCreationDate() == null
-                p.recover-info Nothing Entered
+                p.recover-info Nothing Entered 
+                span
+                    i.fa.fa-times-circle-o.color-red
             else
-                p.recover-info= 'Difference: '+format.stampToTerm(recovery.getAccount().getAdded(), recovery.getCreationDate())
+                -var days = format.getDateDiff(recovery.getAccount().getAdded(), recovery.getCreationDate())
+                p.recover-info= 'Difference: '+format.stampToTerm(recovery.getAccount().getAdded(), recovery.getCreationDate())+' '
+                    span
+                        if days < 14
+                            i.fa.fa-check-circle-o.color-green
+                        else if days < 60
+                            i.fa.fa-check-circle-o.color-yellow
+                        else
+                            i.fa.fa-times-circle-o.color-red
+                
+                    
     //- City/Country
     .row
         .col-md-6

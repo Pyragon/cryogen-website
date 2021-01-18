@@ -74,6 +74,7 @@ public class Website {
 
         redirect.get("/discord", "https://discord.gg/SxHFJdhq5N");
         get("*", Utilities::render404);
+        post("*", Utilities::render404);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             Logger.log(Website.class, "Shutdown hook caught. Website shutting down!");
             stop();

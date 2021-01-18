@@ -4,6 +4,7 @@ import com.cryo.entities.accounts.Account;
 import com.cryo.modules.account.AccountUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
+import org.joda.time.PeriodType;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
@@ -51,17 +52,29 @@ public class FormatUtils {
 		DateTime start = new DateTime(Math.min(startStamp.getTime(), endStamp.getTime()));
 		DateTime end = new DateTime(Math.max(startStamp.getTime(), endStamp.getTime()));
 
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+
+		System.out.println(format.format(new Date(startStamp.getTime())));
+		System.out.println(format.format(new Date(endStamp.getTime())));
+
 		Period period = new Period(start, end);
 
 		PeriodFormatter formatter = new PeriodFormatterBuilder()
 				.appendYears().appendSuffix(" year", " years")
 				.appendMonths().appendSuffix(" month", " months")
 				.appendSeparator(" and ")
+				.printZeroAlways()
 				.appendDays().appendSuffix(" day", " days")
-				.printZeroNever()
 				.toFormatter();
 
-		return formatter.print(period);
+		String formatted = formatter.print(period.normalizedStandard(PeriodType.yearMonthDay()));
+		System.out.println("Formatted: "+formatted);
+		return formatted;
+	}
+
+	public static long getDateDiff(Date date1, Date date2) {
+		if(date1.getTime() < date2.getTime()) return getDateDiff(date1, date2, TimeUnit.DAYS);
+		return getDateDiff(date2, date1, TimeUnit.DAYS);
 	}
 
 	public String formatTimestamp(Timestamp time) {
