@@ -275,6 +275,11 @@ div#main-content {
     cursor: pointer;
 }
 
+.vis-link {
+    cursor: pointer;
+    color: #2484bd;
+}
+
 h4 {
     color: #000;
 }

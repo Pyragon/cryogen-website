@@ -60,7 +60,9 @@ public class Packages {
         if(request.queryParams().contains("filterValues"))
             filterValues = Website.getGson().fromJson(request.queryParams("filterValues"), ArrayList.class);
         boolean archived = Boolean.parseBoolean(request.queryParamOrDefault("archived", "false"));
-        String order = ListManager.getOrder(sortValues, Package.class, archived);
+        if(!request.queryParams().contains("page") || !NumberUtils.isDigits(request.queryParams("page")))
+            return error("Unable to parse page number. Please refresh the page and try again.");
+        int page = Integer.parseInt(request.queryParams("page"));
 
         ArrayList<Object> values = new ArrayList<>();
         String query = "username=? AND active=?";
@@ -72,6 +74,8 @@ public class Packages {
             query += (String) condition[0];
             values.addAll((ArrayList<Object>) condition[1]);
         }
+        int total = getConnection("cryogen_shop").selectCount("packages", query, values.toArray());
+        String order = ListManager.getOrder(model, sortValues, Package.class, page, total, archived);
         List<Package> packages = getConnection("cryogen_shop").selectList("packages", query, order, Package.class, values.toArray());
         if(packages == null)
             return error("Error loading packages. Please try again.");

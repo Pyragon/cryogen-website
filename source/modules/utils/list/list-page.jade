@@ -7,110 +7,13 @@ include ../stylesheet
 +includeScript(module.replaceFirst('/', ''))
 
 script.
-    const module = '!{module}';
-    const id = '!{moduleId}';
-    let archived = false;
-
-    function loadList(cb) {
-        let sortValues = [];
-        $('.sortable').each(function(i, value) {
-            let name = $(this).find('.sort-name').html();
-            let optionValue = $(this).find('option:selected').attr('value');
-            sortValues.push([name, optionValue, i]);
-        });
-
-        let filterValues = [];
-        $('.filterable').each(function(i, value) {
-            let name = $(this).find('.filter-name').html();
-            let filterValue = $(this).find('input').val();
-            filterValues.push([name, filterValue, i]);
-        });
-
-        post(module+'/table', { archived, sortValues: JSON.stringify(sortValues), filterValues: JSON.stringify(filterValues) }, null, data => {
-            $(`#${id}-table`).html(data.html);
-            if(data.sort)
-                $(`#${id}-sort`).html(data.sort);
-            if(data.filter)
-                $(`#${id}-filter`).html(data.filter);
-            
-            $(`#${id}-active-filter`).css('display', data.activeFilter ? 'inline' : 'none');
-            
-            if(cb) cb(data);
-        });
-    }
-    $(document).ready(() => {
-
-        loadList();
-
-        $(`#${id}-sort`).sortable();
-
-        $('.archive-btn').click(function() {
-            archived = !archived;
-            loadList();
-            $(this).find('span').html(' View '+(archived ? 'Active' : 'Archive'));
-        });
-
-        $('.refresh').click(function() {
-            loadList(() => sendAlert('Refreshed.'));
-        });
-
-        $('.sort').click(function() {
-            let sort = $(`#${id}-sort`);
-            let display = sort.css('display');
-            if(display == 'block') {
-                sort.css('display', 'none');
-                return false;
-            }
-            $('.filtered').css('display', 'none');
-            sort.css('display', 'block');
-            sort.css('top', $(this).position().top+20+'px');
-            sort.css('left', $(this).position().left-110+'px');
-            
-            return false;
-        });
-
-        $('.filter').click(function() {
-            let filter = $(`#${id}-filter`);
-            let display = filter.css('display');
-            if(display == 'block') {
-                filter.css('display', 'none');
-                return false;
-            }
-            $('.sorted').css('display', 'none');
-            filter.css('display', 'block');
-            filter.css('top', $(this).position().top+20+'px');
-            filter.css('left', $(this).position().left-110+'px');
-            return false;
-        });
-
-        $(document).on('click', '#'+id+'-sort-reset-btn', function() {
-            $('.sortable').each(function(i, value) {
-                $(this).find('option:selected').removeAttr('selected');
-                $(this).find('option[value="none"]').attr('selected', true);
-            });
-            loadList();
-            $('.sorted').css('display', 'none');
-        });
-
-        $(document).on('click', '#'+id+'-filter-reset-btn', function() {
-            $('.filterable').each(function(i, value) {
-                $(this).find('input').val('');
-            });
-            loadList();
-            $('.filtered').css('display', 'none');
-        });
-
-        $(document).on('click', '#'+id+'-filter-btn', function() {
-            loadList();
-            $('.filtered').css('display', 'none');
-        });
-
-        $(document).on('click', '#'+id+'-sort-btn', function() {
-            loadList();
-            $('.sorted').css('display', 'none');
-        });
-
-    });
+    (async function() {
+        import('/js/utils/list.js').then((mod) => {
+            let c = new mod.ListManager('!{module}', '!{moduleId}');
+            c.setup();
+            $(document).ready(() => c.onLoad());
+        }).catch(console.error);
+    })();
 
 h3= title
 for line in info
@@ -144,5 +47,9 @@ for line in info
             span.active-filter(id=moduleId+'-active-filter')
                 span.col-red  - Filters active!
 .list-table(id=moduleId+'-table')
+.pages(id=moduleId+'-pages')
+    span Pages: 
+    span.page-container
+.clear
 .sorted(id=moduleId+'-sort')
 .filtered(id=moduleId+'-filter')

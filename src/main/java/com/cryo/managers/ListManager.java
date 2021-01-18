@@ -3,6 +3,7 @@ package com.cryo.managers;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.list.*;
 import com.cryo.entities.shop.Package;
+import com.cryo.utils.Utilities;
 import com.google.common.base.CaseFormat;
 import com.mysql.cj.util.StringUtils;
 
@@ -152,7 +153,7 @@ public class ListManager {
         return new Object[] { condition, values };
     }
 
-    public static String getOrder(ArrayList<ArrayList<Object>> sortValues, Class<?> clazz, boolean archived) {
+    public static String getOrder(HashMap<String, Object> model, ArrayList<ArrayList<Object>> sortValues, Class<?> clazz, int page, int totalPages, boolean archived) {
         String order = "ORDER BY ";
         for(int i = 0; i < sortValues.size(); i++) {
             ArrayList<Object> sort = sortValues.get(i);
@@ -172,9 +173,17 @@ public class ListManager {
             order += dbName+" "+value+", ";
         }
         if(order.equals("ORDER BY "))
-            order = null;
+            order = "";
         else
             order = order.substring(0, order.length()-2);
+        if(page < 1)
+            page = 1;
+        totalPages = (int) Utilities.roundUp(totalPages, 10);
+        if(page > totalPages)
+            page = totalPages;
+        model.put("page", page);
+        model.put("total", totalPages);
+        order += " LIMIT "+((page - 1) * 10)+",10";
         return order;
     }
 

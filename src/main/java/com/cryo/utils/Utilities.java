@@ -84,6 +84,10 @@ public class Utilities {
             prop.put("filter", filtered);
             if(model.containsKey("activeFilter"))
                 prop.put("activeFilter", true);
+            if(model.containsKey("page"))
+                prop.put("page", model.get("page"));
+            if(model.containsKey("total"))
+                prop.put("total", model.get("total"));
             return Website.getGson().toJson(prop);
         } catch(Exception e) {
             e.printStackTrace();
@@ -404,6 +408,10 @@ public class Utilities {
             }
         }
         return skill == 24 ? 120 : 99;
+    }
+
+    public static long roundUp(long num, long divisor) {
+        return (num + divisor - 1) / divisor;
     }
 
     public static String checkCaptchaResult(String response) {

@@ -9,6 +9,7 @@ import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.managers.ListManager;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
+import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
 
@@ -56,7 +57,9 @@ public class Appeals {
         if(request.queryParams().contains("filterValues"))
             filterValues = Website.getGson().fromJson(request.queryParams("filterValues"), ArrayList.class);
         boolean archived = Boolean.parseBoolean(request.queryParamOrDefault("archived", "false"));
-        String order = ListManager.getOrder(sortValues, Appeal.class, archived);
+        if(!request.queryParams().contains("page") || !NumberUtils.isDigits(request.queryParams("page")))
+            return error("Unable to parse page number. Please refresh the page and try again.");
+        int page = Integer.parseInt(request.queryParams("page"));
 
         ArrayList<Object> values = new ArrayList<>();
         String query = "username=? AND answered "+(archived ? "IS NOT" : "IS")+" NULL";
@@ -67,6 +70,8 @@ public class Appeals {
             query += (String) condition[0];
             values.addAll((ArrayList<Object>) condition[1]);
         }
+        int total = getConnection("cryogen_punish").selectCount("appeals", query, values.toArray());
+        String order = ListManager.getOrder(model, sortValues, Appeal.class, page, total, archived);
         List<Appeal> appeals = getConnection("cryogen_punish").selectList("appeals", query, order, Appeal.class, values.toArray());
         if(appeals == null)
             return error("Error loading player reports. Please try again.");

@@ -126,3 +126,13 @@ button {
     font-size: 13px;
     color: red;
 }
+
+.pages {
+    float: right;
+    margin-top: -20px;
+    font-size: 13px;
+}
+
+.page-button {
+    margin: 0 2px;
+}
