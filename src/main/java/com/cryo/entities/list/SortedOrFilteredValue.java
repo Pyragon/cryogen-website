@@ -13,6 +13,8 @@ public class SortedOrFilteredValue {
     private final String value;
     private final int index;
 
+    private int secondIndex;
+
     private ArrayList<Properties> values;
 
     public boolean equals(Object object) {

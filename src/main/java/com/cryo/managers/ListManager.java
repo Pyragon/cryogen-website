@@ -497,10 +497,12 @@ public class ListManager {
                 sortable.add(new SortedOrFilteredValue(name, value, order));
             }
             int i = sortable.size();
+            ArrayList<SortedOrFilteredValue> addons = new ArrayList<>();
             for (Field field : clazz.getDeclaredFields()) {
                 if (!field.isAnnotationPresent(Sortable.class) && !field.isAnnotationPresent(SortAndFilter.class))
                     continue;
                 String name;
+                int order = field.getAnnotation(ListValue.class).order();
                 if (field.isAnnotationPresent(Sortable.class)) {
                     Sortable filter = field.getAnnotation(Sortable.class);
                     if(filter.onArchive() && !archive) continue;
@@ -513,13 +515,15 @@ public class ListManager {
                     name = field.getAnnotation(SortAndFilter.class).value();
                 }
                 SortedOrFilteredValue value = new SortedOrFilteredValue(name, "none", i++);
-                if (sortable.contains(value)) continue;
-                sortable.add(value);
+                if (sortable.contains(value) || addons.contains(value)) continue;
+                value.setSecondIndex(order);
+                addons.add(value);
             }
             for (Method method : clazz.getDeclaredMethods()) {
                 if (!method.isAnnotationPresent(Sortable.class) && !method.isAnnotationPresent(SortAndFilter.class))
                     continue;
                 String name;
+                int order = method.getAnnotation(ListValue.class).order();
                 if (method.isAnnotationPresent(Sortable.class)) {
                     Sortable filter = method.getAnnotation(Sortable.class);
                     if(filter.onArchive() && !archive) continue;
@@ -532,9 +536,12 @@ public class ListManager {
                     name = method.getAnnotation(SortAndFilter.class).value();
                 }
                 SortedOrFilteredValue value = new SortedOrFilteredValue(name, "none", i++);
-                if (sortable.contains(value)) continue;
-                sortable.add(value);
+                if (sortable.contains(value) || addons.contains(value)) continue;
+                value.setSecondIndex(order);
+                addons.add(value);
             }
+            addons.sort(Comparator.comparingInt(SortedOrFilteredValue::getSecondIndex));
+            sortable.addAll(addons);
             model.put("sortValues", sortable);
         } catch(Exception e) {
             e.printStackTrace();
