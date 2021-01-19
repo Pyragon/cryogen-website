@@ -7,6 +7,7 @@ import com.cryo.entities.MySQLRead;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.filters.EmailStatusFilter;
 import com.cryo.entities.list.Filterable;
+import com.cryo.entities.list.ListRowValue;
 import com.cryo.entities.list.ListValue;
 import com.cryo.entities.list.Sortable;
 import com.cryo.modules.account.AccountUtils;
@@ -125,9 +126,12 @@ public class Recovery extends MySQLDao {
         return "TODO";
     }
 
-    @ListValue(value = "Status", order = 6, onArchive = true)
-    public String getTableStatus() {
-        return status == 2 ? "Denied" : status == 3 ? "Reset via Email/Discord" : "Accepted";
+    @ListValue(value = "Status", order = 6, onArchive = true, returnsValue = true)
+    public ListRowValue getTableStatus() {
+        ListRowValue value = new ListRowValue(getStatusStr());
+        value.setOrder(6);
+        value.setClassName(getStatusClass());
+        return value;
     }
 
     @Sortable("Fields Entered")
