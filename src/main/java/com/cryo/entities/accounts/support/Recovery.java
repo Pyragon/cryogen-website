@@ -5,6 +5,7 @@ import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
 import com.cryo.entities.accounts.Account;
+import com.cryo.entities.accounts.filters.DiscordStatusFilter;
 import com.cryo.entities.accounts.filters.EmailStatusFilter;
 import com.cryo.entities.list.Filterable;
 import com.cryo.entities.list.ListRowValue;
@@ -70,9 +71,12 @@ public class Recovery extends MySQLDao {
     private final String reason;
 
     private final Timestamp decided;
+
     @MySQLDefault
+    @Sortable("Added")
     @ListValue(value = "Added", order = 7, formatAsTimestamp = true)
     private final Timestamp added;
+
     @MySQLDefault
     private final Timestamp updated;
 
@@ -116,6 +120,7 @@ public class Recovery extends MySQLDao {
         return emailStatus == 3 ? "Email Sent" : "Email Not Sent";
     }
 
+    @Filterable(value = "Discord Status", values = DiscordStatusFilter.class, dbName = "discord_status")
     @ListValue(value = "Discord Status", order = 3)
     public String getDiscordTableStatus() {
         return discordStatus == 3 ? "Discord Message Sent" : "Discord Message Not Sent";
