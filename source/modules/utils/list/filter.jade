@@ -1,8 +1,18 @@
 for filter in filterValues
     .filterable
         p.filter-name= filter.getName()
-        .filter-input
-            input.input(type='text', value=filter.getValue())
+        if filter.getValues() != null
+            .filter-input
+                select.input
+                    option.input(value='NONE', selected) None
+                    for f in filter.getValues()
+                        if f.get('selected') == true
+                            option.input(value=f.get('value'), selected)= f.get('key')
+                        else
+                            option.input(value=f.get('value'))= f.get('key')
+        else
+            .filter-input
+                input.input(type='text', value=filter.getValue())
         .clear
 button.btn.btn-default.small-btn(id=moduleId+'-filter-reset-btn') Reset
 button.btn.btn-default.small-btn(id=moduleId+'-filter-btn') Filter

@@ -20,6 +20,8 @@ public class ListRowValue {
 
     private boolean isButton;
 
+    private String[] fields;
+
     public boolean shouldFormatAsTime() {
         return shouldFormatAsTime;
     }

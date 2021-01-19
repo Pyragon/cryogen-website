@@ -25,6 +25,7 @@ export class ListManager {
         $(document).on('click', '#' + this.id + '-filter-reset-btn', function() {
             $('.filterable').each(function() {
                 $(this).find('input').val('');
+                $(this).find('option:selected').removeAttr('selected');
             });
             that.loadList();
             $('.filtered').css('display', 'none');
@@ -103,6 +104,10 @@ export class ListManager {
         $('.filterable').each(function(i) {
             let name = $(this).find('.filter-name').html();
             let filterValue = $(this).find('input').val();
+            if (typeof filterValue === 'undefined') {
+                let option = $(this).find('option:selected');
+                filterValue = option.attr('value');
+            }
             filterValues.push([name, filterValue, i]);
         });
         post(this.module + '/table', { archived: this.archived, sortValues: JSON.stringify(sortValues), filterValues: JSON.stringify(filterValues), page: toPage }, data => {

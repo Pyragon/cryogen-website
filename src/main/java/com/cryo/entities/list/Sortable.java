@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Sortable {
 
     String value() default "";
@@ -14,4 +14,6 @@ public @interface Sortable {
     String dbName() default "";
 
     boolean onArchive() default false;
+
+    String requiresModule() default "";
 }

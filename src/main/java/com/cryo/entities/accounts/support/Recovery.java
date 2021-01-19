@@ -5,7 +5,10 @@ import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
 import com.cryo.entities.MySQLRead;
 import com.cryo.entities.accounts.Account;
+import com.cryo.entities.accounts.filters.EmailStatusFilter;
+import com.cryo.entities.list.Filterable;
 import com.cryo.entities.list.ListValue;
+import com.cryo.entities.list.Sortable;
 import com.cryo.modules.account.AccountUtils;
 import com.mysql.cj.util.StringUtils;
 import io.ipinfo.api.model.IPResponse;
@@ -20,10 +23,12 @@ import java.util.stream.Collectors;
 public class Recovery extends MySQLDao {
 
     @MySQLDefault
+    @Sortable("ID")
     @ListValue(value = "ID", order = 0)
     private final int id;
 
-    @ListValue(value = "User", order = 1, formatAsUser = true)
+    @Filterable(value = "User", requiresModule = "staff")
+    @ListValue(value = "User", order = 1, formatAsUser = true, requiresModule = "staff")
     private final String username;
 
     private final String viewKey;
@@ -70,11 +75,11 @@ public class Recovery extends MySQLDao {
     @MySQLDefault
     private final Timestamp updated;
 
-    @ListValue(value = "View", order = 8, isButton = true, className = "view-recovery")
+    @ListValue(value = "View", order = 8, isButton = true, className = "view-recovery", requiresModule = "staff")
     private Object viewButton = "View";
 
     public List<Integer> getPreviousPasswordStatuses() {
-        if(previousPasswordStatuses == null) {
+        if (previousPasswordStatuses == null) {
             ArrayList<Double> doubles = Website.getGson().fromJson(previousPasswordString, ArrayList.class);
             previousPasswordStatuses = doubles.stream().map(d -> (int) Math.floor(d)).collect(Collectors.toList());
         }
@@ -82,7 +87,7 @@ public class Recovery extends MySQLDao {
     }
 
     public String getPreviousPasswordStatus(int index) {
-        switch(getPreviousPasswordStatuses().get(index)) {
+        switch (getPreviousPasswordStatuses().get(index)) {
             case -1:
                 return "Nothing Entered";
             case 0:
@@ -94,7 +99,7 @@ public class Recovery extends MySQLDao {
     }
 
     public String getPasswordIconClass(int index) {
-        switch(getPreviousPasswordStatuses().get(index)) {
+        switch (getPreviousPasswordStatuses().get(index)) {
             case -1:
             case 0:
                 return "fa fa-times-circle-o color-red";
@@ -104,6 +109,7 @@ public class Recovery extends MySQLDao {
         return "";
     }
 
+    @Filterable(value = "Email Status", values = EmailStatusFilter.class, dbName = "email_status")
     @ListValue(value = "Email Status", order = 2)
     public String getEmailTableStatus() {
         return emailStatus == 3 ? "Email Sent" : "Email Not Sent";
@@ -124,25 +130,26 @@ public class Recovery extends MySQLDao {
         return status == 2 ? "Denied" : status == 3 ? "Reset via Email/Discord" : "Accepted";
     }
 
+    @Sortable("Fields Entered")
     @ListValue(value = "Fields Entered", order = 4)
     public String getFieldsSet() {
         int total = 0;
-        if(!StringUtils.isNullOrEmpty(emailEntered))
+        if (!StringUtils.isNullOrEmpty(emailEntered))
             total++;
-        if(!StringUtils.isNullOrEmpty(discordEntered))
+        if (!StringUtils.isNullOrEmpty(discordEntered))
             total++;
-        if(creationDate != null)
+        if (creationDate != null)
             total++;
-        if(!StringUtils.isNullOrEmpty(cityCountry))
+        if (!StringUtils.isNullOrEmpty(cityCountry))
             total++;
-        if(!StringUtils.isNullOrEmpty(ISP))
+        if (!StringUtils.isNullOrEmpty(ISP))
             total++;
-        for(int status : getPreviousPasswordStatuses()) {
+        for (int status : getPreviousPasswordStatuses()) {
             if (status != -1)
                 total++;
         }
         total += correctRecoveryQuestions;
-        if(!StringUtils.isNullOrEmpty(additional))
+        if (!StringUtils.isNullOrEmpty(additional))
             total++;
         return Integer.toString(total);
     }
@@ -150,9 +157,9 @@ public class Recovery extends MySQLDao {
     public String getRealCityCountry() {
         try {
             IPResponse response = Website.getIPLookup().lookupIP(getAccount().getCreationIP());
-            if(response == null) return "N/A";
-            return response.getCity()+", "+response.getRegion()+", "+response.getCountryCode();
-        } catch(Exception e) {
+            if (response == null) return "N/A";
+            return response.getCity() + ", " + response.getRegion() + ", " + response.getCountryCode();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "N/A";
@@ -161,17 +168,17 @@ public class Recovery extends MySQLDao {
     public String getRealISP() {
         try {
             IPResponse response = Website.getIPLookup().lookupIP(getAccount().getCreationIP());
-            if(response == null) return "N/A";
-            if(response.getCarrier() != null)
+            if (response == null) return "N/A";
+            if (response.getCarrier() != null)
                 return response.getCarrier().getName();
-            if(response.getAsn() != null)
+            if (response.getAsn() != null)
                 return response.getAsn().getName();
-            if(response.getCompany() != null)
+            if (response.getCompany() != null)
                 return response.getCompany().getName();
-            if(response.getOrg() != null)
+            if (response.getOrg() != null)
                 return response.getOrg();
             return "N/A";
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "N/A";
@@ -180,7 +187,7 @@ public class Recovery extends MySQLDao {
     public String getEDTitle(boolean email) {
         int status = email ? emailStatus : discordStatus;
         String key = email ? "an email" : "a discord";
-        switch(status) {
+        switch (status) {
             case -1:
                 return "User entered no value. Account has value associated. Look at lists to see what is currently linked.";
             case -2:
@@ -190,15 +197,17 @@ public class Recovery extends MySQLDao {
             case 2:
                 return "User entered value. Account does not have a value associated.";
             case 3:
-                return "User entered value during recovery. Value was correct. A password recovery has been sent to "+(email ? "email" : "discord")+".";
+                return "User entered value during recovery. Value was correct. A password recovery has been sent to " + (email ? "email" : "discord") + ".";
         }
         return "";
     }
 
     public String getStatusClass() {
-        switch(status) {
-            case 1: return "color-yellow";
-            case 2: return "color-red";
+        switch (status) {
+            case 1:
+                return "color-yellow";
+            case 2:
+                return "color-red";
             case 3:
             case 4:
                 return "color-green";
@@ -207,7 +216,7 @@ public class Recovery extends MySQLDao {
     }
 
     public String getStatusStr() {
-        switch(status) {
+        switch (status) {
             case 1:
                 return "Submitted";
             case 2:

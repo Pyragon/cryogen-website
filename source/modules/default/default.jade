@@ -54,6 +54,7 @@ html
                 data.first = true;
                 
                 post(window.location.pathname, data, null, data => {
+                    window.rights = data.rights;
 
                     $('#body').html(data.body);
                     $('#footer').html(data.footer);

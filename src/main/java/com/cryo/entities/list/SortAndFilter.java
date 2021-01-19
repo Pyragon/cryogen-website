@@ -14,4 +14,8 @@ public @interface SortAndFilter {
     String dbName() default "";
 
     boolean onArchive() default false;
+
+    Class<?> values() default Object.class;
+
+    String requiresModule() default "";
 }

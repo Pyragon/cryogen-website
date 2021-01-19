@@ -53,6 +53,7 @@ public class Utilities {
             model.put("format", new FormatUtils());
             Properties prop = new Properties();
             prop.put("success", true);
+            prop.put("rights", account == null ? 0 : account.getRights());
             model.put("loggedIn", account != null);
             if(account != null)
                 model.put("user", account);

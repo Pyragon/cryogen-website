@@ -62,7 +62,7 @@ h3 {
 .filtered {
     display: none;
     position: absolute;
-    width: 175px;
+    width: 240px;
     background: #1C1C1C;
     border: 1px solid #000;
     border-radius: 5px;
@@ -74,7 +74,7 @@ h3 {
 
 .filter-name {
     float: left;
-    text-align: left;
+    text-align: center;
     font-size: 11px;
     margin-left: 10px;
     margin-top: 10px;
@@ -82,7 +82,7 @@ h3 {
 
 .sort-name {
     float: left;
-    text-align: left;
+    text-align: center;
     font-size: 11px;
     padding: 5px;
     margin-top: 10px;
@@ -109,8 +109,9 @@ h3 {
     font-size: 12px;
 }
 
-select {
-    width: 70px;
+.sort-input select {
+    min-width: 70px;
+    max-width: 70px;
 }
 
 .sortable {

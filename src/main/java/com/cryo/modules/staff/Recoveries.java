@@ -28,7 +28,7 @@ import static com.cryo.utils.Utilities.*;
 public class Recoveries {
 
     @Endpoint(method = "POST", endpoint = "/staff/recoveries/load")
-    public static String renderAppealsPage(Request request, Response response) {
+    public static String renderRecoveriesPage(Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(account == null) return Login.renderLoginPage("/staff/recoveries", request, response);
         if(account.getRights() < 2) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);

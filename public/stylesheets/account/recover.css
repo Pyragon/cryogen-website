@@ -9,11 +9,6 @@ select {
     margin: auto;
 }
 
-select {
-    min-width: 350px;
-    max-width: 350px;
-}
-
 input,
 textarea {
     margin: 5px 20px;
