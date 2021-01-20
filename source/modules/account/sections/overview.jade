@@ -8,6 +8,7 @@ include ../../utils/account/recovery_questions
 +includeStylesheet('utils/buttons')
 
 script.
+
     $(document).ready(() => {
 
         $('#purchase').click(() => {
@@ -33,6 +34,7 @@ script.
             let email = $('#email').val();
             let discord = $('#discord').val();
             let tfa = $('#tfa-switch').is(':checked');
+            let newPass = $('#new-pass').find('input').val();
 
             let current = $('#current').val();
 
@@ -44,7 +46,7 @@ script.
                 questions.push([ selected, input ]);
             });
 
-            post('/account/overview/save', { display, userTitle, email, discord, questions: JSON.stringify(questions), tfa, current }, null, data => {
+            post('/account/overview/save', { display, userTitle, email, discord, questions: JSON.stringify(questions), tfa, current, newPass }, null, data => {
                 sendAlert('Your settings have been saved. More information will follow if needed.');
                 if(data.display)
                     $('#display').val(data.display);
@@ -55,7 +57,10 @@ script.
                 $('#qr-code').css('visibility', data.tfa ? 'visibile' : 'hidden');
                 if(data.tfa)
                     postNoty('/account/tfa/noty', {}, 'QR Code', [ closeButton() ]);
+                $('#fta-switch').attr('checked', data.tfa ? 'true' : 'false');
             });
+
+            $('#current').val('');
 
             return false;
 
@@ -141,13 +146,19 @@ script.
             .col-md-6
                 for i in [0, 1, 2]
                     +showQuestion(null, null, i)
+        //- Idk why this one is displaying directly below the one above, regardless of margin
+        .row#new-pass
+            .col-md-6
+                p New Password
+            .col-md-6
+                input.input(type='password', placeholder='New Password', autocomplete='new-password')
         .row#current-row
             .col-md-6
                 p Current Password
                     span.color-red *
                 p.color-red#pass-info (Required for any changes)
             .col-md-6
-                input.input#current(type='text', placeholder='Current Password', autocomplete='new-password')
+                input.input#current(type='password', placeholder='Current Password', autocomplete='new-password')
         .row
             .col-md-6
             .col-md-6

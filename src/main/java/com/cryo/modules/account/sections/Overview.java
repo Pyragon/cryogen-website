@@ -73,9 +73,11 @@ public class Overview {
         String questions = request.queryParams("questions");
         String tfa = request.queryParams("tfa");
         String current = request.queryParams("current");
+        String newPass = request.queryParams("newPass");
         boolean changeDiscord = false;
         boolean changeDisplay = false;
         boolean changeUserTitle = false;
+        boolean changePass = false;
         boolean changeEmail = false;
         boolean changeQuestions = false;
         boolean changeTFA = false;
@@ -83,6 +85,9 @@ public class Overview {
         String hashed = BCrypt.hashPassword(current, account.getSalt());
         if(!hashed.equals(account.getPassword()))
             return error("Invalid current password. Please try again.");
+        String sessionId = request.cookie("cryo_sess");
+        if(sessionId == null)
+            sessionId = request.session().attribute("cryo_sess");
         if(displayName != null && !displayName.equalsIgnoreCase(account.getDisplayName())) {
             displayName = Utilities.formatNameForDisplay(displayName);
             if(!DisplayNames.nameExists(displayName, account.getUsername()))
@@ -117,7 +122,6 @@ public class Overview {
             try {
                 tfaEnabled = Boolean.parseBoolean(tfa);
             } catch(Exception e) {
-                System.out.println(tfa);
                 return error("Error parsing TFA. Please refresh the page and try again.");
             }
             if(tfaEnabled == (account.getTFAKey() == null))
@@ -160,7 +164,14 @@ public class Overview {
             e.printStackTrace();
             return error("Error parsing recovery questions. Please report this bug via Github if it persists.");
         }
-        if(!changeDiscord && !changeDisplay && !changeEmail && !changeUserTitle && !changeQuestions)
+        if(newPass != null && !newPass.equals("")) {
+            if(newPass.length() < 6 || newPass.length() > 20)
+                return error("Password must be between 6 and characters.");
+            hashed = BCrypt.hashPassword(newPass, account.getSalt());
+            if(!hashed.equals(account.getPassword()))
+                changePass = true;
+        }
+        if(!changeDiscord && !changeDisplay && !changeEmail && !changeUserTitle && !changeQuestions && !changePass)
             return error("No settings have been changed.");
         Properties prop = new Properties();
         prop.put("success", true);
@@ -186,9 +197,6 @@ public class Overview {
                 getConnection("cryogen_global").set("player_data", "tfa_key=NULL", "username=?", account.getUsername());
             } else {
                 String key = TFA.generateSecretKey();
-                String sessionId = request.cookie("cryo_sess");
-                if(sessionId == null)
-                    sessionId = request.session().attribute("cryo_sess");
                 account.setTfaKey(key);
                 getConnection("cryogen_accounts").delete("sessions", "username = ? AND session_id != ?", account.getUsername(), sessionId);
                 getConnection("cryogen_global").set("player_data", "tfa_key=?", "username=?", key, account.getUsername());
@@ -228,6 +236,10 @@ public class Overview {
                 e.printStackTrace();
                 return error("Error setting recovery questions. Please report this problem via Github if it persists.");
             }
+        }
+        if(changePass) {
+            getConnection("cryogen_global").set("player_data", "password=?", "username=?", hashed, account.getUsername());
+            getConnection("cryogen_accounts").delete("sessions", "username=? AND session_id != ?", account.getUsername(), sessionId);
         }
         return Website.getGson().toJson(prop);
     }

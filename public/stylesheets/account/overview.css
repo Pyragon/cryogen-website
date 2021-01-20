@@ -25,9 +25,8 @@ h3 {
     margin-top: 65px;
 }
 
-#new-pass,
-#new-pass p {
-    margin-top: 10px;
+#new-pass {
+    margin-top: 20px;
 }
 
 #pass-info {
