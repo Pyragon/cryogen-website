@@ -139,14 +139,16 @@ public class Overview {
                             return error("Invalid recovery question selected. Please report this bug via Github.");
                         if(used.contains(id))
                             return error("You cannot have duplicate recovery questions!");
+                        String cur = (String) account.getRecoveryQuestions().get(index).get(1);
+                        if(cur.equals(value)) continue;
                         used.add(id);
                         for(int i = 0; i < 3; i++) {
                             if(i == index) continue;
                             if(account.getQuestion(i) != null && (int) Math.floor((double) account.getQuestion(i).get(0)) == id && (int) Math.floor((double) recoveryQuestions.get(index).get(0)) == (int) Math.floor((double) account.getQuestion(index).get(0)))
                                 return error("You cannot have duplicate recovery questions!");
+                            changeQuestions = true;
                         }
                     }
-                    changeQuestions = true;
                 }
             }
         } catch(Exception e) {
