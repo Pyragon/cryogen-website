@@ -21,8 +21,22 @@ h3 {
     width: 100px;
 }
 
+#current-row {
+    margin-top: 65px;
+}
+
+#new-pass,
+#new-pass p {
+    margin-top: 10px;
+}
+
+#pass-info {
+    margin-top: 2px;
+    font-size: 13px;
+}
+
 #save {
-    margin-top: 75px;
+    margin-top: 10px;
 }
 
 .question input {

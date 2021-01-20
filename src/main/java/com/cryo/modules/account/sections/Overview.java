@@ -9,6 +9,7 @@ import com.cryo.entities.accounts.discord.Discord;
 import com.cryo.entities.accounts.discord.Verify;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
+import com.cryo.utils.BCrypt;
 import com.cryo.utils.DisplayNames;
 import com.cryo.utils.TFA;
 import com.cryo.utils.Utilities;
@@ -71,6 +72,7 @@ public class Overview {
         String discord = request.queryParams("discord");
         String questions = request.queryParams("questions");
         String tfa = request.queryParams("tfa");
+        String current = request.queryParams("current");
         boolean changeDiscord = false;
         boolean changeDisplay = false;
         boolean changeUserTitle = false;
@@ -78,6 +80,9 @@ public class Overview {
         boolean changeQuestions = false;
         boolean changeTFA = false;
         Verify verify = null;
+        String hashed = BCrypt.hashPassword(current, account.getSalt());
+        if(!hashed.equals(account.getPassword()))
+            return error("Invalid current password. Please try again.");
         if(displayName != null && !displayName.equalsIgnoreCase(account.getDisplayName())) {
             displayName = Utilities.formatNameForDisplay(displayName);
             if(!DisplayNames.nameExists(displayName, account.getUsername()))
