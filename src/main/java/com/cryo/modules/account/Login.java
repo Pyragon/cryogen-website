@@ -70,9 +70,10 @@ public class Login {
             long expiry = (remember ? (1000 * 60 * 60 * 24 * 60) : (1000 * 60 * 60 * 24 * 1)) + System.currentTimeMillis();
             Session session = new Session(-1, username, sessionId, request.userAgent(), visitorId, new Timestamp(expiry), null);
             getConnection("cryogen_accounts").insert("sessions", session.data());
-            request.session().attribute("cryo_sess", sessionId);
             if (remember)
-                response.cookie("cryo_sess", sessionId);
+                response.cookie("cryo_sess", sessionId, 3600);
+            else
+                request.session().attribute("cryo_sess", sessionId);
             if(account.isPasswordResetRequired())
                 redirect = "/account/force-reset";
             return Utilities.redirect(redirect, request, response);
