@@ -35,7 +35,7 @@ $(document).ready(() => {
 
                             closeNoty(respondId);
                             sendAlert('Successfully responded.');
-                            loadList();
+                            $('.refresh').click();
 
                         });
                     };

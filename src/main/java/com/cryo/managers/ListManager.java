@@ -104,6 +104,8 @@ public class ListManager {
                         Object[] args = new Object[method.getParameterCount()];
                         if(args.length > 0)
                             args[0] = account;
+                        if(args.length > 1)
+                            args[1] = module;
                         value = annotation.returnsValue() ? (ListRowValue) method.invoke(t, args) : getValue(method.invoke(t, args), annotation);
                         row.getValues().add(value);
                     } catch (Exception e) {

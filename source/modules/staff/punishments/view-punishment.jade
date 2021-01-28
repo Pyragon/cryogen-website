@@ -1,0 +1,65 @@
+include ../../utils/name
+
+.noty_message
+    span.noty_text
+    span  for 
+        +renderName(user)
+.container#punishment-container(style='width: 100%; padding-bottom: 15px;')
+    .row
+        .col-md-6
+            p.punishment-info ID: 
+        .col-md-6
+            p.punishment-info= punishment.getId()
+    .row
+        .col-md-6
+            p.punishment-info Type: 
+        .col-md-6
+            p.punishment-info= punishment.getTypeRow().getValue()
+    .row
+        .col-md-6
+            p.punishment-info Added: 
+        .col-md-6
+            p.punishment-info= format.formatTimestamp(punishment.getAdded())
+    .row
+        .col-md-6
+            p.punishment-info Expires:
+        .col-md-6
+            if punishment.getExpiry() == null
+                p.punishment-info Does not Expire
+            else if punishment.getArchived() != null
+                p.punishment-info.color-green Archived
+            else if punishment.isExpired()
+                p.punishment-info.color-green Expired
+            else
+                p.punishment-info= format.formatTimestamp(punishment.getExpiryStamp())
+    .row
+        .col-md-6
+            p.punishment-info Punisher: 
+        .col-md-6
+            p.punishment-info
+                span
+                    +renderName(punishment.getAccount())
+    .row
+        .col-md-6
+            p.punishment-info Reason:
+        .col-md-6
+            p.punishment-info= punishment.getReason()
+    .row
+        .col-md-6
+            p.punishment-info Info:
+        .col-md-6
+            p.punishment-info= punishment.getInfo()
+    if punishment.getArchiver() != null
+        .row
+            .col-md-6
+                p.punishment-info Archiver:
+            .col-md-6
+                p.punishment-info
+                    span
+                        +renderName(punishment.getArchiverAccount())
+        .row
+            .col-md-6
+                p.punishment-info Archived:
+            .col-md-6
+                p.punishment-info= format.formatTimestamp(punishment.getArchived())
+.noty_close

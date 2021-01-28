@@ -6,6 +6,7 @@ import com.cryo.entities.accounts.Session;
 import com.cryo.utils.DisplayNames;
 import com.mysql.cj.util.StringUtils;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.util.StringUtil;
 import spark.Request;
 
@@ -13,6 +14,7 @@ import java.util.HashMap;
 
 import static com.cryo.Website.getConnection;
 
+@Slf4j
 public class AccountUtils {
 
     @Getter
@@ -27,9 +29,11 @@ public class AccountUtils {
     }
 
     public static Account getAccount(Request request) {
-        if(!request.session().attributes().contains("cryo_sess") && request.cookie("cryo_sess") == null) return null;
+        if(!request.session().attributes().contains("cryo_sess") && request.cookie("cryo_sess") == null)
+            return null;
         String sessionId = request.cookie("cryo_sess");
         String visitorId = request.queryParams("visitorId");
+        log.info("Visitor ID: "+visitorId);
         if(StringUtils.isNullOrEmpty(visitorId))
             return null;
         if(sessionId == null)

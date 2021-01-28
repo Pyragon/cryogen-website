@@ -103,7 +103,7 @@ public class Recoveries {
             return error("Unable to find creator of recovery. Please refresh the page and try again.");
         model.put("recovery", recovery);
         model.put("user", user);
-        return renderPage("account/support/recovery/view-recovery", model, request, response);
+        return renderPage("staff/view-recovery", model, request, response);
     }
 
     @Endpoint(method = "POST", endpoint = "/staff/recoveries/respond/noty")

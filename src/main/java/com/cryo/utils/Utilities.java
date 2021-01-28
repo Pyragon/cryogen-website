@@ -9,6 +9,7 @@ import com.google.common.reflect.ClassPath;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequestWithBody;
+import com.mysql.cj.util.StringUtils;
 import de.neuland.jade4j.Jade4J;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
 import org.joda.time.DateTime;
@@ -61,6 +62,8 @@ public class Utilities {
                 prop.put("body", Jade4J.render("./source/modules/default/body.jade", model));
                 prop.put("footer", Jade4J.render("./source/modules/default/footer.jade", model));
             }
+            if(model.containsKey("404"))
+                prop.put("404", true);
             module = "./source/modules/"+module+".jade";
             String html = Jade4J.render(module, model);
             if(method.equals("GET"))
@@ -172,6 +175,7 @@ public class Utilities {
         response.status(200);
         HashMap<String, Object> model = new HashMap<>();
         model.put("random", getRandomImageLink());
+        model.put("404", true);
         return renderPage("utils/404", model, request, response);
     }
 
@@ -182,10 +186,15 @@ public class Utilities {
         return String.format("%simages/404/%s", Website.getProperties().getProperty("path"), random.getName());
     }
 
+    public static String success() {
+        return success(null);
+    }
+
     public static String success(String html) {
         Properties properties = new Properties();
         properties.put("success", true);
-        properties.put("html", html);
+        if(html != null)
+            properties.put("html", html);
         return Website.getGson().toJson(properties);
     }
 
@@ -413,6 +422,14 @@ public class Utilities {
 
     public static long roundUp(long num, long divisor) {
         return (num + divisor - 1) / divisor;
+    }
+
+    public static boolean isNullOrEmpty(String... strings) {
+        for(String str : strings) {
+            if(StringUtils.isNullOrEmpty(str))
+                return true;
+        }
+        return false;
     }
 
     public static String checkCaptchaResult(String response) {

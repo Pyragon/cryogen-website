@@ -20,8 +20,7 @@ function sendAlert(text, onClick) {
             onClick
         };
     }
-    n = noty(options);
-    return n.options.id;
+    noty(options);
 }
 
 function closeNoty(id) {

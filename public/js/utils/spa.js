@@ -49,6 +49,12 @@ function post(link, data, selector, cb) {
     $.post(link, data, ret => {
         data = parseJSON(ret);
         if (!data) return false;
+        if (data['404']) {
+            sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
+                window.open('https://github.com/pyragon/cryogen-website/issues');
+            });
+            return null;
+        }
         if (cb)
             cb(data);
         else {
@@ -94,6 +100,7 @@ function initFingerprintJS() {
     FingerprintJS.load().then(fp => {
         fp.get().then(result => {
             visitorId = result.visitorId;
+            console.log('Visitor ID: ' + visitorId);
         });
     });
 }

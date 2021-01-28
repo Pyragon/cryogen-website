@@ -1,0 +1,28 @@
+.punishment-label {
+    float: left;
+    text-align: center;
+    width: 48%;
+}
+
+.punishment-label p {
+    width: 100%;
+}
+
+.punishment-info {
+    margin-top: 2px;
+}
+
+.punishment-input {
+    float: right;
+    width: 36%;
+    margin-right: 6%;
+    border-color: #18597F;
+}
+
+label.punishment-input {
+    width: 30px;
+}
+
+.punishment-row {
+    margin-top: 5px;
+}

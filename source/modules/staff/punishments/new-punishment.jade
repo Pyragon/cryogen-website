@@ -1,0 +1,38 @@
+include ../../utils/stylesheet
+
++includeStylesheet('staff/punishments')
+
+.noty_message
+    span.noty_text
+.punishment-row
+    p.punishment-label Player Name:
+    input.punishment-input.input#player-name(type='text', placeholder='Player Name')
+.clear
+.punishment-row
+    p.punishment-label Type:
+    select.punishment-input.input#type
+        option(value='mute') Mute
+        if user.getRights() == 2
+            option(value='ban') Ban
+.clear
+.punishment-row
+    .punishment-label
+        p Expiry
+        p.punishment-info.small (Leave blank to not expire)
+    input.punishment-input.input#expiry(type='text', placeholder='Expiry (MM/dd/yyyy)', style='margin-top: 5px;')
+.clear
+.punishment-row
+    p.punishment-label Appealable?
+    label.switch.punishment-input
+        input#appealable(type='checkbox')
+        span.slider.round
+.clear
+.punishment-row
+    p.punishment-label Reason:
+    input.punishment-input.input#reason(type='text', placeholder='Reason')
+.clear
+.punishment-row
+    p.punishment-label Info:
+    textarea.punishment-input.input#info(type='text', placeholder='Info')
+.clear
+.noty_close

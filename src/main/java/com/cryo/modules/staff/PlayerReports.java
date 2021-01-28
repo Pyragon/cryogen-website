@@ -8,6 +8,7 @@ import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.managers.ListManager;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
+import com.cryo.utils.Utilities;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
@@ -26,6 +27,7 @@ public class PlayerReports {
     public static String renderPlayerReportsPage(Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(account == null) return Login.renderLoginPage("/staff/player-reports", request, response);
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
         HashMap<String, Object> model = new HashMap<>();
         model.put("archivable", true);
         model.put("refreshable", true);
@@ -48,6 +50,7 @@ public class PlayerReports {
     public static String renderTable(Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
         HashMap<String, Object> model = new HashMap<>();
         model.put("moduleId", "player-reports");
         ArrayList<ArrayList<Object>> sortValues = new ArrayList<>();
