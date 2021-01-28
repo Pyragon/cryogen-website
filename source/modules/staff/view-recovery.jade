@@ -28,6 +28,12 @@ script.
             p.view-info ID:
         .col-md-6
             p.view-info= recovery.getId()
+    //- IP
+    .row
+        .col-md-6
+            p.view-info Created with IP:
+        .col-md-6
+            p.view-info= recovery.getIP()
     //- View Key
     .row
         .col-md-6
@@ -95,12 +101,6 @@ script.
             else
                 p.view-info= 'Entered: '+recovery.getISP()
                 p.view-info= 'Actual: '+recovery.getRealISP()
-    //- IP
-    .row
-        .col-md-6
-            p.view-info IP:
-        .col-md-6
-            p.view-info= recovery.getIP()
     //- Previous Passwords
     .row
         .col-md-6

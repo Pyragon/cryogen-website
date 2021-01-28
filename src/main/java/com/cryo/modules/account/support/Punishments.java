@@ -3,7 +3,6 @@ package com.cryo.modules.account.support;
 import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.support.Appeal;
-import com.cryo.entities.accounts.support.BugReport;
 import com.cryo.entities.accounts.support.Punishment;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
@@ -140,6 +139,12 @@ public class Punishments {
         if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
             return error("Unable to parse ID. Please refresh the page and try again.");
         int id = Integer.parseInt(request.queryParams("id"));
+        if(request.queryParams().contains("appeal")) {
+            Appeal appeal = getConnection("cryogen_punish").selectClass("appeals", "id=?", Appeal.class, id);
+            if(appeal == null)
+                return error("");
+            id = appeal.getPunishmentId();
+        }
         Punishment punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, id);
         if(punishment == null || !punishment.getUsername().equals(account.getUsername()))
             return error("Unable to find punishment. Please refresh the page and try again.");

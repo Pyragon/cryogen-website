@@ -2,10 +2,12 @@ package com.cryo.entities.accounts.support;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
+import com.cryo.entities.accounts.Account;
 import com.cryo.entities.list.Filterable;
 import com.cryo.entities.list.ListRowValue;
 import com.cryo.entities.list.ListValue;
 import com.cryo.entities.list.SortAndFilter;
+import com.cryo.modules.account.AccountUtils;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -21,20 +23,19 @@ public class Appeal extends MySQLDao {
     @ListValue(value = "Appealee", order = 1, formatAsUser = true, requiresModule = "staff")
     private final String username;
 
-    @ListValue(value = "View Punishment", order = 7, className="view-punishment", isButton = true)
-    private final int punishId;
+    private final int punishmentId;
 
     @Filterable("Title")
     @ListValue(value = "Title", order = 2)
     private final String title;
 
-    private final String message;
+    private final String additional;
 
-    @SortAndFilter("Archived On")
+    @SortAndFilter(value = "Archived On", onArchive = true)
     @ListValue(value = "Archived On", order = 5, onArchive = true, formatAsTimestamp = true)
     private final Timestamp archived;
 
-    @Filterable("Archiver")
+    @Filterable(value = "Archiver", onArchive = true)
     @ListValue(value = "Archiver", order = 6, onArchive = true, formatAsUser = true)
     private final String archiver;
 
@@ -55,10 +56,21 @@ public class Appeal extends MySQLDao {
     @ListValue(value = "View Appeal", className="view-appeal", order = 8, isButton = true)
     private Object viewAppeal = "View";
 
-    @Filterable("Answer")
+    @Filterable(value = "Answer", onArchive = true)
     @ListValue(value = "Answer", order = 4, onArchive = true)
     public String getAnswer() {
         return answer == 0 ? "Rejected" : "Accepted";
+    }
+
+    @ListValue(value = "View Punishment", className="view-appeal-punishment", order = 7, isButton = true)
+    public Object viewPunishment = "View";
+
+    public boolean isArchived() {
+        return archived != null;
+    }
+
+    public Account getArchiverUser() {
+        return AccountUtils.getAccount(archiver);
     }
 
 }

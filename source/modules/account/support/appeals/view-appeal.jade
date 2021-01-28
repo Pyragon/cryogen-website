@@ -1,0 +1,49 @@
+.noty_message
+    span.noty_text
+.container#view-appeal-container(style='width: 100%;')
+    .row
+        .col-md-6
+            p ID
+        .col-md-6
+            p= appeal.getId()
+    .row
+        .col-md-6
+            p Title
+        .col-md-6
+            //- prob gonna have to do some bullshit with whitespace:pre
+            p= appeal.getTitle()
+    .row
+        .col-md-6
+            p Additional:
+        .col-md-6
+            .additional
+                p= appeal.getAdditional()
+    .row
+        .col-md-6
+            p Added On:
+        .col-md-6
+            p= format.formatTimestamp(appeal.getAdded())
+    if appeal.isArchived()
+        .row
+            .col-md-6
+                p Answer:
+            .col-md-6
+                //- TODO colours and actual word
+                p= appeal.getAnswer()
+        .row
+            .col-md-6
+                p Reason:
+            .col-md-6
+                p= appeal.getReason()
+        .row
+            .col-md-6
+                p Archived By:
+            .col-md-6
+                span
+                    +renderName(appeal.getArchiverUser())
+        .row
+            .col-md-6
+                p Archived On:
+            .col-md-6
+                p= format.formatTimestamp(appeal.getArchived())
+.noty_close

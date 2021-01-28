@@ -7,6 +7,13 @@
     border-color: #18597F;
 }
 
-#create-appeal-container p {
+#create-appeal-container p,
+#view-appeal-container p {
     text-align: center;
+}
+
+.additional {
+    padding: 5px;
+    border: 1px solid #18597F;
+    border-radius: 5px;
 }

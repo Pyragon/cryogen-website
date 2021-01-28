@@ -78,4 +78,19 @@ public class Appeals {
         ListManager.buildTable(model, "account", appeals, Appeal.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
     }
+
+    @Endpoint(method = "POST", endpoint = "/support/appeals/view")
+    public static String viewAppeal(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse ID. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        Appeal appeal = getConnection("cryogen_punish").selectClass("appeals", "id=?", Appeal.class, id);
+        if(appeal == null || !appeal.getUsername().equalsIgnoreCase(account.getUsername()))
+            return error("Unable to find appeal. Please refresh the page and try again.");
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("appeal", appeal);
+        return renderPage("account/support/appeals/view-appeal", model, request, response);
+    }
 }
