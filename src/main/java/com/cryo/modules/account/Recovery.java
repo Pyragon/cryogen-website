@@ -158,7 +158,7 @@ public class Recovery {
             Account account = AccountUtils.getAccount(username);
             if (account == null) {
                 com.cryo.entities.accounts.support.Recovery recovery = new com.cryo.entities.accounts.support.Recovery(-1, username, viewKey, null, null, 0, email, 0, discord,
-                        null, cico, isp, Website.getGson().toJson(previousPasswordStatuses), correctRecoveryQuestions, additional, 1, null, null, null, null, null, null);
+                        null, cico, isp, request.ip(), Website.getGson().toJson(previousPasswordStatuses), correctRecoveryQuestions, additional, 1, null, null, null, null, null, null);
                 getConnection("cryogen_recovery").insert("recoveries", recovery.data());
                 HashMap<String, Object> model = new HashMap<>();
                 model.put("user", null);
@@ -242,7 +242,7 @@ public class Recovery {
                 previousPasswordStatuses.add(previousPasswords.getHashes().contains(hash) ? 1 : 0);
             }
             com.cryo.entities.accounts.support.Recovery recovery = new com.cryo.entities.accounts.support.Recovery(-1, username, viewKey, emailKey, discordKey, emailStatus, email, discordStatus, discord,
-                    creationDate, cico, isp, Website.getGson().toJson(previousPasswordStatuses), correctRecoveryQuestions, additional, 1, null, null, null, null, null, null);
+                    creationDate, cico, isp, request.ip(), Website.getGson().toJson(previousPasswordStatuses), correctRecoveryQuestions, additional, 1, null, null, null, null, null, null);
             getConnection("cryogen_recovery").insert("recoveries", recovery.data());
             HashMap<String, Object> model = new HashMap<>();
             model.put("key", viewKey);

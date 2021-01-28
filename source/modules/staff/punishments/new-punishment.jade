@@ -32,7 +32,9 @@ include ../../utils/stylesheet
     input.punishment-input.input#reason(type='text', placeholder='Reason')
 .clear
 .punishment-row
-    p.punishment-label Info:
+    p.punishment-label Info: 
+        span
+            i.fa.fa-info-circle(title='This information is only available to staff. Use it to describe why you have punished this user.')
     textarea.punishment-input.input#info(type='text', placeholder='Info')
 .clear
 .noty_close

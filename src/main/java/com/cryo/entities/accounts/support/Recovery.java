@@ -52,6 +52,9 @@ public class Recovery extends MySQLDao {
     @MySQLRead("isp")
     private final String ISP;
 
+    @MySQLRead("ip")
+    private final String IP;
+
     //-1 = nothing entered, 0 = entered but incorrect, 1 = entered and correct
     private List<Integer> previousPasswordStatuses;
     @MySQLRead("previous_passwords")

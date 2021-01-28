@@ -1,0 +1,12 @@
+#create-appeal-container .row {
+    margin-top: 10px;
+}
+
+#create-appeal-container input,
+#create-appeal-container textarea {
+    border-color: #18597F;
+}
+
+#create-appeal-container p {
+    text-align: center;
+}

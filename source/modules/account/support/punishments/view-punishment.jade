@@ -1,0 +1,59 @@
+include ../../../utils/name
+include ../../../utils/stylesheet
+
+.noty_message
+    span.noty_text
+.container#punishment-container(style='width: 100%; padding-bottom: 15px;')
+    .row
+        .col-md-6
+            p.view-info ID: 
+        .col-md-6
+            p.view-info= punishment.getId()
+    .row
+        .col-md-6
+            p.view-info Type: 
+        .col-md-6
+            p.view-info= punishment.getTypeRow().getValue()
+    .row
+        .col-md-6
+            p.view-info Added: 
+        .col-md-6
+            p.view-info= format.formatTimestamp(punishment.getAdded())
+    .row
+        .col-md-6
+            p.view-info Expires:
+        .col-md-6
+            if punishment.getExpiry() == null
+                p.view-info Does not Expire
+            else if punishment.getArchived() != null
+                p.view-info.color-green Archived
+            else if punishment.isExpired()
+                p.view-info.color-green Expired
+            else
+                p.view-info= format.formatTimestamp(punishment.getExpiryStamp())
+    .row
+        .col-md-6
+            p.view-info Punisher: 
+        .col-md-6
+            p.view-info
+                span
+                    +renderName(punishment.getAccount())
+    .row
+        .col-md-6
+            p.view-info Reason:
+        .col-md-6
+            p.view-info= punishment.getReason()
+    if punishment.getArchiver() != null
+        .row
+            .col-md-6
+                p.view-info Archiver:
+            .col-md-6
+                p.view-info
+                    span
+                        +renderName(punishment.getArchiverAccount())
+        .row
+            .col-md-6
+                p.view-info Archived:
+            .col-md-6
+                p.view-info= format.formatTimestamp(punishment.getArchived())
+.noty_close

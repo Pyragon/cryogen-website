@@ -4,6 +4,17 @@
     margin: 0px;
 }
 
+p {
+    margin: 5px 15px;
+    color: white;
+}
+
+.view-info {
+    text-align: center;
+    margin: auto;
+    margin-top: 10px;
+}
+
 .iactions {
     margin-top: 25px;
     margin-left: calc(100% - 150px);

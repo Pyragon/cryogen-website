@@ -63,8 +63,10 @@ function post(link, data, selector, cb) {
                 return false;
             }
             $(selector).html(data.html);
-            if (selector == '#main-content')
+            if (selector == '#main-content') {
                 history.pushState({}, 'CryogenSPA', link);
+                $(document).off('click', '**');
+            }
         }
     });
 }
@@ -100,7 +102,6 @@ function initFingerprintJS() {
     FingerprintJS.load().then(fp => {
         fp.get().then(result => {
             visitorId = result.visitorId;
-            console.log('Visitor ID: ' + visitorId);
         });
     });
 }

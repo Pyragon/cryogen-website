@@ -62,7 +62,7 @@ public class Appeals {
         int page = Integer.parseInt(request.queryParams("page"));
 
         ArrayList<Object> values = new ArrayList<>();
-        String query = "username=? AND answered "+(archived ? "IS NOT" : "IS")+" NULL";
+        String query = "username=? AND archived "+(archived ? "IS NOT" : "IS")+" NULL";
         values.add(account.getUsername());
 
         Object[] condition = ListManager.getCondition(filterValues, Appeal.class, archived);

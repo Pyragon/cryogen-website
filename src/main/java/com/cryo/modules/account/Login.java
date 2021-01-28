@@ -90,6 +90,7 @@ public class Login {
             return Login.renderLoginPage("/", request, response);
         if(!account.isPasswordResetRequired())
             return Index.renderIndexPage(request, response);
+        getConnection("cryogen_global").set("player_data", "password_reset_required=0", "id=?", account.getId());
         return renderPage("account/force-reset", null, request, response);
     }
 

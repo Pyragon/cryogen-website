@@ -93,8 +93,8 @@ public class Punishment extends MySQLDao {
         else if(appealId == 0 && module.equals("staff")) {
             value = new ListRowValue("No Appeal");
         } else {
-            value = new ListRowValue(appealId == -1 ? "Appeal" : "View");
-            value.setClassName(appealId == -1 ? "appeal" : "view-appeal");
+            value = new ListRowValue(appealId == 0 ? "Appeal" : "View");
+            value.setClassName(appealId == 0 ? "appeal" : "view-appeal");
             value.setButton(true);
         }
         value.setOrder(10);

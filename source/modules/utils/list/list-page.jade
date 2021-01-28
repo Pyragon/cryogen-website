@@ -28,7 +28,7 @@ for line in info
             i.fa.fa-plus
             span  New
     if refreshable
-        .link.refresh
+        .link.refresh(id=moduleId+'-refresh')
             i.fa.fa-refresh
             span  Refresh
     if customActions != null

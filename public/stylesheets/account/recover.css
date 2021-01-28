@@ -1,7 +1,6 @@
 p,
 select {
     margin: 5px 15px;
-    color: white;
 }
 
 .recover-info {
@@ -46,10 +45,6 @@ button {
 .noty_close,
 .noty_buttons {
     margin-top: 10px;
-}
-
-.row {
-    margin-top: 20px;
 }
 
 #additional,

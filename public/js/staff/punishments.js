@@ -54,7 +54,7 @@ $(document).ready(() => {
             post('/staff/punishments/reverse', { id }, data => {
                 closeNoty();
                 sendAlert('Punishment has been reversed.');
-                $('.refresh').click();
+                $('#punishments-refresh').click();
             });
         };
 

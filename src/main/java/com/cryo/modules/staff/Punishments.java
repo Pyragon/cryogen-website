@@ -145,15 +145,11 @@ public class Punishments {
 
     @Endpoint(method = "POST", endpoint = "/staff/punishments/reverse")
     public static String reversePunishment(Request request, Response response) {
+        Object obj = getPunishment(request, response);
+        if(obj instanceof String)
+            return (String) obj;
+        Punishment punishment = (Punishment) obj;
         Account account = AccountUtils.getAccount(request);
-        if(account == null) return error("Session has expired. Please refresh the page and try again.");
-        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
-        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
-            return error("Invalid ID. Please refresh the page and try again.");
-        int id = Integer.parseInt(request.queryParams("id"));
-        Punishment punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, id);
-        if(punishment == null)
-            return error("Unable to find punishment. Please refresh the page and try again.");
         if(punishment.isArchived())
             return error("Punishment is not currently active. Please refresh the page and try again.");
         if(punishment.getType() == 1 && account.getRights() == 1)
@@ -164,6 +160,20 @@ public class Punishments {
 
     @Endpoint(method = "POST", endpoint = "/staff/punishments/view")
     public static String viewPunishment(Request request, Response response) {
+        Object obj = getPunishment(request, response);
+        if(obj instanceof String)
+            return (String) obj;
+        Punishment punishment = (Punishment) obj;
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("punishment", punishment);
+        Account user = AccountUtils.getAccount(punishment.getUsername());
+        if(user == null)
+            return error("Unable to find user punishment is based on. Please refresh the page and try again.");
+        model.put("user", user);
+        return renderPage("staff/punishments/view-punishment", model, request, response);
+    }
+
+    public static Object getPunishment(Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(account == null) return error("Session has expired. Please refresh the page and try again.");
         if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
@@ -174,11 +184,6 @@ public class Punishments {
         Punishment punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, id);
         if(punishment == null)
             return error("Unable to find punishment. Please refresh the page and try again.");
-        model.put("punishment", punishment);
-        Account user = AccountUtils.getAccount(punishment.getUsername());
-        if(user == null)
-            return error("Unable to find user punishment is based on. Please refresh the page and try again.");
-        model.put("user", user);
-        return renderPage("staff/punishments/view-punishment", model, request, response);
+        return punishment;
     }
 }
