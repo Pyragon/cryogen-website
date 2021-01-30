@@ -43,23 +43,23 @@ export class ListManager {
             $('.sorted').css('display', 'none');
             return false;
         });
-    }
 
-    onLoad() {
+        $(document).on('click', '#' + this.id + '-refresh', function() {
+            that.loadList(() => sendAlert('Refreshed.'));
+            return false;
+        });
 
-        let that = this;
-        $(`#${this.id}-sort`).sortable();
-
-        $('.archive-btn').click(function() {
+        $(document).on('click', '#' + this.id + '-archive', function() {
             that.archived = !that.archived;
             that.loadList();
             $(this).find('span').html(' View ' + (that.archived ? 'Active' : 'Archive'));
             return false;
         });
+    }
 
-        $('.refresh').click(() => {
-            this.loadList(() => sendAlert('Refreshed.'))
-        });
+    onLoad() {
+
+        let that = this;
 
         $('.sort').click(function() {
             let sort = $(`#${that.id}-sort`);

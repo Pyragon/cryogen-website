@@ -34,7 +34,6 @@ $(document).ready(() => {
                         closeNoty();
                         sendAlert('Successfully responded to appeal.');
                         $('#appeals-refresh').click();
-                        console.log('twice');
                     });
                 }
             });

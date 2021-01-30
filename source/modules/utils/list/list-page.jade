@@ -20,7 +20,7 @@ for line in info
     p.small.info= line
 .iactions
     if archivable
-        .link.archive-btn
+        .link.archive-btn(id=moduleId+'-archive')
             i.fa.fa-archive
             span  View Archive
     if creatable
