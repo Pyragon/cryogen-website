@@ -1,3 +1,7 @@
+.container {
+    width: 1270px;
+}
+
 .tab-item {
     background: #124d70;
     border: 1px solid #111;

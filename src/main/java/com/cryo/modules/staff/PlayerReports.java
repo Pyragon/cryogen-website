@@ -3,6 +3,7 @@ package com.cryo.modules.staff;
 import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.support.PlayerReport;
+import com.cryo.entities.accounts.support.Punishment;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.managers.ListManager;
@@ -78,7 +79,66 @@ public class PlayerReports {
         if(reports == null)
             return error("Error loading player reports. Please try again.");
         ListManager.buildTable(model, "staff", reports, PlayerReport.class, account, sortValues, filterValues, archived);
+        model.put("archived", archived);
         return renderList(model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/player-reports/view")
+    public static String viewReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse id. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        if(request.queryParams().contains("punishment")) {
+            Punishment punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, id);
+            if(punishment == null)
+                return error("Unable to find report. Please refresh the page and try again.");
+            id = punishment.getReportId();
+        }
+        PlayerReport report = getConnection("cryogen_reports").selectClass("player_reports", "id=?", PlayerReport.class, id);
+        if(report == null)
+            return error("Unable to find report. Please refresh the page and try again.");
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("report", report);
+        model.put("staff", true);
+        return renderPage("account/support/player-reports/view-report", model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/player-reports/archive")
+    public static String archiveReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse id. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        PlayerReport report = getConnection("cryogen_reports").selectClass("player_reports", "id=?", PlayerReport.class, id);
+        if(report == null)
+            return error("Unable to find report. Please refresh the page and try again.");
+        if(report.getArchived() != null)
+            return error("This report is already archived. Please refresh the page and try again.");
+        if(report.getOffender() == null)
+            return error("Unable to load offender. Please refresh the page and try again.");
+        if(report.getOffender().getRights() > 0 && account.getRights() == 1)
+            return error("Only admins may respond to staff reports. Please contact an admin.");
+        getConnection("cryogen_reports").set("player_reports", "archived=NOW(),archiver=?", "id=?", account.getUsername(), id);
+        return success();
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/player-reports/view-respond")
+    public static String viewRespond(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse id. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        PlayerReport report = getConnection("cryogen_reports").selectClass("player_reports", "id=?", PlayerReport.class, id);
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("username", report.getOffender().getUsername());
+        return renderPage("account/support/player-reports/respond", model, request, response);
     }
 
 }

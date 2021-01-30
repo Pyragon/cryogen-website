@@ -47,29 +47,37 @@ function post(link, data, selector, cb) {
         }, 100);
         return false;
     }
-    $.post(link, data, ret => {
-        data = parseJSON(ret);
-        if (!data) return false;
-        if (data['404']) {
-            sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
-                window.open('https://github.com/pyragon/cryogen-website/issues');
-            });
-            return null;
-        }
-        if (cb)
-            cb(data);
-        else {
-            if (data.redirect) {
+    try {
+        $.post(link, data, ret => {
+            data = parseJSON(ret);
+            if (!data) return false;
+            if (data['404']) {
+                sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
+                    window.open('https://github.com/pyragon/cryogen-website/issues');
+                });
+                return null;
+            }
+            if (cb)
+                cb(data);
+            else {
+                if (data.redirect) {
+                    $(selector).html(data.html);
+                    return false;
+                }
                 $(selector).html(data.html);
-                return false;
+                if (selector == '#main-content') {
+                    history.pushState({}, 'CryogenSPA', link);
+                    $(document).off('click', '**');
+                }
+                $('.footer').height(function(index, height) {
+                    return window.innerHeight - $(this).offset().top;
+                });
             }
-            $(selector).html(data.html);
-            if (selector == '#main-content') {
-                history.pushState({}, 'CryogenSPA', link);
-                $(document).off('click', '**');
-            }
-        }
-    });
+        });
+    } catch (e) {
+        console.error(e);
+        console.log(link, data, cb);
+    }
 }
 
 function parseJSON(data) {

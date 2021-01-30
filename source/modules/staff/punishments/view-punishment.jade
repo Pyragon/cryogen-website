@@ -22,16 +22,17 @@ include ../../utils/name
             p.punishment-info= format.formatTimestamp(punishment.getAdded())
     .row
         .col-md-6
+            p.punishment-info Status:
+        .col-md-6
+            p.punishment-info= punishment.getStatus()
+    .row
+        .col-md-6
             p.punishment-info Expires:
         .col-md-6
             if punishment.getExpiry() == null
-                p.punishment-info Does not Expire
-            else if punishment.getArchived() != null
-                p.punishment-info.color-green Archived
+                p.vipunishmentew-info Does not Expire
             else if punishment.isExpired()
-                p.punishment-info.color-green Expired
-            else
-                p.punishment-info= format.formatTimestamp(punishment.getExpiryStamp())
+                p(class='punishment-info '+punishment.isExpired() ? 'color-green' : '')= format.formatTimestamp(punishment.getExpiryStamp())
     .row
         .col-md-6
             p.punishment-info Punisher: 

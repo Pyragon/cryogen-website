@@ -78,7 +78,42 @@ public class BugReports {
         List<BugReport> reports = getConnection("cryogen_reports").selectList("bug_reports", query, order, BugReport.class, values.toArray());
         if(reports == null)
             return error("Error loading player reports. Please try again.");
+        model.put("archived", archived);
         ListManager.buildTable(model, "staff", reports, BugReport.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/bug-reports/archive")
+    public static String archiveReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse id. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        BugReport report = getConnection("cryogen_reports").selectClass("bug_reports", "id=?", BugReport.class, id);
+        if(report == null)
+            return error("Unable to find report. Please refresh the page and try again.");
+        if(report.getArchived() != null)
+            return error("This report is already archvied. Please refresh the page and try again.");
+        getConnection("cryogen_reports").set("bug_reports", "archived=NOW(),archiver=?", "id=?", account.getUsername(), id);
+        return success();
+    }
+
+    @Endpoint(method = "POST", endpoint = "/staff/bug-reports/view")
+    public static String viewReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse id. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        BugReport report = getConnection("cryogen_reports").selectClass("bug_reports", "id=?", BugReport.class, id);
+        if(report == null)
+            return error("Unable to find report. Please refresh the page and try again.");
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("report", report);
+        model.put("staff", true);
+        return renderPage("account/support/bug-reports/view-report", model, request, response);
     }
 }

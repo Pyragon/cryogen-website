@@ -12,6 +12,8 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 
+import static com.cryo.Website.getConnection;
+
 @Data
 public class Appeal extends MySQLDao {
 
@@ -26,17 +28,17 @@ public class Appeal extends MySQLDao {
     private final int punishmentId;
 
     @Filterable("Title")
-    @ListValue(value = "Title", order = 2)
+    @ListValue(value = "Title", order = 3)
     private final String title;
 
     private final String additional;
 
     @SortAndFilter(value = "Archived On", onArchive = true)
-    @ListValue(value = "Archived On", order = 5, onArchive = true, formatAsTimestamp = true)
+    @ListValue(value = "Archived On", order = 6, onArchive = true, formatAsTimestamp = true)
     private final Timestamp archived;
 
     @Filterable(value = "Archiver", onArchive = true)
-    @ListValue(value = "Archiver", order = 6, onArchive = true, formatAsUser = true)
+    @ListValue(value = "Archiver", order = 7, onArchive = true, formatAsUser = true)
     private final String archiver;
 
     private final int answer;
@@ -47,23 +49,36 @@ public class Appeal extends MySQLDao {
 
     @SortAndFilter("Added On")
     @MySQLDefault
-    @ListValue(value = "Added On", order = 3, formatAsTimestamp = true)
+    @ListValue(value = "Added On", order = 4, formatAsTimestamp = true)
     private final Timestamp added;
 
     @MySQLDefault
     private final Timestamp updated;
 
-    @ListValue(value = "View Appeal", className="view-appeal", order = 8, isButton = true)
+    @ListValue(value = "View Appeal", className="view-appeal", order = 9, isButton = true)
     private Object viewAppeal = "View";
 
     @Filterable(value = "Answer", onArchive = true)
-    @ListValue(value = "Answer", order = 4, onArchive = true)
-    public String getAnswer() {
+    @ListValue(value = "Answer", order = 5, onArchive = true)
+    public String getAnswerText() {
         return answer == 0 ? "Rejected" : "Accepted";
     }
 
-    @ListValue(value = "View Punishment", className="view-appeal-punishment", order = 7, isButton = true)
+    @ListValue(value = "View Punishment", className="view-appeal-punishment", order = 8, isButton = true)
     public Object viewPunishment = "View";
+
+    private Punishment punishment;
+
+    @ListValue(value = "Punisher", order = 2, formatAsUser = true, requiresModule = "staff")
+    public String getPunisher() {
+        return getPunishment().getPunisher();
+    }
+
+    public Punishment getPunishment() {
+        if(punishment == null)
+            punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, punishmentId);
+        return punishment;
+    }
 
     public boolean isArchived() {
         return archived != null;

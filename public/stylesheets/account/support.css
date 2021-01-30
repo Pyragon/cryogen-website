@@ -3,12 +3,19 @@
 }
 
 #create-appeal-container input,
-#create-appeal-container textarea {
+#create-appeal-container textarea,
+#create-bug-report-container input,
+#create-bug-report-container textarea,
+#view-bug-report-container input,
+#view-bug-report-container textarea,
+#create-bug-report-container select {
     border-color: #18597F;
 }
 
 #create-appeal-container p,
-#view-appeal-container p {
+#view-appeal-container p,
+#create-bug-report-container p,
+#view-bug-report-container p {
     text-align: center;
 }
 
@@ -16,4 +23,13 @@
     padding: 5px;
     border: 1px solid #18597F;
     border-radius: 5px;
+}
+
+#create-bug-report-container textarea,
+#replicate-switch {
+    margin-top: 10px;
+}
+
+#create-bug-report-container input[type='date'] {
+    line-height: 21px;
 }

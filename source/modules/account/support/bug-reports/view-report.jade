@@ -1,0 +1,44 @@
+include ../../../utils/name
+
+.noty_message
+    span.noty_text
+.container#view-bug-report-container(style='width: 100%;')
+    .row
+        .col-md-6
+            p ID:
+        .col-md-6
+            p= report.getId()
+    if staff
+        .row
+            .col-md-6
+                p Reporter:
+            .col-md-6
+                p
+                    span
+                        +renderName(report.getReporter())
+    .row
+        .col-md-6
+            p Title:
+        .col-md-6
+            p= report.getTitle()
+    .row
+        .col-md-6
+            p Type:
+        .col-md-6
+            p= report.getTypeString()
+    .row
+        .col-md-6
+            p Replicable?
+        .col-md-6
+            p= report.isReplicable()
+    .row
+        .col-md-6
+            p Date Seen:
+        .col-md-6
+            p= format.formatTimestamp(report.getAdded())
+    .row
+        .col-md-6
+            p Additional Info:
+        .col-md-6
+            p.additional= report.getAdditional()
+.noty_close

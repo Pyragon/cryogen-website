@@ -21,16 +21,17 @@ include ../../../utils/stylesheet
             p.view-info= format.formatTimestamp(punishment.getAdded())
     .row
         .col-md-6
+            p.view-info Status:
+        .col-md-6
+            p.view-info= punishment.getStatus()
+    .row
+        .col-md-6
             p.view-info Expires:
         .col-md-6
             if punishment.getExpiry() == null
                 p.view-info Does not Expire
-            else if punishment.getArchived() != null
-                p.view-info.color-green Archived
             else if punishment.isExpired()
-                p.view-info.color-green Expired
-            else
-                p.view-info= format.formatTimestamp(punishment.getExpiryStamp())
+                p(class='view-info '+punishment.isExpired() ? 'color-green' : '')= format.formatTimestamp(punishment.getExpiryStamp())
     .row
         .col-md-6
             p.view-info Punisher: 

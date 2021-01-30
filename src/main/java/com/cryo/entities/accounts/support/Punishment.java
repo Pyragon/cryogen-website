@@ -12,6 +12,8 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 
+import static com.cryo.Website.getConnection;
+
 @Data
 public class Punishment extends MySQLDao {
 
@@ -41,26 +43,37 @@ public class Punishment extends MySQLDao {
     @ListValue(value = "Punisher", formatAsUser = true, order = 3)
     private final String punisher;
 
-    @ListValue(value = "Reason", order = 5)
+    @ListValue(value = "Reason", order = 6)
     private final String reason;
 
     private final String info;
 
     @Sortable("Archived On")
-    @ListValue(value = "Archived On", formatAsTimestamp = true, onArchive = true, order = 7)
+    @ListValue(value = "Archived On", formatAsTimestamp = true, onArchive = true, order = 8)
     private final Timestamp archived;
 
     private final String archiver;
 
     @Sortable("Added On")
     @MySQLDefault
-    @ListValue(value = "Added On", formatAsTimestamp = true, order = 6)
+    @ListValue(value = "Added On", formatAsTimestamp = true, order = 7)
     private final Timestamp added;
     @MySQLDefault
     private final Timestamp updated;
 
-    @ListValue(value = "View", className="view-punishment", order = 11, isButton = true)
+    @ListValue(value = "View", className="view-punishment", order = 12, isButton = true)
     private Object viewPunishment = "View";
+
+    private Appeal appeal;
+
+    @ListValue(value = "Status", order = 4)
+    public String getStatus() {
+        if(!isArchived()) return "Active";
+        if(archiver != null) return "Reversed";
+        if(appealId > 0 && getAppeal().isArchived()) return "Appeal "+(getAppeal().getAnswer() == 0 ? "denied" : "accepted");
+        if(isExpired()) return "Expired";
+        return "N/A";
+    }
 
     //TODO - type filter
     @ListValue(value = "Type", order = 1, returnsValue = true)
@@ -70,31 +83,30 @@ public class Punishment extends MySQLDao {
         return value;
     }
 
-    @ListValue(value = "Report", order = 9, returnsValue = true, requiresModule = "staff")
+    @ListValue(value = "Report", order = 10, returnsValue = true, requiresModule = "staff")
     public ListRowValue getReport(Account account, String module) {
         ListRowValue value;
         if(reportId == 0)
             value = new ListRowValue("No Report");
         else {
             value = new ListRowValue("View");
-            value.setClassName("view-report");
+            value.setClassName("view-punishment-report");
             value.setButton(true);
         }
         value.setOrder(9);
         return value;
     }
 
-    @ListValue(value = "Appeal", order = 10, returnsValue = true)
-    //can appeal?
-    public ListRowValue getAppealText(Account account, String module) {
+    @ListValue(value = "Appeal", order = 11, returnsValue = true)
+    public ListRowValue getAppealText(Account account, String module, boolean archived) {
         ListRowValue value;
         if(!appealable)
             value = new ListRowValue("Unappealable");
-        else if(appealId == 0 && module.equals("staff")) {
+        else if(appealId == 0 && (module.equals("staff") || archived)) {
             value = new ListRowValue("No Appeal");
         } else {
             value = new ListRowValue(appealId == 0 ? "Appeal" : "View");
-            value.setClassName(appealId == 0 ? "appeal" : "view-appeal");
+            value.setClassName(appealId == 0 ? "appeal" : "view-punishment-appeal");
             value.setButton(true);
         }
         value.setOrder(10);
@@ -102,19 +114,20 @@ public class Punishment extends MySQLDao {
     }
 
     //TODO - figure out how to filter/sort this
-    @ListValue(value = "Expires", order = 4, returnsValue = true)
+    //show only actual date in archive. Use 'status' to show if it was archived because of expiry
+    @ListValue(value = "Expires", order = 5, returnsValue = true)
     public ListRowValue getExpiry() {
-        ListRowValue value = new ListRowValue(expiry == null ? "Does not Expire" : isExpired() ? "Expired" : expiry);
+        ListRowValue value = new ListRowValue(expiry == null ? "Does not Expire" : expiry);
         if(isExpired())
             value.setClassName("color-green");
-        if(expiry != null && !isExpired())
+        if(expiry != null)
             value.setShouldFormatAsTimestamp(true);
         value.setOrder(4);
         return value;
     }
 
     @Filterable(value = "Archived By", requiresModule = "staff", onArchive = true)
-    @ListValue(value = "Archived By", order = 8, returnsValue = true, onArchive = true)
+    @ListValue(value = "Archived By", order = 9, returnsValue = true, onArchive = true)
     public ListRowValue getArchivedBy() {
         ListRowValue value;
         if(archived != null) {
@@ -135,7 +148,13 @@ public class Punishment extends MySQLDao {
     }
 
     public boolean isArchived() {
-        return archived != null || isExpired();
+        return archived != null || isExpired() || (appealId > 0 && getAppeal().isArchived());
+    }
+
+    public Appeal getAppeal() {
+        if(appeal == null)
+            appeal = getConnection("cryogen_punish").selectClass("appeals", "id=?", Appeal.class, appealId);
+        return appeal;
     }
 
     public Account getArchiverAccount() {

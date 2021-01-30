@@ -1,0 +1,74 @@
+include ../../../utils/name
+
+.noty_message
+    span.noty_text
+.container#noty-container
+    .row
+        .col-md-6
+            p ID:
+        .col-md-6
+            p= report.getId()
+    if staff
+        .row
+            .col-md-6
+                p Reporter:
+            .col-md-6
+                p  
+                    span
+                        +renderName(report.getReporter())
+    .row
+        .col-md-6
+            p Offender:
+        .col-md-6
+            p
+                span
+                    +renderName(report.getOffender())
+                        span 
+                            if report.isVerified()
+                                i.fa.fa-check-circle-o.color-green(title="This user's identity has been verified during the report.")
+                            else
+                                i.fa.fa-times-circle-o.color-red(title="This user's identity has not been verified. Please take extra steps to be sure if needed.")
+    .row
+        .col-md-6
+            p Title:
+        .col-md-6
+            p= report.getTitle()
+    .row
+        .col-md-6
+            p Rule Broken:
+        .col-md-6
+            p= report.getRule()
+    .row
+        .col-md-6
+            p Date of Offence:
+        .col-md-6
+            p= format.formatTimestamp(report.getDate())
+    .row
+        .col-md-6
+            p Proof:
+        .col-md-6
+            p= report.getProof()
+    .row
+        .col-md-6
+            p Additional Information:
+        .col-md-6
+            p.additional= report.getAdditional()
+    .row
+        .col-md-6
+            p Reported On:
+        .col-md-6
+            p= format.formatTimestamp(report.getAdded())
+    if report.getArchived() != null
+        .row
+            .col-md-6
+                p Archiver:
+            .col-md-6
+                p
+                    span
+                        +renderName(report.getArchiver())
+        .row
+            .col-md-6
+                p Archived:
+            .col-md-6
+                p= format.formatTimestamp(report.getArchived())
+.noty_close

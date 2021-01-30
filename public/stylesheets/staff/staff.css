@@ -1,0 +1,23 @@
+#punishment-container p,
+#view-appeal-container p,
+#respond-container p,
+#view-bug-report-container p,
+#noty-container p {
+    text-align: center;
+}
+
+#noty-container textarea,
+#noty-container input {
+    border-color: #18597F;
+}
+
+#noty-container {
+    width: 100%;
+}
+
+.additional,
+#reason {
+    padding: 5px;
+    border: 1px solid #18597F;
+    border-radius: 5px;
+}

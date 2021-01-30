@@ -2,10 +2,9 @@ package com.cryo.entities.accounts.support;
 
 import com.cryo.entities.MySQLDao;
 import com.cryo.entities.MySQLDefault;
-import com.cryo.entities.list.Filterable;
-import com.cryo.entities.list.ListValue;
-import com.cryo.entities.list.SortAndFilter;
-import com.cryo.entities.list.Sortable;
+import com.cryo.entities.accounts.Account;
+import com.cryo.entities.list.*;
+import com.cryo.modules.account.AccountUtils;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -21,6 +20,8 @@ public class PlayerReport extends MySQLDao {
     @ListValue(value = "Reporter", requiresModule = "staff", order = 1, formatAsUser = true)
     private final String username;
 
+    private final int punishmentId;
+
     @Filterable("Title")
     @ListValue(value = "Title", order=2)
     private final String title;
@@ -29,17 +30,14 @@ public class PlayerReport extends MySQLDao {
     @ListValue(value = "Offender", order=3, formatAsUser = true)
     private final String offender;
 
+    private final boolean verified;
+
     @Filterable("Rule")
     @ListValue(value = "Rule", order=4)
     private final String rule;
 
-    private final String info;
+    private final String additional;
     private final String proof;
-
-    @MySQLDefault
-    @Filterable("Last Action")
-    @ListValue(value = "Last Action", order=5)
-    private final String lastAction;
 
     @SortAndFilter("Date of Offence")
     @ListValue(value = "Date of Offence", order=6, formatAsTimestamp = true)
@@ -61,6 +59,33 @@ public class PlayerReport extends MySQLDao {
     @MySQLDefault
     private final Timestamp updated;
 
-    @ListValue(value = "View", className="view-offence", order=10, isButton = true)
+    @ListValue(value = "View", className="view-player-report", order=11, isButton = true)
     private Object viewButton = "View";
+
+    @ListValue(value = "Punishment", order=10, returnsValue = true, onArchive = true)
+    public ListRowValue getPunishment() {
+        ListRowValue value = new ListRowValue(punishmentId == 0 ? "No Punishment" : "View");
+        if(punishmentId != 0) {
+            value.setButton(true);
+            value.setClassName("view-report-punishment");
+        }
+        value.setOrder(10);
+        return value;
+    }
+
+    public Account getArchiver() {
+        return AccountUtils.getAccount(archiver);
+    }
+
+    public Account getReporter() {
+        return AccountUtils.getAccount(username);
+    }
+
+    public Account getOffender() {
+        return AccountUtils.getAccount(offender);
+    }
+
+    public String getOffenderName() {
+        return offender;
+    }
 }

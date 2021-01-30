@@ -3,6 +3,7 @@ package com.cryo.modules.staff;
 import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.support.Appeal;
+import com.cryo.entities.accounts.support.PlayerReport;
 import com.cryo.entities.accounts.support.Punishment;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
@@ -99,7 +100,17 @@ public class Punishments {
         Account account = AccountUtils.getAccount(request);
         if(account == null) return error("Session has expired. Please refresh the page and try again.");
         if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
-        return renderPage("staff/punishments/new-punishment", null, request, response);
+        HashMap<String, Object> model = new HashMap<>();
+        if(request.queryParams().contains("id")) {
+            if(!NumberUtils.isDigits(request.queryParams("id")))
+                return error("Unable to parse id. Please refresh the page and try again.");
+            int id = Integer.parseInt(request.queryParams("id"));
+            PlayerReport report = getConnection("cryogen_reports").selectClass("player_reports", "id=?", PlayerReport.class, id);
+            if(report == null)
+                return error("Unable to find report. Please refresh the page and try again.");
+            model.put("username", report.getOffenderName());
+        }
+        return renderPage("staff/punishments/new-punishment", model, request, response);
     }
 
     @Endpoint(method = "POST", endpoint = "/staff/punishments/submit")
@@ -138,8 +149,16 @@ public class Punishments {
                 return error("Invalid expiry date provided. Please check the date and try again.");
             }
         }
-        Punishment punishment = new Punishment(-1, -1, -1, username, type.equals("mute") ? 0 : 1, appealable, expiry, account.getUsername(), reason, info, null, null, null, null);
-        getConnection("cryogen_punish").insert("punishments", punishment.data());
+        int reportId = -1;
+        if(request.queryParams().contains("id")) {
+            if(!NumberUtils.isDigits(request.queryParams("id")))
+                return error("Unable to parse id. Please refresh the page and try again.");
+            reportId = Integer.parseInt(request.queryParams("id"));
+        }
+        Punishment punishment = new Punishment(-1, -1, reportId, username, type.equals("mute") ? 0 : 1, appealable, expiry, account.getUsername(), reason, info, null, null, null, null);
+        int punishmentId = getConnection("cryogen_punish").insert("punishments", punishment.data());
+        if(reportId != -1)
+            getConnection("cryogen_reports").set("player_reports", "archived=NOW(),archiver=?,punishment_id=?", "id=?", account.getUsername(), punishmentId, reportId);
         return success();
     }
 
@@ -181,6 +200,18 @@ public class Punishments {
         if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
             return error("Unable to parse ID. Please refresh the page and try again.");
         int id = Integer.parseInt(request.queryParams("id"));
+        if(request.queryParams().contains("appeal")) {
+            Appeal appeal = getConnection("cryogen_punish").selectClass("appeals", "id=?", Appeal.class, id);
+            if(appeal == null)
+                return error("Unable to find punishment. Please refresh the page and try again.");
+            id = appeal.getPunishmentId();
+        }
+        if(request.queryParams().contains("report")) {
+            PlayerReport report = getConnection("cryogen_reports").selectClass("player_reports", "id=?", PlayerReport.class, id);
+            if(report == null)
+                return error("Unable to find punishment. Please refresh the page and try again.");
+            id = report.getPunishmentId();
+        }
         Punishment punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, id);
         if(punishment == null)
             return error("Unable to find punishment. Please refresh the page and try again.");

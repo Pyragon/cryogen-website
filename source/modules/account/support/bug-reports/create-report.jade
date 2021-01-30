@@ -1,0 +1,34 @@
+.noty_message
+    span.noty_text
+.container#create-bug-report-container(style='width: 100%')
+    .row
+        .col-md-6
+            p Title:
+        .col-md-6
+            input.input#title(type='text', placeholder='Title')
+    .row
+        .col-md-6
+            p Type:
+        .col-md-6
+            select.input#type
+                option(value=0) Server
+                option(value=1) Website
+    .row
+        .col-md-6
+            p Can you replicate the bug?
+        .col-md-6
+            #replicate-switch
+                label.switch
+                    input#replicate(type='checkbox')
+                    span.slider.round
+    .row
+        .col-md-6
+            p When did you see this bug?
+        .col-md-6
+            input.input#seen(type='date')
+    .row
+        .col-md-6
+            p Additional Info:
+        .col-md-6
+            textarea.input#additional(placeholder='Additional Info')
+.noty_close

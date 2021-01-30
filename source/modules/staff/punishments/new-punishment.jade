@@ -6,7 +6,7 @@ include ../../utils/stylesheet
     span.noty_text
 .punishment-row
     p.punishment-label Player Name:
-    input.punishment-input.input#player-name(type='text', placeholder='Player Name')
+    input.punishment-input.input#player-name(type='text', placeholder='Player Name', value=(username ? username : ''))
 .clear
 .punishment-row
     p.punishment-label Type:

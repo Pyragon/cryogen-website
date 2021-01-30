@@ -44,4 +44,12 @@ $(document).ready(() => {
         postNoty('/support/punishments/create-appeal', { id }, 'Create Appeal', buttons, 'centerBig');
 
     });
+
+    $(document).on('click', '.view-punishment-appeal', function() {
+
+        let id = $(this).closest('tr').data('id');
+
+        postNoty('/support/appeals/view', { id, punishment: true }, 'View Appeal', [closeButton()], 'centerBig');
+
+    });
 });

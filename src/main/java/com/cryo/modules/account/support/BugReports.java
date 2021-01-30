@@ -9,10 +9,13 @@ import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.managers.ListManager;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
+import com.cryo.utils.Utilities;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,6 +81,60 @@ public class BugReports {
             return error("Error loading player reports. Please try again.");
         ListManager.buildTable(model, "account", reports, BugReport.class, account, sortValues, filterValues, archived);
         return renderList(model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/support/bug-reports/view")
+    public static String viewReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if(!request.queryParams().contains("id") || !NumberUtils.isDigits(request.queryParams("id")))
+            return error("Unable to parse id. Please refresh the page and try again.");
+        int id = Integer.parseInt(request.queryParams("id"));
+        BugReport report = getConnection("cryogen_reports").selectClass("bug_reports", "id=?", BugReport.class, id);
+        if(report == null || !report.getUsername().equals(account.getUsername()))
+            return error("Unable to find report. Please refresh the page and try again.");
+        HashMap<String, Object> model = new HashMap<>();
+        model.put("report", report);
+        return renderPage("account/support/bug-reports/view-report", model, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/support/bug-reports/create")
+    public static String createReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        return renderPage("account/support/bug-reports/create-report", null, request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/support/bug-reports/submit")
+    public static String submitReport(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        String title = request.queryParams("title");
+        String replicate = request.queryParams("replicate");
+        String date = request.queryParams("date");
+        String additional = request.queryParams("additional");
+        if(Utilities.isNullOrEmpty(title, additional))
+            return error("All fields must be filled out.");
+        if (title.length() < 5 || additional.length() < 5)
+            return error("Both title and additional information must be at least 5 characters.");
+        if(!replicate.equals("true") && !replicate.equals("false"))
+            return error("Invalid replicate value. Please refresh the page and try again.");
+        if(!request.queryParams().contains("type") || !NumberUtils.isDigits(request.queryParams("type")))
+            return error("Invalid type value. Please refresh the page and try again.");
+        int type = Integer.parseInt(request.queryParams("type"));
+        if(type != 0 && type != 1)
+            return error("Invalid type value. Please refresh the page and try again.");
+        boolean replicateable = Boolean.parseBoolean(replicate);
+        Timestamp seen;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            seen = new Timestamp(format.parse(date).getTime());
+        } catch(Exception e) {
+            return error("Invalid date. Please try again. Ensure the date is in yyyy-MM-dd format.");
+        }
+        BugReport report = new BugReport(-1, account.getUsername(), title, type, replicateable, seen, additional, null, null, null, null);
+        getConnection("cryogen_reports").insert("bug_reports", report.data());
+        return success();
     }
 
 }
