@@ -1,0 +1,67 @@
+include ../../utils/name
+
+script.
+    $(document).ready(() => {
+
+        let traderPage = 1;
+        let tradeePage = 1;
+        let id = parseInt('!{trade.getId()}');
+
+        $(document).on('click', '.trade-item .link', function() {
+            let uid = $(this).data('uid');
+
+            navigator.clipboard
+                .writeText(uid)
+                .then(
+                    () => sendAlert('UID '+uid+' has been copied to the clipboard'),
+                    () => sendAlert('Error copying uid to clipboard.')
+                );
+            return false;
+        });
+
+        $(document).on('click', '.trader-prev', function() {
+            if(traderPage == 1) return false;
+            traderPage--;
+            loadTradeItems();
+
+        });
+
+        $(document).on('click', '.trader-next', function() {
+            traderPage++;
+            loadTradeItems();
+        });
+
+        $(document).on('click', '.tradee-prev', function() {
+            if(tradeePage == 1) return false;
+            tradeePage--;
+            loadTradeItems();
+        });
+
+        $(document).on('click', '.tradee-next', function() {
+            tradeePage++;
+            loadTradeItems();
+        });
+
+        function loadTradeItems() {
+            post('/logs/trade/view-page', { id, traderPage, tradeePage }, '.trade-items');
+        }
+
+    });
+.noty_message
+    span.noty_text
+.trade-container
+    .trade-date
+        p= format.formatTimestamp(trade.getAdded())
+    .trader-name
+        span
+            +renderName(trade.getTrader())
+    .tradee-name
+        span
+            +renderName(trade.getTradee())
+    .trader-ip= 'IP: '+trade.getTraderIp()
+    .tradee-ip= 'IP: '+trade.getTradeeIp()
+    .trader-item-size= trade.getTraderItems().size()+' Items'
+    .tradee-item-size= trade.getTradeeItems().size()+' Items'
+    .trade-items
+        include trade-items
+.noty_close

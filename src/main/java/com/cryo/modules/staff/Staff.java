@@ -19,7 +19,7 @@ public class Staff {
     @SPAEndpoints("/staff, /staff/player-reports, /staff/bug-reports, /staff/appeals, /staff/punishments, /staff/recoveries")
     public static String renderStaffPage(String endpoint, Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
-        if(account == null) return Login.renderLoginPage("/staff/appeals", request, response);
+        if(account == null) return Login.renderLoginPage("/staff", request, response);
         if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
         HashMap<String, Object> model = new HashMap<>();
         String section = "player-reports";

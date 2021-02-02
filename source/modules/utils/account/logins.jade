@@ -2,7 +2,9 @@ script.
     $(document).ready(() => {
         $('.revoke').click(function() {
             let id = $(this).closest('.login-block').data('id');
-            post('/account/revoke', { session: id });
+            post('/account/revoke', { session: id }, data => {
+                $(this).closest('.login-block').remove();
+            });
         });
     });
 .noty_message

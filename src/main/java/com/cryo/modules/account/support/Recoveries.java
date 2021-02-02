@@ -29,13 +29,12 @@ public class Recoveries {
         if(account == null) return Login.renderLoginPage("/support/recoveries", request, response);
         HashMap<String, Object> model = new HashMap<>();
         model.put("sortable", true);
-        model.put("filterable", true);
         model.put("title", "Recoveries");
         model.put("module", "/support/recoveries");
         model.put("moduleId", "recoveries");
         model.put("info", new ArrayList<String>() {{
             add("The following page lists all recoveries made by you for your account.");
-            add("You can filter this list using the buttons on the right.");
+            add("You can sort this list using the buttons on the right.");
         }});
         return renderPage("utils/list/list-page", model, request, response);
     }

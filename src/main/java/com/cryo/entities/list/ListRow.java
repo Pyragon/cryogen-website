@@ -10,4 +10,5 @@ public class ListRow {
 
     private final int id;
     private List<ListRowValue> values = new ArrayList<>();
+    private final String extra;
 }

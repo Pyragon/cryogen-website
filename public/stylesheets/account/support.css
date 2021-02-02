@@ -8,15 +8,28 @@
 #create-bug-report-container textarea,
 #view-bug-report-container input,
 #view-bug-report-container textarea,
-#create-bug-report-container select {
+#create-bug-report-container select,
+#noty-container select,
+#noty-container textarea,
+#noty-container input {
     border-color: #18597F;
+}
+
+#noty-container {
+    width: 100%;
+}
+
+#noty-container input {
+    margin-top: 5px;
 }
 
 #create-appeal-container p,
 #view-appeal-container p,
 #create-bug-report-container p,
-#view-bug-report-container p {
+#view-bug-report-container p,
+#noty-container p {
     text-align: center;
+    margin-top: 5px;
 }
 
 .additional {
@@ -30,6 +43,8 @@
     margin-top: 10px;
 }
 
-#create-bug-report-container input[type='date'] {
+#create-bug-report-container input[type='date'],
+#noty-container input[type='date'] {
     line-height: 21px;
+    margin-bottom: 5px;
 }

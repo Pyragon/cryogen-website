@@ -14,26 +14,31 @@ $.ajaxSetup({
     }
 });
 
-$(document).on('click', '.spa-link', function() {
-    let link = $(this).attr('href');
-    if (!link)
-        link = $(this).data('link');
-    let selector = $(this).data('selector') || '#main-content';
-    $('.dropdown.open').each(function() {
-        $(this).find('.dropdown-toggle').dropdown('toggle');
-    });
-    //TODO - allow other data to be added and passed to POST?
-    if (!link) {
-        sendAlert('We had an issue handling this link. Please report this problem by clicking on this alert.', function() {
-            window.open('https://github.com/pyragon/cryogen-website/issues');
+function listenForSPA() {
+    $(document).on('click', '.spa-link', function() {
+        let link = $(this).attr('href');
+        if (!link)
+            link = $(this).data('link');
+        let selector = $(this).data('selector') || '#main-content';
+        $('.dropdown.open').each(function() {
+            $(this).find('.dropdown-toggle').dropdown('toggle');
         });
+        //TODO - allow other data to be added and passed to POST?
+        if (!link) {
+            sendAlert('We had an issue handling this link. Please report this problem by clicking on this alert.', function() {
+                window.open('https://github.com/pyragon/cryogen-website/issues');
+            });
+            return false;
+        }
+        post(link, $(this).data(), selector);
         return false;
-    }
-    post(link, $(this).data(), selector);
-    return false;
-});
+    });
+}
+
+listenForSPA();
 
 function post(link, data, selector, cb) {
+    console.log(link);
     if (typeof selector === 'function') {
         cb = selector;
         selector = null;
@@ -68,10 +73,8 @@ function post(link, data, selector, cb) {
                 if (selector == '#main-content') {
                     history.pushState({}, 'CryogenSPA', link);
                     $(document).off('click', '**');
+                    listenForSPA();
                 }
-                $('.footer').height(function(index, height) {
-                    return window.innerHeight - $(this).offset().top;
-                });
             }
         });
     } catch (e) {

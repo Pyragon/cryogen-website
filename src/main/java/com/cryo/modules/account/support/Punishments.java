@@ -3,6 +3,7 @@ package com.cryo.modules.account.support;
 import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.support.Appeal;
+import com.cryo.entities.accounts.support.PlayerReport;
 import com.cryo.entities.accounts.support.Punishment;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
@@ -144,6 +145,12 @@ public class Punishments {
             if(appeal == null)
                 return error("");
             id = appeal.getPunishmentId();
+        }
+        if(request.queryParams().contains("report")) {
+            PlayerReport report = getConnection("cryogen_reports").selectClass("player_reports", "id=?", PlayerReport.class, id);
+            if(report == null)
+                return error("Unable to find punishment. Please refresh the page and try again.");
+            id = report.getPunishmentId();
         }
         Punishment punishment = getConnection("cryogen_punish").selectClass("punishments", "id=?", Punishment.class, id);
         if(punishment == null || !punishment.getUsername().equals(account.getUsername()))

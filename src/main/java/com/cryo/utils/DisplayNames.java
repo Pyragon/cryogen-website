@@ -21,7 +21,7 @@ public class DisplayNames {
 	public static String getUsername(String displayName) {
 		if(cachedDisplays.containsValue(displayName))
 			return cachedDisplays.getKey(displayName);
-		DisplayName display = getConnection("cryogen_display").selectClass("current_names", "display_name=?", DisplayName.class, displayName);
+		DisplayName display = getConnection("cryogen_display").selectClass("current_names", "display_name LIKE ?", DisplayName.class, displayName);
 		if(display == null)
 			return Utilities.formatNameForProtocol(displayName);
 		cachedDisplays.put(display.getUsername(), displayName);

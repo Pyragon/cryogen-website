@@ -1,0 +1,47 @@
+script.
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0,10);
+    });
+
+    $(document).ready(() => {
+        $('#date').val(new Date().toDateInputValue());
+    });
+
+.noty_message
+    span.noty_text
+if verified != -1
+    input#verify(type='hidden', value=verified)
+.container#noty-container
+    .row
+        .col-md-6
+            p Title:
+        .col-md-6
+            input.input#title(type='text', placeholder='Title')
+    .row
+        .col-md-6
+            p Offender:
+        .col-md-6
+            input.input#offender(type='text', placeholder='Offender', value=(offender ? offender : ''))
+    .row
+        .col-md-6
+            p Rule Broken:
+        .col-md-6
+            input.input#rule(type='text', placeholder='Rule Broken', value=(rule ? rule : ''))
+    .row
+        .col-md-6
+            p Date Seen:
+        .col-md-6
+            input.input#date(type='date')
+    .row
+        .col-md-6
+            p Proof:
+        .col-md-6
+            textarea.input#proof(type='text', placeholder='Proof', cols='22')
+    .row
+        .col-md-6
+            p Additional:
+        .col-md-6
+            textarea.input#additional(type='text', placeholder='Additional', cols='22')
+.noty_close

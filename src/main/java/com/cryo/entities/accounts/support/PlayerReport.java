@@ -62,7 +62,7 @@ public class PlayerReport extends MySQLDao {
     @ListValue(value = "View", className="view-player-report", order=11, isButton = true)
     private Object viewButton = "View";
 
-    @ListValue(value = "Punishment", order=10, returnsValue = true, onArchive = true)
+    @ListValue(value = "Punishment", order=10, returnsValue = true, onArchive = true, requiresModule = "staff")
     public ListRowValue getPunishment() {
         ListRowValue value = new ListRowValue(punishmentId == 0 ? "No Punishment" : "View");
         if(punishmentId != 0) {

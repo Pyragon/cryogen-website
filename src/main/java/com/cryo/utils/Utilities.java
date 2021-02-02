@@ -1,6 +1,7 @@
 package com.cryo.utils;
 
 import com.cryo.Website;
+import com.cryo.cache.Cache;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.annotations.*;
 import com.cryo.modules.account.AccountUtils;
@@ -33,6 +34,8 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 public class Utilities {
+
+    private static final Random RANDOM = new Random();
 
     public static String renderPage(String module, HashMap<String, Object> model, String endpoint, Request request, Response response) {
         return renderPage(module, model, endpoint, request.requestMethod(), request, response);
@@ -420,6 +423,78 @@ public class Utilities {
         return skill == 24 ? 120 : 99;
     }
 
+    public static final int packGJString2(int position, byte[] buffer, String String) {
+        int length = String.length();
+        int offset = position;
+        for (int index = 0; length > index; index++) {
+            int character = String.charAt(index);
+            if (character > 127) {
+                if (character > 2047) {
+                    buffer[offset++] = (byte) ((character | 919275) >> 12);
+                    buffer[offset++] = (byte) (128 | ((character >> 6) & 63));
+                    buffer[offset++] = (byte) (128 | (character & 63));
+                } else {
+                    buffer[offset++] = (byte) ((character | 12309) >> 6);
+                    buffer[offset++] = (byte) (128 | (character & 63));
+                }
+            } else buffer[offset++] = (byte) character;
+        }
+        return offset - position;
+    }
+
+    public static String readString(byte[] buffer, int i_1, int i_2) {
+        char[] arr_4 = new char[i_2];
+        int offset = 0;
+
+        for (int i_6 = 0; i_6 < i_2; i_6++) {
+            int i_7 = buffer[i_6 + i_1] & 0xff;
+            if (i_7 != 0) {
+                if (i_7 >= 128 && i_7 < 160) {
+                    char var_8 = CP_1252_CHARACTERS[i_7 - 128];
+                    if (var_8 == 0) {
+                        var_8 = 63;
+                    }
+
+                    i_7 = var_8;
+                }
+
+                arr_4[offset++] = (char) i_7;
+            }
+        }
+
+        return new String(arr_4, 0, offset);
+    }
+
+    public static char[] CP_1252_CHARACTERS = { '\u20ac', '\0', '\u201a', '\u0192', '\u201e', '\u2026', '\u2020', '\u2021', '\u02c6',
+            '\u2030', '\u0160', '\u2039', '\u0152', '\0', '\u017d', '\0', '\0', '\u2018', '\u2019', '\u201c',
+            '\u201d', '\u2022', '\u2013', '\u2014', '\u02dc', '\u2122', '\u0161', '\u203a', '\u0153',
+            '\0', '\u017e', '\u0178' };
+
+    public static char cp1252ToChar(byte i) {
+        int i_35_ = i & 0xff;
+        if (0 == i_35_) {
+            throw new IllegalArgumentException("Non cp1252 character 0x" + Integer.toString(i_35_, 16) + " provided");
+        }
+        if (i_35_ >= 128 && i_35_ < 160) {
+            int i_36_ = CP_1252_CHARACTERS[i_35_ - 128];
+            if (0 == i_36_) {
+                i_36_ = 63;
+            }
+            i_35_ = i_36_;
+        }
+        return (char) i_35_;
+    }
+
+    public static final int getNPCDefinitionsSize() {
+        int lastArchiveId = Cache.STORE.getIndices()[18].getLastArchiveId();
+        return lastArchiveId * 128 + Cache.STORE.getIndices()[18].getValidFilesCount(lastArchiveId);
+    }
+
+    public static final int getItemDefinitionsSize() {
+        int lastArchiveId = Cache.STORE.getIndices()[19].getLastArchiveId();
+        return (lastArchiveId * 256 + Cache.STORE.getIndices()[19].getValidFilesCount(lastArchiveId))+1;
+    }
+
     public static long roundUp(long num, long divisor) {
         return (num + divisor - 1) / divisor;
     }
@@ -505,6 +580,16 @@ public class Utilities {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static final int random(int maxValue) {
+        if (maxValue <= 0) return 0;
+        return RANDOM.nextInt(maxValue);
+    }
+
+    public static final int random(int min, int max) {
+        final int n = Math.abs(max - min);
+        return Math.min(min, max) + (n == 0 ? 0 : random(n));
     }
 
 }

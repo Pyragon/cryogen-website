@@ -1,0 +1,203 @@
+@font-face {
+    font-family: runescape-uf;
+    src: url(/fonts/runescape_uf.woff) format('woff');
+}
+
+#noty-container {
+    width: 100%;
+}
+
+#noty-container p {
+    text-align: center;
+}
+
+.bordered {
+    padding: 5px;
+    border: 1px solid #18597F;
+    border-radius: 5px;
+}
+
+.browser-icon {
+    float: left;
+}
+
+.browser-icon>img {
+    max-width: 40px;
+    max-height: 40px;
+}
+
+.login-info {
+    float: right;
+    margin-right: 10px;
+}
+
+.login-info>p {
+    margin: 0 0 0 -5px;
+    font-size: 13px;
+}
+
+.trade-container {
+    margin-left: calc(calc(100% - 512px) / 2);
+    width: 512px;
+    height: 336px;
+    margin-bottom: 10px;
+    background-image: url(/images/trade.png);
+    position: relative;
+}
+
+.trader-item-size {
+    position: absolute;
+    font-family: runescape-uf;
+    top: 299px;
+    left: 194px;
+    color: white;
+    font-size: 15px;
+    text-align: right;
+}
+
+.trader-ip {
+    position: absolute;
+    font-family: runescape-uf;
+    top: 262px;
+    left: 30px;
+    color: white;
+    font-size: 15px;
+    text-align: right;
+}
+
+.tradee-ip {
+    position: absolute;
+    font-family: runescape-uf;
+    top: 262px;
+    left: 270px;
+    color: white;
+    font-size: 15px;
+    text-align: right;
+}
+
+.tradee-item-size {
+    position: absolute;
+    font-family: runescape-uf;
+    top: 299px;
+    left: 263px;
+    color: white;
+    font-size: 15px;
+    text-align: right;
+}
+
+.trade-date {
+    position: absolute;
+    top: 21px;
+    left: 195px;
+    display: inline;
+    font-family: runescape-uf;
+}
+
+.trade-date p {
+    color: yellow;
+    font-size: 16px;
+}
+
+.trader-name {
+    position: absolute;
+    top: 61px;
+    left: 113px;
+    display: inline;
+}
+
+.trade-item {
+    height: 14px;
+}
+
+.trader-items,
+.tradee-items {
+    position: absolute;
+    top: 84px;
+    left: 23px;
+    display: inline;
+    text-align: center;
+    font-family: runescape-uf;
+    font-size: 16px;
+    color: white;
+    width: 225px;
+}
+
+.tradee-items {
+    left: 263px;
+}
+
+.trader-prev-next {
+    position: absolute;
+    top: 239px;
+    color: white;
+    font-family: runescape-uf;
+    cursor: pointer;
+}
+
+.trader-prev {
+    left: 30px;
+}
+
+.trader-next {
+    left: 220px;
+}
+
+.tradee-prev {
+    left: 270px;
+}
+
+.tradee-next {
+    left: 461px;
+}
+
+.tradee-name {
+    position: absolute;
+    top: 61px;
+    left: 340px;
+    display: inline;
+}
+
+#death-tile-label {
+    margin-top: 50px;
+}
+
+#death-tile,
+.world-tile-hover img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+}
+
+#items-lost-label {
+    margin-top: 125px;
+}
+
+.lost-items,
+.duel-stake-items,
+.duel-rules {
+    border: 1px solid #18597F;
+    border-radius: 5px;
+    padding: 2px;
+    overflow-y: scroll;
+    height: 250px;
+    margin-bottom: 10px;
+}
+
+.duel-stake-label {
+    margin-top: 62px;
+}
+
+.duel-stake-items,
+.duel-rules {
+    height: 125px;
+}
+
+.world-tile-hover {
+    position: absolute;
+    min-height: 120px;
+    min-width: 120px;
+    padding: 10px;
+    border: 1px solid #18597F;
+    border-radius: 5px;
+    background: #1c1c1c;
+}

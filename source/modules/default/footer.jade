@@ -34,6 +34,9 @@ div(class='footer')
                         if user.getRights() > 0
                             li
                                 a.spa-link(href='/staff') Staff
+                        if user.getRights() > 1
+                            li
+                                a.spa-link(href='/logs') Logs
                         li
                             a.spa-link(href='/logout') Sign Out
                     else

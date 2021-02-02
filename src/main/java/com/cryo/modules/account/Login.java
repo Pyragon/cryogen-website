@@ -76,6 +76,8 @@ public class Login {
                 request.session().attribute("cryo_sess", sessionId);
             if(account.isPasswordResetRequired())
                 redirect = "/account/force-reset";
+            com.cryo.entities.logs.Login login = new com.cryo.entities.logs.Login(-1, account.getUsername(), request.ip(), 1, visitorId, request.userAgent(), sessionId, null);
+            getConnection("cryogen_logs").insert("login", login.data());
             return Utilities.redirect(redirect, request, response);
         } catch(Exception e) {
             e.printStackTrace();

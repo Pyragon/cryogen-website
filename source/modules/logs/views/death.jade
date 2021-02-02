@@ -1,0 +1,63 @@
+include ../../utils/name
+
+script.
+    $(document).on('click', '.lost-item-uid', function() {
+
+        let uid = $(this).data('uid');
+
+        navigator.clipboard
+                .writeText(uid)
+                .then(
+                    () => sendAlert('UID '+uid+' has been copied to the clipboard'),
+                    () => sendAlert('Error copying uid to clipboard.')
+                );
+
+    });
+
+.noty_message
+    span.noty_text
+.container#noty-container
+    .row
+        .col-md-6
+            p ID:
+        .col-md-6
+            p= death.getId()
+    .row
+        .col-md-6
+            p User:
+        .col-md-6
+            p
+                span
+                    +renderName(death.getUser())
+    .row
+        .col-md-6
+            p Killed By:
+        .col-md-6
+            p= death.getNPCName()+' ('+death.getKilledBy()+') ('+death.getLevel()+')'
+    .row
+        .col-md-6
+            p Date:
+        .col-md-6
+            p= format.formatTimestamp(death.getAdded())
+    .row
+        .col-md-6
+            p WorldTile:
+        .col-md-6
+            p= death.getWorldTile()
+    .row
+        .col-md-6
+            p#death-tile-label Picture:
+        .col-md-6
+            p
+                img#death-tile(src=death.getMapLink())
+    .row
+        .col-md-6
+            p#items-lost-label Items Lost:
+        .col-md-6
+            .lost-items
+                for item in death.getItemsLost()
+                    p
+                        span.lost-item-uid.link(data-uid=item.get('uid'), title=item.get('uid'))= format.toItemName(item.get('id'))+' ('+format.toInt(item.get('id'))+')'
+                        span  x 
+                        span(title=format.formatNumber(item.get('amount')), class=format.formatRunescapeNumberClass(item.get('amount')))= format.formatRunescapeNumber(item.get('amount'))
+.noty_close

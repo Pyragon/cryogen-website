@@ -62,7 +62,13 @@ public class ListManager {
             for (T t : list) {
                 Field f = t.getClass().getDeclaredField("id");
                 f.setAccessible(true);
-                ListRow row = new ListRow((int) f.get(t));
+                int id = (int) f.get(t);
+                String extra = "";
+                for(Method m : t.getClass().getDeclaredMethods()) {
+                    if(m.getName().equals("getExtra"))
+                        extra = (String) m.invoke(t);
+                }
+                ListRow row = new ListRow(id, extra);
                 for (Field field : clazz.getDeclaredFields()) {
                     if (!field.isAnnotationPresent(ListValue.class)) continue;
                     ListValue annotation = field.getAnnotation(ListValue.class);

@@ -819,12 +819,12 @@
                 if ($(this).hasClass('i-am-new')) {
                     $(this).css({
                         left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
-                        top: ($(window).height() - actual_height) / 2 + 'px'
+                        top: '100px'
                     });
                 } else {
                     $(this).animate({
                         left: ($(window).width() - $(this).outerWidth(false)) / 2 + 'px',
-                        top: ($(window).height() - actual_height) / 2 + 'px'
+                        top: '100px'
                     }, 500);
                 }
 

@@ -1,0 +1,25 @@
+include ../utils/script
+include ../utils/stylesheet
+
++includeScript('utils/tabs')
++includeStylesheet('logs')
+script.
+    $(document).ready(() => {
+
+        buildPage('logs', {
+            'login': 'Login',
+            'command': 'Command',
+            'trade': 'Trade',
+            'items': 'Item Tracking',
+            'death': 'Death',
+            'drop': 'Drop',
+            'pickup': 'Pickup',
+            'pvp': 'PVP',
+            'duel': 'Duel',
+            'pos': 'Player Owned Shop',
+            'shop': 'Regular Shops'
+        }, '!{active}');
+
+    });
+
+include ../utils/tabs

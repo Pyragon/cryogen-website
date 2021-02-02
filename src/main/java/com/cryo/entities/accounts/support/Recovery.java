@@ -117,19 +117,19 @@ public class Recovery extends MySQLDao {
         return "";
     }
 
-    @Filterable(value = "Email Status", values = EmailStatusFilter.class, dbName = "email_status")
-    @ListValue(value = "Email Status", order = 2)
+    @Filterable(value = "Email Status", values = EmailStatusFilter.class, dbName = "email_status", requiresModule = "staff")
+    @ListValue(value = "Email Status", order = 2, requiresModule = "staff")
     public String getEmailTableStatus() {
         return emailStatus == 3 ? "Email Sent" : "Email Not Sent";
     }
 
-    @Filterable(value = "Discord Status", values = DiscordStatusFilter.class, dbName = "discord_status")
-    @ListValue(value = "Discord Status", order = 3)
+    @Filterable(value = "Discord Status", values = DiscordStatusFilter.class, dbName = "discord_status", requiresModule = "staff")
+    @ListValue(value = "Discord Status", order = 3, requiresModule = "staff")
     public String getDiscordTableStatus() {
         return discordStatus == 3 ? "Discord Message Sent" : "Discord Message Not Sent";
     }
 
-    @ListValue(value = "Likeliness", order = 5, notOnArchive = true)
+    @ListValue(value = "Likeliness", order = 5, notOnArchive = true, requiresModule = "staff")
     public String getLikeliness() {
         return "TODO";
     }
@@ -142,8 +142,8 @@ public class Recovery extends MySQLDao {
         return value;
     }
 
-    @Sortable("Fields Entered")
-    @ListValue(value = "Fields Entered", order = 4)
+    @Sortable(value = "Fields Entered", requiresModule = "staff")
+    @ListValue(value = "Fields Entered", order = 4, requiresModule = "staff")
     public String getFieldsSet() {
         int total = 0;
         if (!StringUtils.isNullOrEmpty(emailEntered))
@@ -232,11 +232,11 @@ public class Recovery extends MySQLDao {
             case 1:
                 return "Submitted";
             case 2:
-                return "Denied";
+                return "Recovery Denied";
             case 3:
                 return "Recovered via email/discord";
             case 4:
-                return "Recovered via staff member";
+                return "Recovery accepted";
         }
         return "N/A";
     }

@@ -1,0 +1,18 @@
+.trader-items
+    for item in traderItems
+        .trade-item
+            span.link(title=item.get('uid'), data-uid=item.get('uid'))= format.toItemName(format.toInt(item.get('id')))+' ('+format.toInt(item.get('id'))+') x '
+            span(class=format.formatRunescapeNumberClass(format.toInt(item.get('amount'))), title=format.formatNumber(format.toInt(item.get('amount'))))= format.formatRunescapeNumber(format.toInt(item.get('amount')))
+if traderPrev
+    .trader-prev.trader-prev-next Prev
+if traderNext
+    .trader-next.trader-prev-next Next
+if tradeePrev
+    .tradee-prev.trader-prev-next Prev
+if tradeeNext
+    .tradee-next.trader-prev-next Next
+.tradee-items
+    for item in tradeeItems
+        .trade-item
+            span.link(title=item.get('uid'), data-uid=item.get('uid'))= format.toItemName(format.toInt(item.get('id')))+' ('+format.toInt(item.get('id'))+') x '
+            span(class=format.formatRunescapeNumberClass(format.toInt(item.get('amount'))), title=format.formatNumber(format.toInt(item.get('amount'))))= format.formatRunescapeNumber(format.toInt(item.get('amount')))

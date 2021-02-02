@@ -1,0 +1,56 @@
+include ../../utils/name
+
+.noty_message
+    span.noty_text
+.container#noty-container
+    .row
+        .col-md-6
+            p ID:
+        .col-md-6
+            p= login.getId()
+    .row
+        .col-md-6
+            p User:
+        .col-md-6
+            p
+                span
+                    +renderName(login.getUser())
+    .row
+        .col-md-6
+            p IP:
+        .col-md-6
+            p= login.getIp()
+    .row
+        .col-md-6
+            p Type:
+        .col-md-6
+            p= login.getTypeString()
+    .row
+        .col-md-6
+            p UUID:
+        .col-md-6
+            p= login.getUuid()
+    if login.getType() == 1
+        .row
+            .col-md-6
+                p User Agent Info:
+            .col-md-6
+                .browser-icon
+                    img(src=login.getIconPath())
+                .login-info
+                    p.os= login.getUserAgent().get('OperatingSystemNameVersion').value+' ('+login.getUserAgent().get('DeviceCpu').value+')'
+                    p.browser= login.getUserAgent().get('AgentNameVersion').value
+        .row
+            .col-md-6
+                p Session:
+            .col-md-6
+                p= login.getSessionId()
+        .row
+            .col-md-6
+                p Session Active?
+            .col-md-6
+                if login.isSessionActive()
+                    p.color-green Active
+                else
+                    p.color-red Inactive
+.noty_close

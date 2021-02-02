@@ -1,0 +1,66 @@
+include ../../utils/name
+
+.noty_message
+    span.noty_text
+.container#noty-container
+    .row
+        .col-md-6
+            p ID:
+        .col-md-6
+            p= duel.getId()
+    .row
+        .col-md-6
+            p Dueler:
+        .col-md-6
+            p
+                span
+                    +renderName(duel.getDueler())
+                span= ' ('+duel.getDuelerIp()+') '
+                if duel.getWinner().getUsername() == duel.getDueler().getUsername()
+                    span(title='Winner')
+                        i.fa.fa-check-circle-o.color-green
+    .row
+        .col-md-6
+            p Duelee:
+        .col-md-6
+            p
+                span
+                    +renderName(duel.getDuelee())
+                span= ' ('+duel.getDueleeIp()+') '
+                if duel.getWinner().getUsername() == duel.getDuelee().getUsername()
+                    span(title='Winner')
+                        i.fa.fa-check-circle-o.color-green
+
+    .row
+        .col-md-6
+            p Date:
+        .col-md-6
+            p= format.formatTimestamp(duel.getAdded())
+    .row
+        .col-md-6
+            p.duel-stake-label Dueler Stake:
+        .col-md-6
+            .duel-stake-items
+                for item in duel.getDuelerStake()
+                    p
+                        span.duel-stake-item-uid.link(data-uid=item.get('uid'), title=item.get('uid'))= format.toItemName(item.get('id'))+' ('+format.toInt(item.get('id'))+')'
+                        span  x 
+                        span(title=format.formatNumber(item.get('amount')), class=format.formatRunescapeNumberClass(item.get('amount')))= format.formatRunescapeNumber(item.get('amount'))
+    .row
+        .col-md-6
+            p.duel-stake-label Duelee Stake:
+        .col-md-6
+            .duel-stake-items
+                for item in duel.getDueleeStake()
+                    p
+                        span.duel-stake-item-uid.link(data-uid=item.get('uid'), title=item.get('uid'))= format.toItemName(item.get('id'))+' ('+format.toInt(item.get('id'))+')'
+                        span  x 
+                        span(title=format.formatNumber(item.get('amount')), class=format.formatRunescapeNumberClass(item.get('amount')))= format.formatRunescapeNumber(item.get('amount'))
+    .row
+        .col-md-6
+            p.duel-stake-label Rules:
+        .col-md-6
+            .duel-rules
+                for rule in duel.getRules()
+                    p= rule.getName()+' - '+rule.isActive()
+.noty_close

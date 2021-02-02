@@ -25,7 +25,7 @@ div#page-container
                     li
                         a.spa-link(href='/account/vote') Vote
                     li.dropdown
-                        a.dropdown-toggle(href='/account', data-toggle='dropdown') Account
+                        a.dropdown-toggle.link(data-toggle='dropdown') Account
                             b.caret
                         ul.dropdown-menu
                             if loggedIn
@@ -49,6 +49,9 @@ div#page-container
                                 if user.getRights() > 0
                                     li
                                         a.spa-link(href='/staff') Staff
+                                if user.getRights() > 1
+                                    li
+                                        a.spa-link(href='/logs') Logs
                                 li
                                     a.spa-link(href='/support') Support
                                 li

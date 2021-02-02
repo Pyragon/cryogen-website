@@ -1,5 +1,6 @@
 package com.cryo;
 
+import com.cryo.cache.Cache;
 import com.cryo.managers.TaskManager;
 import com.cryo.utils.CorsFilter;
 import com.cryo.utils.Logger;
@@ -120,10 +121,10 @@ public class Website {
     }
 
     public static void loadProperties() {
-        loadProperties("data/props.json");
+        properties = loadProperties("data/props.json");
     }
 
-    public static void loadProperties(String fileName) {
+    public static Properties loadProperties(String fileName) {
         File file = new File(fileName);
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -132,8 +133,9 @@ public class Website {
             while((line = reader.readLine()) != null)
                 builder.append(line);
             String json = builder.toString();
-            properties = getGson().fromJson(json, Properties.class);
+            Properties properties = getGson().fromJson(json, Properties.class);
             reader.close();
+            return properties;
         } catch (IOException e) {
             throw new RuntimeException("Error loading properties!", e);
         }
