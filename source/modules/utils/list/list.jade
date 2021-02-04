@@ -13,6 +13,8 @@ table.table.table-condensed.table-responsive.widget.hs-table
                         td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatTime(value.getValue())
                     else if value.shouldFormatAsTimestamp()
                         td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatTimestamp(value.getValue())
+                    else if value.shouldFormatAsTimestampHour()
+                        td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatTimestamp(value.getValue(), 'MMMMM dd, yyyy HH:mm:ss a')
                     else if value.shouldFormatAsNumber()
                         td(class=value.getClassName() == null ? '' : value.getClassName())= format.formatNumber(value.getValue())
                     else if value.shouldFormatAsUser() && value.getUser() != null

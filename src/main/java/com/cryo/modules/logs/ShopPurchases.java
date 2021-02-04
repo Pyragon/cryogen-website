@@ -4,12 +4,10 @@ import com.cryo.Website;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
-import com.cryo.entities.logs.Death;
-import com.cryo.entities.logs.ShopPurchase;
+import com.cryo.entities.logs.ShopAction;
 import com.cryo.managers.ListManager;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.utils.Utilities;
-import lombok.Data;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
@@ -64,17 +62,17 @@ public class ShopPurchases {
         ArrayList<Object> values = new ArrayList<>();
         String query = "";
 
-        Object[] condition = ListManager.getCondition(filterValues, ShopPurchase.class, false);
+        Object[] condition = ListManager.getCondition(filterValues, ShopAction.class, false);
         if(condition.length == 2 && condition[0] != null) {
             query += (String) condition[0];
             values.addAll((ArrayList<Object>) condition[1]);
         }
         int total = getConnection("cryogen_logs").selectCount("shop", query, values.toArray());
-        String order = ListManager.getOrder(model, sortValues, ShopPurchase.class, page, total, false);
-        List<ShopPurchase> purchases = getConnection("cryogen_logs").selectList("shop", query, order, ShopPurchase.class, values.toArray());
+        String order = ListManager.getOrder(model, sortValues, ShopAction.class, page, total, false);
+        List<ShopAction> purchases = getConnection("cryogen_logs").selectList("shop", query, order, ShopAction.class, values.toArray());
         if(purchases == null)
             return error("Error loading shops. Please try again.");
-        ListManager.buildTable(model, "logs", purchases, ShopPurchase.class, account, sortValues, filterValues, false);
+        ListManager.buildTable(model, "logs", purchases, ShopAction.class, account, sortValues, filterValues, false);
         return renderList(model, request, response);
     }
 }

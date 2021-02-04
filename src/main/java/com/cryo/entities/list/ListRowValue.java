@@ -13,6 +13,7 @@ public class ListRowValue {
 
     private boolean shouldFormatAsTime;
     private boolean shouldFormatAsTimestamp;
+    private boolean shouldFormatAsTimestampHour;
     private boolean shouldFormatAsNumber;
     private boolean shouldFormatAsUser;
 
@@ -28,6 +29,10 @@ public class ListRowValue {
 
     public boolean shouldFormatAsTimestamp() {
         return shouldFormatAsTimestamp;
+    }
+
+    public boolean shouldFormatAsTimestampHour() {
+        return shouldFormatAsTimestampHour;
     }
 
     public boolean shouldFormatAsNumber() {

@@ -95,6 +95,11 @@ public class Utilities {
                 prop.put("page", model.get("page"));
             if(model.containsKey("total"))
                 prop.put("total", model.get("total"));
+            if(model.containsKey("itemId")) {
+                prop.put("itemId", model.get("itemId"));
+                prop.put("itemName", model.get("itemName"));
+                prop.put("uid", model.get("uid"));
+            }
             return Website.getGson().toJson(prop);
         } catch(Exception e) {
             e.printStackTrace();

@@ -566,6 +566,8 @@ public class ListManager {
             value.setShouldFormatAsTime(true);
         if(annotation.formatAsTimestamp())
             value.setShouldFormatAsTimestamp(true);
+        if(annotation.formatAsTimestampHour())
+            value.setShouldFormatAsTimestampHour(true);
         if(annotation.formatAsUser())
             value.setShouldFormatAsUser(true);
         if(annotation.order() != -1)

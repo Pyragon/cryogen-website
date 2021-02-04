@@ -17,6 +17,7 @@ public @interface ListValue {
     boolean notOnArchive() default false;
     boolean formatAsTime() default false;
     boolean formatAsTimestamp() default false;
+    boolean formatAsTimestampHour() default false;
     boolean formatAsNumber() default false;
     boolean formatAsUser() default false;
 

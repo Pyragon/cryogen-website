@@ -1,0 +1,54 @@
+include ../../../utils/script
+include ../../../utils/stylesheet
+
+script.
+    $(document).ready(() => {
+
+        let trackPage = 1;
+        let uid = '';
+
+        $('.search i').click(() => {
+            let id = $('#uid-search').val();
+            if(!id) return;
+
+            uid = id;
+
+            loadList();
+
+        });
+
+        function loadList() {
+            post('/logs/items/table', { uid, page: trackPage }, data => {
+                $('#items-table').html(data.html);
+                trackPage = parseInt(data.page);
+
+                $('#item-id-value').html(data.itemId);
+                $('#item-name-value').html(data.itemName);
+                $('#uid-value').html(data.uid);
+                //build pages
+            });
+        }
+    });
+
+h3 Item Tracking
+p.small.info The following page can be used to track items throughout Cryogen
+p.small.info Get an item's UID and search it in this page to view everything that's happened since the item was generated.
+.iactions
+    .search
+        input.input#uid-search(type='text', placeholder='UID')
+        span= ' '
+        i.fa.fa-search.link
+    #item-id
+        span.color-grey Item ID: 
+            span#item-id-value= itemId ? itemId : 'N/A'
+    #item-name
+        span.color-grey Name: 
+            span.small#item-name-value= itemName ? itemName : 'N/A'
+    #uid
+        span.color-grey UID: 
+            span.small#uid-value= uid ? uid : 'N/A'
+.list-table(id='items-table')
+.pages(id='items-pages')
+    span Pages: 
+    span.page-container
+.clear
