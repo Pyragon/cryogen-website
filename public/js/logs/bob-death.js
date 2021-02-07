@@ -1,0 +1,1 @@
+//TODO - view log, same with dice i think

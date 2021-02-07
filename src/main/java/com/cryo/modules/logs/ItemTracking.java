@@ -158,7 +158,7 @@ public class ItemTracking {
                         break;
                     }
                 }
-                if (!found) continue; //If it wasn't lost, who cares?
+                if (!found) continue;
                 String loser = winner.equals(dice.getDicer()) ? dice.getHost() : dice.getDicer();
                 items.add(new TrackedItem(dice.getId(), "Dice", loser, "Lost item in dice to", winner, null, dice.getAdded()));
             }

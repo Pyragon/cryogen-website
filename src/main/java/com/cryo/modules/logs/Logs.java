@@ -17,7 +17,7 @@ import static com.cryo.utils.Utilities.renderPage;
 public class Logs {
 
     @SPAEndpoints("/logs, /logs/login, /logs/command, /logs/trade, /logs/items, /logs/drop, /logs/npc-drop, /logs/ge, /logs/bob, " +
-            "/logs/bob-death, /logs/death, /logs/pickup, /logs/pvp, /logs/duel, /logs/dice, /logs/pos, /logs/shop")
+            "/logs/bob-death, /logs/chat, /logs/death, /logs/pickup, /logs/pvp, /logs/duel, /logs/dice, /logs/pos, /logs/shop")
     public static String renderLogsPage(String endpoint, Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
         if(account == null) return Login.renderLoginPage("/logs", request, response);

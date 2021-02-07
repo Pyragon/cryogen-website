@@ -57,11 +57,15 @@ public class Region {
 	}
 
 	public Region(int x, int y, int plane) {
-		int regionX = x >> 6;
-		int regionY = y >> 6;
-		this.regionID = (regionX << 8) + regionY;
+		this.regionID = getRegionId(x, y);
 		this.baseX = (regionID >> 8 & 0xFF) << 6;
 		this.baseY = (regionID & 0xFF) << 6;
+	}
+
+	public static int getRegionId(int x, int y) {
+		int regionX = x >> 6;
+		int regionY = y >> 6;
+		return (regionX << 8) + regionY;
 	}
 
 	/**
