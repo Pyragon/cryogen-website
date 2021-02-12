@@ -1,0 +1,120 @@
+include ../utils/stylesheet
+include ../utils/script
+include ../utils/module
+
++includeStylesheet('neko')
++includeStylesheet('utils/input')
++includeScript('neko/storage')
++includeScript('neko/chat')
++includeScript('neko/video')
++includeScript('neko/main')
+
+script.
+    createConnection('!{user.getUsername()}', '!{sessionId}', parseInt('!{user.getRights()}'))
+
+    if (/*@cc_on!@*/false) { // check for Internet Explorer
+        document.onfocusin = onFocus;
+        document.onfocusout = onBlur;
+    } else {
+        window.onfocus = onFocus;
+        window.onblur = onBlur;
+    }
+
+    function onFocus() {
+        if(window.newMessage === true)
+            $('title').html('Cryogen Website');
+        window.inFocus = true;
+    }
+
+    function onBlur() {
+        window.inFocus = false;
+    }
+
+    $(document).ready(() => {
+
+        setNotification();
+
+        $('#neko-notifications').click(toggleNotifications);
+
+        $('#neko-chat-button').click(function() {
+
+            let container = $('#neko-chat-container');
+            let hidden = container.css('display') == 'none';
+
+            container.css('display', hidden ? 'block' : 'none');
+
+            $(this).find('span').html(' '+(hidden ? 'Disable' : 'Enable')+' Chat');
+
+        });
+
+        function setNotification() {
+
+            let notifications = localStorage.getItem('notification-sound');
+            if(notifications == null || notifications == 0) return;
+
+            $('#neko-notifications').find('span').html(' Enable Notifications');
+        }
+
+        function toggleNotifications() {
+
+            let notifications = localStorage.getItem('notification-sound');
+
+            if(notifications == null) notifications = 1;
+
+            notifications = notifications == 1 ? 0 : 1;
+
+            localStorage.setItem('notification-sound', notifications);
+
+            $('#neko-notifications').find('span').html(' '+(notifications == 0 ? 'Disable' : 'Enable')+' Notifications');
+
+        }
+
+    });
+
+.container
+    .row
+        .col-md-9
+            .widget
+                .header
+                    h4.color-white Movie Night!
+                .content#neko-content
+                    video
+                    .overlay
+        .col-md-3
+            .widget
+                .header
+                    h4.color-white Controls
+                .content
+                    if user.getRights() == 2
+                        .control#neko-controlling
+                            i.fas.fa-keyboard
+                            span  Enable Controls
+                    .control#neko-fullscreen
+                        i.fas.fa-expand
+                        span  Fullscreen
+                    .control#neko-volume
+                        i.fas.fa-volume-up
+                        span  
+                            input.volume-slider(type='range', min='1', max='100', value='50')
+                    .control#neko-mute
+                        i.fas.fa-volume-mute
+                        span  Mute
+                    .control#neko-notifications
+                        i.fas.fa-bell
+                        span  Disable Notifications
+                    .control#neko-chat-button
+                        i.fa.fa-comment
+                        span  Disable Chat
+            .widget
+                .header
+                    h4.color-white Watching
+                .content#neko-members
+            .widget#neko-chat-container
+                .header
+                    h4.color-white Chat
+                .content#neko-chat
+                    #chat-container
+                    #chat-input
+                        input.input(type='text', placeholder='Chat Message')
+                        span
+                            i.fa.fa-paper-plane.link

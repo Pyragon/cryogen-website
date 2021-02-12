@@ -1,0 +1,20 @@
+include ../utils/name
+
+script.
+    $(document).on('mouseover', '.chat', function() {
+        $(this).find('.chat-remove').css('display', 'block');
+    });
+
+    $(document).on('mouseleave', '.chat', function() {
+        $(this).find('.chat-remove').css('display', 'none');
+    });
+
+for message in messages
+    .chat
+        p.chat-author
+            span
+                +renderName(message.get('account'))
+            span.small= ' - '+format.formatTimestamp(message.get('stamp'), 'MMM dd -  hh:mm:ss a')
+        p.chat-message= message.get('content')
+        .chat-remove.link(style='display: none;')
+            i.far.fa-times-circle

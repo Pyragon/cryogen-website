@@ -1,0 +1,76 @@
+#neko-content {
+    min-height: 500px;
+    position: relative;
+}
+
+#neko-chat {
+    min-height: 100px;
+}
+
+#neko-members {
+    text-align: center;
+}
+
+.control {
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    margin: 5px auto;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#neko-volume .volume-slider {
+    width: 100px;
+    display: inline-block;
+}
+
+#chat-container {
+    height: 250px;
+    overflow-y: auto;
+}
+
+#chat-input {
+    border-top: 1px solid #18597F;
+}
+
+#neko-chat input {
+    margin: 5px;
+    width: 88%;
+}
+
+.chat {
+    border-bottom: 1px solid #000;
+    position: relative;
+}
+
+.chat:last-of-type:not(:only-of-type) {
+    border-bottom: none;
+}
+
+.chat-remove {
+    position: absolute;
+    top: 0px;
+    right: 5px;
+}
+
+.chat-author {
+    margin: 5px auto auto 5px;
+}
+
+.chat-message {
+    margin: 5px auto 5px 20px;
+    color: white;
+}

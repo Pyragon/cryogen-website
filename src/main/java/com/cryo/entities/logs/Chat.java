@@ -53,6 +53,6 @@ public class Chat extends MySQLDao {
     }
 
     public int getRegionId() {
-
+        return 1;
     }
 }
