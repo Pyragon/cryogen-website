@@ -329,7 +329,7 @@ function onMouseDown(event) {
     if (!controlling) return;
     sendMousePosition(event);
 
-    sendData('mousedown', { key: event.button });
+    sendData('mousedown', { key: event.button + 1 });
 
 
     return false;
@@ -340,7 +340,7 @@ function onMouseUp(event) {
     if (!controlling) return;
     sendMousePosition(event);
 
-    sendData('mouseup', { key: event.button });
+    sendData('mouseup', { key: event.button + 1 });
 
     return false;
 }
