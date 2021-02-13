@@ -389,17 +389,18 @@ function onMouseUp(event) {
 
 function sendMouseWheel(event) {
     if (!controlling) return;
-    sendMousePosition(event);
-
-    //not working?
+    // sendMousePosition(event);
 
     let x = event.deltaX;
     let y = event.deltaY;
 
-    let scroll = storage.getSetting('scroll');
+    let scroll = 4; // storage.getSetting('scroll');
 
     x = Math.min(Math.max(x, -scroll), scroll);
     y = Math.min(Math.max(y, -scroll), scroll);
+
+    x = x * -1
+    y = y * -1
 
     sendData('wheel', { x, y });
     return false;
@@ -482,6 +483,12 @@ $(document).ready(() => {
     $('.overlay').mouseleave(onMouseLeave);
     $('.overlay').mousedown(onMouseDown);
     $('.overlay').mouseup(onMouseUp);
+
+    $('.overlay')[0].addEventListener('wheel', (event) => {
+        sendMouseWheel(event);
+        event.preventDefault();
+        return false;
+    });
 
     $('#neko-controlling').click(toggleControl);
     $('#neko-fullscreen').click(toggleFullscreen);
