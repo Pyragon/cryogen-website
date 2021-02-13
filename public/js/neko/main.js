@@ -22,7 +22,7 @@ let users = [];
 
 let video = createVideoObject(sendMessage, onStreamChange);
 let storage = createStorageObject();
-let chat = createChatObject(sendMessage, getUsername);
+let chat;
 
 let rights;
 
@@ -40,10 +40,8 @@ function createConnection(user, sessionId, userRights) {
     connection.onerror = onError;
     username = user;
     rights = userRights;
-    //TODO - when connecting to neko via GET, generate a server key with username attached to it
-    //Pass the key back to website here, that's what we'll use to authenticate with the websocket.
-    //Websocket can get our names and shit from there
-    //For now, just use usernames
+    chat = createChatObject(sendMessage, rights);
+    chat.load();
 }
 
 function connectionOpen(event) {
@@ -446,12 +444,11 @@ $(document).ready(() => {
     $('#neko-mute').click(toggleMute);
     $('#neko-volume').find('.volume-slider').change(onVolumeChange);
 
-    chat.load();
-
     let board = new Guacamole.Keyboard(document);
 
     board.onkeydown = function(key) {
-        if (!controlling) return;
+        if ($('#neko-chat input').is(':focus')) return true;
+        if (!controlling) return false;
         let rect = $('.overlay')[0].getBoundingClientRect();
         if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
             mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
@@ -461,6 +458,7 @@ $(document).ready(() => {
     };
 
     board.onkeyup = function(key) {
+        if ($('#neko-chat input').is(':focus')) return true;
         if (!controlling) return;
         let rect = $('.overlay')[0].getBoundingClientRect();
         if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&

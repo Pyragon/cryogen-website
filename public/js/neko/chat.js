@@ -1,4 +1,4 @@
-function createChatObject(sendMessage, getUsername) {
+function createChatObject(sendMessage, rights) {
     return {
 
         messages: [],
@@ -10,6 +10,8 @@ function createChatObject(sendMessage, getUsername) {
                 sendAlert('Messages must be between 4 and 100 characters.');
                 return false;
             }
+
+            message = censorChatMessage(message, rights);
 
             $('#neko-chat input').val('');
 
