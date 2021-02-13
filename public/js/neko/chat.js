@@ -2,6 +2,7 @@ function createChatObject(sendMessage, rights) {
     return {
 
         messages: [],
+        delay: 0,
 
         submitMessage: function() {
             let message = $('#neko-chat input').val();
@@ -11,11 +12,17 @@ function createChatObject(sendMessage, rights) {
                 return false;
             }
 
+            if (this.delay > Date.now()) {
+                sendAlert('You are sending chat messages to fast. Please wait a second.');
+                return false;
+            }
+
             message = censorChatMessage(message, rights);
 
             $('#neko-chat input').val('');
 
             sendMessage('chat/message', { content: message });
+            this.delay = Date.now() + 500;
         },
 
         receiveMessage: function(data) {
