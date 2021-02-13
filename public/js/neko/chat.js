@@ -25,15 +25,35 @@ function createChatObject(sendMessage, rights) {
             this.delay = Date.now() + 500;
         },
 
-        receiveMessage: function(data) {
-            let username = data.name; //will have to save ids to users, will change once we change how users are loaded.
-            let content = data.content;
+        receiveMessages: function(data) {
+            if (!data.messages) {
+                $('#chat-container').html('');
+                return false;
+            }
+            for (message of data.messages)
+                this.appendMessage(message.id, message.author, message.content, message.stamp);
+        },
 
+        receiveMessage: function(data) {
+            let id = data.message.id;
+            let username = data.message.author;
+            let content = data.message.content;
+            let stamp = data.message.stamp;
+
+            this.appendMessage(id, username, content, stamp);
+
+        },
+
+        appendMessage(id, username, content, stamp) {
             this.messages.push({
+                id,
                 username,
                 content,
-                stamp: Date.now()
+                stamp
             });
+
+            if (this.messages.length > 200)
+                this.messages.pop();
 
             post('/neko/chat', { messages: JSON.stringify(this.messages) }, ret => {
 
@@ -53,7 +73,6 @@ function createChatObject(sendMessage, rights) {
                 }
 
             });
-
         },
 
         removeMessage: function() {

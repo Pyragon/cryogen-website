@@ -7,12 +7,9 @@ Moderation options:
     ✔ Chat filters (for links and shit) @done (2021-02-12, 5:24:06 p.m.)
 ☐ Bring back the 'Now Playing' widget
 ✔ Chat delay (increasing delay? 1->2=10 seconds, 2->3=20 seconds) @done (2021-02-12, 9:08:58 p.m.)
-☐ Save previous chat (maybe last 3 hours or 200?)
+✔ Save previous chat (maybe last 3 hours or 200?) @done (2021-02-13, 1:50:41 a.m.)
 ✔ Scrolling not working? (Bug) @done (2021-02-13, 12:12:21 a.m.)
 ☐ Navigating away using SPA does not close websocket !!!!
     vvvvvvvvvvvvvvv This should fix this ^^^^^^^^^^^
 ☐ Establish ping/pong method to ensure users are still connected
-
-Either:
-    Figure out inserting via golang and ban people through there
-    Send the bans to java, and ban from there, just disconnect their connection through golang
+☐ Allow extra chat filter for just profanities

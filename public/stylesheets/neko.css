@@ -82,3 +82,9 @@ video {
     vertical-align: top;
     cursor: pointer;
 }
+
+#chat-loading {
+    width: 100%;
+    text-align: center;
+    margin: 10px auto;
+}
