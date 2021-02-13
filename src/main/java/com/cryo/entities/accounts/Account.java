@@ -53,6 +53,10 @@ public class Account extends MySQLDao {
     private String creationIP;
 	@MySQLRead
     private boolean passwordResetRequired;
+	@MySQLRead
+	private boolean mutedFromMovieNight;
+	@MySQLRead
+	private boolean bannedFromMovieNight;
 	@MySQLDefault
 	private final Timestamp added;
 	@MySQLDefault
@@ -60,7 +64,7 @@ public class Account extends MySQLDao {
 
 	private HashMap<Integer, ArrayList<Object>> recoveries;
 
-	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, Timestamp added, Timestamp updated) {
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, Timestamp added, Timestamp updated) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -75,6 +79,8 @@ public class Account extends MySQLDao {
 		this.usergroups = usergroups;
 		this.creationIP = creationIP;
 		this.passwordResetRequired = passwordResetRequired;
+		this.mutedFromMovieNight = mutedFromMovieNight;
+		this.bannedFromMovieNight = bannedFromMovieNight;
 		this.added = added;
 		this.updated = updated;
 	}

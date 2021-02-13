@@ -7,6 +7,7 @@ import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.annotations.SPAEndpoint;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
+import com.cryo.utils.Utilities;
 import com.google.gson.internal.LinkedTreeMap;
 import com.mysql.cj.util.StringUtils;
 import spark.Request;
@@ -18,8 +19,8 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Properties;
 
-import static com.cryo.utils.Utilities.error;
-import static com.cryo.utils.Utilities.renderPage;
+import static com.cryo.Website.getConnection;
+import static com.cryo.utils.Utilities.*;
 
 @EndpointSubscriber
 public class Neko {
@@ -27,7 +28,6 @@ public class Neko {
     @SPAEndpoint("/neko")
     public static String renderMovieNightPage(Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
-        try {
             if (account == null)
                 return Login.renderLoginPage("/neko", request, response);
             String sessionId = request.cookie("cryo_sess");
@@ -36,10 +36,6 @@ public class Neko {
             HashMap<String, Object> model = new HashMap<>();
             model.put("sessionId", sessionId);
             return renderPage("neko/index", model, request, response);
-        } catch(Exception e) {
-            e.printStackTrace();
-            return error("Test");
-        }
     }
 
     @Endpoint(method = "POST", endpoint = "/neko/member-list")
@@ -94,6 +90,44 @@ public class Neko {
         });
         model.put("messages", results);
         return renderPage("neko/chat", model, request, response);
+    }
+
+    @Endpoint(values = { "POST", "/neko/mute", "POST", "/neko/unmute"})
+    public static String muteOrUnmuteUser(String endpoint, Request request, Response response) {
+        Account account;
+        if((account = AccountUtils.getAccount(request)) == null)
+            return error("Invalid login. Please refresh the page and try again.");
+        if(account.getRights() < 1) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        if(!request.queryParams().contains("target"))
+            return error("No target specified. Please refresh the page and try again.");
+        String targetName = request.queryParams("target");
+        Account target = AccountUtils.getAccount(targetName);
+        if(target == null)
+            return error("Unable to find target. Please refresh the page and try again.");
+//        if(target.getRights() > 0)
+//            return error("You cannot mute other staff.");
+        String action = endpoint.replace("/neko/", "");
+        if(!action.equals("mute") && !action.equals("unmute"))
+            return error("Invalid action. Please refresh the page and try again.");
+        if(action.equals("mute") && target.isMutedFromMovieNight())
+            return error("Target is already muted from movie night. Please refresh the page and try again.");
+        else if(action.equals("unmute") && !target.isMutedFromMovieNight())
+            return error("Target is not muted from movie night. Please refresh the page and try again.");
+        getConnection("cryogen_global").set("player_data", "muted_from_movie_night=?", "id=?", action.equals("mute") ? 1 : 0, target.getId());
+        return success();
+    }
+
+    @Endpoint(method = "POST", endpoint = "/neko/ban")
+    public static String banUser(Request request, Response response) {
+        Account account;
+        if((account = AccountUtils.getAccount(request)) == null)
+            return error("Invalid login. Please refresh the page and try again.");
+        if(account.getRights() < 2) return Utilities.redirect("/", "Invalid permissions", null, null, request, response);
+        //wtf am i doing, get target not us
+        if(account.isBannedFromMovieNight())
+            return error("User is already banned from movie night. Please refresh the page and try again.");
+        getConnection("cryogen_global").set("player_data", "banned_from_movie_night=1", "id=?", account.getId());
+        return success();
     }
 
 }

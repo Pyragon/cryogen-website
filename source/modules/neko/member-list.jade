@@ -1,6 +1,16 @@
 include ../utils/name
 
 for member in members
-    p
+    p.member-list-item(data-username=member.getUsername())
         span
             +renderName(member)
+        if user.getRights() > 0
+            span.member-list-btns
+                span  
+                if member.isMutedFromMovieNight()
+                    span.member-list-btn.mute-user  Unmute
+                else
+                    span.member-list-btn.mute-user  Mute
+                if user.getRights() > 1
+                    span  
+                    span.member-list-btn.ban-user  Ban

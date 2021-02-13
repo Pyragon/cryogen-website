@@ -50,6 +50,7 @@ function connectionOpen(event) {
 
 function onMessage(event) {
     let data = JSON.parse(event.data);
+    let target, name;
     switch (data.event) {
         case 'signal/provide':
             let { sdp, lite, ice, id } = data;
@@ -72,7 +73,7 @@ function onMessage(event) {
             break;
         case 'member/connected':
             let userId = data.id;
-            let name = data.displayname;
+            name = data.displayname;
             users[userId] = name;
             if (memberList.filter(m => m.displayname == name).length > 0)
                 return;
@@ -102,6 +103,23 @@ function onMessage(event) {
         case 'system/disconnect':
             sendAlert('Disconnected from websocket. Reason: ' + data.message);
             console.error(data.error);
+            break;
+        case 'admin/mute':
+            target = data.target;
+            name = data.name;
+            sendAlert(name + ' has muted ' + target + '!');
+            console.log($('.member-list-item[data-username=' + target + ']'));
+            $('.member-list-item[data-username=' + target + ']').find('.mute-user').html(' Unmute');
+            break;
+        case 'admin/unmute':
+            target = data.target;
+            name = data.name;
+            sendAlert(name + ' has unmuted ' + target + '!');
+            console.log($('.member-list-item[data-username=' + target + ']'));
+            $('.member-list-item[data-username=' + target + ']').find('.mute-user').html(' Mute');
+            break;
+        case 'admin/error':
+            sendAlert(data.error);
             break;
         default:
             console.log('UNCONDITIONED MESSAGE', data);
@@ -169,6 +187,7 @@ function sendMessage(event, payload) {
     console.log('SENDING MESSAGE', event, payload);
 
     if (!connection) return;
+    console.log(JSON.stringify({ event, ...payload }));
     connection.send(JSON.stringify({ event, ...payload }));
 }
 
@@ -301,6 +320,31 @@ function toggleControl() {
     controlling = !controlling;
     sendMessage(opcode);
     $('#neko-controlling').find('span').html(' ' + (controlling ? 'Disable' : 'Enable') + ' Controls');
+    return false;
+}
+
+function muteUser() {
+    if (rights < 1) return false;
+    let name = $(this).closest('.member-list-item').data('username');
+    if (!name) return false;
+    let action = $(this).html() == ' Mute' ? 'mute' : 'unmute';
+    post('/neko/' + action, { target: name }, _ => {
+        sendMessage('admin/' + action, { name });
+    });
+}
+
+function banUser() {
+    if (rights < 2) return;
+    let name = $(this).closest('.member-list-item').data('username');
+    if (!name) return false;
+    if (name == username) {
+        sendAlert('You cannot ban yourself!');
+        return false;
+    }
+    post('/neko/ban', { target: name }, _ => {
+        sendMessage('admin/kick', { target: name });
+        sendAlert('Player has been successfully banned.');
+    });
     return false;
 }
 
@@ -444,6 +488,8 @@ $(document).ready(() => {
     $('#neko-mute').click(toggleMute);
     $('#neko-volume').find('.volume-slider').change(onVolumeChange);
 
+    $(document).on('click', '.mute-user', muteUser);
+
     let board = new Guacamole.Keyboard(document);
 
     board.onkeydown = function(key) {
@@ -467,25 +513,5 @@ $(document).ready(() => {
         }
         return false;
     };
-
-    console.log('Keyboard: ' + board);
-
-    // $(document).keydown((event) => {
-    //     let rect = $('.overlay')[0].getBoundingClientRect();
-    //     if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
-    //         mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
-    //         sendData('keydown', { key: event.which });
-    //         console.log(event.which);
-    //     }
-    // });
-
-    // $(document).keyup((event) => {
-    //     let rect = $('.overlay')[0].getBoundingClientRect();
-    //     if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
-    //         mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
-    //         sendData('keyup', { key: event.which });
-    //         console.log(event.which);
-    //     }
-    // });
 
 });
