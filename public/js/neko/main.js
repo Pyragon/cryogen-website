@@ -400,8 +400,8 @@ function setKeyboardModifierState(options) {
 }
 
 function syncKeyboardModifierState(options) {
-    // setKeyboardModifierState(options);
-    // sendMessage('control/keyboard', options);
+    setKeyboardModifierState(options);
+    sendMessage('control/keyboard', options);
 }
 
 const keyboardModifierState = (caps, num, scroll) =>
@@ -448,20 +448,46 @@ $(document).ready(() => {
 
     chat.load();
 
-    $(document).keydown((event) => {
-        let rect = $('.overlay')[0].getBoundingClientRect();
-        if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
-            mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
-            sendData('keydown', { key: event.which });
-        }
-    });
+    let board = new Guacamole.Keyboard(document);
 
-    $(document).keyup((event) => {
+    board.onkeydown = function(key) {
+        if (!controlling) return;
         let rect = $('.overlay')[0].getBoundingClientRect();
         if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
             mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
-            sendData('keyup', { key: event.which });
+            sendData('keydown', { key });
         }
-    });
+        return false;
+    };
+
+    board.onkeyup = function(key) {
+        if (!controlling) return;
+        let rect = $('.overlay')[0].getBoundingClientRect();
+        if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
+            mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
+            sendData('keyup', { key });
+        }
+        return false;
+    };
+
+    console.log('Keyboard: ' + board);
+
+    // $(document).keydown((event) => {
+    //     let rect = $('.overlay')[0].getBoundingClientRect();
+    //     if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
+    //         mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
+    //         sendData('keydown', { key: event.which });
+    //         console.log(event.which);
+    //     }
+    // });
+
+    // $(document).keyup((event) => {
+    //     let rect = $('.overlay')[0].getBoundingClientRect();
+    //     if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
+    //         mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
+    //         sendData('keyup', { key: event.which });
+    //         console.log(event.which);
+    //     }
+    // });
 
 });
