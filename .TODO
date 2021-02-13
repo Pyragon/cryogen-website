@@ -1,0 +1,11 @@
+✔ Error message for if someone is already connected to websocket @done (2021-02-12, 4:38:18 p.m.)
+Moderation options:
+    ☐ Ban users
+    ☐ Mute their chat
+    ☐ Delete chat messages
+    ☐ Edit chat messages (probably not, just delete)
+    ☐ Chat filters (for links and shit)
+    ☐ Allow moderators to do above, but not control
+☐ Bring back the 'Now Playing' widget
+✔ Chat delay (increasing delay? 1->2=10 seconds, 2->3=20 seconds) @done (2021-02-12, 5:19:37 p.m.)
+☐ Save previous chat (maybe last 3 hours or 200?)
