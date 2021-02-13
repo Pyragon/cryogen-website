@@ -12,7 +12,9 @@ include ../utils/module
 +includeScript('neko/main')
 
 script.
-    createConnection('!{user.getUsername()}', '!{sessionId}', parseInt('!{user.getRights()}'))
+    let username = '!{user.getUsername()}';
+    let sessionId = '!{sessionId}'
+    let rights = parseInt('!{user.getRights()}')
 
     if (/*@cc_on!@*/false) { // check for Internet Explorer
         document.onfocusin = onFocus;
@@ -33,6 +35,8 @@ script.
     }
 
     $(document).ready(() => {
+
+        createConnection(username, sessionId, rights)
 
         setNotification();
 

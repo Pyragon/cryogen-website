@@ -44,6 +44,16 @@ function createConnection(user, sessionId, userRights) {
     chat.load();
 }
 
+function closeConnection() {
+    if (channel)
+        channel.close();
+    if (connection)
+        connection.close();
+    if (peer)
+        peer.close();
+    console.log('Closed websocket connection!');
+}
+
 function connectionOpen(event) {
     console.log('Connection has been created.', event);
 }
@@ -502,6 +512,11 @@ $(document).ready(() => {
     $('#neko-volume').find('.volume-slider').change(onVolumeChange);
 
     $(document).on('click', '.mute-user', muteUser);
+
+    $('.spa-link').click(function() {
+        closeConnection();
+        return true;
+    });
 
     let board = new Guacamole.Keyboard(document);
 

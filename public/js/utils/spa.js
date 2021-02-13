@@ -69,12 +69,14 @@ function post(link, data, selector, cb) {
                     $(selector).html(data.html);
                     return false;
                 }
-                $(selector).html(data.html);
                 if (selector == '#main-content') {
                     history.pushState({}, 'CryogenSPA', link);
                     $(document).off('click', '**');
-                    listenForSPA();
+                    $(document).off('mouseover', '**');
+                    $(document).off('mouseleave', '**');
                 }
+                $(selector).html(data.html);
+                listenForSPA();
             }
         });
     } catch (e) {

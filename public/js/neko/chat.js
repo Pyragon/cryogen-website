@@ -83,8 +83,6 @@ function createChatObject(sendMessage, rights) {
         sendRemoveMessage: function() {
             if (rights < 1) return false;
             let id = $(this).closest('.chat').data('id');
-            console.log(id);
-            console.log($(this).closest('.chat'));
             if (!id) return false;
             sendMessage('chat/remove', { id });
             sendAlert('Attempting to remove message!');
@@ -100,6 +98,7 @@ function createChatObject(sendMessage, rights) {
             });
 
             $(document).on('click', '.chat-remove', this.sendRemoveMessage);
+
             $(document).on('mouseover', '.chat', function() {
                 if (rights < 2) return false;
                 $(this).find('.chat-remove').css('display', 'block');
