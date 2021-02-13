@@ -2,7 +2,7 @@
 Moderation options:
     ✔ Ban users @done (2021-02-13, 12:01:26 a.m.)
     ✔ Mute their chat @done (2021-02-13, 12:01:25 a.m.)
-    ☐ Delete chat messages
+    ✔ Delete chat messages @done (2021-02-13, 10:55:42 a.m.)
     ✘ Edit chat messages (probably not, just delete) @cancelled (2021-02-13, 12:01:32 a.m.)
     ✔ Chat filters (for links and shit) @done (2021-02-12, 5:24:06 p.m.)
 ☐ Bring back the 'Now Playing' widget
@@ -13,3 +13,4 @@ Moderation options:
     vvvvvvvvvvvvvvv This should fix this ^^^^^^^^^^^
 ☐ Establish ping/pong method to ensure users are still connected
 ☐ Allow extra chat filter for just profanities
+☐ Markdown for chat?

@@ -83,6 +83,7 @@ public class Neko {
             Account account = AccountUtils.getAccount((String) m.get("username"));
             if(account == null) return;
             Properties prop = new Properties();
+            prop.put("id", m.get("id"));
             prop.put("content", m.get("content"));
             prop.put("stamp", new Timestamp((long) (double) m.get("stamp")));
             prop.put("account", account);

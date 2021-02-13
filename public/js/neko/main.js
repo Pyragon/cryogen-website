@@ -97,6 +97,9 @@ function onMessage(event) {
             if (rights == 2)
                 sendAlert(data.name + ' has given up control!');
             break;
+        case 'chat/remove':
+            chat.removeMessage(data);
+            break;
         case 'chat/all':
             chat.receiveMessages(data);
             break;

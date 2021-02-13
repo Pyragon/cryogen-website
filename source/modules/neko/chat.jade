@@ -1,16 +1,7 @@
 include ../utils/name
 
-script.
-    $(document).on('mouseover', '.chat', function() {
-        $(this).find('.chat-remove').css('display', 'block');
-    });
-
-    $(document).on('mouseleave', '.chat', function() {
-        $(this).find('.chat-remove').css('display', 'none');
-    });
-
 for message in messages
-    .chat
+    .chat(data-id=message.get('id'))
         p.chat-author
             span
                 +renderName(message.get('account'))
