@@ -9,8 +9,7 @@ Moderation options:
 ✔ Chat delay (increasing delay? 1->2=10 seconds, 2->3=20 seconds) @done (2021-02-12, 9:08:58 p.m.)
 ✔ Save previous chat (maybe last 3 hours or 200?) @done (2021-02-13, 1:50:41 a.m.)
 ✔ Scrolling not working? (Bug) @done (2021-02-13, 12:12:21 a.m.)
-☐ Navigating away using SPA does not close websocket !!!!
-    vvvvvvvvvvvvvvv This should fix this ^^^^^^^^^^^
-☐ Establish ping/pong method to ensure users are still connected
+✔ Navigating away using SPA does not close websocket !!!! @done (2021-02-13, 11:23:09 a.m.)
+✘ Establish ping/pong method to ensure users are still connected @cancelled (2021-02-13, 11:23:16 a.m.)
 ☐ Allow extra chat filter for just profanities
-☐ Markdown for chat?
+✘ Markdown for chat? @cancelled (2021-02-13, 11:26:54 a.m.)

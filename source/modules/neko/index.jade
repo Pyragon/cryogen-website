@@ -4,10 +4,10 @@ include ../utils/module
 
 +includeStylesheet('neko')
 +includeStylesheet('utils/input')
-+includeScript('neko/censor')
 +includeScript('neko/keyboard')
 +includeScript('neko/storage')
 +includeScript('neko/chat')
++includeScript('neko/censor')
 +includeScript('neko/video')
 +includeScript('neko/main')
 
@@ -111,6 +111,9 @@ script.
                     .control#neko-chat-button
                         i.fa.fa-comment
                         span  Disable Chat
+                    .control#neko-chat-filter
+                        i.fa.fa-filter
+                        span  Enable Filter
             .widget
                 .header
                     h4.color-white Watching

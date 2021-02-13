@@ -484,6 +484,19 @@ function toggleFullscreen() {
     $('#neko-content')[0].requestFullscreen();
 }
 
+function setFilter(filter) {
+    $('#neko-chat-filter').find('span').html(' ' + (filter ? 'Disable' : 'Enable') + ' Filter');
+}
+
+function toggleFilter() {
+    let filter = storage.getSetting('filter') === 'false';
+    console.log(filter, storage.getSetting('filter'))
+    storage.setSetting('filter', filter);
+    setFilter(filter);
+    if (chat)
+        chat.reloadChat();
+}
+
 function getVideoElement() {
     return $('video')[0];
 }
@@ -491,6 +504,8 @@ function getVideoElement() {
 $(document).ready(() => {
 
     onStreamChange();
+
+    setFilter(storage.getSetting('filter'));
 
     setVolume(.5);
 
@@ -508,6 +523,7 @@ $(document).ready(() => {
 
     $('#neko-controlling').click(toggleControl);
     $('#neko-fullscreen').click(toggleFullscreen);
+    $('#neko-chat-filter').click(toggleFilter);
     $('#neko-mute').click(toggleMute);
     $('#neko-volume').find('.volume-slider').change(onVolumeChange);
 

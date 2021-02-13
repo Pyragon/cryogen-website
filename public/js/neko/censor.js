@@ -1,3 +1,7 @@
+let storage = createStorageObject();
+
+let warning = false;
+
 let CENSORED = [{
         regex: [/https?:\/\//,
             /.(com)|(ca)|(.co.uk)/
@@ -6,11 +10,41 @@ let CENSORED = [{
         link: true
     },
     {
-        regex: [/faggot/],
-        replace: '******',
+        regex: /faggot/,
+        replace: true,
+        filter: true
+    },
+    {
+        regex: /fuck/,
+        replace: true,
+        filter: true
+    },
+    {
+        regex: /shit/,
+        replace: true,
         filter: true
     }
 ];
+
+function censorSentMessage(message, rights) {
+    for (let censor of CENSORED) {
+        let regexes = censor.regex;
+        if (!Array.isArray(regexes))
+            regexes = [regexes];
+        for (regex of regexes) {
+            if (message.match(regex)) {
+                if (censor.error) {
+                    let cb = undefined;
+                    if (censor.link)
+                        cb = () => window.open('http://cryogen-rsps.com/forums/');
+                    sendAlert(censor.error, cb);
+                    return false;
+                }
+            }
+        }
+    }
+    return message;
+}
 
 //Enable chat filter button, add many more
 
@@ -23,21 +57,17 @@ function censorChatMessage(message, rights) {
         for (regex of regexes) {
             if (message.match(regex)) {
                 if (censor.filter) {
-                    //check if user has a filter on
-                    //if not, continue, cause we don't give a fuck
-                    //bring back local storage?
+                    let filter = storage.getSetting('filter') == 'true';
+                    if (!filter) continue;
                 }
-                if (censor.error) {
-                    let cb = undefined;
-                    if (censor.link)
-                        cb = () => window.open('http://cryogen-rsps.com/forums/');
-                    sendAlert(censor.error, cb);
-                    return false;
-                } else if (censor.replace) {
+                if (censor.replace) {
                     while (message.match(regex)) {
-                        message = message.replace(regex, censor.replace);
-                        sendAlert('A portion of your chat message has been censored due to our movie night rules. Please click this alert to learn more.',
-                            () => window.open('http://cryogen-rsps.com/forums/'));
+                        message = message.replace(regex, '******');
+                        if (!warning) {
+                            sendAlert('A portion of a chat message has been censored due to our movie night rules and your filter settings. Please click this alert to learn more.',
+                                () => window.open('http://cryogen-rsps.com/forums/'));
+                            warning = true;
+                        }
                     }
                 }
             }

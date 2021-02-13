@@ -1,6 +1,8 @@
 function createStorageObject() {
     return {
 
+        warned: false,
+
         storageAvailable: function(type) {
             var storage;
             try {
@@ -10,6 +12,10 @@ function createStorageObject() {
                 storage.removeItem(x);
                 return true;
             } catch (e) {
+                if (!this.warned) {
+                    sendAlert('Unable to use local storage. Some features will be unavailable on this page.');
+                    this.warned = true;
+                }
                 return e instanceof DOMException && (
                         e.code === 22 ||
                         e.code === 1014 ||
@@ -20,15 +26,16 @@ function createStorageObject() {
         },
 
         getSetting: function(setting) {
-            if (!storageAvailable('localStorage') || typeof localStorage.getItem(setting) === 'undefined') {
-                console.log('GETTING FROM DEFAULTS');
-                return defaults[setting];
-            }
+            if (!storageAvailable('localStorage'))
+                return this.defaults()[setting];
+            else if (localStorage.getItem(setting) == null || typeof localStorage.getItem(setting) === 'undefined')
+                return this.defaults()[setting];
             return localStorage.getItem(setting);
         },
 
         setSetting: function(setting, value) {
-            if (!this.storageAvailable('localStorage')) return;
+            if (!this.storageAvailable('localStorage'))
+                return false;
             localStorage.setItem(setting, value);
         },
 
@@ -37,7 +44,8 @@ function createStorageObject() {
                 'scroll': 10,
                 'keyboard-state': 0,
                 'volume': .5,
-                'muted': false
+                'muted': false,
+                'filter': false,
             };
         }
 

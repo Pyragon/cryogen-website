@@ -105,8 +105,8 @@ public class Neko {
         Account target = AccountUtils.getAccount(targetName);
         if(target == null)
             return error("Unable to find target. Please refresh the page and try again.");
-//        if(target.getRights() > 0)
-//            return error("You cannot mute other staff.");
+        if(target.getRights() > 0)
+            return error("You cannot mute other staff.");
         String action = endpoint.replace("/neko/", "");
         if(!action.equals("mute") && !action.equals("unmute"))
             return error("Invalid action. Please refresh the page and try again.");

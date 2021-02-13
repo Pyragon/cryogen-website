@@ -1,3 +1,5 @@
+let storage = createStorageObject();
+
 function createChatObject(sendMessage, rights) {
     return {
 
@@ -17,7 +19,7 @@ function createChatObject(sendMessage, rights) {
                 return false;
             }
 
-            message = censorChatMessage(message, rights);
+            message = censorSentMessage(message, rights);
 
             $('#neko-chat input').val('');
 
@@ -55,7 +57,20 @@ function createChatObject(sendMessage, rights) {
             if (this.messages.length > 200)
                 this.messages.pop();
 
-            post('/neko/chat', { messages: JSON.stringify(this.messages) }, ret => {
+            this.reloadChat();
+        },
+
+        reloadChat: function() {
+
+            let messages = JSON.parse(JSON.stringify(this.messages));
+
+            if (storage.getSetting('filter') == 'true') {
+                for (let message of messages) {
+                    message.content = censorChatMessage(message.content, rights);
+                }
+            }
+
+            post('/neko/chat', { messages: JSON.stringify(messages) }, ret => {
 
                 $('#chat-container').html(ret.html);
 
