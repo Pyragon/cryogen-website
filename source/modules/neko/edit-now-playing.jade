@@ -1,0 +1,43 @@
+script.
+    $(document).ready(() => {
+
+        $('#type').change(showValues);
+
+        showValues();
+
+        function showValues() {
+            let value = $(this).find('option:selected').val();
+            let display = value == 'show';
+            $('#show-values').css('display', (display ? 'block' : 'none'));
+        }
+
+    });
+
+.noty_message
+    span.noty_text
+.container#edit-container(style='width: 100%')
+    .row
+        .col-md-3
+            p Title:
+        .col-md-9
+            input.input.neko-input#title(type='text', placeholder='Title', value=now.getTitle())
+    .row
+        .col-md-3
+            p Type:
+        .col-md-9
+            select.input#type
+                option(value='movie', selected) Movie
+                option(value='show') TV Show
+                option(value='misc') Misc
+    #show-values(style='display: none;')
+        .row
+            .col-md-3
+                p Show:
+            .col-md-9
+                input.input.neko-input#show(type='text', placeholder='Show', value=now.getShow())
+        .row
+            .col-md-3
+                p S/E:
+            .col-md-9
+                input.input.neko-input#season-episode(type='text', placeholder='Season/Episode', value=now.getSeasonEpisode())
+.noty_close

@@ -26,6 +26,8 @@ let chat;
 
 let rights;
 
+let board;
+
 const OPCODE = {
     MOVE: 0x01,
     SCROLL: 0x02,
@@ -136,6 +138,10 @@ function onMessage(event) {
             break;
         case 'admin/error':
             sendAlert(data.error);
+            break;
+        case 'playing/reload':
+            console.log('RELOADING NOW PLAYING');
+            reloadNowPlaying();
             break;
         default:
             console.log('UNCONDITIONED MESSAGE', data);
@@ -501,6 +507,10 @@ function getVideoElement() {
     return $('video')[0];
 }
 
+function reloadNowPlaying() {
+    post('/neko/now-playing', {}, '.neko-widget[data-id="now-playing"] .content');
+}
+
 $(document).ready(() => {
 
     onStreamChange();
@@ -529,33 +539,89 @@ $(document).ready(() => {
 
     $(document).on('click', '.mute-user', muteUser);
 
+    $('.now-playing-edit').click(() => {
+
+        let buttons = [];
+
+        buttons.push({
+            addClass: 'btn btn-success',
+            text: 'Submit',
+            onClick: () => {
+                let title = $('#title').val();
+                let type = $('#type').find('option:selected').val();
+
+                if (!title || title.length < 5 || title.length > 20) {
+                    sendAlert('Title must be between 5 and 20 characters.');
+                    return false;
+                }
+
+                if (type != 'show' && type != 'misc' && type != 'movie') {
+                    sendAlert('Invalid type. Please refresh the page and try again.');
+                    return false;
+                }
+
+                let submit = { title, type };
+                if (type == 'show') {
+                    let show = $('#show').val();
+                    let seasonEpisode = $('#season-episode').val();
+                    if (!show || show.length < 4 || show.length > 20) {
+                        sendAlert('Show must be between 4 and 20 characters.');
+                        return false;
+                    }
+                    if (!seasonEpisode || seasonEpisode.length < 3 || seasonEpisode.length > 20) {
+                        sendAlert('Season/Episode must be between 3 and 20 characters.');
+                        return false;
+                    }
+                    submit.show = show;
+                    submit.seasonEpisode = seasonEpisode;
+                }
+                closeNoty();
+
+                post('/neko/now-playing/submit', submit, ret => {
+                    sendAlert('Successfully edited the now playing values!');
+                    sendMessage('playing/reload');
+                });
+
+                return false;
+            }
+        })
+
+        buttons.push(closeButton());
+
+        postNoty('/neko/now-playing/edit', {}, 'Edit Now Playing', buttons);
+
+    });
+
     $('.spa-link').click(function() {
         closeConnection();
+        board = null;
         return true;
     });
 
-    let board = new Guacamole.Keyboard(document);
+    board = new Guacamole.Keyboard(document);
 
     board.onkeydown = function(key) {
-        if ($('#neko-chat input').is(':focus')) return true;
-        if (!controlling) return false;
+        if ($('.neko-input:focus').length) return true;
+        if (!controlling) return true;
         let rect = $('.overlay')[0].getBoundingClientRect();
         if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
             mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
             sendData('keydown', { key });
+            return false;
         }
-        return false;
+        return true;
     };
 
     board.onkeyup = function(key) {
-        if ($('#neko-chat input').is(':focus')) return true;
-        if (!controlling) return;
+        if ($('.neko-input:focus').length) return true;
+        if (!controlling) return true;
         let rect = $('.overlay')[0].getBoundingClientRect();
         if (mousePosX > rect.x && mousePosX < (rect.x + rect.width) &&
             mousePosY > rect.y && mousePosY < (rect.y + rect.height)) {
             sendData('keyup', { key });
+            return false;
         }
-        return false;
+        return true;
     };
 
 });

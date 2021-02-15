@@ -109,6 +109,16 @@ script.
                     video
                     .overlay
         .col-md-3
+            .widget.neko-widget(data-id='now-playing')
+                .header
+                    h4.color-white Now Playing
+                    .minimize-btn.link
+                        i.fa.fa-minus
+                    .now-playing-edit.link
+                        i.fa.fa-edit
+                    .clear
+                .content
+                    include now-playing
             .widget.neko-widget(data-id='controls')
                 .header
                     h4.color-white Controls

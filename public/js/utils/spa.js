@@ -74,6 +74,8 @@ function post(link, data, selector, cb) {
                     $(document).off('click', '**');
                     $(document).off('mouseover', '**');
                     $(document).off('mouseleave', '**');
+                    $(document).off('keyup', '**');
+                    $(document).off('keydown', '**');
                 }
                 $(selector).html(data.html);
                 listenForSPA();

@@ -88,3 +88,48 @@ video {
     text-align: center;
     margin: 10px auto;
 }
+
+.neko-widget h4 {
+    float: left;
+    width: 90%;
+    padding-left: 10%;
+}
+
+.neko-widget[data-id='now-playing'] h4 {
+    float: left;
+    width: 80%;
+    padding-left: 20%;
+}
+
+.neko-widget .now-playing-edit {
+    float: right;
+    width: 10%;
+}
+
+.neko-widget .minimize-btn {
+    float: right;
+    width: 10%;
+}
+
+#neko-now-playing-container p {
+    text-align: center;
+    color: white;
+}
+
+#edit-container select {
+    width: calc(100% + 2px);
+    margin-bottom: 5px;
+    border: 1px solid #18597F;
+}
+
+#edit-container .row {
+    margin: 5px auto;
+}
+
+#edit-container p {
+    margin-top: 5px;
+}
+
+#edit-container input {
+    border: 1px solid #18597F;
+}

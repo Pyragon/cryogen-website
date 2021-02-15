@@ -1,0 +1,16 @@
+.container#neko-now-playing-container(style='width: 100%;')
+    .row
+        .col-md-3
+            p Title:
+        .col-md-9
+            p= now.getTitle()
+    .row
+        .col-md-3
+            p Show:
+        .col-md-9
+            p= now.getShow()
+    .row
+        .col-md-3
+            p S/E:
+        .col-md-9
+            p= now.getSeasonEpisode()
