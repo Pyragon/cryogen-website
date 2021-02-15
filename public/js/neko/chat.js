@@ -78,7 +78,7 @@ function createChatObject(sendMessage, rights) {
 
                 if (window.inFocus === false) {
 
-                    if ($('#neko-chat').css('display') == 'none') return;
+                    if ($('#neko-chat').find('.content').css('display') == 'none') return;
 
                     if (localStorage.getItem('notification-sound') == null || localStorage.getItem('notification-sound') == 0) {
                         new Audio('/sounds/notification.mp3').play().catch(console.error);

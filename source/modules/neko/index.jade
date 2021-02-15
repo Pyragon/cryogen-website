@@ -15,6 +15,7 @@ script.
     let username = '!{user.getUsername()}';
     let sessionId = '!{sessionId}'
     let rights = parseInt('!{user.getRights()}')
+    let storage = createStorageObject();
 
     if (/*@cc_on!@*/false) { // check for Internet Explorer
         document.onfocusin = onFocus;
@@ -42,17 +43,6 @@ script.
 
         $('#neko-notifications').click(toggleNotifications);
 
-        $('#neko-chat-button').click(function() {
-
-            let container = $('#neko-chat-container');
-            let hidden = container.css('display') == 'none';
-
-            container.css('display', hidden ? 'block' : 'none');
-
-            $(this).find('span').html(' '+(hidden ? 'Disable' : 'Enable')+' Chat');
-
-        });
-
         function setNotification() {
 
             let notifications = localStorage.getItem('notification-sound');
@@ -75,21 +65,56 @@ script.
 
         }
 
+        $('.minimize-btn').click(function() {
+            toggleMinimize($(this));
+        });
+
+        function toggleMinimize(element) {
+            let minus = element.find('i').attr('class').includes('minus');
+            setMinimized(element);
+
+            let id = 'minimized-'+element.closest('.neko-widget').data('id');
+            
+            storage.setSetting(id, minus);
+
+        }
+
+        function setMinimized(element) {
+            element.closest('.neko-widget').find('.content').slideToggle(400);
+            let minus = element.find('i').attr('class').includes('minus');
+            element.find('i').attr('class', 'fa fa-'+(minus ? 'plus' : 'minus'));
+        }
+
+        loadMinimized();
+
+        function loadMinimized() {
+            let data = [ 'minimized-now-playing', 'minimized-controls', 'minimized-watching', 'minimized-chat' ];
+            for(let key of data) {
+                let widget = $('.neko-widget[data-id='+key.replace('minimized-', '')+']');
+                if(storage.getSetting(key) == 'true' || storage.getSetting(key) == true)
+                    toggleMinimize(widget.find('.minimize-btn'));
+            }
+        }
+
     });
 
 .container
     .row
         .col-md-9
-            .widget
+            .widget.neko-widget
                 .header
                     h4.color-white Movie Night!
+                    .clear
                 .content#neko-content
                     video
                     .overlay
         .col-md-3
-            .widget
+            .widget.neko-widget(data-id='controls')
                 .header
                     h4.color-white Controls
+                    .minimize-btn.link
+                        i.fa.fa-minus
+                    .clear
                 .content
                     if user.getRights() == 2
                         .control#neko-controlling
@@ -108,19 +133,22 @@ script.
                     .control#neko-notifications
                         i.fas.fa-bell
                         span  Disable Notifications
-                    .control#neko-chat-button
-                        i.fa.fa-comment
-                        span  Disable Chat
                     .control#neko-chat-filter
                         i.fa.fa-filter
                         span  Enable Filter
-            .widget
+            .widget.neko-widget(data-id='watching')
                 .header
                     h4.color-white Watching
+                    .minimize-btn.link
+                        i.fa.fa-minus
+                    .clear
                 .content#neko-members
-            .widget#neko-chat-container
+            .widget.neko-widget#neko-chat-container(data-id='chat')
                 .header
                     h4.color-white Chat
+                    .minimize-btn.link
+                        i.fa.fa-minus
+                    .clear
                 .content#neko-chat
                     #chat-container
                         #chat-loading

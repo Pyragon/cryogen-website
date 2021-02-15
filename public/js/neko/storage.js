@@ -46,6 +46,10 @@ function createStorageObject() {
                 'volume': .5,
                 'muted': false,
                 'filter': false,
+                'minimized-controls': false,
+                'minimized-watching': false,
+                'minimized-chat': false,
+                'minimized-now-playing': false,
             };
         }
 
