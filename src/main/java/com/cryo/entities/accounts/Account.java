@@ -57,6 +57,10 @@ public class Account extends MySQLDao {
 	private boolean mutedFromMovieNight;
 	@MySQLRead
 	private boolean bannedFromMovieNight;
+	@MySQLRead
+	private int gender;
+	@MySQLRead
+	private String equippedItems;
 	@MySQLDefault
 	private final Timestamp added;
 	@MySQLDefault
@@ -64,7 +68,7 @@ public class Account extends MySQLDao {
 
 	private HashMap<Integer, ArrayList<Object>> recoveries;
 
-	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, Timestamp added, Timestamp updated) {
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String equippedItems, Timestamp added, Timestamp updated) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -81,6 +85,8 @@ public class Account extends MySQLDao {
 		this.passwordResetRequired = passwordResetRequired;
 		this.mutedFromMovieNight = mutedFromMovieNight;
 		this.bannedFromMovieNight = bannedFromMovieNight;
+		this.gender = gender;
+		this.equippedItems = equippedItems;
 		this.added = added;
 		this.updated = updated;
 	}
@@ -113,6 +119,14 @@ public class Account extends MySQLDao {
 		if (getDisplayGroup() != null && getDisplayGroup().getUserTitle() != null)
 			return getDisplayGroup().getUserTitle();
 		return null;
+	}
+
+	public int[] getEquippedItems() {
+		return Website.getGson().fromJson(equippedItems, int[].class);
+	}
+
+	public void setEquippedItems(int[] equippedItems) {
+		this.equippedItems = Website.getGson().toJson(equippedItems);
 	}
 
 	public String getTFAKey() {

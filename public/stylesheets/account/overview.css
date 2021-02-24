@@ -114,3 +114,15 @@ h3 {
     margin-bottom: 5px;
     width: 150px;
 }
+
+#model-viewer {
+    height: 400px;
+    width: 250px;
+    padding: 0px;
+    margin-top: 79px;
+    margin-left: 40px;
+}
+
+#model-viewer canvas {
+    border-radius: 5px;
+}

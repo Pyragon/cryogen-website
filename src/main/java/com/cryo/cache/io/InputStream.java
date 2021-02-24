@@ -210,7 +210,7 @@ public final class InputStream extends Stream {
         /*
          * if(Settings.CLIENT_BUILD < 670) return readUnsignedShort();
          */
-        if ((buffer[offset] ^ 0xffffffff) <= -1) {
+        if ((~buffer[offset]) <= -1) {
             int value = readUnsignedShort();
             if (value == 32767) {
                 return -1;
@@ -272,11 +272,20 @@ public final class InputStream extends Stream {
         return s;
     }
 
+    public final int readSmartNS() {
+        return readSmart()-1;
+    }
+
     public final int readSmart() {
         int v = this.buffer[this.offset] & 0xff;
         if (v < 0x80)
             return readUnsignedByte() - 0x40;
         return readUnsignedShort() - 0xC000;
+    }
+
+    public int readUnsignedSmart2() {
+        int i_2 = buffer[offset] & 0xff;
+        return i_2 < 128 ? readUnsignedByte() - 64 : readUnsignedShort() - 49152;
     }
 
     public int readUnsignedSmart() {

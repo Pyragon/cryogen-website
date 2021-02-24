@@ -64,7 +64,7 @@ public final class OverlayDefinitions {
 			col = 0;
 		}
 		if (col == 0 && texture != -1) {
-			col = TextureDefinitions.getDefinitions(texture & 0xFF).unk4;
+			col = TextureDefinitions.getDefinitions(texture & 0xFF).colour;
 		}
 		return col;
 	}

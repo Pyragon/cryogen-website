@@ -412,7 +412,7 @@ public class MapImageDumper {
         try {
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "jpg", outStream);
+            ImageIO.write(image, "png", outStream);
             InputStream in = new ByteArrayInputStream(outStream.toByteArray());
             @Cleanup OutputStream out = new BufferedOutputStream(response.raw().getOutputStream());
             response.raw().setContentType(MediaType.PNG.toString());

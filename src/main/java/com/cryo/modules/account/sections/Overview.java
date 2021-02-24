@@ -1,18 +1,30 @@
 package com.cryo.modules.account.sections;
 
 import com.cryo.Website;
+import com.cryo.cache.loaders.EquipmentDefaults;
+import com.cryo.cache.loaders.IdentiKitDefinition;
+import com.cryo.cache.loaders.ItemDefinitions;
+import com.cryo.cache.loaders.model.ModelDefinitions;
+import com.cryo.cache.loaders.model.RSMesh;
+import com.cryo.cache.loaders.model.material.MaterialDefinitions;
+import com.cryo.cache.loaders.model.material.properties.MaterialPropTexture;
+import com.cryo.cache.loaders.model.material.properties.MaterialProperty;
 import com.cryo.entities.accounts.support.RecoveryQuestion;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.discord.Discord;
 import com.cryo.entities.accounts.discord.Verify;
+import com.cryo.entities.logs.Item;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
 import com.cryo.utils.BCrypt;
 import com.cryo.utils.DisplayNames;
 import com.cryo.utils.TFA;
 import com.cryo.utils.Utilities;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mysql.cj.util.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
@@ -29,6 +41,12 @@ import static com.cryo.utils.Utilities.renderPage;
 @EndpointSubscriber
 public class Overview {
 
+    private static Gson gson;
+
+    static {
+        buildGson();
+    }
+
     @Endpoint(method = "POST", endpoint = "/account/overview/load")
     public static String renderOverviewPage(Request request, Response response) {
         Account account = AccountUtils.getAccount(request);
@@ -38,6 +56,15 @@ public class Overview {
         if(discord != null)
             model.put("discord", discord);
         model.put("questions", RecoveryQuestion.getQuestions().values());
+//        IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(433);
+//        model.put("model", gson.toJson(defs.renderBody()));
+//        ModelDefinitions defs = ModelDefinitions.getModelDefinitions(3);
+//        if(defs == null)
+//            System.out.println("MODEL IS NULL");
+//        else
+//            model.put("model", gson.toJson(defs.getMesh()));
+        RSMesh mesh = ModelDefinitions.renderPlayerBody(account);
+        model.put("model", gson.toJson(mesh));
         return renderPage("account/sections/overview", model, "/account/overview", request, response);
     }
 
@@ -90,7 +117,7 @@ public class Overview {
             sessionId = request.session().attribute("cryo_sess");
         if(displayName != null && !displayName.equalsIgnoreCase(account.getDisplayName())) {
             displayName = Utilities.formatNameForDisplay(displayName);
-            if(!DisplayNames.nameExists(displayName, account.getUsername()))
+            if(!DisplayNames.nameAllowed(displayName, account.getUsername()))
                 return error("Display name is already taken! Please try another.");
             changeDisplay = true;
         }
@@ -242,6 +269,15 @@ public class Overview {
             getConnection("cryogen_accounts").delete("sessions", "username=? AND session_id != ?", account.getUsername(), sessionId);
         }
         return Website.getGson().toJson(prop);
+    }
+
+    public static void buildGson() {
+        gson = new GsonBuilder()
+                .serializeNulls()
+                .setVersion(1.0)
+                .disableHtmlEscaping()
+                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                .create();
     }
 
 }

@@ -3,6 +3,9 @@ package com.cryo.cache.loaders;
 import com.cryo.cache.*;
 import com.cryo.cache.io.InputStream;
 import com.cryo.cache.io.OutputStream;
+import com.cryo.cache.loaders.model.MeshModifier;
+import com.cryo.cache.loaders.model.ModelDefinitions;
+import com.cryo.cache.loaders.model.RSMesh;
 import com.cryo.utils.Utilities;
 
 import java.util.Arrays;
@@ -47,10 +50,10 @@ public final class ItemDefinitions {
     public String[] inventoryOptions;
 
     // model information
-    public int[] originalModelColours;
-    public int[] modifiedModelColours;
-    public int[] originalTextureIds;
-    public int[] modifiedTextureIds;
+    public short[] originalModelColours;
+    public short[] modifiedModelColours;
+    public short[] originalTextureIds;
+    public short[] modifiedTextureIds;
     public byte[] spriteRecolourIndices;
     public byte[] unknownArray3;
     public int[] quests;
@@ -528,16 +531,16 @@ public final class ItemDefinitions {
         else if (opcode >= 35 && opcode < 40) inventoryOptions[opcode - 35] = stream.readString();
         else if (opcode == 40) {
             int length = stream.readUnsignedByte();
-            originalModelColours = new int[length];
-            modifiedModelColours = new int[length];
+            originalModelColours = new short[length];
+            modifiedModelColours = new short[length];
             for (int index = 0; index < length; index++) {
-                originalModelColours[index] = stream.readUnsignedShort();
-                modifiedModelColours[index] = stream.readUnsignedShort();
+                originalModelColours[index] = (short) stream.readUnsignedShort();
+                modifiedModelColours[index] = (short) stream.readUnsignedShort();
             }
         } else if (opcode == 41) {
             int length = stream.readUnsignedByte();
-            originalTextureIds = new int[length];
-            modifiedTextureIds = new int[length];
+            originalTextureIds = new short[length];
+            modifiedTextureIds = new short[length];
             for (int index = 0; index < length; index++) {
                 originalTextureIds[index] = (short) stream.readUnsignedShort();
                 modifiedTextureIds[index] = (short) stream.readUnsignedShort();
@@ -1244,5 +1247,78 @@ public final class ItemDefinitions {
         stream.setOffset(0);
         stream.getBytes(data, 0, data.length);
         return data;
+    }
+
+    public RSMesh getBodyMesh(boolean isFemale, MeshModifier modifier) {
+        int equip1;
+        int equip2;
+        int equip3;
+        if (isFemale) {
+            if (modifier != null && modifier.femaleBody != null) {
+                equip1 = modifier.femaleBody[0];
+                equip2 = modifier.femaleBody[1];
+                equip3 = modifier.femaleBody[2];
+            } else {
+                equip1 = femaleEquip1;
+                equip2 = femaleEquip2;
+                equip3 = femaleEquip3;
+            }
+        } else if (modifier != null && modifier.maleBody != null) {
+            equip1 = modifier.maleBody[0];
+            equip2 = modifier.maleBody[1];
+            equip3 = modifier.maleBody[2];
+        } else {
+            equip1 = maleEquip1;
+            equip2 = maleEquip2;
+            equip3 = maleEquip3;
+        }
+        if (equip1 == -1)
+            return null;
+        ModelDefinitions defs = ModelDefinitions.getModelDefinitions(equip1);
+        if(defs == null)
+            return null;
+        RSMesh mesh = defs.getMesh();
+        if (mesh == null)
+            return null;
+        if (mesh.version < 13)
+            mesh.upscale();
+        if (equip2 != -1) {
+            RSMesh equip2Mesh = ModelDefinitions.getModelDefinitions(equip2).getMesh();
+            if (equip2Mesh.version < 13)
+                equip2Mesh.upscale();
+            if (equip3 != -1) {
+                RSMesh equip3Mesh = ModelDefinitions.getModelDefinitions(equip3).getMesh();
+                if (equip3Mesh.version < 13)
+                    equip3Mesh.upscale();
+                RSMesh[] meshes = {mesh, equip2Mesh, equip3Mesh};
+                mesh = new RSMesh(meshes, 3);
+            } else {
+                RSMesh[] meshes = {mesh, equip2Mesh};
+                mesh = new RSMesh(meshes, 2);
+            }
+        }
+//        if (!isFemale && (maleWearXOffset != 0 || maleWearYOffset != 0 || maleWearZOffset != 0))
+//            mesh.translate(maleWearXOffset, maleWearYOffset, maleWearZOffset);
+//        if (isFemale && (femaleWearXOffset != 0 || femaleWearYOffset != 0 || femaleWearZOffset != 0))
+//            mesh.translate(femaleWearXOffset, femaleWearYOffset, femaleWearZOffset);
+        int i;
+        short[] modified;
+        if (originalModelColours != null) {
+            if (modifier != null && modifier.modifiedColours != null)
+                modified = modifier.modifiedColours;
+            else
+                modified = modifiedModelColours;
+            for (i = 0; i < originalModelColours.length; i++)
+                mesh.recolour(originalModelColours[i], modified[i]);
+        }
+        if (originalTextureIds != null) {
+            if (modifier != null && modifier.modifiedTextures != null)
+                modified = modifier.modifiedTextures;
+            else
+                modified = modifiedTextureIds;
+            for (i = 0; i < originalTextureIds.length; i++)
+                mesh.retexture(originalTextureIds[i], modified[i]);
+        }
+        return mesh;
     }
 }

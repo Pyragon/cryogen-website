@@ -14,7 +14,7 @@
     background: #151515;
     border: 1px solid #010101;
     border-radius: 5px;
-    min-height: 340px;
+    min-height: 320px;
 }
 
 .item h3 {
@@ -40,6 +40,8 @@
     overflow: hidden;
     border: 1px solid #222;
     margin: 5px 5px;
+    vertical-align: center;
+    height: 45px;
 }
 
 .item .price {

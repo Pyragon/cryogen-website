@@ -107,6 +107,16 @@ public final class Index {
 		return -1;
 	}
 
+	public byte[] getAnyFile(int fileId) {
+		if(getValidArchivesCount() == 1)
+			return getFile(0, fileId);
+		else if(!archiveExists(fileId))
+			return null;
+		else if(getValidFilesCount(fileId) == 1)
+			return getFile(fileId, 0);
+		return null;
+	}
+
 	public byte[] getFile(int archiveId) {
 		if (!archiveExists(archiveId))
 			return null;

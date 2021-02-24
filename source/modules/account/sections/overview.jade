@@ -1,4 +1,5 @@
 include ../../utils/stylesheet
+include ../../utils/script
 include ../../utils/name
 include ../../utils/account/recovery_questions
 
@@ -7,9 +8,19 @@ include ../../utils/account/recovery_questions
 +includeStylesheet('utils/input')
 +includeStylesheet('utils/buttons')
 
++includeScript('utils/rgb-utils')
++includeScript('utils/three/THREE')
++includeScript('utils/three/Stats')
++includeScript('utils/three/TrackballControls')
+
++includeScript('account/model-viewer')
+
 script.
 
     $(document).ready(() => {
+
+        loadScene(JSON.parse('!{model}'));
+
 
         $('#purchase').click(() => {
             showTab('shop');
@@ -69,8 +80,7 @@ script.
     });
 
 .row
-    .col-md-4#post-look
-        include ../../utils/forums/post_look
+    .col-md-4#model-viewer
     .col-md-8#overview
         h3 Overview
         .row

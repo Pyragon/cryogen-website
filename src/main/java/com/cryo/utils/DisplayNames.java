@@ -1,8 +1,6 @@
 package com.cryo.utils;
 
-import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.DisplayName;
-import com.cryo.modules.account.AccountUtils;
 import org.apache.commons.collections4.OrderedBidiMap;
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
 
@@ -38,11 +36,11 @@ public class DisplayNames {
 		return display.getDisplayName();
 	}
 
-	public static boolean nameExists(String username) {
-		return nameExists(username, null);
+	public static boolean nameAllowed(String username) {
+		return nameAllowed(username, null);
 	}
 
-	public static boolean nameExists(String username, String from) {
+	public static boolean nameAllowed(String username, String from) {
 		DisplayName name = getConnection("cryogen_display").selectClass("current_names", "display_name LIKE ?", DisplayName.class, username);
 		if(name != null) return false;
 		name = getConnection("cryogen_display").selectClass("last_names", "display_name LIKE ?", DisplayName.class, username);
