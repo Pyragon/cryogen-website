@@ -18,14 +18,14 @@ public class IdentiKitDefinition {
     private short[] replacementColours;
     private short[] originalTextures;
     private short[] replacementTextures;
-    private int[] headModels = { -1, -1, -1, -1, -1 };
+    private int[] headModels = {-1, -1, -1, -1, -1};
 
     private static HashMap<Integer, IdentiKitDefinition> defs = new HashMap<>();
 
     public static IdentiKitDefinition getIdentikitDefinition(int id) {
-        if(defs.containsKey(id)) return defs.get(id);
+        if (defs.containsKey(id)) return defs.get(id);
         byte[] data = Cache.STORE.getIndex(IndexType.CONFIG).getFile(FileType.IDENTIKIT.getId(), id);
-        if(data == null) return null;
+        if (data == null) return null;
         IdentiKitDefinition defs = new IdentiKitDefinition(id);
         defs.decode(new InputStream(data));
         IdentiKitDefinition.defs.put(id, defs);
@@ -36,28 +36,28 @@ public class IdentiKitDefinition {
         this.id = id;
     }
 
-    public RSMesh renderHead() {
+    public RSMesh renderHead(boolean upscale) {
         RSMesh[] meshes = new RSMesh[5];
         int index = 0;
-        for(int i = 0; i < 5; i++) {
-            if(headModels[i] != -1) {
+        for (int i = 0; i < 5; i++) {
+            if (headModels[i] != -1) {
                 ModelDefinitions defs = ModelDefinitions.getModelDefinitions(headModels[i]);
-                if(defs != null)
+                if (defs != null)
                     meshes[index++] = defs.getMesh();
             }
         }
-//        for(int i = 0; i < 5; i++) {
-//            if(meshes[i] != null && meshes[i].version < 13)
-//                meshes[i].upscale();
-//        }
+        for (int i = 0; i < 5; i++) {
+            if (meshes[i] != null && meshes[i].version < 13)
+                meshes[i].upscale();
+        }
         RSMesh mesh = new RSMesh(meshes, index);
-        if(originalColours != null) {
-            for(int i = 0; i < originalColours.length; i++) {
+        if (originalColours != null) {
+            for (int i = 0; i < originalColours.length; i++) {
                 mesh.recolour(originalColours[i], replacementColours[i]);
             }
         }
-        if(originalTextures != null) {
-            for(int i = 0; i < originalTextures.length; i++) {
+        if (originalTextures != null) {
+            for (int i = 0; i < originalTextures.length; i++) {
                 mesh.retexture(originalTextures[i], replacementTextures[i]);
             }
         }
@@ -69,8 +69,8 @@ public class IdentiKitDefinition {
             return null;
         RSMesh[] meshes = new RSMesh[modelIds.length];
         int index = 0;
-        if(modelIds[0] == 60060)
-            System.out.println("Model comes from: "+id);
+        if (modelIds[0] == 60060)
+            System.out.println("Model comes from: " + id);
         while (index < modelIds.length) {
             meshes[index] = ModelDefinitions.getModelDefinitions(modelIds[index]).getMesh();
             ++index;
@@ -97,7 +97,7 @@ public class IdentiKitDefinition {
     }
 
     public void decode(int opcode, InputStream stream) {
-        if(opcode == 1)
+        if (opcode == 1)
             stream.readUnsignedByte();
         else if (opcode == 2) {
             int count = stream.readUnsignedByte();
@@ -127,9 +127,9 @@ public class IdentiKitDefinition {
     }
 
     public void decode(InputStream stream) {
-        while(true) {
+        while (true) {
             int opcode = stream.readUnsignedByte();
-            if(opcode == 0) break;
+            if (opcode == 0) break;
             decode(opcode, stream);
         }
     }

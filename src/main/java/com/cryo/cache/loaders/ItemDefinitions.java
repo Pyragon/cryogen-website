@@ -1308,6 +1308,58 @@ public final class ItemDefinitions {
                 modified = modifier.modifiedColours;
             else
                 modified = modifiedModelColours;
+            System.out.println("MODIFYING COLOURS: "+Arrays.toString(originalModelColours));
+            for (i = 0; i < originalModelColours.length; i++)
+                mesh.recolour(originalModelColours[i], modified[i]);
+        }
+        if (originalTextureIds != null) {
+            if (modifier != null && modifier.modifiedTextures != null)
+                modified = modifier.modifiedTextures;
+            else
+                modified = modifiedTextureIds;
+            for (i = 0; i < originalTextureIds.length; i++)
+                mesh.retexture(originalTextureIds[i], modified[i]);
+        }
+        return mesh;
+    }
+
+    public RSMesh getHeadMesh(boolean isFemale, MeshModifier modifier) {
+        int headModel1;
+        int headModel2;
+        if (isFemale) {
+            if (modifier != null && modifier.femaleHead != null) {
+                headModel1 = modifier.femaleHead[0];
+                headModel2 = modifier.femaleHead[1];
+            } else {
+                headModel1 = femaleHead1;
+                headModel2 = femaleHead2;
+            }
+        } else if (modifier != null && modifier.maleHead != null) {
+            headModel1 = modifier.maleHead[0];
+            headModel2 = modifier.maleHead[1];
+        } else {
+            headModel1 = maleHead1;
+            headModel2 = maleHead2;
+        }
+        if (headModel1 == -1)
+            return null;
+        RSMesh mesh = ModelDefinitions.getModelDefinitions(headModel1).getMesh();
+        if (mesh.version < 13)
+            mesh.upscale();
+        if (headModel2 != -1) {
+            RSMesh mesh2 = ModelDefinitions.getModelDefinitions(headModel2).getMesh();
+            if (mesh2.version < 13)
+                mesh2.upscale();
+            RSMesh[] meshes = {mesh, mesh2};
+            mesh = new RSMesh(meshes, 2);
+        }
+        int i;
+        short[] modified;
+        if (originalModelColours != null) {
+            if (modifier != null && modifier.modifiedColours != null)
+                modified = modifier.modifiedColours;
+            else
+                modified = modifiedModelColours;
             for (i = 0; i < originalModelColours.length; i++)
                 mesh.recolour(originalModelColours[i], modified[i]);
         }

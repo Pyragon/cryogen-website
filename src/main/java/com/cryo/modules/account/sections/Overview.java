@@ -63,8 +63,16 @@ public class Overview {
 //            System.out.println("MODEL IS NULL");
 //        else
 //            model.put("model", gson.toJson(defs.getMesh()));
+        ItemDefinitions defs = ItemDefinitions.getItemDefinitions(20139);
+        ModelDefinitions.dumpModel(defs.maleEquip1);
+        MaterialDefinitions materialDefinitions = MaterialDefinitions.getMaterialDefinitions(247);
+        if(materialDefinitions != null)
+            System.out.println(Website.getGson().toJson(materialDefinitions));
         RSMesh mesh = ModelDefinitions.renderPlayerBody(account);
-        model.put("model", gson.toJson(mesh));
+        if(mesh != null) {
+            mesh.setRealColours();
+            model.put("model", gson.toJson(mesh));
+        }
         return renderPage("account/sections/overview", model, "/account/overview", request, response);
     }
 

@@ -90,4 +90,11 @@ public class MaterialDefinitions {
         translucentProperty = properties[stream.readUnsignedByte()];
         combinedProperty = properties[stream.readUnsignedByte()];
     }
+
+    public int[] renderToIntPixels(double d_3, int width, int height, boolean bool_7) {
+        for(int i = 0; i < properties.length; i++)
+            properties[i].method12315(width, height);
+        int[] pixels = new int[width * height];
+        return pixels;
+    }
 }

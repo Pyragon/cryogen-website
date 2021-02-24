@@ -32,6 +32,10 @@ public abstract class MaterialProperty {
 	public void reset() {
     }
 
+    public void method12315(int width, int height) {
+
+	}
+
 	public static MaterialProperty decode(InputStream stream) {
 	    stream.readUnsignedByte();
 	    int opIndex = stream.readUnsignedByte();

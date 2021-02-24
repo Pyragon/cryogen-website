@@ -9,6 +9,10 @@ import com.cryo.cache.loaders.ItemDefinitions;
 import com.cryo.entities.accounts.Account;
 import lombok.Data;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -36,22 +40,52 @@ public class ModelDefinitions {
         return defs;
     }
 
+    public static void dumpModel(int id) {
+        byte[] data = Cache.STORE.getIndex(IndexType.MODELS).getFile(id, 0);
+        if(data == null) return;
+        File file = new File("models/"+id+".dat");
+        if(file.exists()) file.delete();
+        try {
+            FileOutputStream stream = new FileOutputStream(file);
+            stream.write(data);
+            stream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public ModelDefinitions(int id) {
         this.id = id;
     }
 
-    public static RSMesh renderPlayerHead() {
-        int[] defaultLook = getDefaultLook();
-        RSMesh[] meshes = new RSMesh[defaultLook.length];
-        int size = 0;
-        for (int look : defaultLook) {
-            if(look == -1) continue;
-            IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(look);
-            RSMesh mesh;
-            if(defs == null || (mesh = defs.renderHead()) == null) continue;
-             meshes[size++] = mesh;
+    public static RSMesh renderPlayerHead(Account account) {
+        try {
+            int[] defaultLook = getDefaultLook();
+            RSMesh[] meshes = new RSMesh[15];
+            int size = 0;
+            int[] equipped = account.getEquippedItems();
+            if (equipped == null) {
+                equipped = new int[15];
+                Arrays.fill(equipped, -1);
+            }
+            if(equipped[EquipmentDefaults.HAT] != -1) {
+                ItemDefinitions defs = ItemDefinitions.getItemDefinitions(equipped[EquipmentDefaults.HAT]);
+                RSMesh mesh;
+                if(defs != null && (mesh = defs.getHeadMesh(account.getGender() == 1, null)) != null)
+                    meshes[size++] = mesh;
+            }
+            for (int look : defaultLook) {
+                if (look == -1) continue;
+                IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(look);
+                RSMesh mesh;
+                if (defs == null || (mesh = defs.renderHead(size > 0)) == null) continue;
+                meshes[size++] = mesh;
+            }
+            return new RSMesh(meshes, size);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return new RSMesh(meshes, size);
     }
 
     public static RSMesh renderPlayerBody(Account account) {

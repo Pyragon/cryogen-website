@@ -1,6 +1,7 @@
 package com.cryo.cache.loaders.model;
 
 import com.cryo.cache.io.InputStream;
+import com.cryo.utils.Utilities;
 
 public class RSMesh {
 
@@ -25,6 +26,7 @@ public class RSMesh {
     public int[] textureSkins;
     public short[] faceTextures;
     public short[] faceColor;
+    public int[] realFaceColour;
     public byte[] texturePos;
     public short[] texTriX;
     public short[] texTriY;
@@ -675,6 +677,18 @@ public class RSMesh {
         }
     }
 
+    public void setRealColours() {
+        short[] colours = this.faceColor;
+        int[] realColours = new int[colours.length];
+        for(int i = 0; i < colours.length; i++) {
+            int colour = Utilities.hslToRgb(colours[i] & 0xffff);
+            realColours[i] = colour;
+            int r = (colour>>16)&0xFF;
+            int g = (colour>>8)&0xFF;
+            int b = (colour>>0)&0xFF;
+        }
+        this.realFaceColour = realColours;
+    }
     void calculateMaxDepth(InputStream first, InputStream second) {
         short s_3 = 0;
         short s_4 = 0;

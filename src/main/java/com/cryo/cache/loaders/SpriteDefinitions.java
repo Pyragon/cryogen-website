@@ -125,19 +125,19 @@ public final class SpriteDefinitions {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 		int[] rgbArray = new int[width * height];
 		int i = 0;
-		int i_43_ = 0;
+		int index = 0;
 		if (useExtraPixels && extraPixels != null) {
-			for (int i_44_ = 0; i_44_ < height; i_44_++) {
-				for (int i_45_ = 0; i_45_ < width; i_45_++) {
-					rgbArray[i_43_++] = (extraPixels[i] << 24 | (pallete[pixelsIndexes[i] & 0xff]));
+			for (int h = 0; h < height; h++) {
+				for (int w = 0; w < width; w++) {
+					rgbArray[index++] = (extraPixels[i] << 24 | (pallete[pixelsIndexes[i] & 0xff]));
 					i++;
 				}
 			}
 		} else {
-			for (int i_46_ = 0; i_46_ < height; i_46_++) {
-				for (int i_47_ = 0; i_47_ < width; i_47_++) {
-					int i_48_ = pallete[pixelsIndexes[i++] & 0xff];
-					rgbArray[i_43_++] = i_48_ != 0 ? ~0xffffff | i_48_ : 0;
+			for (int h = 0; h < height; h++) {
+				for (int w = 0; w < width; w++) {
+					int pallete = this.pallete[pixelsIndexes[i++] & 0xff];
+					rgbArray[index++] = pallete != 0 ? ~0xffffff | pallete : 0;
 				}
 			}
 		}
