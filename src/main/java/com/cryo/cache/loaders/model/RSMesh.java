@@ -103,8 +103,6 @@ public class RSMesh {
         int modelVerticesZ = first.readUnsignedShort();
         int faceIndices = first.readUnsignedShort();
         int textureIndices = first.readUnsignedShort();
-        if(id == 60060)
-            System.out.println("face: "+faceIndices+" tex: "+textureIndices);
         int numVertexSkins = 0;
         int i_25 = 0;
         int i_26 = 0;
@@ -347,14 +345,14 @@ public class RSMesh {
                 for (int i = 0; i < emitterCount; i++) {
                     int particleId = first.readUnsignedShort();
                     int faceIdx = first.readUnsignedShort();
-                    byte b_60;
+                    byte priority;
                     if (modelPriority == 255) {
-                        b_60 = facePriorities[faceIdx];
+                        priority = facePriorities[faceIdx];
                     } else {
-                        b_60 = (byte) modelPriority;
+                        priority = (byte) modelPriority;
                     }
 
-                    particleConfig[i] = new ParticleEmitterConfig(particleId, triangleX[faceIdx], triangleY[faceIdx], triangleZ[faceIdx], b_60);
+                    particleConfig[i] = new ParticleEmitterConfig(particleId, triangleX[faceIdx], triangleY[faceIdx], triangleZ[faceIdx], priority);
                 }
             }
 
@@ -761,86 +759,86 @@ public class RSMesh {
     }
 
     void decodeTexturedTriangles(InputStream first, InputStream second, InputStream third, InputStream fourth, InputStream fifth, InputStream sixth) {
-        for (int i_7 = 0; i_7 < texturedFaceCount; i_7++) {
-            int i_8 = textureRenderTypes[i_7] & 0xff;
-            if (i_8 == 0) {
-                texTriX[i_7] = (short) first.readUnsignedShort();
-                texTriY[i_7] = (short) first.readUnsignedShort();
-                texTriZ[i_7] = (short) first.readUnsignedShort();
+        for (int face = 0; face < texturedFaceCount; face++) {
+            int type = textureRenderTypes[face] & 0xff;
+            if (type == 0) {
+                texTriX[face] = (short) first.readUnsignedShort();
+                texTriY[face] = (short) first.readUnsignedShort();
+                texTriZ[face] = (short) first.readUnsignedShort();
             }
 
-            if (i_8 == 1) {
-                texTriX[i_7] = (short) second.readUnsignedShort();
-                texTriY[i_7] = (short) second.readUnsignedShort();
-                texTriZ[i_7] = (short) second.readUnsignedShort();
+            if (type == 1) {
+                texTriX[face] = (short) second.readUnsignedShort();
+                texTriY[face] = (short) second.readUnsignedShort();
+                texTriZ[face] = (short) second.readUnsignedShort();
                 if (version < 15) {
-                    particleDirectionX[i_7] = third.readUnsignedShort();
+                    particleDirectionX[face] = third.readUnsignedShort();
                     if (version < 14) {
-                        particleDirectionY[i_7] = third.readUnsignedShort();
+                        particleDirectionY[face] = third.readUnsignedShort();
                     } else {
-                        particleDirectionY[i_7] = third.read24BitUnsignedInt();
+                        particleDirectionY[face] = third.read24BitUnsignedInt();
                     }
 
-                    particleDirectionZ[i_7] = third.readUnsignedShort();
+                    particleDirectionZ[face] = third.readUnsignedShort();
                 } else {
-                    particleDirectionX[i_7] = third.read24BitUnsignedInt();
-                    particleDirectionY[i_7] = third.read24BitUnsignedInt();
-                    particleDirectionZ[i_7] = third.read24BitUnsignedInt();
+                    particleDirectionX[face] = third.read24BitUnsignedInt();
+                    particleDirectionY[face] = third.read24BitUnsignedInt();
+                    particleDirectionZ[face] = third.read24BitUnsignedInt();
                 }
 
-                particleLifespanX[i_7] = fourth.readByte();
-                particleLifespanY[i_7] = fifth.readByte();
-                particleLifespanZ[i_7] = sixth.readByte();
+                particleLifespanX[face] = fourth.readByte();
+                particleLifespanY[face] = fifth.readByte();
+                particleLifespanZ[face] = sixth.readByte();
             }
 
-            if (i_8 == 2) {
-                texTriX[i_7] = (short) second.readUnsignedShort();
-                texTriY[i_7] = (short) second.readUnsignedShort();
-                texTriZ[i_7] = (short) second.readUnsignedShort();
+            if (type == 2) {
+                texTriX[face] = (short) second.readUnsignedShort();
+                texTriY[face] = (short) second.readUnsignedShort();
+                texTriZ[face] = (short) second.readUnsignedShort();
                 if (version < 15) {
-                    particleDirectionX[i_7] = third.readUnsignedShort();
+                    particleDirectionX[face] = third.readUnsignedShort();
                     if (version < 14) {
-                        particleDirectionY[i_7] = third.readUnsignedShort();
+                        particleDirectionY[face] = third.readUnsignedShort();
                     } else {
-                        particleDirectionY[i_7] = third.read24BitUnsignedInt();
+                        particleDirectionY[face] = third.read24BitUnsignedInt();
                     }
 
-                    particleDirectionZ[i_7] = third.readUnsignedShort();
+                    particleDirectionZ[face] = third.readUnsignedShort();
                 } else {
-                    particleDirectionX[i_7] = third.read24BitUnsignedInt();
-                    particleDirectionY[i_7] = third.read24BitUnsignedInt();
-                    particleDirectionZ[i_7] = third.read24BitUnsignedInt();
+                    particleDirectionX[face] = third.read24BitUnsignedInt();
+                    particleDirectionY[face] = third.read24BitUnsignedInt();
+                    particleDirectionZ[face] = third.read24BitUnsignedInt();
                 }
 
-                particleLifespanX[i_7] = fourth.readByte();
-                particleLifespanY[i_7] = fifth.readByte();
-                particleLifespanZ[i_7] = sixth.readByte();
-                texturePrimaryColor[i_7] = sixth.readByte();
-                textureSecondaryColor[i_7] = sixth.readByte();
+                particleLifespanX[face] = fourth.readByte();
+                particleLifespanY[face] = fifth.readByte();
+                particleLifespanZ[face] = sixth.readByte();
+                texturePrimaryColor[face] = sixth.readByte();
+                textureSecondaryColor[face] = sixth.readByte();
             }
 
-            if (i_8 == 3) {
-                texTriX[i_7] = (short) second.readUnsignedShort();
-                texTriY[i_7] = (short) second.readUnsignedShort();
-                texTriZ[i_7] = (short) second.readUnsignedShort();
+            if (type == 3) {
+                texTriX[face] = (short) second.readUnsignedShort();
+                texTriY[face] = (short) second.readUnsignedShort();
+                texTriZ[face] = (short) second.readUnsignedShort();
                 if (version < 15) {
-                    particleDirectionX[i_7] = third.readUnsignedShort();
+                    particleDirectionX[face] = third.readUnsignedShort();
                     if (version < 14) {
-                        particleDirectionY[i_7] = third.readUnsignedShort();
+                        particleDirectionY[face] = third.readUnsignedShort();
                     } else {
-                        particleDirectionY[i_7] = third.read24BitUnsignedInt();
+                        particleDirectionY[face] = third.read24BitUnsignedInt();
                     }
 
-                    particleDirectionZ[i_7] = third.readUnsignedShort();
+                    particleDirectionZ[face] = third.readUnsignedShort();
                 } else {
-                    particleDirectionX[i_7] = third.read24BitUnsignedInt();
-                    particleDirectionY[i_7] = third.read24BitUnsignedInt();
-                    particleDirectionZ[i_7] = third.read24BitUnsignedInt();
+                    particleDirectionX[face] = third.read24BitUnsignedInt();
+                    particleDirectionY[face] = third.read24BitUnsignedInt();
+                    particleDirectionZ[face] = third.read24BitUnsignedInt();
                 }
 
-                particleLifespanX[i_7] = fourth.readByte();
-                particleLifespanY[i_7] = fifth.readByte();
-                particleLifespanZ[i_7] = sixth.readByte();
+                particleLifespanX[face] = fourth.readByte();
+                particleLifespanY[face] = fifth.readByte();
+                particleLifespanZ[face] = sixth.readByte();
             }
         }
 

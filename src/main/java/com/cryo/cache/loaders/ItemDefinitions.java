@@ -1308,7 +1308,6 @@ public final class ItemDefinitions {
                 modified = modifier.modifiedColours;
             else
                 modified = modifiedModelColours;
-            System.out.println("MODIFYING COLOURS: "+Arrays.toString(originalModelColours));
             for (i = 0; i < originalModelColours.length; i++)
                 mesh.recolour(originalModelColours[i], modified[i]);
         }

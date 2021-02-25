@@ -3,18 +3,22 @@ package com.cryo.cache.loaders.model;
 import com.cryo.cache.Cache;
 import com.cryo.cache.IndexType;
 import com.cryo.cache.io.InputStream;
+import com.cryo.cache.loaders.BASDefinitions;
 import com.cryo.cache.loaders.EquipmentDefaults;
 import com.cryo.cache.loaders.IdentiKitDefinition;
 import com.cryo.cache.loaders.ItemDefinitions;
 import com.cryo.entities.accounts.Account;
+import com.google.gson.internal.LinkedTreeMap;
 import lombok.Data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Properties;
 
 @Data
 public class ModelDefinitions {
@@ -60,23 +64,22 @@ public class ModelDefinitions {
 
     public static RSMesh renderPlayerHead(Account account) {
         try {
-            int[] defaultLook = getDefaultLook();
+            int[] look = account.getLook();
             RSMesh[] meshes = new RSMesh[15];
             int size = 0;
-            int[] equipped = account.getEquippedItems();
-            if (equipped == null) {
-                equipped = new int[15];
-                Arrays.fill(equipped, -1);
-            }
-            if(equipped[EquipmentDefaults.HAT] != -1) {
-                ItemDefinitions defs = ItemDefinitions.getItemDefinitions(equipped[EquipmentDefaults.HAT]);
+            LinkedTreeMap<String, Object>[] equipped = account.getEquippedItems();
+            if (equipped == null)
+                equipped = new LinkedTreeMap[15];
+            int id = (int) equipped[EquipmentDefaults.HAT].get("id");
+            if(id != -1) {
+                ItemDefinitions defs = ItemDefinitions.getItemDefinitions(id);
                 RSMesh mesh;
                 if(defs != null && (mesh = defs.getHeadMesh(account.getGender() == 1, null)) != null)
                     meshes[size++] = mesh;
             }
-            for (int look : defaultLook) {
-                if (look == -1) continue;
-                IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(look);
+            for (int l : look) {
+                if (l == -1) continue;
+                IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(l);
                 RSMesh mesh;
                 if (defs == null || (mesh = defs.renderHead(size > 0)) == null) continue;
                 meshes[size++] = mesh;
@@ -90,52 +93,127 @@ public class ModelDefinitions {
 
     public static RSMesh renderPlayerBody(Account account) {
         try {
-            int[] defaultLook = getDefaultLook();
+            int[] look = account.getLook();
+            LinkedTreeMap<String, Object>[] equipped = account.getEquippedItems();
+            if (equipped == null)
+                equipped = new LinkedTreeMap[15];
             RSMesh[] meshes = new RSMesh[15];
             int size = 0;
-            int[] equipped = account.getEquippedItems();
-            if (equipped == null) {
-                equipped = new int[15];
-                Arrays.fill(equipped, -1);
-            }
             for(int i = 0; i < 4; i++) {
-                if(equipped[i] == -1) continue;
-                ItemDefinitions defs = ItemDefinitions.getItemDefinitions(equipped[i]);
-                RSMesh mesh;
-                if (defs == null || (mesh = defs.getBodyMesh(account.getGender() == 1, null)) == null) continue;
-                meshes[size++] = mesh;
-            }
-            for (int i = 0; i < defaultLook.length; i++) {
-                int look = defaultLook[i];
-                if (look == -1) continue;
-                int equipSlot = getEquipmentSlot(i);
-                if (equipSlot != -1 && equipped[equipSlot] != -1) {
-                    ItemDefinitions defs = ItemDefinitions.getItemDefinitions(equipped[equipSlot]);
-                    RSMesh mesh;
-                    if (defs == null || (mesh = defs.getBodyMesh(account.getGender() == 1, null)) == null) continue;
-                    meshes[size++] = mesh;
-                    continue;
+                if(equipped[i] == null) continue;
+                int id = (int) ((double) equipped[i].get("id"));
+                if(id == -1) continue;
+                MeshModifier modifier = null;
+                if(equipped[i].containsKey("colours")) {
+                    short[] colours = new short[4];
+                    ArrayList<Double> iColours = (ArrayList<Double>) equipped[i].get("colours");
+                    int index = 0;
+                    for(Double col : iColours)
+                        colours[index++] = col.shortValue();
+                    modifier = new MeshModifier(colours, null);
                 }
-                IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(look);
+                ItemDefinitions defs = ItemDefinitions.getItemDefinitions(id);
                 RSMesh mesh;
-                if (defs == null || (mesh = defs.renderBody()) == null) continue;
+                if (defs == null || (mesh = defs.getBodyMesh(account.getGender() == 1, modifier)) == null) continue;
                 meshes[size++] = mesh;
             }
+            //chest
+            RSMesh mesh;
+            int id = (int) ((double) equipped[EquipmentDefaults.CHEST].get("id"));
+            if(id == -1)
+                mesh = renderLook(2);
+            else
+                mesh = renderItem(account, id, null);
+            if(mesh != null)
+                meshes[size++] = mesh;
+
+            id = (int) ((double) equipped[EquipmentDefaults.SHIELD].get("id"));
+            if(id != -1)
+                meshes[size++] = renderItem(account, id, null);
+
+            id = (int) ((double) equipped[EquipmentDefaults.CHEST].get("id"));
+            mesh = null;
+            if(look[3] == -1 && (id == -1 || !EquipmentDefaults.hideArms(id)))
+                mesh = renderLook(3);
+            else if(id != -1 && !EquipmentDefaults.hideArms(id))
+                mesh = renderIdentikit(account.getGender() == 0 ? 26 : 61);
+            if(mesh != null)
+                meshes[size++] = mesh;
+
+            id = (int) ((double) equipped[EquipmentDefaults.LEGS].get("id"));
+            if(id == -1)
+                mesh = renderLook(5);
+            else
+                mesh = renderItem(account, id, null);
+            if(mesh != null)
+                meshes[size++] = mesh;
+
+            id = (int) ((double) equipped[EquipmentDefaults.HAT].get("id"));
+            mesh = null;
+            if(look[0] != -1 && (id == -1 || !EquipmentDefaults.hideHair(id))) {
+                if(id == -1)
+                    mesh = renderLook(0);
+                else {
+                    ItemDefinitions defs = ItemDefinitions.getItemDefinitions(id);
+                    if(defs != null) {
+                        int style = EquipmentDefaults.getHatHairStyle(getDefaultLook()[0], defs.faceMask(), account.getGender() == 1);
+                        if (style != -1)
+                            mesh = renderIdentikit(style);
+                    }
+                }
+            }
+            if(mesh != null)
+                meshes[size++] = mesh;
+
+            id = (int) ((double) equipped[EquipmentDefaults.HANDS].get("id"));
+            if(id == -1)
+                mesh = renderLook(4);
+            else
+                mesh = renderItem(account, id, null);
+            meshes[size++] = mesh;
+
+            id = (int) ((double) equipped[EquipmentDefaults.FEET].get("id"));
+            if(id == -1)
+                mesh = renderLook(6);
+            else
+                mesh = renderItem(account, id, null);
+            meshes[size++] = mesh;
+
+            boolean male = account.getGender() == 0;
+            int slot = male ? EquipmentDefaults.HAT : EquipmentDefaults.CHEST;
+            id = (int) ((double) equipped[slot].get("id"));
+            if(male && look[1] != -1 && (id == -1 || (male && !EquipmentDefaults.hideBeard(id))))
+                meshes[size++] = renderLook(1);
+
+            BASDefinitions defs = BASDefinitions.getDefs(getRenderEmote(account));
+
             return new RSMesh(meshes, size);
         } catch(Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
-    public static int getEquipmentSlot(int lookIndex) {
-        switch(lookIndex) {
-            case 2: return EquipmentDefaults.CHEST;
-            case 4: return EquipmentDefaults.HANDS;
-            case 5: return EquipmentDefaults.LEGS;
-            case 6: return EquipmentDefaults.FEET;
-            default: return -1;
-        }
+    public static int getRenderEmote(Account account) {
+        return -1;
+    }
+
+    public static RSMesh renderLook(int look) {
+        int id = getDefaultLook()[look];
+        if(id == -1) return null;
+        return renderIdentikit(id);
+    }
+
+    public static RSMesh renderIdentikit(int id) {
+        IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(id);
+        if(defs == null) return null;
+        return defs.renderBody();
+    }
+
+    public static RSMesh renderItem(Account account, int id, MeshModifier modifier) {
+        ItemDefinitions defs = ItemDefinitions.getItemDefinitions(id);
+        if(defs == null) return null;
+        return defs.getBodyMesh(account.getGender() == 1, modifier);
     }
 
     public static int[] getDefaultLook() {

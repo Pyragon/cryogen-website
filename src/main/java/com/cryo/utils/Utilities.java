@@ -667,4 +667,19 @@ public class Utilities {
         return HSL_2_RGB[hsl]& 0xffffff;
     }
 
+    public static int getHashMapSize(int size) {
+        size--;
+        size |= size >>> -1810941663;
+        size |= size >>> 2010624802;
+        size |= size >>> 10996420;
+        size |= size >>> 491045480;
+        size |= size >>> 1388313616;
+        return 1 + size;
+    }
+
+    public static final int getAnimationDefinitionsSize() {
+        int lastArchiveId = Cache.STORE.getIndices()[20].getLastArchiveId();
+        return lastArchiveId * 128 + Cache.STORE.getIndices()[20].getValidFilesCount(lastArchiveId);
+    }
+
 }

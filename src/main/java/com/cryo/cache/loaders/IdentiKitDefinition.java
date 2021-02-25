@@ -69,8 +69,6 @@ public class IdentiKitDefinition {
             return null;
         RSMesh[] meshes = new RSMesh[modelIds.length];
         int index = 0;
-        if (modelIds[0] == 60060)
-            System.out.println("Model comes from: " + id);
         while (index < modelIds.length) {
             meshes[index] = ModelDefinitions.getModelDefinitions(modelIds[index]).getMesh();
             ++index;
@@ -84,11 +82,13 @@ public class IdentiKitDefinition {
         if (mesh == null)
             return null;
         if (originalColours != null) {
+            System.out.println("REPLACING IDENTIKIT COLOURS: "+Arrays.toString(originalColours)+", "+Arrays.toString(replacementColours));
             for (index = 0; index < originalColours.length; index++) {
                 mesh.recolour(originalColours[index], replacementColours[index]);
             }
         }
         if (originalTextures != null) {
+            System.out.println("REPLACING IDENTIKIT TEXTURES: "+Arrays.toString(originalTextures)+", "+Arrays.toString(replacementTextures));
             for (index = 0; index < originalTextures.length; index++) {
                 mesh.retexture(originalTextures[index], replacementTextures[index]);
             }

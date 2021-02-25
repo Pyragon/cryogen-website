@@ -10,4 +10,9 @@ public class MeshModifier {
 
     public short[] modifiedColours;
     public short[] modifiedTextures;
+
+    public MeshModifier(short[] modifiedColours, short[] modifiedTextures) {
+        this.modifiedColours = modifiedColours;
+        this.modifiedTextures = modifiedTextures;
+    }
 }

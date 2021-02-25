@@ -54,15 +54,16 @@ function loadScene(model) {
         }
 
         let textureId = model.FaceTextures == null ? -1 : model.FaceTextures[i];
+        let texTri = model.TexTriX[i];
 
         let u, v;
         let colour = model.RealFaceColour[i];
         let r = (colour >> 16) & 0xFF;
         let g = (colour >> 8) & 0xFF;
         let b = colour & 0xFF;
-        vertices.push({ pos: [model.VertexX[faceA], model.VertexY[faceA], model.VertexZ[faceA]], norm: [faceA, faceB, faceC], colors: [r, g, b] });
-        vertices.push({ pos: [model.VertexX[faceB], model.VertexY[faceB], model.VertexZ[faceB]], norm: [faceA, faceB, faceC], colors: [r, g, b] });
-        vertices.push({ pos: [model.VertexX[faceC], model.VertexY[faceC], model.VertexZ[faceC]], norm: [faceA, faceB, faceC], colors: [r, g, b] });
+        vertices.push({ pos: [model.VertexX[faceA], model.VertexY[faceA], model.VertexZ[faceA]], norm: [faceA, faceB, faceC], colors: [r, g, b, alpha] });
+        vertices.push({ pos: [model.VertexX[faceB], model.VertexY[faceB], model.VertexZ[faceB]], norm: [faceA, faceB, faceC], colors: [r, g, b, alpha] });
+        vertices.push({ pos: [model.VertexX[faceC], model.VertexY[faceC], model.VertexZ[faceC]], norm: [faceA, faceB, faceC], colors: [r, g, b, alpha] });
     }
 
     let positions = [];
@@ -77,7 +78,7 @@ function loadScene(model) {
     let geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
     geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
-    geometry.addAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 3, true));
+    geometry.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colors), 4, true));
 
     geometry.normalizeNormals();
     geometry.computeVertexNormals();

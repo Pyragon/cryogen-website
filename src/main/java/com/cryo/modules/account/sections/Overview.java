@@ -56,18 +56,6 @@ public class Overview {
         if(discord != null)
             model.put("discord", discord);
         model.put("questions", RecoveryQuestion.getQuestions().values());
-//        IdentiKitDefinition defs = IdentiKitDefinition.getIdentikitDefinition(433);
-//        model.put("model", gson.toJson(defs.renderBody()));
-//        ModelDefinitions defs = ModelDefinitions.getModelDefinitions(3);
-//        if(defs == null)
-//            System.out.println("MODEL IS NULL");
-//        else
-//            model.put("model", gson.toJson(defs.getMesh()));
-        ItemDefinitions defs = ItemDefinitions.getItemDefinitions(20139);
-        ModelDefinitions.dumpModel(defs.maleEquip1);
-        MaterialDefinitions materialDefinitions = MaterialDefinitions.getMaterialDefinitions(247);
-        if(materialDefinitions != null)
-            System.out.println(Website.getGson().toJson(materialDefinitions));
         RSMesh mesh = ModelDefinitions.renderPlayerBody(account);
         if(mesh != null) {
             mesh.setRealColours();

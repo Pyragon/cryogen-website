@@ -1,12 +1,15 @@
 package com.cryo.entities.accounts;
 
 import com.cryo.Website;
+import com.cryo.cache.loaders.EquipmentDefaults;
+import com.cryo.cache.loaders.model.ModelDefinitions;
 import com.cryo.entities.*;
 import com.cryo.entities.accounts.discord.Discord;
 import com.cryo.entities.accounts.email.Email;
 import com.cryo.entities.accounts.support.RecoveryQuestion;
 import com.cryo.entities.forums.UserGroup;
 import com.cryo.entities.forums.VisitorMessage;
+import com.google.gson.internal.LinkedTreeMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import net.dv8tion.jda.api.entities.User;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static com.cryo.Website.getConnection;
@@ -60,6 +64,8 @@ public class Account extends MySQLDao {
 	@MySQLRead
 	private int gender;
 	@MySQLRead
+	private String look;
+	@MySQLRead
 	private String equippedItems;
 	@MySQLDefault
 	private final Timestamp added;
@@ -68,7 +74,7 @@ public class Account extends MySQLDao {
 
 	private HashMap<Integer, ArrayList<Object>> recoveries;
 
-	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String equippedItems, Timestamp added, Timestamp updated) {
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String look, String equippedItems, Timestamp added, Timestamp updated) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -86,6 +92,7 @@ public class Account extends MySQLDao {
 		this.mutedFromMovieNight = mutedFromMovieNight;
 		this.bannedFromMovieNight = bannedFromMovieNight;
 		this.gender = gender;
+		this.look = look;
 		this.equippedItems = equippedItems;
 		this.added = added;
 		this.updated = updated;
@@ -121,11 +128,16 @@ public class Account extends MySQLDao {
 		return null;
 	}
 
-	public int[] getEquippedItems() {
-		return Website.getGson().fromJson(equippedItems, int[].class);
+	public LinkedTreeMap<String, Object>[] getEquippedItems() {
+		ArrayList<LinkedTreeMap<String, Object>> equipped = Website.getGson().fromJson(equippedItems, ArrayList.class);
+		LinkedTreeMap<String, Object>[] arr = new LinkedTreeMap[equipped.size()];
+		int index = 0;
+		for(LinkedTreeMap<String, Object> equip : equipped)
+			arr[index++] = equip;
+		return arr;
 	}
 
-	public void setEquippedItems(int[] equippedItems) {
+	public void setEquippedItems(Properties[] equippedItems) {
 		this.equippedItems = Website.getGson().toJson(equippedItems);
 	}
 
@@ -253,6 +265,16 @@ public class Account extends MySQLDao {
 		if(donator == 2) return "Contributor";
 		if(donator == 3) return "VIP";
 		return "";
+	}
+
+	public int[] getLook() {
+		if(look == null) return ModelDefinitions.getDefaultLook();
+		ArrayList<Double> look = Website.getGson().fromJson(this.look, ArrayList.class);
+		int[] rLook = new int[look.size()];
+		int index = 0;
+		for(Double l : look)
+			rLook[index++] = l.intValue();
+		return rLook;
 	}
 	
 }
