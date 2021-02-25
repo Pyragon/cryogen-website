@@ -8,3 +8,4 @@ log/
 *.iml
 data/props.json
 data/qr_codes/*
+models/*
