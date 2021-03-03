@@ -1,13 +1,13 @@
 package com.cryo.cache.loaders.model;
 
+import com.cryo.Website;
 import com.cryo.cache.Cache;
 import com.cryo.cache.IndexType;
 import com.cryo.cache.io.InputStream;
-import com.cryo.cache.loaders.BASDefinitions;
-import com.cryo.cache.loaders.EquipmentDefaults;
-import com.cryo.cache.loaders.IdentiKitDefinition;
-import com.cryo.cache.loaders.ItemDefinitions;
+import com.cryo.cache.loaders.*;
+import com.cryo.cache.loaders.animations.AnimationDefinitions;
 import com.cryo.entities.accounts.Account;
+import com.cryo.utils.Logger;
 import com.google.gson.internal.LinkedTreeMap;
 import lombok.Data;
 
@@ -96,8 +96,8 @@ public class ModelDefinitions {
             int[] look = account.getLook();
             LinkedTreeMap<String, Object>[] equipped = account.getEquippedItems();
             if (equipped == null)
-                equipped = new LinkedTreeMap[15];
-            RSMesh[] meshes = new RSMesh[15];
+                equipped = new LinkedTreeMap[20];
+            RSMesh[] meshes = new RSMesh[20];
             int size = 0;
             for(int i = 0; i < 4; i++) {
                 if(equipped[i] == null) continue;
@@ -185,9 +185,35 @@ public class ModelDefinitions {
             if(male && look[1] != -1 && (id == -1 || (male && !EquipmentDefaults.hideBeard(id))))
                 meshes[size++] = renderLook(1);
 
-            BASDefinitions defs = BASDefinitions.getDefs(getRenderEmote(account));
+            slot = EquipmentDefaults.AURA;
+            id = (int) ((double) equipped[slot].get("id"));
+            if(id != -1 && equipped[slot].containsKey("models")) {
+                ArrayList<Double> models = (ArrayList<Double>) equipped[slot].get("models");
+                for(Double modelId : models) {
+                    if(modelId == -1) continue;
+                    ModelDefinitions defs = ModelDefinitions.getModelDefinitions(modelId.intValue());
+                    if(defs == null) continue;
+                    meshes[size++] = defs.getMesh();
+                }
+            }
 
-            return new RSMesh(meshes, size);
+            mesh = new RSMesh(meshes, size);
+            EntityDefaults defaults = EntityDefaults.ENTITY_DEFAULTS;
+            if(account.getColours() != null && defaults != null) {
+                for(int i = 0; i < 10; i++) {
+                    for(int j = 0; j < defaults.getOriginalColours()[i].length; j++) {
+                        if(account.getColours()[i] < defaults.getReplacementColours()[i][j].length) {
+                            mesh.recolour(defaults.getOriginalColours()[i][j], defaults.getReplacementColours()[i][j][account.getColours()[i]]);
+                        }
+                    }
+                }
+            }
+            BASDefinitions defs = BASDefinitions.getDefs(getRenderEmote(account));
+            AnimationDefinitions animation = AnimationDefinitions.getDefs(defs.standAnimation);
+            if(animation != null)
+                mesh.animation = animation;
+            mesh.animationBones = mesh.getBones(true);
+            return mesh;
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -195,7 +221,10 @@ public class ModelDefinitions {
     }
 
     public static int getRenderEmote(Account account) {
-        return -1;
+        int id = (int) ((double) account.getEquippedItems()[EquipmentDefaults.WEAPON].get("id"));
+        if(id == -1)
+            return 1426;
+        return ItemDefinitions.getItemDefinitions(id).getRenderAnimId();
     }
 
     public static RSMesh renderLook(int look) {
@@ -226,5 +255,46 @@ public class ModelDefinitions {
         look[5] = 627; //legs
         look[6] = 433; //feet
         return look;
+    }
+
+    public static int getAuraModelId(int weaponId) {
+        if(weaponId == -1) return 8719;
+        String name = ItemDefinitions.getItemDefinitions(weaponId).getName();
+        if (name.contains("dagger")) return 8724;
+        if (name.contains("whip")) return 8725;
+        if (name.contains("2h sword") || name.contains("godsword")) return 8773;
+        if (name.contains("sword") || name.contains("scimitar") || name.contains("korasi")) return 8722;
+        return 8719;
+    }
+
+    public static int getAuraModelId2(int aura) {
+        switch (aura) {
+            case 22905: // Corruption.
+                return 16449;
+            case 22899: // Salvation.
+                return 16465;
+            case 23848: // Harmony.
+                return 68605;
+            case 22907: // Greater corruption.
+                return 16464;
+            case 22901: // Greater salvation.
+                return 16524;
+            case 23850: // Greater harmony.
+                return 68610;
+            case 22909: // Master corruption.
+                return 16429;
+            case 22903: // Master salvation.
+                return 16450;
+            case 23852: // Master harmony.
+                return 68607;
+            case 23874: // Supreme corruption.
+                return 68615;
+            case 23876: // Supreme salvation.
+                return 68611;
+            case 23854: // Supreme harmony.
+                return 68613;
+            default:
+                return -1;
+        }
     }
 }

@@ -8,18 +8,23 @@ include ../../utils/account/recovery_questions
 +includeStylesheet('utils/input')
 +includeStylesheet('utils/buttons')
 
++includeScript('utils/trig')
 +includeScript('utils/rgb-utils')
 +includeScript('utils/three/THREE')
 +includeScript('utils/three/Stats')
 +includeScript('utils/three/TrackballControls')
 
-+includeScript('account/model-viewer')
++includeScript('account/model/frame-manager')
++includeScript('account/model/animation')
++includeScript('account/model/rasterizer')
++includeScript('account/model/animation-manager')
++includeScript('account/model/model-viewer')
 
 script.
 
     $(document).ready(() => {
 
-        loadScene(JSON.parse('!{model}'));
+        loadScene();
 
 
         $('#purchase').click(() => {
@@ -81,6 +86,9 @@ script.
 
 .row
     .col-md-4#model-viewer
+        #render
+        input.input(type='text', placeholder='Animation Id')
+        button.btn.btn-default.input#play-animation(style='margin-left: 5px;') Play
     .col-md-8#overview
         h3 Overview
         .row

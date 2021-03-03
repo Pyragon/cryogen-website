@@ -66,6 +66,8 @@ public class Account extends MySQLDao {
 	@MySQLRead
 	private String look;
 	@MySQLRead
+	private String colours;
+	@MySQLRead
 	private String equippedItems;
 	@MySQLDefault
 	private final Timestamp added;
@@ -74,7 +76,7 @@ public class Account extends MySQLDao {
 
 	private HashMap<Integer, ArrayList<Object>> recoveries;
 
-	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String look, String equippedItems, Timestamp added, Timestamp updated) {
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String look, String colours, String equippedItems, Timestamp added, Timestamp updated) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -93,6 +95,7 @@ public class Account extends MySQLDao {
 		this.bannedFromMovieNight = bannedFromMovieNight;
 		this.gender = gender;
 		this.look = look;
+		this.colours = colours;
 		this.equippedItems = equippedItems;
 		this.added = added;
 		this.updated = updated;
@@ -275,6 +278,16 @@ public class Account extends MySQLDao {
 		for(Double l : look)
 			rLook[index++] = l.intValue();
 		return rLook;
+	}
+
+	public int[] getColours() {
+		if(colours == null) return null;
+		ArrayList<Double> colour = Website.getGson().fromJson(this.colours, ArrayList.class);
+		int[] rColour = new int[colour.size()];
+		int index = 0;
+		for(Double l : colour)
+			rColour[index++] = l.intValue();
+		return rColour;
 	}
 	
 }

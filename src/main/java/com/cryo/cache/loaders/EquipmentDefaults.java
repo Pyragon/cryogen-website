@@ -20,7 +20,10 @@ public class EquipmentDefaults {
     public static final int HAIR_WITH_HAT_PARAM = 790;
     public static final int HAIR_WITH_FACE_MASK_PARAM = 791;
 
-    public static EquipmentDefaults DEFAULTS;
+    public static EquipmentDefaults EQUIPMENT_DEFAULTS;
+
+    public static short[][] DEFAULT_SKIN_COLOURS;
+    public static short[][][] SKIN_COLOURS;
 
     public int[] hidden;
     public int offhandSlot = -1;
@@ -37,7 +40,7 @@ public class EquipmentDefaults {
         }
         EquipmentDefaults defaults = new EquipmentDefaults();
         defaults.decode(new InputStream(data));
-        DEFAULTS = defaults;
+        EQUIPMENT_DEFAULTS = defaults;
     }
 
     public static boolean hideArms(int id) {

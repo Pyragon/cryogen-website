@@ -1,6 +1,7 @@
 package com.cryo.cache.loaders.model;
 
 import com.cryo.cache.io.InputStream;
+import com.cryo.cache.loaders.animations.AnimationDefinitions;
 import com.cryo.utils.Utilities;
 
 public class RSMesh {
@@ -41,6 +42,9 @@ public class RSMesh {
     public int[] textureSecondaryColor;
     public short[] aShortArray1980;
     public short[] aShortArray1981;
+    public AnimationDefinitions animation;
+
+    public int[][] animationBones;
 
     private ParticleEmitterConfig[] particleConfig;
     private SurfaceSkin[] surfaceSkins;
@@ -683,10 +687,44 @@ public class RSMesh {
             realColours[i] = colour;
             int r = (colour>>16)&0xFF;
             int g = (colour>>8)&0xFF;
-            int b = (colour>>0)&0xFF;
+            int b = colour&0xFF;
         }
         this.realFaceColour = realColours;
     }
+
+    public int[][] getBones(boolean bool_1) {
+        int[] ints_2 = new int[256];
+        int i_3 = 0;
+        int i_4 = bool_1 ? vertexCount : maxDepth;
+
+        int i_6;
+        for (int i_5 = 0; i_5 < i_4; i_5++) {
+            i_6 = vertexSkins[i_5];
+            if (i_6 >= 0) {
+                ++ints_2[i_6];
+                if (i_6 > i_3) {
+                    i_3 = i_6;
+                }
+            }
+        }
+
+        int[][] ints_8 = new int[i_3 + 1][];
+
+        for (i_6 = 0; i_6 <= i_3; i_6++) {
+            ints_8[i_6] = new int[ints_2[i_6]];
+            ints_2[i_6] = 0;
+        }
+
+        for (i_6 = 0; i_6 < i_4; i_6++) {
+            int i_7 = vertexSkins[i_6];
+            if (i_7 >= 0) {
+                ints_8[i_7][ints_2[i_7]++] = i_6;
+            }
+        }
+
+        return ints_8;
+    }
+
     void calculateMaxDepth(InputStream first, InputStream second) {
         short s_3 = 0;
         short s_4 = 0;

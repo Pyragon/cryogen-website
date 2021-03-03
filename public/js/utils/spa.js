@@ -2,13 +2,14 @@ var visitorId;
 
 $.ajaxSetup({
     type: 'POST',
-    timeout: 5000,
+    timeout: 60000,
     error: function(xhr, status, e) {
         if (status == 'timeout') {
+            console.error(e);
             sendAlert('We had an issue communicating with the server. Please check your connection settings.');
             return false;
         }
-        sendAlert('We had an issue handling this link. Please refresh the page, and report this problem if it still persists.');
+        sendAlert('We had an issue handling this link2. Please refresh the page, and report this problem if it still persists.');
         console.error(e);
         return false;
     }
@@ -37,7 +38,7 @@ function listenForSPA() {
 
 listenForSPA();
 
-function post(link, data, selector, cb) {
+function post(link, data, selector, cb, onError) {
     console.log(link);
     if (typeof selector === 'function') {
         cb = selector;
@@ -55,11 +56,15 @@ function post(link, data, selector, cb) {
     try {
         $.post(link, data, ret => {
             data = parseJSON(ret);
-            if (!data) return false;
+            if (!data) {
+                if (onError) onError();
+                return false;
+            }
             if (data['404']) {
                 sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
                     window.open('https://github.com/pyragon/cryogen-website/issues');
                 });
+                if (onError) onError();
                 return null;
             }
             if (cb)
@@ -82,6 +87,7 @@ function post(link, data, selector, cb) {
             }
         });
     } catch (e) {
+        if (onError) onError();
         console.error(e);
         console.log(link, data, cb);
     }
@@ -89,7 +95,7 @@ function post(link, data, selector, cb) {
 
 function parseJSON(data) {
     if (!data) {
-        sendAlert('Unable to parse response from server. Please report this problem by clicking on this alert.', function() {
+        sendAlert('Unable to parse response from server2. Please report this problem by clicking on this alert.', function() {
             window.open('https://github.com/pyragon/cryogen-website/issues');
         });
         return null;

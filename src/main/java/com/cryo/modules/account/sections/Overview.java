@@ -1,9 +1,11 @@
 package com.cryo.modules.account.sections;
 
 import com.cryo.Website;
+import com.cryo.cache.loaders.BASDefinitions;
 import com.cryo.cache.loaders.EquipmentDefaults;
 import com.cryo.cache.loaders.IdentiKitDefinition;
 import com.cryo.cache.loaders.ItemDefinitions;
+import com.cryo.cache.loaders.animations.AnimationDefinitions;
 import com.cryo.cache.loaders.model.ModelDefinitions;
 import com.cryo.cache.loaders.model.RSMesh;
 import com.cryo.cache.loaders.model.material.MaterialDefinitions;
@@ -31,6 +33,7 @@ import spark.Request;
 import spark.Response;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -56,12 +59,29 @@ public class Overview {
         if(discord != null)
             model.put("discord", discord);
         model.put("questions", RecoveryQuestion.getQuestions().values());
-        RSMesh mesh = ModelDefinitions.renderPlayerBody(account);
-        if(mesh != null) {
-            mesh.setRealColours();
-            model.put("model", gson.toJson(mesh));
-        }
         return renderPage("account/sections/overview", model, "/account/overview", request, response);
+    }
+
+    @Endpoint(method = "POST", endpoint = "/account/overview/render")
+    public static String renderPlayerModel(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        Properties prop = new Properties();
+        try {
+            RSMesh mesh = ModelDefinitions.renderPlayerBody(account);
+            if (mesh != null) {
+                mesh.setRealColours();
+                prop.put("success", true);
+                String meshGson = gson.toJson(mesh);
+                prop.put("model", meshGson);
+                if(mesh.animation != null)
+                    prop.put("animationId", mesh.animation.id);
+                return Website.getGson().toJson(prop);
+            } else return error("Error loading player model. Please refresh the page and try again.");
+        } catch(Exception e) {
+            e.printStackTrace();
+            return error("Error loading player model. Please refresh the page and try again.");
+        }
     }
 
     @Endpoint(method = "POST", endpoint = "/account/overview/question")

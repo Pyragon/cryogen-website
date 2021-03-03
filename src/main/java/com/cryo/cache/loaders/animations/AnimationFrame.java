@@ -21,12 +21,22 @@ public class AnimationFrame {
 	public short[] transformationIndices;
 	public boolean aBool988;
 	public int frameBaseId;
-	public AnimationFrameBase frameBase;
+	public GsonFrameBase frameBase;
+
+	public int id;
+	public int setId;
+
+	static int count = 0;
+
+	public AnimationFrame(int id, int setId, GsonFrameBase file) {
+		this.id = id;
+		this.setId = setId;
+		this.frameBase = file;
+		this.frameBaseId = file.id;
+	}
 	
-	public static AnimationFrame getFrame(byte[] frameData, AnimationFrameBase frameBase) {
-		AnimationFrame frame = new AnimationFrame();
-		frame.frameBase = frameBase;
-		frame.frameBaseId = frameBase.id;
+	public static AnimationFrame getFrame(int setId, int id, byte[] frameData, GsonFrameBase file) {
+		AnimationFrame frame = new AnimationFrame(id, setId, file);
 		frame.readFrameData(frameData);
 		return frame;
 	}
@@ -59,15 +69,15 @@ public class AnimationFrame {
 					if (type == 3 || type == 10)
 						value = (short) 128;
 					if ((attribute & 0x1) != 0)
-						bufferX[used] = (short) transformationBuffer.readSmart();
+						bufferX[used] = (short) transformationBuffer.readUnsignedSmart2();
 					else
 						bufferX[used] = value;
 					if ((attribute & 0x2) != 0)
-						bufferY[used] = (short) transformationBuffer.readSmart();
+						bufferY[used] = (short) transformationBuffer.readUnsignedSmart2();
 					else
 						bufferY[used] = value;
 					if ((attribute & 0x4) != 0)
-						bufferZ[used] = (short) transformationBuffer.readSmart();
+						bufferZ[used] = (short) transformationBuffer.readUnsignedSmart2();
 					else
 						bufferZ[used] = value;
 					flagsBuffer[used] = (byte) (attribute >>> 3 & 0x3);
@@ -114,6 +124,7 @@ public class AnimationFrame {
 			this.transformationCount = 0;
 			this.modifiesAlpha = false;
 			this.modifiesColor = false;
+			exception_13.printStackTrace();
 		}
 	}
 }

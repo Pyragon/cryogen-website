@@ -228,11 +228,11 @@ public class Utilities {
                     int count = method.getParameterCount();
                     if((count != 2 && count != 3) || (!method.isAnnotationPresent(Endpoint.class) && !method.isAnnotationPresent(SPAEndpoint.class) && !method.isAnnotationPresent(SPAEndpoints.class))) continue;
                     if(!Modifier.isStatic(method.getModifiers())) {
-                        Logger.log("EndpointInitializer", "Expected method to be static in order for endpoint to work! "+method.getName());
+                        Logger.log("EndpointInitializer", "Expected method to be static in order for endpoint to work! "+method.getName(), true);
                         throw new RuntimeException();
                     }
                     if(method.getReturnType() != String.class) {
-                        Logger.log("EndpointInitializer", "Expected endpoint to return a String! "+method.getName());
+                        Logger.log("EndpointInitializer", "Expected endpoint to return a String! "+method.getName(), true);
                         throw new RuntimeException();
                     }
                     if(!classChecked) {
