@@ -1,9 +1,28 @@
 package com.cryo.cache.loaders;
 
+import com.cryo.Website;
 import com.cryo.cache.Cache;
 import com.cryo.cache.IndexType;
 import com.cryo.cache.io.InputStream;
+import com.cryo.cache.loaders.model.material.MaterialDefinitions;
+import com.cryo.entities.accounts.Account;
+import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
+import com.cryo.modules.account.AccountUtils;
+import com.cryo.modules.account.sections.Overview;
+import com.google.common.io.ByteStreams;
+import com.google.common.net.MediaType;
+import lombok.Cleanup;
+import org.apache.commons.lang3.math.NumberUtils;
+import spark.Request;
+import spark.Response;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.Properties;
+
+import static com.cryo.utils.Utilities.error;
 
 @EndpointSubscriber
 public class TextureDefinitions {
@@ -121,6 +140,62 @@ public class TextureDefinitions {
         for (int i = 0; i < textureDefSize; i++) {
             if (textures[i] != null)
                 textures[i].blendType = stream.readUnsignedByte();
+        }
+    }
+
+    @Endpoint(method="POST", endpoint="/textures/defs/:id")
+    public static String getTextureDefinitions(Request request, Response response) {
+        Account account = AccountUtils.getAccount(request);
+        if(account == null) return error("Session has expired. Please refresh the page and try again.");
+        if (!NumberUtils.isDigits(request.params(":id")))
+            return error("Invalid id. Please try again."+request.params(":id"));
+        int id = Integer.parseInt(request.params(":id"));
+        TextureDefinitions textureDefinitions = TextureDefinitions.getDefinitions(id);
+        if(textureDefinitions == null)
+            return error("Unable to load texture details. Please try again.");
+        Properties prop = new Properties();
+        prop.put("success", true);
+        prop.put("defs", Overview.getGson().toJson(textureDefinitions));
+        return Website.getGson().toJson(prop);
+    }
+
+    @Endpoint(method="GET", endpoint="/material/:id")
+    public static String renderMaterialImage(Request request, Response response) {
+        try {
+            if (!NumberUtils.isDigits(request.params(":id")))
+                return error("Invalid id. Please try again.");
+            int id = Integer.parseInt(request.params(":id"));
+            MaterialDefinitions defs = MaterialDefinitions.getMaterialDefinitions(id);
+            if (defs == null)
+                return error("Unable to load material. Please try again.");
+            TextureDefinitions textureDefinitions = TextureDefinitions.getDefinitions(id);
+            if(textureDefinitions == null)
+                return error("Unable to load texture details. Please try again.");
+            int resolution = textureDefinitions.isHalfSize ? 64 : 128;
+            int[] pixels = defs.renderIntPixels((float) 0.7, resolution, resolution, false);
+            BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.TYPE_INT_RGB);
+            image.setRGB(0, 0, resolution, resolution, pixels, 0, resolution);
+            image.flush();
+            try {
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", outStream);
+                java.io.InputStream in = new ByteArrayInputStream(outStream.toByteArray());
+                @Cleanup OutputStream out = new BufferedOutputStream(response.raw().getOutputStream());
+                response.raw().setContentType(MediaType.PNG.toString());
+                response.status(200);
+                ByteStreams.copy(in, out);
+                out.flush();
+                return "";
+            } catch (FileNotFoundException ex) {
+                response.status(404);
+                return ex.getMessage();
+            } catch (IOException ex) {
+                response.status(500);
+                return ex.getMessage();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            return error("Error loading.");
         }
     }
 

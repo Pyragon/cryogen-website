@@ -4,6 +4,20 @@ import com.cryo.cache.io.InputStream;
 
 public class MaterialProp32 extends MaterialProperty {
 
+    public static byte[] aByteArray9814;
+
+    static {
+        int i_0 = 0;
+        aByteArray9814 = new byte[32896];
+
+        for (int i_1 = 0; i_1 < 256; i_1++) {
+            for (int i_2 = 0; i_2 <= i_1; i_2++) {
+                aByteArray9814[i_0++] = (byte) ((int) (255.0D / Math.sqrt((i_2 * i_2 + i_1 * i_1 + 65535) / 65535.0F)));
+            }
+        }
+
+    }
+
     int anInt9810 = 4096;
     int anInt9813 = 3216;
     int anInt9807 = 3216;
@@ -11,6 +25,55 @@ public class MaterialProp32 extends MaterialProperty {
 
     public MaterialProp32() {
         super(1, true);
+    }
+
+    @Override
+    public int[] method12319(int i_1) {
+        int[] ints_3 = aClass320_7667.method5721(i_1);
+        if (aClass320_7667.aBool3722) {
+            int i_4 = anInt9810 * Class316.anInt3678 >> 12;
+            int[] ints_5 = method12317(0, i_1 - 1 & Class316.anInt3673);
+            int[] ints_6 = method12317(0, i_1);
+            int[] ints_7 = method12317(0, i_1 + 1 & Class316.anInt3673);
+
+            for (int i_8 = 0; i_8 < Class316.anInt3670; i_8++) {
+                int i_9 = (ints_7[i_8] - ints_5[i_8]) * i_4 >> 12;
+                int i_10 = i_4 * (ints_6[i_8 - 1 & Class316.anInt3669] - ints_6[i_8 + 1 & Class316.anInt3669]) >> 12;
+                int i_11 = i_10 >> 4;
+                int i_12 = i_9 >> 4;
+                if (i_11 < 0) {
+                    i_11 = -i_11;
+                }
+
+                if (i_11 > 255) {
+                    i_11 = 255;
+                }
+
+                if (i_12 < 0) {
+                    i_12 = -i_12;
+                }
+
+                if (i_12 > 255) {
+                    i_12 = 255;
+                }
+
+                int i_13 = aByteArray9814[i_11 + (i_12 * (i_12 + 1) >> 1)] & 0xff;
+                int i_14 = i_10 * i_13 >> 8;
+                int i_15 = i_9 * i_13 >> 8;
+                int i_16 = i_13 * 4096 >> 8;
+                i_14 = i_14 * anIntArray9808[0] >> 12;
+                i_15 = anIntArray9808[1] * i_15 >> 12;
+                i_16 = i_16 * anIntArray9808[2] >> 12;
+                ints_3[i_8] = i_16 + i_15 + i_14;
+            }
+        }
+
+        return ints_3;
+    }
+
+    @Override
+    public int[][] getPixels(int i_1) {
+        return null;
     }
 
     @Override

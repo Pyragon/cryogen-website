@@ -11,6 +11,35 @@ public class MaterialProp10 extends MaterialProperty {
         super(1, false);
     }
 
+    @Override
+    public int[][] getPixels(int i_1) {
+        int[][] ints_3 = aClass308_7670.method5463(i_1);
+        if (aClass308_7670.aBool3619) {
+            int[] ints_4 = method12317(0, i_1);
+            int[] ints_5 = ints_3[0];
+            int[] ints_6 = ints_3[1];
+            int[] ints_7 = ints_3[2];
+
+            for (int i_8 = 0; i_8 < Class316.anInt3670; i_8++) {
+                int i_9 = ints_4[i_8] >> 4;
+                if (i_9 < 0) {
+                    i_9 = 0;
+                }
+
+                if (i_9 > 256) {
+                    i_9 = 256;
+                }
+
+                i_9 = anIntArray9823[i_9];
+                ints_5[i_8] = (i_9 & 0xff0000) >> 12;
+                ints_6[i_8] = (i_9 & 0xff00) >> 4;
+                ints_7[i_8] = (i_9 & 0xff) << 4;
+            }
+        }
+
+        return ints_3;
+    }
+
     void method15268() {
         int i_2 = anIntArrayArray9822.length;
         if (i_2 > 0) {
@@ -301,6 +330,11 @@ public class MaterialProp10 extends MaterialProperty {
             }
         }
 
+    }
+
+    @Override
+    public int[] method12319(int i_1) {
+        return null;
     }
 
 }

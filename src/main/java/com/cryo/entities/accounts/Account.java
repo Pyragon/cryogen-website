@@ -69,6 +69,10 @@ public class Account extends MySQLDao {
 	private String colours;
 	@MySQLRead
 	private String equippedItems;
+	@MySQLRead
+	private int startAnimationId;
+	@MySQLRead
+	private int renderAnimationId;
 	@MySQLDefault
 	private final Timestamp added;
 	@MySQLDefault
@@ -76,7 +80,7 @@ public class Account extends MySQLDao {
 
 	private HashMap<Integer, ArrayList<Object>> recoveries;
 
-	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String look, String colours, String equippedItems, Timestamp added, Timestamp updated) {
+	public Account(int id, String username, String password, String salt, int rights, int donator, String questions, String avatarUrl, String tfaKey, String customUserTitle, int displayGroup, String usergroups, String creationIP, boolean passwordResetRequired, boolean mutedFromMovieNight, boolean bannedFromMovieNight, int gender, String look, String colours, String equippedItems, int startAnimationId, int renderAnimationId, Timestamp added, Timestamp updated) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -97,6 +101,8 @@ public class Account extends MySQLDao {
 		this.look = look;
 		this.colours = colours;
 		this.equippedItems = equippedItems;
+		this.startAnimationId = startAnimationId;
+		this.renderAnimationId = renderAnimationId;
 		this.added = added;
 		this.updated = updated;
 	}

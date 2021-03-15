@@ -6,4 +6,13 @@ public class MaterialProp2 extends MaterialProperty {
         super(0, true);
     }
 
+    @Override
+    public int[] method12319(int i_1) {
+        return Class316.anIntArray3672;
+    }
+
+    @Override
+    public int[][] getPixels(int i_1) {
+        return null;
+    }
 }

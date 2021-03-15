@@ -1,23 +1,16 @@
 package com.cryo.modules.account.sections;
 
 import com.cryo.Website;
-import com.cryo.cache.loaders.BASDefinitions;
-import com.cryo.cache.loaders.EquipmentDefaults;
-import com.cryo.cache.loaders.IdentiKitDefinition;
-import com.cryo.cache.loaders.ItemDefinitions;
 import com.cryo.cache.loaders.animations.AnimationDefinitions;
+import com.cryo.cache.loaders.animations.SpotAnimationDefinitions;
 import com.cryo.cache.loaders.model.ModelDefinitions;
 import com.cryo.cache.loaders.model.RSMesh;
-import com.cryo.cache.loaders.model.material.MaterialDefinitions;
-import com.cryo.cache.loaders.model.material.properties.MaterialPropTexture;
-import com.cryo.cache.loaders.model.material.properties.MaterialProperty;
 import com.cryo.entities.accounts.support.RecoveryQuestion;
 import com.cryo.entities.annotations.Endpoint;
 import com.cryo.entities.annotations.EndpointSubscriber;
 import com.cryo.entities.accounts.Account;
 import com.cryo.entities.accounts.discord.Discord;
 import com.cryo.entities.accounts.discord.Verify;
-import com.cryo.entities.logs.Item;
 import com.cryo.modules.account.AccountUtils;
 import com.cryo.modules.account.Login;
 import com.cryo.utils.BCrypt;
@@ -28,6 +21,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mysql.cj.util.StringUtils;
+import lombok.Getter;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
@@ -44,6 +38,7 @@ import static com.cryo.utils.Utilities.renderPage;
 @EndpointSubscriber
 public class Overview {
 
+    @Getter
     private static Gson gson;
 
     static {
@@ -68,12 +63,37 @@ public class Overview {
         if(account == null) return error("Session has expired. Please refresh the page and try again.");
         Properties prop = new Properties();
         try {
+//            SpotAnimationDefinitions spotAnimationDefinitions = SpotAnimationDefinitions.getSpotAnimationDefinitions(252);
+//            if(spotAnimationDefinitions == null)
+//                return error("Unable to find spot animation. Please refresh the page and try again.");
+//            ModelDefinitions modelDefinitions = ModelDefinitions.getModelDefinitions(spotAnimationDefinitions.getDefaultModelId());
+//            if(modelDefinitions == null)
+//                return error("Unable to find model definitions. Please refresh the page and try again.");
+//            RSMesh mesh = modelDefinitions.getMesh();
+//            if(mesh == null)
+//                return error("Error loading player model. Please refresh the page and try again.");
+//            mesh.setRealColours();
+//            AnimationDefinitions animationDefinitions = AnimationDefinitions.getAnimationDefinitions(spotAnimationDefinitions.getAnimationId());
+//            if(animationDefinitions == null)
+//                return error("Unable to load animation definitions. Please refresh the page and try again.");
+//            prop.put("animationId", spotAnimationDefinitions.getAnimationId());
+//            System.out.println(spotAnimationDefinitions.getAnimationId());
+//            mesh.animation = animationDefinitions;
+//            mesh.animationBones = mesh.getBones(true);
+//            mesh.upscale();
+//            prop.put("success", true);
+//            String meshGson = gson.toJson(mesh);
+//            prop.put("model", meshGson);
+//            prop.put("height", 100);
+//            return Website.getGson().toJson(prop);
             RSMesh mesh = ModelDefinitions.renderPlayerBody(account);
             if (mesh != null) {
                 mesh.setRealColours();
                 prop.put("success", true);
                 String meshGson = gson.toJson(mesh);
                 prop.put("model", meshGson);
+                if(mesh.render != null)
+                    prop.put("renderId", mesh.render.id);
                 if(mesh.animation != null)
                     prop.put("animationId", mesh.animation.id);
                 return Website.getGson().toJson(prop);

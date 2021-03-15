@@ -1,12 +1,15 @@
 package com.cryo.cache.loaders.model;
 
 import com.cryo.cache.io.InputStream;
+import com.cryo.cache.loaders.TextureDefinitions;
 import com.cryo.cache.loaders.animations.AnimationDefinitions;
 import com.cryo.utils.Utilities;
 
+import java.util.Arrays;
+
 public class RSMesh {
 
-    private int id;
+    public int id;
     public int version = 12;
     public int vertexCount;
     public int maxDepth;
@@ -42,7 +45,10 @@ public class RSMesh {
     public int[] textureSecondaryColor;
     public short[] aShortArray1980;
     public short[] aShortArray1981;
+    public AnimationDefinitions render;
     public AnimationDefinitions animation;
+
+    public TextureDefinitions[] textureDefinitions;
 
     public int[][] animationBones;
 

@@ -235,7 +235,10 @@ public class MapImageDumper {
                 int spriteId = MapSpriteDefinitions.getMapSpriteDefinitions(defs.mapSpriteId).spriteId;
                 if (spriteId == -1)
                     continue;
-                Image spriteImage = new SpriteDefinitions(Cache.STORE, spriteId, 0).getImages()[0];
+                SpriteDefinitions spriteDefinitions = SpriteDefinitions.getSprite(spriteId, 0);
+                if(spriteDefinitions == null)
+                    continue;
+                Image spriteImage = spriteDefinitions.image;
                 graphics.drawImage(spriteImage, localX * PIXELS_PER_TILE, drawY * PIXELS_PER_TILE, null);
             }
         }
@@ -326,7 +329,10 @@ public class MapImageDumper {
             if(defs.mapIcon != -1) {
                 AreaDefinitions area = AreaDefinitions.getDefinitions(defs.mapIcon);
                 if(area.spriteId != -1) {
-                    Image spriteImage = new SpriteDefinitions(Cache.STORE, area.spriteId, 0).getImages()[0];
+                    SpriteDefinitions spriteDefinitions = SpriteDefinitions.getSprite(area.spriteId, 0);
+                    if(spriteDefinitions == null)
+                        continue;
+                    Image spriteImage = spriteDefinitions.image;
                     graphics.drawImage(spriteImage, (localX - 1) * PIXELS_PER_TILE, (drawY - 1) * PIXELS_PER_TILE, null);
                 }
             }

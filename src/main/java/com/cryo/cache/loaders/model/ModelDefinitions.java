@@ -1,24 +1,18 @@
 package com.cryo.cache.loaders.model;
 
-import com.cryo.Website;
 import com.cryo.cache.Cache;
 import com.cryo.cache.IndexType;
-import com.cryo.cache.io.InputStream;
 import com.cryo.cache.loaders.*;
 import com.cryo.cache.loaders.animations.AnimationDefinitions;
 import com.cryo.entities.accounts.Account;
-import com.cryo.utils.Logger;
 import com.google.gson.internal.LinkedTreeMap;
 import lombok.Data;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Properties;
 
 @Data
 public class ModelDefinitions {
@@ -26,21 +20,18 @@ public class ModelDefinitions {
     private int id;
     private RSMesh mesh;
 
-    private static HashMap<Integer, ModelDefinitions> defs = new HashMap<>();
-
     public static ModelDefinitions getModelDefinitions(int id) {
-        if(defs.containsKey(id)) return defs.get(id);
         byte[] data = Cache.STORE.getIndex(IndexType.MODELS).getFile(id, 0);
         if(data == null) return null;
         ModelDefinitions defs = new ModelDefinitions(id);
         try {
             RSMesh mesh = new RSMesh();
+            mesh.id = id;
             mesh.decode(data);
             defs.mesh = mesh;
         } catch(Exception e) {
             e.printStackTrace();
         }
-        ModelDefinitions.defs.put(id, defs);
         return defs;
     }
 
@@ -208,10 +199,17 @@ public class ModelDefinitions {
                     }
                 }
             }
-            BASDefinitions defs = BASDefinitions.getDefs(getRenderEmote(account));
-            AnimationDefinitions animation = AnimationDefinitions.getDefs(defs.standAnimation);
-            if(animation != null)
-                mesh.animation = animation;
+
+            AnimationDefinitions render = AnimationDefinitions.getAnimationDefinitions(getRenderEmote(account));
+            if(render != null)
+                mesh.render = render;
+
+            if(account.getStartAnimationId() != -1) {
+                AnimationDefinitions animation = AnimationDefinitions.getAnimationDefinitions(account.getStartAnimationId());
+                if(animation != null)
+                    mesh.animation = animation;
+            }
+
             mesh.animationBones = mesh.getBones(true);
             return mesh;
         } catch(Exception e) {
@@ -221,10 +219,20 @@ public class ModelDefinitions {
     }
 
     public static int getRenderEmote(Account account) {
+        if(account.getRenderAnimationId() != -1)
+            return getStandAnimation(account.getRenderAnimationId());
         int id = (int) ((double) account.getEquippedItems()[EquipmentDefaults.WEAPON].get("id"));
         if(id == -1)
-            return 1426;
-        return ItemDefinitions.getItemDefinitions(id).getRenderAnimId();
+            id = 1426;
+        int renderId = ItemDefinitions.getItemDefinitions(id).getRenderAnimId();
+        return getStandAnimation(renderId);
+    }
+
+    public static int getStandAnimation(int id) {
+        BASDefinitions defs = BASDefinitions.getDefs(id);
+        if(defs == null)
+            return 808;
+        return defs.standAnimation;
     }
 
     public static RSMesh renderLook(int look) {

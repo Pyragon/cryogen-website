@@ -16,6 +16,7 @@ Animation.Animation = function Animation() {
             if (this.defs.ReplayMode == 0) return;
         } else
             this.defs = defs;
+        this.id = id;
         this.anInt5459 = 0;
         this.speed = speed;
         this.anInt5461 = i_3;
@@ -133,7 +134,7 @@ Animation.Animation = function Animation() {
         if (this.defs == null || this.defs.FrameHashes == null) return;
         let setup = await this.setupAnimationFrames();
         if (setup == true)
-            rasterizer.rasterize(this.frameManager.frameSet1, this.frameManager.frame1Id, this.frameManager.frameSet2, this.frameManager.frame2Id, this.frame1Duration, this.defs.FrameDurations[this.frame1Index], i_2, this.defs.ABool5923);
+            rasterizer.rasterize(this.id, this.frameManager.frameSet1, this.frameManager.frame1Id, this.frameManager.frameSet2, this.frameManager.frame2Id, this.frame1Duration, this.defs.FrameDurations[this.frame1Index], i_2, this.defs.ABool5923);
     }
 
     this.setupAnimationFrames = async function() {

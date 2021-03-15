@@ -3,141 +3,567 @@ package com.cryo.cache.loaders;
 import com.cryo.cache.Cache;
 import com.cryo.cache.IndexType;
 import com.cryo.cache.io.InputStream;
-import com.cryo.cache.io.OutputStream;
-import com.cryo.cache.store.Store;
+import com.cryo.utils.JagexArrayUtils;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.RGBImageFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-public final class SpriteDefinitions {
+public class SpriteDefinitions {
 
-	private BufferedImage[] images;
+	public BufferedImage image;
 
-	private int pallete[];
-	private int pixelsIndexes[][];
-	private byte alpha[][];
-	private boolean[] usesAlpha;
-	private int biggestWidth;
-	private int biggestHeight;
+	public int minX;
+	public int minY;
+	public int width;
+	public int height;
+	public int anInt958;
+	public int anInt953;
+	public int[] pallete;
+	public byte[] pixels;
+	public byte[] alpha;
 
-	public SpriteDefinitions(BufferedImage... images) {
-		this.images = images;
-	}
-	
-	public static SpriteDefinitions getSprite(int spriteId, int fileId) {
-		return new SpriteDefinitions(Cache.STORE, spriteId, fileId);
+	public static SpriteDefinitions[] getSpriteArray(int id) {
+		byte[] data = Cache.STORE.getIndex(IndexType.SPRITES).getAnyFile(id);
+		if(data == null) return null;
+		return decode(data);
 	}
 
-	public SpriteDefinitions(Store cache, int archiveId, int fileId) {
-		decodeArchive(cache, archiveId, fileId);
+	public static SpriteDefinitions getSprite(int id) {
+		return getSpriteArray(id)[0];
 	}
 
-	public void decodeArchive(Store cache, int archiveId, int fileId) {
-		byte[] data = cache.getIndex(IndexType.SPRITES).getFile(archiveId, fileId);
-		if (data == null)
-			return;
+	public static SpriteDefinitions[] getSpriteArray(int archiveId, int fileId) {
+		byte[] data = Cache.STORE.getIndex(IndexType.SPRITES).getFile(archiveId, fileId);
+		if(data == null)
+			return null;
+		return decode(data);
+	}
+
+	public static SpriteDefinitions getSprite(int archiveId, int fileId) {
+		SpriteDefinitions[] arr = getSpriteArray(archiveId, fileId);
+		if(arr == null)
+			return null;
+		return arr[0];
+	}
+
+	public static SpriteDefinitions[] decode(byte[] data) {
 		InputStream stream = new InputStream(data);
 		stream.setOffset(data.length - 2);
 		int count = stream.readUnsignedShort();
-		images = new BufferedImage[count];
-		pixelsIndexes = new int[images.length][];
-		alpha = new byte[images.length][];
-		usesAlpha = new boolean[images.length];
-		int[] imagesMinX = new int[images.length];
-		int[] imagesMinY = new int[images.length];
-		int[] imagesWidth = new int[images.length];
-		int[] imagesHeight = new int[images.length];
-		stream.setOffset(data.length - 7 - images.length * 8);
-		setBiggestWidth(stream.readShort()); // biggestWidth
-		setBiggestHeight(stream.readShort()); // biggestHeight
-		int palleteLength = (stream.readUnsignedByte() & 0xff) + 1; // 1 + up to
-		// 255.
-		for (int index = 0; index < images.length; index++)
-			imagesMinX[index] = stream.readUnsignedShort();
-		for (int index = 0; index < images.length; index++)
-			imagesMinY[index] = stream.readUnsignedShort();
-		for (int index = 0; index < images.length; index++)
-			imagesWidth[index] = stream.readUnsignedShort();
-		for (int index = 0; index < images.length; index++)
-			imagesHeight[index] = stream.readUnsignedShort();
-		stream.setOffset(data.length - 7 - images.length * 8 - (palleteLength - 1) * 3);
-		pallete = new int[palleteLength];
-		for (int index = 1; index < palleteLength; index++) {
-			pallete[index] = stream.read24BitInt();
-			if (pallete[index] == 0)
-				pallete[index] = 1;
+		SpriteDefinitions[] sprites = new SpriteDefinitions[count];
+
+		for (int i = 0; i < count; i++) {
+			sprites[i] = new SpriteDefinitions();
 		}
+
+		stream.setOffset(data.length - 7 - count * 8);
+		int biggestWidth = stream.readUnsignedShort();
+		int biggestHeight = stream.readUnsignedShort();
+		int palleteLength = (stream.readUnsignedByte() & 0xff) + 1;
+
+		for (int i = 0; i < count; i++) {
+			sprites[i].minX = stream.readUnsignedShort();
+		}
+
+		for (int i = 0; i < count; i++) {
+			sprites[i].minY = stream.readUnsignedShort();
+		}
+
+		for (int i = 0; i < count; i++) {
+			sprites[i].width = stream.readUnsignedShort();
+		}
+
+		for (int i = 0; i < count; i++) {
+			sprites[i].height = stream.readUnsignedShort();
+		}
+
+		for (int i = 0; i < count; i++) {
+			SpriteDefinitions sprite = sprites[i];
+			sprite.anInt958 = biggestWidth - sprite.width - sprite.minX;
+			sprite.anInt953 = biggestHeight - sprite.height - sprite.minY;
+		}
+
+		stream.setOffset(data.length - 7 - count * 8 - (palleteLength - 1) * 3);
+		int[] pallete = new int[palleteLength];
+
+		for (int i = 1; i < palleteLength; i++) {
+			pallete[i] = stream.read24BitUnsignedInt();
+			if (pallete[i] == 0) {
+				pallete[i] = 1;
+			}
+		}
+
+		for (int i = 0; i < count; i++) {
+			sprites[i].pallete = pallete;
+		}
+
 		stream.setOffset(0);
-		for (int i_20_ = 0; i_20_ < images.length; i_20_++) {
-			int pixelsIndexesLength = imagesWidth[i_20_] * imagesHeight[i_20_];
-			pixelsIndexes[i_20_] = new int[pixelsIndexesLength];
-			alpha[i_20_] = new byte[pixelsIndexesLength];
-			int maskData = stream.readUnsignedByte();
-			if ((maskData & 0x2) == 0) {
-				if ((maskData & 0x1) == 0) {
-					for (int index = 0; index < pixelsIndexesLength; index++) {
-						pixelsIndexes[i_20_][index] = (byte) stream.readByte();
+
+		for (int i = 0; i < count; i++) {
+			SpriteDefinitions sprite = sprites[i];
+			int numPixels = sprite.width * sprite.height;
+			sprite.pixels = new byte[numPixels];
+			int flags = stream.readUnsignedByte();
+			boolean usesAlpha = false;
+			if ((flags & 0x2) == 0) {
+				if ((flags & 0x1) == 0) {
+					for (int j = 0; j < numPixels; j++) {
+						sprite.pixels[j] = (byte) stream.readByte();
 					}
 				} else {
-					for (int i_24_ = 0; i_24_ < imagesWidth[i_20_]; i_24_++) {
-						for (int i_25_ = 0; i_25_ < imagesHeight[i_20_]; i_25_++) {
-							pixelsIndexes[i_20_][i_24_ + i_25_ * imagesWidth[i_20_]] = (byte) stream.readByte();
+					for (int j = 0; j < sprite.width; j++) {
+						for (int k = 0; k < sprite.height; k++) {
+							sprite.pixels[j + k * sprite.width] = (byte) stream.readByte();
 						}
 					}
 				}
 			} else {
-				usesAlpha[i_20_] = true;
-				boolean bool = false;
-				if ((maskData & 0x1) == 0) {
-					for (int index = 0; index < pixelsIndexesLength; index++) {
-						pixelsIndexes[i_20_][index] = (byte) stream.readByte();
+				sprite.alpha = new byte[numPixels];
+				if ((flags & 0x1) == 0) {
+					for (int j = 0; j < numPixels; j++) {
+						sprite.pixels[j] = (byte) stream.readByte();
 					}
-					for (int i_27_ = 0; i_27_ < pixelsIndexesLength; i_27_++) {
-						byte i_28_ = (alpha[i_20_][i_27_] = (byte) stream.readByte());
-						bool = bool | i_28_ != -1;
+
+					for (int j = 0; j < numPixels; j++) {
+						byte alpha = sprite.alpha[j] = (byte) stream.readByte();
+						usesAlpha |= alpha != -1;
 					}
 				} else {
-					for (int i_29_ = 0; i_29_ < imagesWidth[i_20_]; i_29_++) {
-						for (int i_30_ = 0; i_30_ < imagesHeight[i_20_]; i_30_++) {
-							pixelsIndexes[i_20_][i_29_ + i_30_ * imagesWidth[i_20_]] = stream.readByte();
+					for (int j = 0; j < sprite.width; j++) {
+						for (int k = 0; k < sprite.height; k++) {
+							sprite.pixels[j + k * sprite.width] = (byte) stream.readByte();
 						}
 					}
-					for (int i_31_ = 0; i_31_ < imagesWidth[i_20_]; i_31_++) {
-						for (int i_32_ = 0; i_32_ < imagesHeight[i_20_]; i_32_++) {
-							byte i_33_ = (alpha[i_20_][i_31_ + i_32_ * imagesWidth[i_20_]] = (byte) stream.readByte());
-							bool = bool | i_33_ != -1;
+
+					for (int j = 0; j < sprite.width; j++) {
+						for (int k = 0; k < sprite.height; k++) {
+							byte alpha = sprite.alpha[j + k * sprite.width] = (byte) stream.readByte();
+							usesAlpha |= alpha != -1;
 						}
 					}
 				}
-				if (!bool)
-					alpha[i_20_] = null;
+
+				if (!usesAlpha) {
+					sprite.alpha = null;
+				}
 			}
-			images[i_20_] = getBufferedImage(imagesWidth[i_20_], imagesHeight[i_20_], pixelsIndexes[i_20_], alpha[i_20_], usesAlpha[i_20_]);
+			sprite.image = sprite.getBufferedImage(sprite.width, sprite.height, sprite.pixels, sprite.alpha, usesAlpha);
 		}
+
+		return sprites;
 	}
 
-	public BufferedImage getBufferedImage(int width, int height, int[] pixelsIndexes, byte[] extraPixels, boolean useExtraPixels) {
+	public int getMaxWidth() {
+		return width + minX + anInt958;
+	}
+
+	public int getMaxHeight() {
+		return height + minY + anInt953;
+	}
+
+	public void load() {
+		int i_1 = getMaxWidth();
+		int i_2 = getMaxHeight();
+		if (i_1 != width || i_2 != height) {
+			byte[] bytes_3 = new byte[i_1 * i_2];
+			int i_5;
+			int i_6;
+			int i_7;
+			if (alpha != null) {
+				byte[] bytes_4 = new byte[i_1 * i_2];
+				i_5 = 0;
+
+				while (true) {
+					if (i_5 >= height) {
+						alpha = bytes_4;
+						break;
+					}
+
+					i_6 = i_5 * width;
+					i_7 = i_1 * (i_5 + minY) + minX;
+
+					for (int i_8 = 0; i_8 < width; i_8++) {
+						bytes_3[i_7] = pixels[i_6];
+						bytes_4[i_7++] = alpha[i_6++];
+					}
+
+					++i_5;
+				}
+			} else {
+				for (int i_9 = 0; i_9 < height; i_9++) {
+					i_5 = i_9 * width;
+					i_6 = i_1 * (i_9 + minY) + minX;
+
+					for (i_7 = 0; i_7 < width; i_7++) {
+						bytes_3[i_6++] = pixels[i_5++];
+					}
+				}
+			}
+
+			anInt953 = 0;
+			minY = 0;
+			anInt958 = 0;
+			minX = 0;
+			width = i_1;
+			height = i_2;
+			pixels = bytes_3;
+		}
+
+	}
+
+	public void method1524(int i_1) {
+		int i_2 = -1;
+		int i_3;
+		int i_4;
+		int i_5;
+		if (pallete.length < 255) {
+			for (i_3 = 0; i_3 < pallete.length; i_3++) {
+				if (pallete[i_3] == i_1) {
+					i_2 = i_3;
+					break;
+				}
+			}
+
+			if (i_2 == -1) {
+				i_2 = pallete.length;
+				int[] ints_16 = new int[pallete.length + 1];
+				JagexArrayUtils.method8362(pallete, 0, ints_16, 0, pallete.length);
+				pallete = ints_16;
+				ints_16[i_2] = i_1;
+			}
+		} else {
+			i_3 = Integer.MAX_VALUE;
+			i_4 = i_1 >> 16 & 0xff;
+			i_5 = i_1 >> 8 & 0xff;
+			int i_6 = i_1 & 0xff;
+
+			for (int i_7 = 0; i_7 < pallete.length; i_7++) {
+				int i_8 = pallete[i_7];
+				int i_9 = i_8 >> 16 & 0xff;
+				int i_10 = i_8 >> 8 & 0xff;
+				int i_11 = i_8 & 0xff;
+				int i_12 = i_4 - i_9;
+				if (i_12 < 0) {
+					i_12 = -i_12;
+				}
+
+				int i_13 = i_5 - i_10;
+				if (i_13 < 0) {
+					i_13 = -i_13;
+				}
+
+				int i_14 = i_6 - i_11;
+				if (i_14 < 0) {
+					i_14 = -i_14;
+				}
+
+				int i_15 = i_12 + i_13 + i_14;
+				if (i_15 < i_3) {
+					i_3 = i_15;
+					i_2 = i_7;
+				}
+			}
+		}
+
+		for (i_3 = height - 1; i_3 > 0; --i_3) {
+			i_4 = i_3 * width;
+
+			for (i_5 = width - 1; i_5 > 0; --i_5) {
+				if (pallete[pixels[i_5 + i_4] & 0xff] == 0 && pallete[pixels[i_5 + i_4 - 1 - width] & 0xff] != 0) {
+					pixels[i_5 + i_4] = (byte) i_2;
+				}
+			}
+		}
+
+	}
+
+	public void method1525() {
+		byte[] bytes_1 = pixels;
+		int i_2;
+		int i_3;
+		int i_4;
+		if (alpha == null) {
+			for (i_2 = height - 1; i_2 >= 0; --i_2) {
+				i_3 = i_2 * width;
+
+				for (i_4 = (i_2 + 1) * width; i_3 < i_4; i_3++) {
+					--i_4;
+					byte b_5 = bytes_1[i_3];
+					bytes_1[i_3] = bytes_1[i_4];
+					bytes_1[i_4] = b_5;
+				}
+			}
+		} else {
+			byte[] bytes_7 = alpha;
+
+			for (i_3 = height - 1; i_3 >= 0; --i_3) {
+				i_4 = i_3 * width;
+
+				for (int i_8 = (i_3 + 1) * width; i_4 < i_8; i_4++) {
+					--i_8;
+					byte b_6 = bytes_1[i_4];
+					bytes_1[i_4] = bytes_1[i_8];
+					bytes_1[i_8] = b_6;
+					b_6 = bytes_7[i_4];
+					bytes_7[i_4] = bytes_7[i_8];
+					bytes_7[i_8] = b_6;
+				}
+			}
+		}
+
+		i_2 = minX;
+		minX = anInt958;
+		anInt958 = i_2;
+	}
+
+	public void method1526() {
+		byte[] bytes_1 = pixels;
+		int i_2;
+		int i_3;
+		int i_4;
+		int i_5;
+		if (alpha == null) {
+			for (i_2 = (height >> 1) - 1; i_2 >= 0; --i_2) {
+				i_3 = i_2 * width;
+				i_4 = (height - i_2 - 1) * width;
+
+				for (i_5 = -width; i_5 < 0; i_5++) {
+					byte b_6 = bytes_1[i_3];
+					bytes_1[i_3] = bytes_1[i_4];
+					bytes_1[i_4] = b_6;
+					++i_3;
+					++i_4;
+				}
+			}
+		} else {
+			byte[] bytes_8 = alpha;
+
+			for (i_3 = (height >> 1) - 1; i_3 >= 0; --i_3) {
+				i_4 = i_3 * width;
+				i_5 = (height - i_3 - 1) * width;
+
+				for (int i_9 = -width; i_9 < 0; i_9++) {
+					byte b_7 = bytes_1[i_4];
+					bytes_1[i_4] = bytes_1[i_5];
+					bytes_1[i_5] = b_7;
+					b_7 = bytes_8[i_4];
+					bytes_8[i_4] = bytes_8[i_5];
+					bytes_8[i_5] = b_7;
+					++i_4;
+					++i_5;
+				}
+			}
+		}
+
+		i_2 = minY;
+		minY = anInt953;
+		anInt953 = i_2;
+	}
+
+	public void method1527() {
+		byte[] bytes_1 = new byte[width * height];
+		int i_2 = 0;
+		int i_3;
+		int i_4;
+		if (alpha == null) {
+			for (i_3 = 0; i_3 < width; i_3++) {
+				for (i_4 = height - 1; i_4 >= 0; --i_4) {
+					bytes_1[i_2++] = pixels[i_3 + i_4 * width];
+				}
+			}
+
+			pixels = bytes_1;
+		} else {
+			byte[] bytes_6 = new byte[width * height];
+
+			for (i_4 = 0; i_4 < width; i_4++) {
+				for (int i_5 = height - 1; i_5 >= 0; --i_5) {
+					bytes_1[i_2] = pixels[i_4 + i_5 * width];
+					bytes_6[i_2++] = alpha[i_4 + i_5 * width];
+				}
+			}
+
+			pixels = bytes_1;
+			alpha = bytes_6;
+		}
+
+		i_3 = minY;
+		minY = minX;
+		minX = anInt953;
+		anInt953 = anInt958;
+		anInt958 = minY;
+		i_3 = height;
+		height = width;
+		width = i_3;
+	}
+
+	public int[] getPixels() {
+		int i_1 = getMaxWidth();
+		int[] ints_2 = new int[i_1 * getMaxHeight()];
+		int i_3;
+		int i_4;
+		int i_5;
+		int i_6;
+		if (alpha != null) {
+			for (i_3 = 0; i_3 < height; i_3++) {
+				i_4 = i_3 * width;
+				i_5 = i_1 * (i_3 + minY) + minX;
+
+				for (i_6 = 0; i_6 < width; i_6++) {
+					ints_2[i_5++] = alpha[i_4] << 24 | pallete[pixels[i_4] & 0xff];
+					++i_4;
+				}
+			}
+		} else {
+			for (i_3 = 0; i_3 < height; i_3++) {
+				i_4 = i_3 * width;
+				i_5 = i_1 * (i_3 + minY) + minX;
+
+				for (i_6 = 0; i_6 < width; i_6++) {
+					int i_7 = pallete[pixels[i_4++] & 0xff];
+					if (i_7 != 0) {
+						ints_2[i_5++] = -16777216 | i_7;
+					} else {
+						ints_2[i_5++] = 0;
+					}
+				}
+			}
+		}
+
+		return ints_2;
+	}
+
+	public void method1529(int i_1, int i_2, int i_3) {
+		for (int i_4 = 1; i_4 < pallete.length; i_4++) {
+			if (pallete[i_4] != 1 && pallete[i_4] != 16711935) {
+				int i_5 = pallete[i_4] >> 16 & 0xff;
+				i_5 += i_1;
+				if (i_5 < 0) {
+					i_5 = 0;
+				} else if (i_5 > 255) {
+					i_5 = 255;
+				}
+
+				int i_6 = pallete[i_4] >> 8 & 0xff;
+				i_6 += i_2;
+				if (i_6 < 0) {
+					i_6 = 0;
+				} else if (i_6 > 255) {
+					i_6 = 255;
+				}
+
+				int i_7 = pallete[i_4] & 0xff;
+				i_7 += i_3;
+				if (i_7 < 0) {
+					i_7 = 0;
+				} else if (i_7 > 255) {
+					i_7 = 255;
+				}
+
+				pallete[i_4] = i_5 << 16 | i_6 << 8 | i_7;
+			}
+		}
+
+	}
+
+	public void method1536(int i_1) {
+		int i_2 = -1;
+		int i_3;
+		int i_5;
+		int i_6;
+		int i_7;
+		if (pallete.length < 255) {
+			for (i_3 = 0; i_3 < pallete.length; i_3++) {
+				if (pallete[i_3] == i_1) {
+					i_2 = i_3;
+					break;
+				}
+			}
+
+			if (i_2 == -1) {
+				i_2 = pallete.length;
+				int[] ints_16 = new int[pallete.length + 1];
+				JagexArrayUtils.method8362(pallete, 0, ints_16, 0, pallete.length);
+				pallete = ints_16;
+				ints_16[i_2] = i_1;
+			}
+		} else {
+			i_3 = Integer.MAX_VALUE;
+			int i_17 = i_1 >> 16 & 0xff;
+			i_5 = i_1 >> 8 & 0xff;
+			i_6 = i_1 & 0xff;
+
+			for (i_7 = 0; i_7 < pallete.length; i_7++) {
+				int i_8 = pallete[i_7];
+				int i_9 = i_8 >> 16 & 0xff;
+				int i_10 = i_8 >> 8 & 0xff;
+				int i_11 = i_8 & 0xff;
+				int i_12 = i_17 - i_9;
+				if (i_12 < 0) {
+					i_12 = -i_12;
+				}
+
+				int i_13 = i_5 - i_10;
+				if (i_13 < 0) {
+					i_13 = -i_13;
+				}
+
+				int i_14 = i_6 - i_11;
+				if (i_14 < 0) {
+					i_14 = -i_14;
+				}
+
+				int i_15 = i_12 + i_13 + i_14;
+				if (i_15 < i_3) {
+					i_3 = i_15;
+					i_2 = i_7;
+				}
+			}
+		}
+
+		i_3 = 0;
+		byte[] bytes_4 = new byte[width * height];
+
+		for (i_5 = 0; i_5 < height; i_5++) {
+			for (i_6 = 0; i_6 < width; i_6++) {
+				i_7 = pixels[i_3] & 0xff;
+				if (pallete[i_7] == 0) {
+					if (i_6 > 0 && pallete[pixels[i_3 - 1] & 0xff] != 0) {
+						i_7 = i_2;
+					} else if (i_5 > 0 && pallete[pixels[i_3 - width] & 0xff] != 0) {
+						i_7 = i_2;
+					} else if (i_6 < width - 1 && pallete[pixels[i_3 + 1] & 0xff] != 0) {
+						i_7 = i_2;
+					} else if (i_5 < height - 1 && pallete[pixels[i_3 + width] & 0xff] != 0) {
+						i_7 = i_2;
+					}
+				}
+
+				bytes_4[i_3++] = (byte) i_7;
+			}
+		}
+
+		pixels = bytes_4;
+	}
+
+	public BufferedImage getBufferedImage(int width, int height, byte[] pixelsIndexes, byte[] extraPixels, boolean useExtraPixels) {
 		if (width <= 0 || height <= 0)
 			return null;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 		int[] rgbArray = new int[width * height];
 		int i = 0;
-		int index = 0;
+		int i_43_ = 0;
 		if (useExtraPixels && extraPixels != null) {
-			for (int h = 0; h < height; h++) {
-				for (int w = 0; w < width; w++) {
-					rgbArray[index++] = (extraPixels[i] << 24 | (pallete[pixelsIndexes[i] & 0xff]));
+			for (int i_44_ = 0; i_44_ < height; i_44_++) {
+				for (int i_45_ = 0; i_45_ < width; i_45_++) {
+					rgbArray[i_43_++] = (extraPixels[i] << 24 | (pallete[pixelsIndexes[i] & 0xff]));
 					i++;
 				}
 			}
 		} else {
-			for (int h = 0; h < height; h++) {
-				for (int w = 0; w < width; w++) {
-					int pallete = this.pallete[pixelsIndexes[i++] & 0xff];
-					rgbArray[index++] = pallete != 0 ? ~0xffffff | pallete : 0;
+			for (int i_46_ = 0; i_46_ < height; i_46_++) {
+				for (int i_47_ = 0; i_47_ < width; i_47_++) {
+					int i_48_ = pallete[pixelsIndexes[i++] & 0xff];
+					rgbArray[i_43_++] = i_48_ != 0 ? ~0xffffff | i_48_ : 0;
 				}
 			}
 		}
@@ -146,206 +572,76 @@ public final class SpriteDefinitions {
 		return image;
 	}
 
-	public byte[] encodeFile() {
-		if (pallete == null) // if not generated yet
-			generatePallete();
-		OutputStream stream = new OutputStream();
-		// sets pallete indexes and int size bytes
-		for (int imageId = 0; imageId < images.length; imageId++) {
-			int pixelsMask = 0;
-			if (usesAlpha[imageId])
-				pixelsMask |= 0x2;
-			// pixelsMask |= 0x1; //sets read all rgbarray indexes 1by1
-			stream.writeByte(pixelsMask);
-			for (int index = 0; index < pixelsIndexes[imageId].length; index++)
-				stream.writeByte(pixelsIndexes[imageId][index]);
-			if (usesAlpha[imageId])
-				for (int index = 0; index < alpha[imageId].length; index++)
-					stream.writeByte(alpha[imageId][index]);
-		}
-
-		// sets up to 255colors pallete, index0 is black
-		for (int index = 1; index < pallete.length; index++)
-			stream.write24BitInteger(pallete[index]);
-
-		// extra inform
-		if (biggestWidth == 0 && biggestHeight == 0) {
-			for (BufferedImage image : images) {
-				if (image.getWidth() > biggestWidth)
-					biggestWidth = image.getWidth();
-				if (image.getHeight() > biggestHeight)
-					biggestHeight = image.getHeight();
+	public void method1554(int i_1) {
+		int i_2 = getMaxWidth();
+		int i_3 = getMaxHeight();
+		if (i_2 != width || i_3 != height) {
+			int i_4 = i_1;
+			if (i_1 > minX) {
+				i_4 = minX;
 			}
-		}
-		stream.writeShort(biggestWidth); // probably used for textures
-		stream.writeShort(biggestHeight);// probably used for textures
-		stream.writeByte(pallete.length - 1); // sets pallete size, -1 cuz of
-		// black index
-		for (int imageId = 0; imageId < images.length; imageId++)
-			stream.writeShort(images[imageId].getMinX());
-		for (int imageId = 0; imageId < images.length; imageId++)
-			stream.writeShort(images[imageId].getMinY());
-		for (int imageId = 0; imageId < images.length; imageId++)
-			stream.writeShort(images[imageId].getWidth());
-		for (int imageId = 0; imageId < images.length; imageId++)
-			stream.writeShort(images[imageId].getHeight());
-		stream.writeShort(images.length); // amt of images
-		// generates fixed byte data array
-		byte[] container = new byte[stream.getOffset()];
-		stream.setOffset(0);
-		stream.getBytes(container, 0, container.length);
-		return container;
-	}
 
-	public int getPalleteIndex(int rgb) {
-		if (pallete == null) // index 0 is 0
-			pallete = new int[] { 0 };
-		for (int index = 0; index < pallete.length; index++) {
-			if (pallete[index] == rgb)
-				return index;
-		}
-		if (pallete.length == 256) {
-			System.out.println("Pallete to big, please reduce images quality.");
-			return 0;
-		}
-		// throw new RuntimeException("Pallete to big, please reduce images
-		// quality.");
-		int[] newpallete = new int[pallete.length + 1];
-		System.arraycopy(pallete, 0, newpallete, 0, pallete.length);
-		newpallete[pallete.length] = rgb;
-		pallete = newpallete;
-		return pallete.length - 1;
-	}
+			int i_5 = i_1;
+			if (i_1 + minX + width > i_2) {
+				i_5 = i_2 - minX - width;
+			}
 
-	public int addImage(BufferedImage image) {
-		BufferedImage[] newImages = Arrays.copyOf(images, images.length + 1);
-		newImages[images.length] = image;
-		images = newImages;
-		pallete = null;
-		pixelsIndexes = null;
-		alpha = null;
-		usesAlpha = null;
-		return images.length - 1;
-	}
+			int i_6 = i_1;
+			if (i_1 > minY) {
+				i_6 = minY;
+			}
 
-	public void replaceImage(BufferedImage image, int index) {
-		images[index] = image;
-		pallete = null;
-		pixelsIndexes = null;
-		alpha = null;
-		usesAlpha = null;
-	}
+			int i_7 = i_1;
+			if (i_1 + minY + height > i_3) {
+				i_7 = i_3 - minY - height;
+			}
 
-	public void generatePallete() {
-		pixelsIndexes = new int[images.length][];
-		alpha = new byte[images.length][];
-		usesAlpha = new boolean[images.length];
-		for (int index = 0; index < images.length; index++) {
-			BufferedImage image = filter(images[index]);
-			int[] rgbArray = new int[image.getWidth() * image.getHeight()];
-			image.getRGB(0, 0, image.getWidth(), image.getHeight(), rgbArray, 0, image.getWidth());
-			pixelsIndexes[index] = new int[image.getWidth() * image.getHeight()];
-			alpha[index] = new byte[image.getWidth() * image.getHeight()];
-			for (int pixel = 0; pixel < pixelsIndexes[index].length; pixel++) {
-				int rgb = rgbArray[pixel];
-				Color c = new Color(rgb, true);
-				int medintrgb = new Color(c.getRed(), c.getGreen(), c.getBlue()).getRGB();// convertToMediumInt(rgb);
-				int i = getPalleteIndex(medintrgb);
-				pixelsIndexes[index][pixel] = i;
-				if (c.getAlpha() != 0) {
-					alpha[index][pixel] = (byte) c.getAlpha();
-					usesAlpha[index] = true;
+			int i_8 = i_4 + i_5 + width;
+			int i_9 = i_6 + i_7 + height;
+			byte[] bytes_10 = new byte[i_8 * i_9];
+			int i_12;
+			int i_13;
+			int i_14;
+			if (alpha == null) {
+				for (int i_11 = 0; i_11 < height; i_11++) {
+					i_12 = i_11 * width;
+					i_13 = i_8 * (i_11 + i_6) + i_4;
+
+					for (i_14 = 0; i_14 < width; i_14++) {
+						bytes_10[i_13++] = pixels[i_12++];
+					}
+				}
+			} else {
+				byte[] bytes_16 = new byte[i_8 * i_9];
+				i_12 = 0;
+
+				while (true) {
+					if (i_12 >= height) {
+						alpha = bytes_16;
+						break;
+					}
+
+					i_13 = i_12 * width;
+					i_14 = i_8 * (i_12 + i_6) + i_4;
+
+					for (int i_15 = 0; i_15 < width; i_15++) {
+						bytes_16[i_14] = alpha[i_13];
+						bytes_10[i_14++] = pixels[i_13++];
+					}
+
+					++i_12;
 				}
 			}
-		}
-	}
 
-	public BufferedImage[] getImages() {
-		return images;
-	}
-
-	public int getBiggestWidth() {
-		return biggestWidth;
-	}
-
-	public void setBiggestWidth(int biggestWidth) {
-		this.biggestWidth = biggestWidth;
-	}
-
-	public int getBiggestHeight() {
-		return biggestHeight;
-	}
-
-	public void setBiggestHeight(int biggestHeight) {
-		this.biggestHeight = biggestHeight;
-	}
-
-	public static BufferedImage filter(BufferedImage image) {
-		DetailFilter filter = new DetailFilter();
-		while (!filter.done()) {
-			for (int x = 0; x < image.getWidth(); x++) {
-				for (int y = 0; y < image.getHeight(); y++) {
-					int rgb = filter.filterRGB(x, y, image.getRGB(x, y));
-					image.setRGB(x, y, rgb);
-				}
-			}
-		}
-		return image;
-	}
-
-	private static class DetailFilter extends RGBImageFilter {
-
-		public static int START_DIFF = 1;
-
-		private int diffB, diffG, diffR;
-
-		private ArrayList<Integer> colours;
-
-		public boolean done() {
-			if (colours == null) {
-				colours = new ArrayList<Integer>();
-				diffB = diffG = diffR = START_DIFF;
-				return false;
-			}
-
-			int increase = colours.size() > 1000 ? 5 : 1;
-			if (increase == 0)
-				increase = 1;
-
-			// System.out.println(diffR+", "+diffG+", "+diffB+",
-			// "+colours.size()+", "+increase);
-			if (colours.size() <= 256)
-				return true;
-			colours.clear();
-
-			if (diffR <= diffB)
-				diffR += increase;
-			else if (diffG <= diffB)
-				diffG += increase;
-			else if (diffB <= diffR)
-				diffB += increase;
-			return false;
-
+			minX -= i_4;
+			minY -= i_6;
+			anInt958 -= i_5;
+			anInt953 -= i_7;
+			width = i_8;
+			height = i_9;
+			pixels = bytes_10;
 		}
 
-		@Override
-		public int filterRGB(int x, int y, int rgb) {
-			Color c = new Color(rgb, true);
-			rgb = c.getRGB();
-			int blue = (int) (c.getBlue() / diffB * diffB);
-			int green = (int) (c.getGreen() / diffG * diffG);
-			int red = (int) (c.getRed() / diffR * diffR);
-			int alpha = c.getAlpha();
-
-			rgb = new Color(red, green, blue).getRGB();
-			if (!colours.contains(rgb)) {
-				// System.out.println(colours.size() +", "+rgb+", "+red+",
-				// "+green+", "+blue+", "+alpha);
-				colours.add(rgb);
-			}
-			rgb = new Color(red, green, blue, alpha).getRGB();
-			return rgb;
-		}
 	}
 
 }

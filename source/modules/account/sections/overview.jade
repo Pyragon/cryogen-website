@@ -17,14 +17,13 @@ include ../../utils/account/recovery_questions
 +includeScript('account/model/frame-manager')
 +includeScript('account/model/animation')
 +includeScript('account/model/rasterizer')
-+includeScript('account/model/animation-manager')
 +includeScript('account/model/model-viewer')
 
 script.
 
     $(document).ready(() => {
 
-        loadScene();
+        loadViewer();
 
 
         $('#purchase').click(() => {
@@ -87,8 +86,14 @@ script.
 .row
     .col-md-4#model-viewer
         #render
-        input.input(type='text', placeholder='Animation Id')
-        button.btn.btn-default.input#play-animation(style='margin-left: 5px;') Play
+        #animation-id
+            input.input(type='text', placeholder='Animation Id', value='11989')
+            button.btn.btn-default.input#play-animation(style='margin-left: 5px;') Play
+        #spot-animation-id
+            input.input(type='text', placeholder='Spot Animation Id', value='2113')
+            button.btn.btn-default.input#play-spot-animation(style='margin-left: 5px') Play
+        #camera-display
+            button.btn.btn-default.input#get-camera-coords Get Camera Coords
     .col-md-8#overview
         h3 Overview
         .row

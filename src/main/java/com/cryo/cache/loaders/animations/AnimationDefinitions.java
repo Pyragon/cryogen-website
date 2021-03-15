@@ -17,7 +17,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,7 +69,7 @@ public class AnimationDefinitions {
 		if(!NumberUtils.isDigits(request.params(":id")))
 			return error("Invalid animation id. Please make sure it is a number and try again.");
 		int id = Integer.parseInt(request.params(":id"));
-		AnimationDefinitions defs = AnimationDefinitions.getDefs(id);
+		AnimationDefinitions defs = AnimationDefinitions.getAnimationDefinitions(id);
 		if(defs == null)
 			return error("Invalid animation. Please try again.");
 		//TODO - is animation playable on player model
@@ -83,7 +82,7 @@ public class AnimationDefinitions {
 
 	public static void init() {
 		for (int i = 0; i < Utilities.getAnimationDefinitionsSize(); i++) {
-			AnimationDefinitions defs = getDefs(i);
+			AnimationDefinitions defs = getAnimationDefinitions(i);
 			if (defs == null)
 				continue;
 			if (defs.leftHandItem != -1 && defs.leftHandItem != 65535) {
@@ -110,7 +109,7 @@ public class AnimationDefinitions {
 		return -1;
 	}
 
-	public static final AnimationDefinitions getDefs(int emoteId) {
+	public static final AnimationDefinitions getAnimationDefinitions(int emoteId) {
 		try {
 			AnimationDefinitions defs = animDefs.get(emoteId);
 			if (defs != null)
