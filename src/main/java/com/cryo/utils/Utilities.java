@@ -370,6 +370,7 @@ public class Utilities {
             }
         } catch(Exception e) {
             Logger.handle(e);
+            Logger.handle(e.getCause());
         }
         long end = System.currentTimeMillis();
         Logger.log("WebStartInitializer", "Executed "+startup+" startup methods in "+(end-start)+"ms.");
