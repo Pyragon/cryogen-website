@@ -352,8 +352,9 @@ public class Utilities {
         long start = System.currentTimeMillis();
         int startup = 0;
         try {
+            record MethodData(int priority, Method method) {}
             ArrayList<Class<?>> classes = Utilities.getClassesWithAnnotation("com.cryo", WebStartSubscriber.class);
-            HashMap<Integer, Method> methods = new HashMap<>();
+            ArrayList<MethodData> methods = new ArrayList<>();
             for(Class<?> clazz : classes) {
                 if(!clazz.isAnnotationPresent(WebStartSubscriber.class)) continue;
                 for(Method method : clazz.getMethods()) {
@@ -367,13 +368,13 @@ public class Utilities {
                         throw new RuntimeException();
                     }
                     WebStart webStart = method.getAnnotation(WebStart.class);
-                    methods.put(webStart.priority(), method);
+                    methods.add(new MethodData(webStart.priority(), method));
                     startup++;
                 }
             }
-            methods.keySet().stream().sorted().map(methods::get).forEach(m -> {
+            methods.stream().sorted(Comparator.comparingInt(m -> m.priority)).forEach(m -> {
                 try {
-                    m.invoke(null);
+                    m.method.invoke(null);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
