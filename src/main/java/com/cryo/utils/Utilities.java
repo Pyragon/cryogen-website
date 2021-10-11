@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -352,6 +353,7 @@ public class Utilities {
         int startup = 0;
         try {
             ArrayList<Class<?>> classes = Utilities.getClassesWithAnnotation("com.cryo", WebStartSubscriber.class);
+            HashMap<Integer, Method> methods = new HashMap<>();
             for(Class<?> clazz : classes) {
                 if(!clazz.isAnnotationPresent(WebStartSubscriber.class)) continue;
                 for(Method method : clazz.getMethods()) {
@@ -364,10 +366,18 @@ public class Utilities {
                         Logger.log("WebStartInitializer", "Expected startup method to be void! "+method.getName()+":"+method.getReturnType());
                         throw new RuntimeException();
                     }
-                    method.invoke(null);
+                    WebStart webStart = method.getAnnotation(WebStart.class);
+                    methods.put(webStart.priority(), method);
                     startup++;
                 }
             }
+            methods.keySet().stream().sorted().map(methods::get).forEach(m -> {
+                try {
+                    m.invoke(null);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch(Exception e) {
             Logger.handle(e);
             Logger.handle(e.getCause());

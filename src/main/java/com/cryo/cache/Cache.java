@@ -25,7 +25,7 @@ public final class Cache {
 		STORE = new Store(Website.getProperties().getProperty("cache_path"));
 	}
 
-	@WebStart
+	@WebStart(priority = 0)
 	public static void loadCache() {
 		long start = System.currentTimeMillis();
 
