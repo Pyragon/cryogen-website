@@ -57,6 +57,11 @@ public class Website {
         buildGson();
         loadProperties();
         port(Integer.parseInt(properties.getProperty("port", "8085")));
+        if(properties.contains("cert_path")) {
+            String path = properties.getProperty("cert_path");
+            String pass = properties.getProperty("cert_key");
+            secure(path, pass, null, null);
+        }
         exception(Exception.class, Utilities.handleExceptions());
         staticFiles.externalLocation("public/");
         staticFiles.expireTime(0); // ten minutes
