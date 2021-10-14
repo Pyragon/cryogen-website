@@ -274,7 +274,7 @@ public class Recovery {
     public static String[] DISCORD_RECOVERY_MESSAGE = {
             "Hello, {{name}}. An account recovery has been made for your in-game account.",
             "The recovery included your discord tag, so you are receiving this message.",
-            "If you did not make this recovery attempt, please go to http://cryogen-rsps.com/support/recoveries and remove the recovery, admins will still need to approve it's removal.",
+            "If you did not make this recovery attempt, please go to https://cryogen-rsps.com/support/recoveries and remove the recovery, admins will still need to approve it's removal.",
             "If you are consistently getting recoveries through discord, please read the forums for information on how to disable recovering via Discord.",
             "If you DID make this recovery attempt, please click on the following link to be redirected to the website where you can reset your password:",
             "Please keep in mind, this key will expire in 24 hours. After that, you will need to either resubmit your recovery, or rely on an admin accepting the recovery based on the information provided.",
