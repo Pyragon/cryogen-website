@@ -1,17 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import IndexPage from './pages/IndexPage';
+import Header from './components/default/Header';
+import Footer from './components/default/Footer';
+import './styles/Default.css'
+import { Route, BrowserRouter as Router, Routes, IndexRoute } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <div>
+        <Header />
+        <Routes>
+            <Route path="/" element={<IndexPage />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

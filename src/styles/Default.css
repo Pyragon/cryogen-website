@@ -1,0 +1,59 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    background: url('../../public/images/bg-lighting.png') no-repeat scroll center -463px #18597f;
+    color: #888;
+    margin: 0px;
+}
+
+.navbar {
+    background: url('../../public/images/navbar.png') repeat-x scroll 0 0 transparent;
+    min-height: 150px;
+    border: 0;
+    border-radius: 0;
+    width: 100%;
+}
+
+.logo-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 25px;
+}
+
+.footer {
+    background: url('../../public/images/noise.png') repeat scroll 0 0 #1a1a1a;
+    margin-top: 20px;
+    padding: 20px 0 30px 0;
+    border-top: 8px solid #111;
+    bottom: 0;
+    width: 100%;
+    position: absolute;
+}
+
+.footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer .row {
+    margin: auto;
+}
+
+.footer ul li a {
+    color: #888;
+    font-size: 12px;
+    transition: color .3s;
+}
+
+.footer ul li a:hover {
+    color: #CCC;
+}
+
+.footer h3 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+    font-size: 18px;
+    color: #AAA;
+}
