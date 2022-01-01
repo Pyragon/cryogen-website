@@ -1,23 +1,29 @@
 import React from 'react'
 
-import { Container, Row, Col } from 'react-bootstrap';
+import FooterButton from './FooterButton';
+
+const buttons = require('./buttons.json');
 
 export default function Footer() {
+    let className = "footer";
+    let loggedIn = true;
+    if(loggedIn) //logged-in
+        className += " footer-4";
     return (
-        <div class="footer">
-            <Container>
-                <Row>
-                    <Col xs="4">
-                        <h3>Cryogen</h3>
-                    </Col>
-                    <Col xs="4">
-                        <h3>Community</h3>
-                    </Col>
-                    <Col xs="4">
-                        <h3>Account</h3>
-                    </Col>
-                </Row>
-            </Container>
+        <div className={className}>
+            { buttons.map((button, index) => {
+                if(button.requiresStaff && !loggedIn)
+                    return (<></>);
+                return(
+                <div key={index}>
+                    <h3>{button.header}</h3>
+                    <ul>
+                        {button.buttons.map((button, index) => (
+                            <FooterButton key={index} button={button} index={index}/>
+                        ))}
+                    </ul>
+                </div>
+            ) })}
         </div>
     )
 }

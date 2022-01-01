@@ -1,0 +1,101 @@
+[{
+        "header": "Cryogen",
+        "buttons": [{
+                "title": "Download JAR",
+                "link": "http://api.cryogen-rsps.com/live/download/latest",
+                "isATag": true
+            },
+            {
+                "title": "Open-Sourced",
+                "link": "http://api.cryogen-rsps.com/live/download/latest",
+                "isATag": true
+            },
+            {
+                "title": "API Documentation",
+                "link": "/api"
+            }
+        ]
+    },
+    {
+        "header": "Community",
+        "buttons": [{
+                "title": "Forums",
+                "link": "/forums"
+            },
+            {
+                "title": "Highscores",
+                "link": "/highscores"
+            },
+            {
+                "title": "Discord",
+                "link": "",
+                "isATag": true
+            },
+            {
+                "title": "Movie Night",
+                "link": "/movie-night"
+            },
+            {
+                "title": "Vote",
+                "link": "/vote"
+            }
+        ]
+    },
+    {
+        "header": "Account",
+        "buttons": [{
+                "title": "Support",
+                "link": "/support"
+            },
+            {
+                "title": "Login",
+                "link": "/login",
+                "requiresLogin": false
+            },
+            {
+                "title": "Register",
+                "link": "/register",
+                "requiresLogin": false
+            },
+            {
+                "title": "Forgot my Password",
+                "link": "/forgot",
+                "requiresLogin": false
+            },
+            {
+                "title": "Profile",
+                "link": "/user",
+                "requiresLogin": true
+            },
+            {
+                "title": "Inbox",
+                "link": "/inbox",
+                "requiresLogin": true
+            },
+            {
+                "title": "Staff",
+                "link": "/staff",
+                "requiresLogin": true,
+                "requiresStaff": true
+            },
+            {
+                "title": "Logout",
+                "link": "/logout",
+                "requiresLogin": true
+            }
+        ]
+    },
+    {
+        "header": "Admin",
+        "requiresStaff": true,
+        "buttons": [{
+                "title": "Logs",
+                "link": "/staff/logs"
+            },
+            {
+                "title": "Forum Admin Panel",
+                "link": "/forums/admin"
+            }
+        ]
+    }
+]

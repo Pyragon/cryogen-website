@@ -1,0 +1,38 @@
+.mini-login .content>p {
+    margin-left: 10px;
+    color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 0px;
+}
+
+.login-input {
+    width: 30%;
+    min-height: 10px;
+    margin-left: 10px;
+    color: #777;
+    user-select: none;
+}
+
+#toggle-tfa {
+    margin: 5px 0 0 11px;
+}
+
+#tfa-op {
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+#tfa-block {
+    margin-top: 5px;
+    display: none;
+}
+
+#tfa-block>div {
+    margin: auto;
+    width: 145px;
+}
+
+#tfa-block input {
+    width: 100px;
+}
