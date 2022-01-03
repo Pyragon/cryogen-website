@@ -29,7 +29,7 @@
 .minimize {
     float: right;
     color: #FFF;
-    font-size: 12px;
+    font-size: 1rem;
     font-weight: 800;
     padding: 6px 16px;
     border-radius: 5px;
@@ -62,7 +62,7 @@
 
 .news-post>.header>.title {
     margin: 0;
-    font-size: 13px;
+    font-size: 1rem;
     font-weight: 300;
     color: #FFF;
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
@@ -71,7 +71,7 @@
 .news-post>.header>.single-title {
     float: left;
     margin: 0;
-    font-size: 13px;
+    font-size: 1rem;
     font-weight: 300;
     color: #FFF;
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
@@ -79,14 +79,14 @@
 
 .news-post>.header>.description {
     margin-left: 10px;
-    font-size: 11px;
+    font-size: .5rem;
     font-weight: 300;
     color: white;
 }
 
 .news-post>.header>.author {
     margin: 0;
-    font-size: 11px;
+    font-size: .8rem;
     color: #FFF;
     padding-left: 20px;
 }

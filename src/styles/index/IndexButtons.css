@@ -1,0 +1,19 @@
+.index-btns {
+    display: grid;
+    gap: 2rem;
+    grid-column: 3;
+}
+
+.index-btn {
+    padding: 20px;
+    line-height: 0px;
+    transition: border .3s, color .3s;
+    margin: -30px auto;
+    width: 100%;
+    border-radius: 40px;
+    font-size: 1rem;
+}
+
+.index-btn:first-of-type {
+    margin: 10px auto;
+}

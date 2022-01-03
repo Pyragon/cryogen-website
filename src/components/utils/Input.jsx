@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function MiniHighscores() {
+export default function Input({ placeholder, ref }) {
     return (
         <div>
             

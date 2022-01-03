@@ -1,46 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+import LabelInput from '../../utils/LabelInput';
+import Checkbox from '../../utils/Checkbox';
+import SpanIcon from '../../utils/SpanIcon';
+import Button from '../../utils/Button';
+import Widget from '../../utils/Widget';
 
 import './../../../styles/Buttons.css'
 
 export default function LoginWidget() {
+    let [ tfaToggled, setTfaToggled ] = useState(false);
+    let [ username, setUsername ] = useState("");
+    let [ password, setPassword ] = useState("");
+    let [ rememberMe, setRememberMe ] = useState(false);
+    let [ otp, setOtp ] = useState("");
+
+    let submitAuth = () => {
+        console.log(username, password, rememberMe);
+    };
+
+    let forgotPassword = () => {
+
+    };
     return (
         <div>
             <h4 className="title t-center">Account & Community</h4>
-            <div className="mini-login">
-                <div className="widget">
-                    <div className="header">
-                        <h4>Account Login</h4>
-                    </div>
-                    <div className="content">
-                        <p>Username:</p>
-                        <input className="username login-input input" type="text" placeholder="Username" readOnly/>
-                        <p>Password:</p>
-                        <input className="password login-input input" type="password" placeholder="Password" readOnly/>
-                        <div id="toggle-tfa">
-                            <span>
-                                <i className="fa fa-plus-square"></i>
-                            </span>
-                            <span id="tfa-op">
-                                Two-factor Authentication Options
-                            </span>
-                        </div>
-                        <div id="tfa-block">
-                            <div>
-                                <span className="color-white">OTP: </span>
-                                <input className="input" type="text" placeholder="Enter OTP" title="Enter One-Time Password" />
-                            </div>
-                        </div>
-                        <div id="remember-me">
-                            <input type="checkbox"/>
-                            <span>Remember me</span>
-                        </div>
-                        <div id="login-buttons">
-                            <button className="btn btn-default small-btn" id="login-btn">Login</button>
-                            <button className="btn btn-default small-btn" id="forgot-btn">Forgot Password</button>
-                        </div>
-                    </div>
+            <Widget title="Login">
+                <LabelInput title="Username" placeholder="Enter username" value={username} setState={setUsername}/>
+                <LabelInput title="Password" placeholder="Enter password" type="password" value={password} setState={setPassword} />
+                <SpanIcon className="toggle-tfa" onClick={() => setTfaToggled(!tfaToggled)} icon={"fa-"+(tfaToggled ? "minus": "plus")+"-square"} content={'Two-factor Authentication Options'}/>
+                { tfaToggled &&
+                    <LabelInput title="One-time password" placeholder="Enter OTP" type="text" value={otp} setState={setOtp}/>
+                }
+                <Checkbox title="Keep me logged in" className="remember-me-block" value={rememberMe} setState={setRememberMe}/>
+                <div className="login-buttons">
+                    <Button title="Login" onClick={submitAuth}/>
+                    <Button title="Forgot Password" onClick={forgotPassword}/>
                 </div>
-            </div>
+            </Widget>
         </div>
     )
 }

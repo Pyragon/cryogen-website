@@ -1,8 +1,11 @@
-import React from 'react'
-
+import React, { useState } from 'react'
 import SlideToggle from 'react-slide-toggle';
 
-export default function RecentPost({post, index}) {
+import { crownUser } from '../../../utils/format';
+
+export default function RecentPost({thread, index}) {
+    let post = thread.posts[0];
+    thread = thread.thread;
     return (
         <SlideToggle
             duration={1000}
@@ -12,13 +15,13 @@ export default function RecentPost({post, index}) {
                 <div key={index} className="news-post ">
                     <div className="header">
                         <p className="title">
-                            {post.title}
+                            {thread.title}
                             <a className="minimize" onClick={toggle}>
                                 <span className={"fa "+(toggleState == 'COLLAPSED' ? "fa-plus" : "fa-minus")}/>
                             </a>
                         </p>
                         <p className="author">
-                            Posted Today by {post.author}
+                            Posted Today by {crownUser(thread.author)}
                         </p>
                     </div>
                     <div className="content">

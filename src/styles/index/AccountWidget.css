@@ -1,31 +1,34 @@
-.mini-login .content>p {
-    margin-left: 10px;
-    color: white;
-    text-align: left;
-    padding: 5px;
-    margin-bottom: 0px;
+.remember-me-block {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
 }
 
-.login-input {
-    width: 30%;
-    min-height: 10px;
-    margin-left: 10px;
-    color: #777;
-    user-select: none;
+.login-widget {
+    display: grid;
+    grid-column: 3;
 }
 
-#toggle-tfa {
+.login-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    padding: 10px;
+}
+
+.toggle-tfa {
     margin: 5px 0 0 11px;
+    font-size: 1rem;
 }
 
 #tfa-op {
-    font-size: 12px;
+    font-size: 1rem;
     margin-left: 5px;
 }
 
 #tfa-block {
     margin-top: 5px;
-    display: none;
 }
 
 #tfa-block>div {
