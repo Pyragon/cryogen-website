@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 let formatNameForProtocol = (name) => {
     return name.toLowerCase().replace(' ', '_');
 };
@@ -10,4 +12,8 @@ let formatNumber = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-module.exports = { formatNameForProtocol, crownUser, formatNumber };
+let formatDate = (date) => {
+    return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+};
+
+module.exports = { formatNameForProtocol, crownUser, formatNumber, formatDate };

@@ -3,7 +3,7 @@ import AccountWidget from '../components/index/account/AccountWidget'
 import IndexButtons from '../components/index/IndexButtons'
 import MiniHighscores from '../components/index/highscores/MiniHighscores'
 
-import ForumRecents from './../components/index/recents/ForumRecents'
+import ForumRecents from '../components/index/ForumRecents'
 
 import './../styles/index/Index.css'
 

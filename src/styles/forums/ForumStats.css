@@ -1,0 +1,15 @@
+.forum-stats {
+    padding: 0 30px;
+    height: 30px;
+}
+
+.forum-stats:last-of-type {
+    margin-bottom: 10px;
+}
+
+.forum-stats-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    color: white;
+    gap: 5rem;
+}

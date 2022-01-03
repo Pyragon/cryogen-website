@@ -9,3 +9,15 @@
 .c-pointer {
     cursor: pointer;
 }
+
+.grey {
+    color: #999;
+}
+
+.white {
+    color: #fff;
+}
+
+.small {
+    font-size: .75em;
+}

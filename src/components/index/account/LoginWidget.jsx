@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import axios from 'axios';
+
 import LabelInput from '../../utils/LabelInput';
 import Checkbox from '../../utils/Checkbox';
 import SpanIcon from '../../utils/SpanIcon';
@@ -15,8 +17,18 @@ export default function LoginWidget() {
     let [ rememberMe, setRememberMe ] = useState(false);
     let [ otp, setOtp ] = useState("");
 
-    let submitAuth = () => {
-        console.log(username, password, rememberMe);
+    let submitAuth = async() => {
+        try {
+            let response = await axios.post('http://localhost:8081/users/auth', {
+                username,
+                password,
+                rememberMe,
+                otp
+            });
+            console.log(response);
+        } catch(err) {
+            console.error(err);
+        }
     };
 
     let forgotPassword = () => {

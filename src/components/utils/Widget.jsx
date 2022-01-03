@@ -1,10 +1,11 @@
 import React from 'react'
 
-export default function Widget({ title, children }) {
+export default function Widget({ title, description, style, children }) {
     return (
-        <div className="widget">
+        <div className="widget" style={style}>
             <div className="header">
                 <h4>{title}</h4>
+                { description && <p className="small">{description}</p> }
             </div>
             <div className="content">
                 {children}
