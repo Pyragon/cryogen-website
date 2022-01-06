@@ -8,17 +8,16 @@ import DisplayUser from '../../utils/user/DisplayUser';
 
 import '../../../styles/forums/Subforum.css';
 
-export default function SubforumBlock({ forum }) {
+export default function SubforumBlock({ forum, viewForum }) {
     let [ subforums, setSubforums ] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:8081/forums/subforums/' + forum._id)
+        fetch('http://localhost:8081/forums/subforums/children/' + forum._id)
             .then(res => res.json())
             .then(res => setSubforums(res));
     }, []);
     return (
         <>
             { subforums.map((subforum, index) => {
-                console.log(subforum);
                 return (
                     <div key={index} className="subforum">
                         <div className="subforum-description">
@@ -26,6 +25,11 @@ export default function SubforumBlock({ forum }) {
                                 <a className="link" href={subforum.link}>
                                     {subforum.name}
                                 </a>
+                                : 
+                                viewForum ? 
+                                    <>
+                                        <div className="link" onClick={async() => { await viewForum(subforum._id)}}>{subforum.name}</div>
+                                    </>
                                 : <Link to={"/forums/"+subforum._id} className="link">{subforum.name} </Link> }               
                             <div className="m-top-5 small grey">{subforum.description}</div>
                             { forum.subforums?.length > 0 && (

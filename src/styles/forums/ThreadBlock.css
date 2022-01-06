@@ -1,0 +1,22 @@
+.thread {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    padding: .75rem 0;
+    border-bottom: 1px solid #000;
+}
+
+.thread:last-of-type {
+    border-bottom: none;
+}
+
+.new-thread-btn {
+    float: right;
+    margin-bottom: 5px;
+}
+
+.thread-view-info {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}

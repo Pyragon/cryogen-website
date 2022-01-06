@@ -25,8 +25,8 @@ export default function ForumStats() {
             <ForumStat title="Registered Users" value={stats.registered || 0} />
             <ForumStat title="Users Online" value={stats.online || 0} />
             <ForumStat title="Most Online" value={stats.mostOnline || 0} />
-            <ForumStat title="Threads" value={stats.threads || 0} />
-            <ForumStat title="Posts" value={stats.posts || 0} />
+            <ForumStat title="Total Threads" value={stats.threads || 0} />
+            <ForumStat title="Total Posts" value={stats.posts || 0} />
         </Widget>
     )
 }

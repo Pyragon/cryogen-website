@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import IndexPage from './pages/IndexPage';
-import ForumPage from './pages/forums/ForumIndex';
+import ForumIndex from './pages/forums/ForumIndex';
+import ForumPage from './pages/forums/ForumPage';
+import ThreadPage from './pages/forums/ThreadPage';
 import Header from './components/default/Header';
 import Footer from './components/default/Footer';
 import './styles/Default.css'
@@ -15,8 +17,9 @@ ReactDOM.render(
         <Header />
         <Routes>
             <Route path="/" element={<IndexPage />} />
-            <Route path="/forums" element={<ForumPage/>} />
+            <Route path="/forums" element={<ForumIndex/>} />
             <Route path="/forums/:forumId" element={<ForumPage/>} />
+            <Route path="/forums/thread/:threadId" element={<ThreadPage/>} />
         </Routes>
         <Footer />
       </div>

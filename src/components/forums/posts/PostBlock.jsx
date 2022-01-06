@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function ViewThread() {
+export default function PostBlock({ post}) {
     return (
         <div>
             
