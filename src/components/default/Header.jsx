@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Button from '../utils/Button';
 import NavButton from './NavButton';
 
 export default function Header() {

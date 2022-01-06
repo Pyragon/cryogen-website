@@ -49,11 +49,16 @@ body {
     padding: 0;
 }
 
+.footer li {
+    padding-top: 5px;
+}
+
 .footer a {
     color: #888;
-    font-size: 1rem;
+    font-size: .9em;
     transition: color .3s;
     text-decoration: none;
+    padding-top: 5px;
 }
 
 .footer a:hover {
@@ -79,14 +84,6 @@ h4.title {
     color: black;
     font-size: 1rem;
     font-weight: 500;
-}
-
-.grid-span-2 {
-    grid-column: span 2;
-}
-
-.grid-col-3 {
-    grid-column: 3;
 }
 
 .nav-btns {
@@ -230,21 +227,14 @@ button:focus {
     /* IE6-9 */
 }
 
-.news-post>.header>.title {
+.news-post-title {
     margin: 0;
     font-size: 1rem;
     font-weight: 300;
     color: #FFF;
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
-}
-
-.news-post>.header>.single-title {
-    float: left;
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 300;
-    color: #FFF;
-    text-shadow: 0px 0px 3px rgba(0, 0, 0, 1);
+    text-decoration: none;
+    color: white;
 }
 
 .news-post>.header>.description {
@@ -254,7 +244,7 @@ button:focus {
     color: white;
 }
 
-.news-post>.header>.author {
+.news-post-description {
     margin: 0;
     font-size: .8rem;
     color: #FFF;

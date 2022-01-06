@@ -1,0 +1,26 @@
+.message-container {
+    border: 1px solid #000;
+    height: 150px;
+    background-color: #111;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+
+.input-container {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+}
+
+.chat-input {
+    margin-left: 0;
+    grid-column: span 9;
+}
+
+.chat-btn {
+    grid-column: 10;
+}
+
+.chatbox-message {
+    margin: 5px 10px;
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import NewsPost from '../utils/NewsPost'
+import NewsPost from '../../utils/NewsPost'
 import SubforumBlock from './SubforumBlock';
 
 export default function Categories() {
@@ -13,7 +13,8 @@ export default function Categories() {
     return (
         <>
             { subforums.map((subforum, index) => 
-                <NewsPost key={subforum._id}
+                <NewsPost 
+                    key={subforum._id}
                     title={subforum.name}
                     description={subforum.description}
                     index={index}

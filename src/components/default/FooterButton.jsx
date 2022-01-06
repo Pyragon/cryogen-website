@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 export default function FooterButton({ button, index }) {
     let loggedIn = false;
     let staff = false;
-    if(button.requiresLogin !== undefined && button.requiresLogin != loggedIn)
+    if(button.requiresLogin !== undefined && button.requiresLogin !== loggedIn)
         return (<></>)
     if(button.requiresStaff && !staff)
         return (<></>)

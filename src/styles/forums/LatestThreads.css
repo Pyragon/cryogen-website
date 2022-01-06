@@ -1,0 +1,12 @@
+.latest-thread {
+    padding: .5em .75em;
+}
+
+.latest-thread-title {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.latest-thread-author {
+    margin-left: 1.5em;
+}

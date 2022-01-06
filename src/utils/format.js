@@ -12,8 +12,16 @@ let formatNumber = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-let formatDate = (date) => {
-    return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+let formatDate = (date, format = 'MMMM Do YYYY, h:mm:ss a') => {
+    return moment(date).format(format);
 };
 
-module.exports = { formatNameForProtocol, crownUser, formatNumber, formatDate };
+let formatMessage = (message) => {
+    //Uppercase first letter and all letters after a period
+    // let formattedMessage = message.toLowerCase();
+    let formattedMessage = message.charAt(0).toUpperCase() + message.slice(1);
+    formattedMessage = formattedMessage.replace(/\. ?[a-z]{1}/g, c => c.toUpperCase());
+    return formattedMessage;
+};
+
+module.exports = { formatNameForProtocol, crownUser, formatNumber, formatDate, formatMessage };

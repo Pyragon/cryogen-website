@@ -21,3 +21,24 @@
 .small {
     font-size: .75em;
 }
+
+.grid-span-2 {
+    grid-column: span 2;
+}
+
+.grid-col-3 {
+    grid-column: 3;
+}
+
+.grid-span-3 {
+    grid-column: span 3;
+}
+
+.m-top-5 {
+    margin-top: 5px;
+}
+
+.link {
+    color: white;
+    text-decoration: none;
+}

@@ -25,7 +25,6 @@ export default function LoginWidget() {
                 rememberMe,
                 otp
             });
-            console.log(response);
         } catch(err) {
             console.error(err);
         }

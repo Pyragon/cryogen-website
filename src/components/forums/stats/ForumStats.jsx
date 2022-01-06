@@ -8,7 +8,7 @@ import ForumStat from './ForumStat';
 async function fetchStats(stats, setStats) {
     let newStats = await fetch('http://localhost:8081/forums/stats');
     newStats = await newStats.json();
-    if(JSON.stringify(stats) == JSON.stringify(newStats))
+    if(JSON.stringify(stats) === JSON.stringify(newStats))
         return;
     setStats(newStats);
 }

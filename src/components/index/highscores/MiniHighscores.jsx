@@ -11,7 +11,9 @@ export default function MiniHighscores() {
     useEffect(() => {
         fetch('http://localhost:8081/highscores/mini')
             .then(res => res.json())
-            .then(data => setHighscores(data.highscores));
+            .then(data => {
+                setHighscores(data.highscores);
+            });
     }, []);
     return (
         <Widget title="Highscores" style={{marginTop: '20px'}}>
