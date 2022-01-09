@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import NewsPost from '../utils/NewsPost';
+import CollapsibleWidget from '../utils/CollapsibleWidget';
 import DisplayUser from '../utils/user/DisplayUser';
 
 export default function ForumRecents() {
@@ -13,22 +13,22 @@ export default function ForumRecents() {
     return (
         <>
             <h4 className="title">Recent News:</h4>
-            { threads.map((data, index) => ( 
-                <NewsPost 
-                    key={data.thread._id} 
-                    title={data.thread.title} 
-                    link={`/forums/thread/${data.thread._id}`}
+            { threads.map((thread, index) => ( 
+                <CollapsibleWidget 
+                    key={thread._id} 
+                    title={thread.title} 
+                    link={`/forums/thread/${thread._id}`}
                     description={
                         <DisplayUser 
-                            user={data.posts[0].author} 
+                            user={thread.firstPost?.author} 
                             prefix='Posted Today by '
                         />
                     }  
                     index={index}
                     collapsed={index !== 0 && index !== 1}
                 >
-                    {data.posts[0].content}
-                </NewsPost> ) )
+                    {thread.firstPost?.content}
+                </CollapsibleWidget> ) )
             }
         </>
     )

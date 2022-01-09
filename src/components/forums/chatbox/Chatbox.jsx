@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import UserContext from '../../../utils/UserContext';
 import axios from 'axios';
 
-import NewsPost from '../../utils/NewsPost';
+import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import Input from '../../utils/Input';
 import Button from '../../utils/Button';
 
@@ -19,13 +20,14 @@ async function fetchMessages(messages, setMessages) {
 
 export default function Chatbox() {
     let [ messages, setMessages ] = useState([]);
+    let [ text, setText ] = useState('');
+    let { user } = useContext(UserContext);
+    let loggedIn = user !== null;
     useEffect(() => {
         fetchMessages(messages, setMessages);
         let interval = setInterval(() => fetchMessages(messages, setMessages), 1000);
         return () => clearInterval(interval);
     }, []);
-    let loggedIn = true;
-    let [ text, setText ] = useState('');
     let submitMessage = async() => {
         let results = await axios.post('http://localhost:8081/forums/chatbox', {
             author: 'cody',
@@ -39,7 +41,7 @@ export default function Chatbox() {
         fetchMessages(messages, setMessages);
     };
     return (
-        <NewsPost
+        <CollapsibleWidget
             title="Chatbox"
             description="Chat with other users in real-time"
             className="grid-span-3"
@@ -59,6 +61,6 @@ export default function Chatbox() {
                     <Input style={{ marginLeft: '0px' }} value={text} className="chat-input" type="text" placeholder="Type a message..." setState={setText} onEnter={submitMessage}/>
                     <Button className="chat-button" title="Send" onClick={submitMessage}/>
                 </div> }
-        </NewsPost>
+        </CollapsibleWidget>
     )
 };

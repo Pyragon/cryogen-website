@@ -1,0 +1,20 @@
+.text-editor {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
+    border: 1px solid #000;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    resize: vertical;
+    color: #999;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.text-editor-options {
+    height: 1.5rem;
+    border-radius: 5px 5px 0 0;
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.7);
+    border: 1px solid #000;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+}

@@ -24,6 +24,12 @@ body {
     padding-top: 25px;
 }
 
+.user-avatar {
+    height: 6rem;
+    width: 6rem;
+    margin: auto;
+}
+
 .footer {
     background: url('../../public/images/noise.png') repeat scroll 0 0 #1a1a1a;
     margin-top: 20px;

@@ -39,7 +39,9 @@ export default function LoginWidget() {
             <Widget title="Login">
                 <LabelInput title="Username" placeholder="Enter username" value={username} setState={setUsername}/>
                 <LabelInput title="Password" placeholder="Enter password" type="password" value={password} setState={setPassword} />
-                <SpanIcon className="toggle-tfa" onClick={() => setTfaToggled(!tfaToggled)} icon={"fa-"+(tfaToggled ? "minus": "plus")+"-square"} content={'Two-factor Authentication Options'}/>
+                <SpanIcon className="toggle-tfa" onClick={() => setTfaToggled(!tfaToggled)} icon={"fa-"+(tfaToggled ? "minus": "plus")+"-square"}>
+                    Two-factor Authentication Options
+                </SpanIcon>
                 { tfaToggled &&
                     <LabelInput title="One-time password" placeholder="Enter OTP" type="text" value={otp} setState={setOtp}/>
                 }

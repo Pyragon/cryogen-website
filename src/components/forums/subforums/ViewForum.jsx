@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
+import UserContext from '../../../utils/UserContext';
 
-import NewsPost from '../../utils/NewsPost'
+import CollapsibleWidget from '../../utils/CollapsibleWidget'
 import Button from '../../utils/Button';
 import SubforumBlock from './SubforumBlock'
 import ThreadBlock from '../threads/ThreadBlock';
@@ -8,7 +9,8 @@ import ThreadBlock from '../threads/ThreadBlock';
 export default function ViewForum({ forum, viewForum }) {
     let [ subforums, setSubforums ] = useState([]);
     let [ threads, setThreads ] = useState([]);
-    let loggedIn = true;
+    let { user } = useContext(UserContext);
+    let loggedIn = user !== null;
     useEffect(() => {
         fetch('http://localhost:8081/forums/subforums/children/' + forum._id)
             .then(res => res.json())
@@ -20,12 +22,12 @@ export default function ViewForum({ forum, viewForum }) {
     return (
         <>
             { subforums.length > 0 && 
-                <NewsPost 
+                <CollapsibleWidget 
                     title={'Subforums'}
                     index={0}
                 >
                     <SubforumBlock forum={forum} viewForum={viewForum} />
-                </NewsPost> 
+                </CollapsibleWidget> 
             }
             { loggedIn && (
                 <>
@@ -33,7 +35,7 @@ export default function ViewForum({ forum, viewForum }) {
                     <div style={{clear: 'both'}} />
                 </>
              ) }
-            <NewsPost 
+            <CollapsibleWidget 
                 title={forum.name}
                 description={forum.description}
                 index={1}
@@ -46,7 +48,7 @@ export default function ViewForum({ forum, viewForum }) {
                             <ThreadBlock key={index} thread={thread} index={index} />
                         ))
                 }
-            </NewsPost>
+            </CollapsibleWidget>
         </>
     )
 }

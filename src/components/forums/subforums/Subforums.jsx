@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import NewsPost from '../../utils/NewsPost'
+import CollapsibleWidget from '../../utils/CollapsibleWidget'
 import SubforumBlock from './SubforumBlock';
 
 export default function Categories() {
@@ -13,14 +13,14 @@ export default function Categories() {
     return (
         <>
             { subforums.map((subforum, index) => 
-                <NewsPost 
+                <CollapsibleWidget 
                     key={subforum._id}
                     title={subforum.name}
                     description={subforum.description}
                     index={index}
                 >
                     <SubforumBlock forum={subforum} />
-                </NewsPost>
+                </CollapsibleWidget>
             )} 
         </> 
     )

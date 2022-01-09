@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import SlideToggle from 'react-slide-toggle';
 
-export default function NewsPost({ title, minimizable=true, link, onClick, description, index, children, collapsed=false, className="", style, contentStyle={} }) {
+export default function CollapsibleWidget({ title, minimizable=true, link, onClick, description, index, children, collapsed=false, className="", style, contentStyle={} }) {
 
     return (
         <SlideToggle

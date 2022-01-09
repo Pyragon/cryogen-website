@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 
+import axios from '../../../utils/axios';
+
 import Widget from '../../utils/Widget'
 
 import LatestThread from './LatestThread';
 
 async function fetchLatestThreads(setThreads) {
-    setThreads(await (await fetch('http://localhost:8081/forums/threads/latest')).json());
+    setThreads((await axios.get('http://localhost:8081/forums/threads/latest')).data);
 }
 
 export default function LatestThreads() {
