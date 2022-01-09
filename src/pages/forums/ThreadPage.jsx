@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import Chatbox from '../../components/forums/chatbox/Chatbox';
 import ViewThread from '../../components/forums/threads/ViewThread';
-import ForumStats from '../../components/forums/stats/ForumStats';
-import LatestThreads from '../../components/forums/latest/LatestThreads';
+
+import ForumContainer from './ForumContainer';
 
 export default function ThreadPage() {
     let { threadId } = useParams();
@@ -19,15 +18,8 @@ export default function ThreadPage() {
         }
     }, []);
     return (
-        <div className="container">
-            <Chatbox />
-            <div className="grid-span-2">
-                { thread && <ViewThread thread={thread}/> }
-            </div>
-            <div className="grid-col-3">
-                <ForumStats />
-                <LatestThreads />
-            </div>
-        </div>
+        <ForumContainer>
+            { thread && <ViewThread thread={thread}/> }
+        </ForumContainer>
     )
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import UserContext from '../../../utils/UserContext';
-import axios from 'axios';
+import axios from '../../../utils/axios';
 
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import Input from '../../utils/Input';
@@ -30,7 +30,6 @@ export default function Chatbox() {
     }, []);
     let submitMessage = async() => {
         let results = await axios.post('http://localhost:8081/forums/chatbox', {
-            author: 'cody',
             message: text
         });
         if(!results || results.message) {

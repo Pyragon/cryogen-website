@@ -81,6 +81,7 @@
             {
                 "title": "Logout",
                 "link": "/logout",
+                "isATag": true,
                 "requiresLogin": true
             }
         ]

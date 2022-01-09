@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react';
+import UserContext from '../../../utils/UserContext';
 
-import axios from 'axios';
+import axios from '../../../utils/axios';
 
 import LabelInput from '../../utils/LabelInput';
 import Checkbox from '../../utils/Checkbox';
@@ -10,7 +11,8 @@ import Widget from '../../utils/Widget';
 
 import './../../../styles/Buttons.css'
 
-export default function LoginWidget() {
+export default function LoginWidget( { header=true } ) {
+    let { user, setUser } = useContext(UserContext);
     let [ tfaToggled, setTfaToggled ] = useState(false);
     let [ username, setUsername ] = useState("");
     let [ password, setPassword ] = useState("");
@@ -22,9 +24,18 @@ export default function LoginWidget() {
             let response = await axios.post('http://localhost:8081/users/auth', {
                 username,
                 password,
-                rememberMe,
                 otp
             });
+            let valid = response.data.success;
+            if(!valid) {
+                console.error(response.data.message); //TODO - use notification instead
+                return;
+            }
+            let sessionId = response.data.sessionId;
+            //if rememberMe, set to localStorage, else set to sessionStorage
+            let storage = rememberMe ? localStorage : sessionStorage;
+            storage.setItem('sessionId', sessionId);
+            setUser(response.data.user);
         } catch(err) {
             console.error(err);
         }
@@ -35,7 +46,7 @@ export default function LoginWidget() {
     };
     return (
         <div>
-            <h4 className="title t-center">Account & Community</h4>
+            { header && <h4 className="title t-center">Account & Community</h4> }
             <Widget title="Login">
                 <LabelInput title="Username" placeholder="Enter username" value={username} setState={setUsername}/>
                 <LabelInput title="Password" placeholder="Enter password" type="password" value={password} setState={setPassword} />

@@ -54,7 +54,7 @@ export default function SubforumBlock({ forum, viewForum }) {
                                         <DisplayUser 
                                             user={subforum.extraData?.lastPost.author} 
                                             prefix='by '
-                                            suffix={ formatDate(subforum.extraData?.lastPost.createdAt)}
+                                            suffix={ ', '+formatDate(subforum.extraData?.lastPost.createdAt)}
                                         />
                                     </div>
                                 </>

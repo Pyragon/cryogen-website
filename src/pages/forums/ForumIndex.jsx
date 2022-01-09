@@ -1,21 +1,19 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 
-import ForumStats from '../../components/forums/stats/ForumStats';
-import LatestThreads from '../../components/forums/latest/LatestThreads';
+import setUserActivity from '../../utils/user-activity';
+import UserContext from '../../utils/UserContext';
+
 import Subforums from '../../components/forums/subforums/Subforums';
-import Chatbox from '../../components/forums/chatbox/Chatbox';
+import ForumContainer from './ForumContainer';
 
 export default function ForumIndex() {
+    let { user } = useContext(UserContext);
+    useEffect(() => {
+        setUserActivity(user, 'Viewing Index');
+    }, []);
     return (
-        <div className="container">
-            <Chatbox />
-            <div className="grid-span-2">
-                <Subforums />
-            </div>
-            <div className="grid-col-3">
-                <ForumStats />
-                <LatestThreads />
-            </div>
-        </div>
+        <ForumContainer>
+            <Subforums />
+        </ForumContainer>
     )
 }

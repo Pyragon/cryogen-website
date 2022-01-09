@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 
 import UserContext from '../../../utils/UserContext';
+import setUserActivity from '../../../utils/user-activity';
 import axios from '../../../utils/axios';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
@@ -17,6 +18,7 @@ export default function ViewThread({ thread }) {
         fetch('http://localhost:8081/forums/posts/children/'+thread._id)
         .then(res => res.json())
         .then(data => setPosts(data));
+        setUserActivity(user, 'Viewing thread ' + thread.title);
     }, []);
     return (
         <>
