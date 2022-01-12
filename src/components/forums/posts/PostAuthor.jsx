@@ -9,7 +9,7 @@ export default function PostAuthor({ user }) {
         <div className="post-author-block">
             <DisplayUser 
                 user={user} 
-                useTitle={true}
+                useUserTitle={true}
                 avatar={user.avatar || '/images/default_avatar.png'}
             />
             <SpanIcon icon="fa-clipboard" className="post-author-block-line small">

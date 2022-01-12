@@ -8,11 +8,14 @@ const buttons = require('./buttons.json');
 export default function Footer() {
     let { user } = useContext(UserContext);
     let loggedIn = user !== null;
-    let isStaff = loggedIn && user.displayGroup.rights > 0;
+    let isAdmin = loggedIn && user.displayGroup.rights > 0;
     return (
         <div className="footer">
-            <div className={"footer-btns "+(loggedIn && isStaff ? "footer-btns-4" : "")}>
-                { buttons.map((button, index) => (
+            <div className={"footer-btns "+(loggedIn && isAdmin ? "footer-btns-4" : "")}>
+                { buttons.map((button, index) => {
+                    if(button.requiresStaff && (!loggedIn || !isAdmin))
+                        return;
+                    return(
                     <div key={index}>
                         <h3>{button.header}</h3>
                         <ul>
@@ -21,7 +24,7 @@ export default function Footer() {
                             ))}
                         </ul>
                     </div>
-                ))}
+                ) })}
             </div>
         </div>
     )

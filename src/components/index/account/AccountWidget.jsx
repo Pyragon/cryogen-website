@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import axios from '../../../utils/axios';
 import LoginWidget from './LoginWidget'
 import UserContext from '../../../utils/UserContext';
+import Widget from '../../utils/Widget';
+import Button from '../../utils/Button';
 
 import './../../../styles/index/AccountWidget.css'
 
@@ -11,6 +14,16 @@ export default function AccountWidget() {
     if(!loggedIn)
         return <LoginWidget/>
     return (
-        <p>Test</p>
+        <div>
+            <h4 className="title t-center">Account & Community</h4>
+            <Widget title="Account">
+                <div className="account-node-btns">
+                    <Link to="/account" className="btn account-node-btn">Overview</Link>
+                    <Link to="/highscores" className="btn account-node-btn">My Highscores</Link>
+                    <Link to="/account/vote" className="btn account-node-btn">Vote</Link>
+                    <Link to="/account/shop" className="btn account-node-btn">Shop</Link>
+                </div>
+            </Widget>
+        </div>
     )
 }

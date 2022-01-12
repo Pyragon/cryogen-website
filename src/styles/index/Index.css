@@ -4,10 +4,3 @@
     gap: 1.5rem;
     padding: 1.5rem 3rem;
 }
-
-@media only screen and (max-width: 900px) {
-    .container {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
-}

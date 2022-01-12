@@ -10,6 +10,18 @@
     grid-column: 3;
 }
 
+.account-node-btns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.account-node-btn {
+    text-decoration: none;
+    text-align: center;
+}
+
 .login-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;

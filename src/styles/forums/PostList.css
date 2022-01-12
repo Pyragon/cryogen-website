@@ -6,6 +6,20 @@
     margin-bottom: 10px;
 }
 
+.post {}
+
+.edit-options {
+    text-align: center;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+.edit-option {
+    float: right;
+    margin-left: 10px;
+}
+
 .post-content-block {
     grid-column: span 3;
 }
@@ -28,7 +42,8 @@
 .post-message-block {
     padding: 15px;
     text-align: left;
-    height: 9rem;
+    min-height: 9rem;
+    position: relative;
 }
 
 .post-thanks-block {
@@ -53,5 +68,14 @@
 }
 
 .reply-btn {
+    float: right;
+}
+
+.cancel-edit-btn {
+    float: right;
+    margin-right: 5px;
+}
+
+.save-edit-btn {
     float: right;
 }

@@ -12,7 +12,7 @@ export default function ForumIndex() {
         setUserActivity(user, 'Viewing Index');
     }, []);
     return (
-        <ForumContainer>
+        <ForumContainer index={true}>
             <Subforums />
         </ForumContainer>
     )
