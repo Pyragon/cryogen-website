@@ -1,3 +1,4 @@
+import axios from '../../utils/axios';
 import React, { useState, useEffect } from 'react'
 
 import CollapsibleWidget from '../utils/CollapsibleWidget';
@@ -6,9 +7,8 @@ import DisplayUser from '../utils/user/DisplayUser';
 export default function ForumRecents() {
     let [ threads, setThreads ] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:8081/forums/threads/news')
-            .then(res => res.json())
-            .then(res => setThreads(res));
+        axios.get('http://localhost:8081/forums/threads/news')
+            .then(res => setThreads(res.data));
     }, []);
     return (
         <>

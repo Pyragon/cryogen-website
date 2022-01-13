@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from '../../../utils/axios';
 
 import HighscoreRow from './HighscoreRow';
 import Widget from '../../utils/Widget';
@@ -9,10 +10,9 @@ import './../../../styles/index/MiniHighscores.css';
 export default function MiniHighscores() {
     let [highscores, setHighscores] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:8081/highscores/mini')
-            .then(res => res.json())
-            .then(data => {
-                setHighscores(data.highscores);
+        axios.get('http://localhost:8081/highscores/mini')
+            .then(results => {
+                setHighscores(results.data.highscores);
             });
     }, []);
     return (

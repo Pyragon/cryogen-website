@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from '../../../utils/axios';
 
 import { formatDate } from '../../../utils/format';
 
@@ -11,9 +12,9 @@ import '../../../styles/forums/Subforum.css';
 export default function SubforumBlock({ forum, viewForum }) {
     let [ subforums, setSubforums ] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:8081/forums/subforums/children/' + forum._id)
-            .then(res => res.json())
-            .then(res => setSubforums(res));
+        axios.get('http://localhost:8081/forums/subforums/children/' + forum._id)
+            .then(response => setSubforums(response.data))
+            .catch(console.error);
     }, []);
     return (
         <>

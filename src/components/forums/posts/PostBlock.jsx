@@ -38,7 +38,7 @@ export default function PostBlock({ post }) {
     let { setReply } = useContext(EditorContext);
     let [ editing, setEditing ] = useState(false);
     let [ postState, setPostState ] = useState(post);
-    let loggedIn = user !== null, canEdit = postState.author._id === user._id, canPost = true;
+    let loggedIn = user !== null, canEdit = user && postState.author._id === user._id, canPost = true;
     let [ thanks, setThanks ] = useState(postState.thanks);
     return (
         <div key={postState._id} className="post-content-block">
@@ -61,7 +61,7 @@ export default function PostBlock({ post }) {
                             }
                             { loggedIn && canPost && <div className="quote-post link edit-option" onClick={(e) => clickedQuote(e, postState, setReply)}>Quote</div> }
                             { loggedIn && canEdit && <div className="edit-post link edit-option" onClick={() => {setEditing(true)}}>Edit</div> }
-                            { postState.edited && <div className="last-edited edit-option">{'Lasted Edited: '+formatDate(postState.edited)}</div> }
+                            { postState.edited && <div className="last-edited edit-option small">{'Lasted Edited: '+formatDate(postState.edited)}</div> }
                         </div>
                     </>
                 }

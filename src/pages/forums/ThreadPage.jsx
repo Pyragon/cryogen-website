@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from '../../utils/axios';
 
 import { useParams } from 'react-router-dom';
 
@@ -11,11 +12,9 @@ export default function ThreadPage() {
     let [ thread, setThread ] = useState(null);
     useEffect(async() => {
         if(!threadId) return;
-        let result = await fetch(`http://localhost:8081/forums/threads/${threadId}`);
-        if(result) {
-            let data = await result.json();
-            setThread(data);
-        }
+        let results = await axios.get(`http://localhost:8081/forums/threads/${threadId}`);
+        if(results)
+            setThread(results.data);
     }, []);
     return (
         <ForumContainer>

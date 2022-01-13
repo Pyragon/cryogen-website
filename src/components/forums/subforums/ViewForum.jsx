@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import UserContext from '../../../utils/UserContext';
+import axios from '../../../utils/axios';
 
 import CollapsibleWidget from '../../utils/CollapsibleWidget'
 import Button from '../../utils/Button';
@@ -12,12 +13,10 @@ export default function ViewForum({ forum, viewForum }) {
     let { user } = useContext(UserContext);
     let loggedIn = user !== null;
     useEffect(() => {
-        fetch('http://localhost:8081/forums/subforums/children/' + forum._id)
-            .then(res => res.json())
-            .then(res => setSubforums(res));
-        fetch('http://localhost:8081/forums/threads/children/' + forum._id)
-            .then(res => res.json())
-            .then(res => setThreads(res));
+        axios.get('http://localhost:8081/forums/subforums/children/' + forum._id)
+            .then(res => setSubforums(res.data));
+        axios.get('http://localhost:8081/forums/threads/children/' + forum._id)
+            .then(res => setThreads(res.data));
     }, [forum]);
     return (
         <>

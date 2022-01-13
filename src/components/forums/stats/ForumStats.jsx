@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from '../../../utils/axios';
 
 import Widget from '../../utils/Widget'
 
@@ -6,8 +7,8 @@ import '../../../styles/forums/ForumStats.css';
 import ForumStat from './ForumStat';
 
 async function fetchStats(stats, setStats) {
-    let newStats = await fetch('http://localhost:8081/forums/stats');
-    newStats = await newStats.json();
+    let newStats = await axios.get('http://localhost:8081/forums/stats');
+    newStats = await newStats.data;
     if(JSON.stringify(stats) === JSON.stringify(newStats))
         return;
     setStats(newStats);

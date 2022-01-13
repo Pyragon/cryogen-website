@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from '../../utils/axios';
 
 import { useParams } from 'react-router-dom';
 
@@ -9,11 +10,9 @@ export default function ForumPage() {
     let { forumId } = useParams();
     let [ forum, setForum ] = useState(null);
     let viewForum = async(forumId) => {
-        let result = await fetch(`http://localhost:8081/forums/subforums/${forumId}`);
-        if(result) {
-            let data = await result.json();
-            setForum(data);
-        }
+        let result = await axios.get(`/forums/subforums/${forumId}`);
+        if(result)
+            setForum(result.data);
     };
     useEffect(async() => {
         if(!forumId) return;

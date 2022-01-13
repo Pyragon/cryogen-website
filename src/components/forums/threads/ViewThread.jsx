@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
+import axios from '../../../utils/axios';
+
+import Permissions from '../../../utils/permissions';
 
 import UserContext from '../../../utils/UserContext';
 import setUserActivity from '../../../utils/user-activity';
-import axios from '../../../utils/axios';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
 
@@ -33,15 +35,30 @@ export default function ViewThread({ thread }) {
     let [ reply, setReply ] = useState('');
     let { user } = useContext(UserContext);
     let loggedIn = user !== null;
+    if(thread.subforum.permissions)
+        thread.permissions = new Permissions(thread.subforum.permissions);
     useEffect(() => {
-        fetch('http://localhost:8081/forums/posts/children/'+thread._id)
-        .then(res => res.json())
-        .then(data => setPosts(data));
+        axios.get('http://localhost:8081/forums/posts/children/'+thread._id)
+        .then(results => {
+            let data = results.data;
+            if(data.permissions)
+                data.permissions = new Permissions(data.permissions);
+            setPosts(data)
+        });
         setUserActivity(user, 'Viewing thread: ' + thread.title);
     }, []);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
     return (
-        <>
+        <div style={{position: 'relative'}}>
+            { thread.permissions && thread.permissions.canModerate(user) &&
+                <>
+                    <Button className="moderate-thread-btn small" onClick={() => console.log('open options')}>
+                        <span>Moderation Options </span>
+                        <i className="fas fa-chevron-down"></i>
+                    </Button>
+                    <div style={{clear: 'both' }}/>
+                </>
+            }
             <EditorContext.Provider value={providerValue}>
                 <CollapsibleWidget
                     title={thread.title}
@@ -66,6 +83,6 @@ export default function ViewThread({ thread }) {
                     </CollapsibleWidget> 
                 }
             </EditorContext.Provider>
-        </>
+        </div>
     )
 }

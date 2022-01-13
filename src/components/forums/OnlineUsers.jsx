@@ -7,15 +7,15 @@ import DisplayUser from '../utils/user/DisplayUser';
 export default function OnlineUsers() {
     let [ users, setUsers ] = React.useState([]);
     useEffect(async() => {
-        let interval = setInterval(async() => {
-            let response = await axios.get('/forums/stats/online');
-            if(response.data.message) {
-                console.error(response.data.message);
-                return;
-            }
-            setUsers(response.data);
-        }, 1000);
-        return () => clearInterval(interval);
+        // let interval = setInterval(async() => {
+        //     let response = await axios.get('/forums/stats/online');
+        //     if(response.data.message) {
+        //         console.error(response.data.message);
+        //         return;
+        //     }
+        //     setUsers(response.data);
+        // }, 1000);
+        // return () => clearInterval(interval);
     }, []);
     return (
         <CollapsibleWidget

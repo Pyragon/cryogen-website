@@ -10,7 +10,7 @@ import '../../../styles/forums/Chatbox.css';
 import ChatboxMessage from './ChatboxMessage';
 
 async function fetchMessages(messages, setMessages) {
-    let results = await axios.get('http://localhost:8081/forums/chatbox');
+    let results = await axios.get('/forums/chatbox');
     let newMessages = results.data;
     if(JSON.stringify(messages) === JSON.stringify(newMessages.messages))
         return;
@@ -25,11 +25,11 @@ export default function Chatbox() {
     let loggedIn = user !== null;
     useEffect(() => {
         fetchMessages(messages, setMessages);
-        let interval = setInterval(() => fetchMessages(messages, setMessages), 1000);
-        return () => clearInterval(interval);
+        // let interval = setInterval(() => fetchMessages(messages, setMessages), 5000);
+        return;// () => clearInterval(interval);
     }, []);
     let submitMessage = async() => {
-        let results = await axios.post('http://localhost:8081/forums/chatbox', {
+        let results = await axios.post('/forums/chatbox', {
             message: text
         });
         if(!results || results.message) {

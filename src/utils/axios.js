@@ -9,6 +9,7 @@ instance.interceptors.request.use(config => {
     let sessionId = localStorage.getItem('sessionId') || sessionStorage.getItem('sessionId');
     if (sessionId)
         config.headers.Authorization = sessionId;
+    console.log(sessionId, config.url);
     return config;
 });
 

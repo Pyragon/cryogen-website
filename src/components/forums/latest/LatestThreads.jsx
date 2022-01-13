@@ -16,6 +16,7 @@ export default function LatestThreads() {
         fetchLatestThreads(setThreads);
         let threadsInterval = setInterval(() => fetchLatestThreads(setThreads), 5000);
         return () => clearInterval(threadsInterval);
+        //not clearing like it should be
     }, []);
     return (
         <Widget title="Latest Threads">

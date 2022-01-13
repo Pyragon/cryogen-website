@@ -79,3 +79,8 @@
 .save-edit-btn {
     float: right;
 }
+
+.moderate-thread-btn {
+    float: right;
+    margin-bottom: 10px;
+}
