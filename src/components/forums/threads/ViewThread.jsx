@@ -30,6 +30,13 @@ async function clickedReply(thread, reply, setReply, setPosts) {
     }
 }
 
+function canReply(user, thread) {
+    if(!user) return false;
+    if(thread.permissions.canModerate(user)) return true;
+    if(!thread.open) return false;
+    return thread.permissions.canReply(user, thread);
+}
+
 export default function ViewThread({ thread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
@@ -37,17 +44,22 @@ export default function ViewThread({ thread }) {
     let loggedIn = user !== null;
     if(thread.subforum.permissions)
         thread.permissions = new Permissions(thread.subforum.permissions);
-    useEffect(() => {
-        axios.get('http://localhost:8081/forums/posts/children/'+thread._id)
-        .then(results => {
-            let data = results.data;
-            if(data.permissions)
-                data.permissions = new Permissions(data.permissions);
-            setPosts(data)
+    useEffect(async() => {
+        let response = await axios.get('http://localhost:8081/forums/posts/children/'+thread._id);
+        if(!response.data) {
+            console.error('No posts found for thread '+thread._id);
+            return;
+        }
+        let posts = response.data.map(post => {
+            if(!post.permissions) return post;
+            post.permissions = new Permissions(post.permissions);
+            return post;
         });
+        setPosts(posts);
         setUserActivity(user, 'Viewing thread: ' + thread.title);
     }, []);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
+
     return (
         <div style={{position: 'relative'}}>
             { thread.permissions && thread.permissions.canModerate(user) &&
@@ -66,7 +78,7 @@ export default function ViewThread({ thread }) {
                 >
                     { posts && <PostList posts={posts} /> }
                 </CollapsibleWidget>
-                { loggedIn && thread.open && 
+                { canReply(user, thread) && 
                     <CollapsibleWidget
                         title="Quick Reply"
                         description={ 

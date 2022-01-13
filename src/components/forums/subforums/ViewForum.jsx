@@ -28,7 +28,7 @@ export default function ViewForum({ forum, viewForum }) {
                     <SubforumBlock forum={forum} viewForum={viewForum} />
                 </CollapsibleWidget> 
             }
-            { loggedIn && (
+            { forum.permissions && forum.permissions.canCreateThreads(user) && (
                 <>
                     <Button title='New Thread' className='new-thread-btn' onClick={() => {}} />
                     <div style={{clear: 'both'}} />

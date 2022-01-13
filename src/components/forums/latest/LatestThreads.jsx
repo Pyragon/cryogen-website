@@ -7,7 +7,9 @@ import Widget from '../../utils/Widget'
 import LatestThread from './LatestThread';
 
 async function fetchLatestThreads(setThreads) {
-    setThreads((await axios.get('http://localhost:8081/forums/threads/latest')).data);
+    let response = await axios.get('/forums/threads/latest');
+    if(!response || !response.data) return;
+    setThreads(response.data);
 }
 
 export default function LatestThreads() {

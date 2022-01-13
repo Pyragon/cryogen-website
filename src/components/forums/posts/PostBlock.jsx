@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 
 import { formatDate } from '../../../utils/format';
 import axios from '../../../utils/axios';
+import Permissions from '../../../utils/permissions';
 import Post from './Post';
 
 import EditorContext from '../../../utils/EditorContext';
@@ -33,13 +34,17 @@ async function clickedQuote(e, post, setReply) {
     setReply((prev) => prev + (prev ? '\n' : '') + reply);
 }
 
-export default function PostBlock({ post }) {
+export default function PostBlock({ data }) {
+    let post = data.post;
     let { user } = useContext(UserContext);
     let { setReply } = useContext(EditorContext);
     let [ editing, setEditing ] = useState(false);
     let [ postState, setPostState ] = useState(post);
-    let loggedIn = user !== null, canEdit = user && postState.author._id === user._id, canPost = true;
-    let [ thanks, setThanks ] = useState(postState.thanks);
+    let loggedIn = user !== null, canPost = true;
+    let [ thanks, setThanks ] = useState(data.thanks);
+
+    let permissions = new Permissions(post.thread.subforum.permissions);
+    let canEdit = user._id === post.author._id || permissions.canModerate(user, post.thread);
     return (
         <div key={postState._id} className="post-content-block">
             <div className="post-date-block">
@@ -53,7 +58,7 @@ export default function PostBlock({ post }) {
                         <div className="edit-options">
                             { loggedIn && 
                                 <>
-                                    { thanks.find(thank => thank._id == user._id) ? 
+                                    { thanks.find(thank => thank.user._id == user._id) ? 
                                         <a href="#" className="link edit-option" onClick={(e) => clickedThanks(e, false, postState, setThanks)}>Remove Thanks</a> : 
                                         <a href="#" className="link edit-option" onClick={(e) => clickedThanks(e, true, postState, setThanks)}>Thanks</a> 
                                     }
@@ -72,10 +77,10 @@ export default function PostBlock({ post }) {
                     { thanks && thanks.length > 0 && 
                         <>
                             <span>{thanks.length + ' user'+(thanks.length == 1 ? '' : 's')+' '+(thanks.length == 1 ? 'has' : 'have')+' thanked this post:'}</span>
-                            { thanks.slice(0, 10).map((user, index) =>
+                            { thanks.slice(0, 10).map((thank, index) =>
                                 <DisplayUser
                                     key={index}
-                                    user={user}
+                                    user={thank.user}
                                     suffix={index == thanks.length-1 ? '' : ', '}
                                 />
                             )}

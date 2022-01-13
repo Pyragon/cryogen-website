@@ -13,7 +13,10 @@ export default function SubforumBlock({ forum, viewForum }) {
     let [ subforums, setSubforums ] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:8081/forums/subforums/children/' + forum._id)
-            .then(response => setSubforums(response.data))
+            .then(response => {
+                console.log(response.data);
+                setSubforums(response.data)
+            })
             .catch(console.error);
     }, []);
     return (

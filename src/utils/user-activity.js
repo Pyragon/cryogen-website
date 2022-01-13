@@ -5,7 +5,7 @@ const setUserActivity = async(user, activity) => {
     try {
         let results = await axios.post('/users/activity', { activity });
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 };
 

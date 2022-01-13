@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../utils/axios';
+import Permissions from '../../utils/permissions';
 
 import { useParams } from 'react-router-dom';
 
@@ -11,8 +12,11 @@ export default function ForumPage() {
     let [ forum, setForum ] = useState(null);
     let viewForum = async(forumId) => {
         let result = await axios.get(`/forums/subforums/${forumId}`);
-        if(result)
-            setForum(result.data);
+        if(result) {
+            let forum = result.data;
+            forum.permissions = new Permissions(forum.permissions);
+            setForum(forum);
+        }
     };
     useEffect(async() => {
         if(!forumId) return;
