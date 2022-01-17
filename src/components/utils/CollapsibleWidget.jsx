@@ -22,7 +22,7 @@ export default function CollapsibleWidget({ title, minimizable=true, link, onCli
                             : <span className="news-post-title" onClick={() => onClick && onClick()}>{title}</span> }
                             { minimizable && 
                                 <div className="minimize" onClick={toggle}>
-                                    <span className={"fa "+(toggleState === 'COLLAPSED' ? "fa-plus" : "fa-minus")}/>
+                                    <i className={"fa "+(toggleState === 'COLLAPSED' ? "fa-plus" : "fa-minus")}/>
                                 </div> 
                             }
                         </div>

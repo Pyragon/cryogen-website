@@ -14,7 +14,7 @@ export default function Footer() {
             <div className={"footer-btns "+(loggedIn && isAdmin ? "footer-btns-4" : "")}>
                 { buttons.map((button, index) => {
                     if(button.requiresStaff && (!loggedIn || !isAdmin))
-                        return;
+                        return <></>
                     return(
                     <div key={index}>
                         <h3>{button.header}</h3>

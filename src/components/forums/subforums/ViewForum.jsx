@@ -7,11 +7,10 @@ import Button from '../../utils/Button';
 import SubforumBlock from './SubforumBlock'
 import ThreadBlock from '../threads/ThreadBlock';
 
-export default function ViewForum({ forum, viewForum }) {
+export default function ViewForum({ forum }) {
     let [ subforums, setSubforums ] = useState([]);
     let [ threads, setThreads ] = useState([]);
     let { user } = useContext(UserContext);
-    let loggedIn = user !== null;
     useEffect(() => {
         axios.get('http://localhost:8081/forums/subforums/children/' + forum._id)
             .then(res => setSubforums(res.data));
@@ -25,7 +24,7 @@ export default function ViewForum({ forum, viewForum }) {
                     title={'Subforums'}
                     index={0}
                 >
-                    <SubforumBlock forum={forum} viewForum={viewForum} />
+                    <SubforumBlock forum={forum} />
                 </CollapsibleWidget> 
             }
             { forum.permissions && forum.permissions.canCreateThreads(user) && (
@@ -40,7 +39,7 @@ export default function ViewForum({ forum, viewForum }) {
                 index={1}
             >
                 { 
-                    threads.length == 0 ?
+                    threads.length === 0 ?
                         <p className="t-center">No threads have been created yet.</p>
                     :
                         threads.map((thread, index) => (

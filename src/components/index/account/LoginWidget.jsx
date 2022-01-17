@@ -12,7 +12,7 @@ import Widget from '../../utils/Widget';
 import './../../../styles/Buttons.css'
 
 export default function LoginWidget( { header=true } ) {
-    let { user, setUser } = useContext(UserContext);
+    let { setUser } = useContext(UserContext);
     let [ tfaToggled, setTfaToggled ] = useState(false);
     let [ username, setUsername ] = useState("");
     let [ password, setPassword ] = useState("");

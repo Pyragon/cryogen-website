@@ -41,23 +41,25 @@ export default function ViewThread({ thread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
     let { user } = useContext(UserContext);
-    let loggedIn = user !== null;
     if(thread.subforum.permissions)
         thread.permissions = new Permissions(thread.subforum.permissions);
-    useEffect(async() => {
-        let response = await axios.get('http://localhost:8081/forums/posts/children/'+thread._id);
-        if(!response.data) {
-            console.error('No posts found for thread '+thread._id);
-            return;
+    useEffect(() => {
+        async function fetchData() {
+            let response = await axios.get('http://localhost:8081/forums/posts/children/'+thread._id);
+            if(!response.data) {
+                console.error('No posts found for thread '+thread._id);
+                return;
+            }
+            let posts = response.data.map(post => {
+                if(!post.permissions) return post;
+                post.permissions = new Permissions(post.permissions);
+                return post;
+            });
+            setPosts(posts);
+            setUserActivity(user, 'Viewing thread: ' + thread.title);
         }
-        let posts = response.data.map(post => {
-            if(!post.permissions) return post;
-            post.permissions = new Permissions(post.permissions);
-            return post;
-        });
-        setPosts(posts);
-        setUserActivity(user, 'Viewing thread: ' + thread.title);
-    }, []);
+        fetchData();
+    }, [ user, thread]);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
 
     return (
@@ -84,7 +86,7 @@ export default function ViewThread({ thread }) {
                         description={ 
                             <>
                                 <span>Add a reply to this thread. Click </span>
-                                <a href="" className="link">here</a>
+                                <a href="/forums" className="link">here</a>
                                 <span> for BBCode examples</span>
                             </>
                         }

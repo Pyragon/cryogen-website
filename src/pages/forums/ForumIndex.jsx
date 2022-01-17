@@ -10,7 +10,7 @@ export default function ForumIndex() {
     let { user } = useContext(UserContext);
     useEffect(() => {
         setUserActivity(user, 'Viewing Index');
-    }, []);
+    }, [ user ]);
     return (
         <ForumContainer index={true}>
             <Subforums />

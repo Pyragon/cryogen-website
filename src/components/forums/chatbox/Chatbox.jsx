@@ -25,9 +25,9 @@ export default function Chatbox() {
     let loggedIn = user !== null;
     useEffect(() => {
         fetchMessages(messages, setMessages);
-        // let interval = setInterval(() => fetchMessages(messages, setMessages), 5000);
-        return;// () => clearInterval(interval);
-    }, []);
+        let interval = setInterval(() => fetchMessages(messages, setMessages), 5000);
+        return () => clearInterval(interval);
+    }, [ messages ]);
     let submitMessage = async() => {
         let results = await axios.post('/forums/chatbox', {
             message: text

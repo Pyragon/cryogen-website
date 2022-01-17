@@ -10,12 +10,12 @@ import ForumContainer from './ForumContainer';
 export default function ThreadPage() {
     let { threadId } = useParams();
     let [ thread, setThread ] = useState(null);
-    useEffect(async() => {
+    useEffect(() => {
         if(!threadId) return;
-        let results = await axios.get(`http://localhost:8081/forums/threads/${threadId}`);
-        if(results)
-            setThread(results.data);
-    }, []);
+        axios.get(`http://localhost:8081/forums/threads/${threadId}`)
+            .then(results => setThread(results.data))
+            .catch(console.error);
+    }, [ threadId ]);
     return (
         <ForumContainer>
             { thread && <ViewThread thread={thread}/> }

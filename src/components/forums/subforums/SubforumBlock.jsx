@@ -9,16 +9,13 @@ import DisplayUser from '../../utils/user/DisplayUser';
 
 import '../../../styles/forums/Subforum.css';
 
-export default function SubforumBlock({ forum, viewForum }) {
+export default function SubforumBlock({ forum }) {
     let [ subforums, setSubforums ] = useState([]);
     useEffect(() => {
         axios.get('http://localhost:8081/forums/subforums/children/' + forum._id)
-            .then(response => {
-                console.log(response.data);
-                setSubforums(response.data)
-            })
+            .then(response => setSubforums(response.data))
             .catch(console.error);
-    }, []);
+    }, [ forum ]);
     return (
         <>
             { subforums.map((subforum, index) => {
@@ -30,11 +27,7 @@ export default function SubforumBlock({ forum, viewForum }) {
                                     {subforum.name}
                                 </a>
                                 : 
-                                viewForum ? 
-                                    <>
-                                        <div className="link" onClick={async() => { await viewForum(subforum._id)}}>{subforum.name}</div>
-                                    </>
-                                : <Link to={"/forums/"+subforum._id} className="link">{subforum.name} </Link> }               
+                                <Link to={"/forums/"+subforum._id} className="link">{subforum.name} </Link> }               
                             <div className="m-top-5 small grey">{subforum.description}</div>
                             { forum.subforums?.length > 0 && (
                                 <>

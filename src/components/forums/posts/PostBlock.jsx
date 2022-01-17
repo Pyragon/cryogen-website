@@ -58,9 +58,9 @@ export default function PostBlock({ data }) {
                         <div className="edit-options">
                             { loggedIn && 
                                 <>
-                                    { thanks.find(thank => thank.user._id == user._id) ? 
-                                        <a href="#" className="link edit-option" onClick={(e) => clickedThanks(e, false, postState, setThanks)}>Remove Thanks</a> : 
-                                        <a href="#" className="link edit-option" onClick={(e) => clickedThanks(e, true, postState, setThanks)}>Thanks</a> 
+                                    { thanks.find(thank => thank.user._id === user._id) ? 
+                                        <div className="link edit-option" onClick={(e) => clickedThanks(e, false, postState, setThanks)}>Remove Thanks</div> : 
+                                        <div className="link edit-option" onClick={(e) => clickedThanks(e, true, postState, setThanks)}>Thanks</div> 
                                     }
                                 </>
                             }
@@ -73,15 +73,15 @@ export default function PostBlock({ data }) {
             </div>
             <div className="post-thanks-block small">
                 <p style={{margin: '0'}}>
-                    { thanks.length == 0 && <span>No users have thanked this post.</span>}
+                    { thanks.length === 0 && <span>No users have thanked this post.</span>}
                     { thanks && thanks.length > 0 && 
                         <>
-                            <span>{thanks.length + ' user'+(thanks.length == 1 ? '' : 's')+' '+(thanks.length == 1 ? 'has' : 'have')+' thanked this post:'}</span>
+                            <span>{thanks.length + ' user'+(thanks.length === 1 ? '' : 's')+' '+(thanks.length === 1 ? 'has' : 'have')+' thanked this post:'}</span>
                             { thanks.slice(0, 10).map((thank, index) =>
                                 <DisplayUser
                                     key={index}
                                     user={thank.user}
-                                    suffix={index == thanks.length-1 ? '' : ', '}
+                                    suffix={index === thanks.length-1 ? '' : ', '}
                                 />
                             )}
                             { thanks.length > 10 && <span>...</span> }

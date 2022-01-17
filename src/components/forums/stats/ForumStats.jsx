@@ -20,7 +20,7 @@ export default function ForumStats() {
         let statsInterval = setInterval(() => fetchStats(stats, setStats), 5000);
         fetchStats(stats, setStats);
         return () => clearInterval(statsInterval);
-    }, []);
+    }, [ stats ]);
     return (
         <Widget title="Forum Stats" description="Real-Time stats about the forums">
             <ForumStat title="Registered Users" value={stats.registered || 0} />

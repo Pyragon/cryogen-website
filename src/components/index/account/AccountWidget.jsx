@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import axios from '../../../utils/axios';
 import LoginWidget from './LoginWidget'
 import UserContext from '../../../utils/UserContext';
 import Widget from '../../utils/Widget';
-import Button from '../../utils/Button';
 
 import './../../../styles/index/AccountWidget.css'
 

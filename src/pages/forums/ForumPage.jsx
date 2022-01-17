@@ -10,21 +10,19 @@ import ForumContainer from './ForumContainer';
 export default function ForumPage() {
     let { forumId } = useParams();
     let [ forum, setForum ] = useState(null);
-    let viewForum = async(forumId) => {
-        let result = await axios.get(`/forums/subforums/${forumId}`);
-        if(result) {
-            let forum = result.data;
-            forum.permissions = new Permissions(forum.permissions);
-            setForum(forum);
-        }
-    };
-    useEffect(async() => {
+    useEffect(() => {
         if(!forumId) return;
-        await viewForum(forumId);
-    }, []);
+        axios.get(`/forums/subforums/${forumId}`)
+            .then(results => {
+                let forum = results.data;
+                forum.permissions = new Permissions(forum.permissions);
+                setForum(forum);
+            })
+            .catch(console.error);
+    }, [ forumId ]);
     return (
         <ForumContainer>
-            { forum && <ViewForum forum={forum} viewForum={viewForum} /> }
+            { forum && <ViewForum forum={forum} /> }
         </ForumContainer>
     )
 }
