@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 
-import UserContext from '../../utils/UserContext';
+import UserContext from '../../utils/contexts/UserContext';
 import Chatbox from '../../components/forums/chatbox/Chatbox';
 import ForumStats from '../../components/forums/stats/ForumStats';
 import LatestThreads from '../../components/forums/latest/LatestThreads';

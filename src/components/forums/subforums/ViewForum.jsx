@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserContext from '../../../utils/UserContext';
+import UserContext from '../../../utils/contexts/UserContext';
 import axios from '../../../utils/axios';
 
 import CollapsibleWidget from '../../utils/CollapsibleWidget'

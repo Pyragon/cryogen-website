@@ -1,0 +1,37 @@
+.register-widget {
+    width: 80%;
+    margin: auto;
+}
+
+.register-btn-container {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.register-btn {
+    margin: 1rem;
+}
+
+.register-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 1rem;
+}
+
+.register-info {
+    border-left: 1px solid #999;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    color: #999;
+}
+
+.register-info h3 {
+    margin-bottom: 0;
+}
+
+.register-info li {
+    margin: 1rem;
+}

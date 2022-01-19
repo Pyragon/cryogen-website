@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import PageContext from '../../../utils/PageContext';
+import PageContext from '../../../utils/contexts/PageContext';
 
 function getPages(pageTotal, currentPage) {
     if(pageTotal === 1) return [ 1 ];

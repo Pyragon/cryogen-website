@@ -10,7 +10,7 @@ import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import LabelInput from '../../utils/LabelInput';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
 import Button from '../../utils/Button';
-import UserContext from '../../../utils/UserContext';
+import UserContext from '../../../utils/contexts/UserContext';
 
 import '../../../styles/forums/Thread.css';
 

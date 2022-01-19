@@ -3,13 +3,13 @@ import axios from '../../../utils/axios';
 
 import Permissions from '../../../utils/permissions';
 
-import UserContext from '../../../utils/UserContext';
+import UserContext from '../../../utils/contexts/UserContext';
 import setUserActivity from '../../../utils/user-activity';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
 
-import EditorContext from '../../../utils/EditorContext';
-import PageContext from '../../../utils/PageContext';
+import EditorContext from '../../../utils/contexts/EditorContext';
+import PageContext from '../../../utils/contexts/PageContext';
 
 import Button from '../../utils/Button';
 

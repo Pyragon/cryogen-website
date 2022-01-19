@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 
 import setUserActivity from '../../utils/user-activity';
-import UserContext from '../../utils/UserContext';
+import UserContext from '../../utils/contexts/UserContext';
 import generateBreadcrumbs from '../../utils/breadcrumbs';
 
 import Subforums from '../../components/forums/subforums/Subforums';

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import UserContext from '../../utils/UserContext';
+import UserContext from '../../utils/contexts/UserContext';
 
 import FooterButton from './FooterButton';
 
@@ -12,7 +12,7 @@ export default function Footer() {
     return (
         <div className="footer">
             <div className={"footer-btns "+(loggedIn && isAdmin ? "footer-btns-4" : "")}>
-                { buttons.filter(button => !button.requiresStaff || (loggedIn || isAdmin))
+                { buttons.filter(button => !button.requiresStaff || isAdmin)
                     .map((button, index) => 
                         <div key={index}>
                             <h3>{button.header}</h3>

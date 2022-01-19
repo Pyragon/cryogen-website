@@ -7,7 +7,7 @@ import generateBreadcrumbs from '../../utils/breadcrumbs';
 import ViewThread from '../../components/forums/threads/ViewThread';
 
 import ForumContainer from './ForumContainer';
-import PageContext from '../../utils/PageContext';
+import PageContext from '../../utils/contexts/PageContext';
 
 export default function ThreadPage() {
     let { threadId, page: pageParam } = useParams();

@@ -10,8 +10,9 @@ import './styles/Default.css'
 import './styles/utils/Helpers.css'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
-import UserContext from './utils/UserContext';
+import UserContext from './utils/contexts/UserContext';
 import NewThread from './components/forums/threads/NewThread';
+import RegisterPage from './pages/account/RegisterPage';
 
 export default function App() {
     let [ user, setUser ] = useState(null);
@@ -30,6 +31,7 @@ export default function App() {
                 <Header />
                 <Routes>
                     <Route path="/" element={<IndexPage />} />
+                    <Route path="/register" element={<RegisterPage/>}/>
                     <Route path="/forums" element={<ForumIndex/>} />
                     <Route path="/forums/:forumId" element={<ForumPage/>} />
                     <Route path="/forums/:forumId/new" element={<NewThread/>} />

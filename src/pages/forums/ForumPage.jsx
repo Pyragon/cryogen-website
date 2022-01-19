@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 import ViewForum from '../../components/forums/subforums/ViewForum';
 import ForumContainer from './ForumContainer';
-import UserContext from '../../utils/UserContext';
+import UserContext from '../../utils/contexts/UserContext';
 
 export default function ForumPage() {
     let { user } = useContext(UserContext);

@@ -5,8 +5,8 @@ import axios from '../../../utils/axios';
 import Permissions from '../../../utils/permissions';
 import Post from './Post';
 
-import EditorContext from '../../../utils/EditorContext';
-import UserContext from '../../../utils/UserContext';
+import EditorContext from '../../../utils/contexts/EditorContext';
+import UserContext from '../../../utils/contexts/UserContext';
 import DisplayUser from '../../utils/user/DisplayUser';
 import Button from '../../utils/Button';
 import EditPost from './EditPost';

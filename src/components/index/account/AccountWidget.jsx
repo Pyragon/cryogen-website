@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import LoginWidget from './LoginWidget'
-import UserContext from '../../../utils/UserContext';
+import UserContext from '../../../utils/contexts/UserContext';
 import Widget from '../../utils/Widget';
+import DisplayUser from '../../utils/user/DisplayUser';
 
 import './../../../styles/index/AccountWidget.css'
 
@@ -14,7 +15,19 @@ export default function AccountWidget() {
     return (
         <div>
             <h4 className="title t-center">Account & Community</h4>
-            <Widget title="Account">
+            <Widget 
+                title="Account"
+                description={
+                    <span>
+                        Welcome back,
+                            <DisplayUser
+                                user={user}
+                                prefix=' '
+                                suffix='.'
+                            />
+                    </span>
+                }
+            >
                 <div className="account-node-btns">
                     <Link to="/account" className="btn account-node-btn">Overview</Link>
                     <Link to="/highscores" className="btn account-node-btn">My Highscores</Link>

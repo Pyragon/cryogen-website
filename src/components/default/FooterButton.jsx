@@ -2,7 +2,7 @@ import { React, useContext } from 'react';
 
 import axios from '../../utils/axios';
 
-import UserContext from '../../utils/UserContext';
+import UserContext from '../../utils/contexts/UserContext';
 
 import { Link } from 'react-router-dom';
 
