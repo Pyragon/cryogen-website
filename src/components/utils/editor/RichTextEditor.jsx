@@ -2,19 +2,20 @@ import React from 'react';
 
 import '../../../styles/utils/RichTextEditor.css';
 
-export default function RichTextEditor({ value, height, width, setState}) {
-    let style = {
-        height: height || '8rem',
-        width: width || '100%',
-        minHeight: height || '8rem',
-    }
+export default function RichTextEditor({ value, style={}, setState}) {
+    let defaultStyle = {
+        height: '8rem',
+        width: '100%',
+        minHeight: '8rem',
+    };
+    let extended = { ...defaultStyle, ...style };
     return (
         <>
-            <div className="text-editor-options">
+            <div style={{...style, height: '2rem'}}className="text-editor-options">
             </div>
             <textarea 
                 className="text-editor" 
-                style={style}
+                style={extended}
                 value={value} 
                 onChange={(e) => setState(e.target.value)}
             />

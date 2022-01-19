@@ -12,7 +12,7 @@ export default function MiniHighscores() {
     useEffect(() => {
         axios.get('http://localhost:8081/highscores/mini')
             .then(results => {
-                setHighscores(results.data.highscores);
+                setHighscores(results.data);
             });
     }, []);
     return (

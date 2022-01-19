@@ -31,3 +31,14 @@
 .users-viewing-container {
     padding: 1rem;
 }
+
+.create-thread-btn {
+    float: right;
+    margin-right: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.new-thread-title {
+    width: 95%;
+}

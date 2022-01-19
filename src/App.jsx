@@ -11,6 +11,7 @@ import './styles/utils/Helpers.css'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import UserContext from './utils/UserContext';
+import NewThread from './components/forums/threads/NewThread';
 
 export default function App() {
     let [ user, setUser ] = useState(null);
@@ -31,6 +32,7 @@ export default function App() {
                     <Route path="/" element={<IndexPage />} />
                     <Route path="/forums" element={<ForumIndex/>} />
                     <Route path="/forums/:forumId" element={<ForumPage/>} />
+                    <Route path="/forums/:forumId/new" element={<NewThread/>} />
                     <Route path="/forums/threads/:threadId" element={<ThreadPage/>} />
                     <Route path="/forums/threads/:threadId/:page" element={<ThreadPage/>} />
                 </Routes>
