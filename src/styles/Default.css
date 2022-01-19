@@ -233,6 +233,14 @@ button:focus {
     /* IE6-9 */
 }
 
+.breadcrumb {
+    font-size: .75em;
+}
+
+.breadcrumbs {
+    margin-bottom: 1rem;
+}
+
 .news-post-title {
     margin: 0;
     font-size: 1rem;

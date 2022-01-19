@@ -9,13 +9,17 @@ import LoginWidget from '../../components/index/account/LoginWidget';
 import OnlineUsers from '../../components/forums/OnlineUsers';
 
 import '../../styles/forums/Thread.css';
+import Breadcrumbs from '../../components/forums/crumbs/Breadcrumbs';
 
-export default function ForumContainer({ children, index=false, thread }) {
+export default function ForumContainer({ children, index=false, thread, breadcrumbs }) {
     let { user } = useContext(UserContext);
     return (
         <div className="container">
             <Chatbox />
             <div className="grid-span-2">
+                <Breadcrumbs
+                    breadcrumbs={breadcrumbs}
+                />
                 { children }
             </div>
             <div className="grid-col-3">
