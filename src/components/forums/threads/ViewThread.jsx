@@ -97,7 +97,7 @@ export default function ViewThread({ thread }) {
                 />
                 { canReply(user, thread) && 
                     <CollapsibleWidget
-                        title="Quick Reply"
+                        title="Reply"
                         description={ 
                             <>
                                 <span>Add a reply to this thread. Click </span>
