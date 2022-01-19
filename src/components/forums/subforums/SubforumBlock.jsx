@@ -29,12 +29,12 @@ export default function SubforumBlock({ forum }) {
                                 : 
                                 <Link to={"/forums/"+subforum._id} className="link">{subforum.name} </Link> }               
                             <div className="m-top-5 small grey">{subforum.description}</div>
-                            { forum.subforums?.length > 0 && (
+                            { subforum.subforums?.length > 0 && (
                                 <>
                                     <p className="small">Subforums:</p>
-                                    { forum.subforums.slice(0, 4).map((subforum) => (
+                                    { subforum.subforums.slice(0, 4).map((sub) => (
                                         <>
-                                            <Link className="small white" to={"/forum/"+subforum._id} key={subforum._id}>{subforum.name}</Link>
+                                            <Link className="small white" to={"/forum/"+sub._id} key={sub._id}>{sub.name}</Link>
                                         </>
                                     )) }
                                 </>
