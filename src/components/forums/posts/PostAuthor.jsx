@@ -5,7 +5,8 @@ import DisplayUser from '../../utils/user/DisplayUser';
 import SpanIcon from '../../utils/SpanIcon';
 
 export default function PostAuthor({ data }) {
-    console.log(data);
+    if(!data.post)
+        console.log(data);
     return (
         <div className="post-author-block">
             <DisplayUser 

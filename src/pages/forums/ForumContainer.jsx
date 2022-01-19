@@ -4,10 +4,13 @@ import UserContext from '../../utils/UserContext';
 import Chatbox from '../../components/forums/chatbox/Chatbox';
 import ForumStats from '../../components/forums/stats/ForumStats';
 import LatestThreads from '../../components/forums/latest/LatestThreads';
+import UsersViewingThread from '../../components/forums/threads/UsersViewingThread';
 import LoginWidget from '../../components/index/account/LoginWidget';
 import OnlineUsers from '../../components/forums/OnlineUsers';
 
-export default function ForumContainer({ children, index=false }) {
+import '../../styles/forums/Thread.css';
+
+export default function ForumContainer({ children, index=false, thread }) {
     let { user } = useContext(UserContext);
     return (
         <div className="container">
@@ -17,6 +20,7 @@ export default function ForumContainer({ children, index=false }) {
             </div>
             <div className="grid-col-3">
                 { user === null && <LoginWidget header={false}/>}
+                { thread && <UsersViewingThread thread={thread}/> }
                 <ForumStats />
                 <LatestThreads />
             </div>

@@ -11,7 +11,7 @@ import '../../../styles/forums/LatestThreads.css';
 export default function LatestThread({ thread }) {
     return (
         <div key={thread._id} className="latest-thread">
-            <Link to={"/forums/thread/"+thread._id} className="latest-thread-title white link">
+            <Link to={"/forums/threads/"+thread._id} className="latest-thread-title white link">
                 {thread.title}
             </Link>
             <div className="latest-thread-author small">

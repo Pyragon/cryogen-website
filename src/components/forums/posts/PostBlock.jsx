@@ -8,6 +8,7 @@ import Post from './Post';
 import EditorContext from '../../../utils/EditorContext';
 import UserContext from '../../../utils/UserContext';
 import DisplayUser from '../../utils/user/DisplayUser';
+import Button from '../../utils/Button';
 import EditPost from './EditPost';
 
 async function clickedThanks(e, add, post, setThanks) {
@@ -56,6 +57,14 @@ export default function PostBlock({ data }) {
                     <>
                         <Post post={postState} />
                         <div className="edit-options">
+                            { permissions.canModerate(user) &&
+                                <Button className="edit-option small">
+                                    Mod Options 
+                                    <span>
+                                        <i style={{marginLeft: '2px'}}className="fa fa-chevron-down" />
+                                    </span>
+                                </Button>
+                            }
                             { loggedIn && 
                                 <>
                                     { thanks.find(thank => thank.user._id === user._id) ? 

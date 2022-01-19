@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 
 import DisplayUser from '../../utils/user/DisplayUser';
 
-import '../../../styles/forums/ThreadBlock.css';
-
 export default function ThreadBlock({ thread, index }) {
     return (
         <div className="thread">
@@ -14,7 +12,7 @@ export default function ThreadBlock({ thread, index }) {
                     { thread.pinned && <span className="fa fa-thumb-tack green" title='This thread has been pinned.' /> }
                     { !thread.open && <span className="fa fa-lock red" title='This thread has been locked.'/> }
                     <span>
-                        <Link to={`/forums/thread/${thread._id}`} className="link">{' '+thread.title}</Link>
+                        <Link to={`/forums/threads/${thread._id}`} className="link">{' '+thread.title}</Link>
                     </span>
                 </div>
                 <div className="thread-info small">

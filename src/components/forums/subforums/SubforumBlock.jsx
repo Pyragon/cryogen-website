@@ -44,7 +44,7 @@ export default function SubforumBlock({ forum }) {
                             { 
                             subforum.extraData && subforum.extraData?.lastPost && 
                                 <>
-                                    <Link to={'/forums/thread/'+subforum.extraData?.lastPost?.thread?._id} className="link">
+                                    <Link to={'/forums/threads/'+subforum.extraData?.lastPost?.thread?._id} className="link">
                                         {subforum.extraData?.lastPost.thread.title}
                                     </Link>
                                     <div className="m-top-5 small">

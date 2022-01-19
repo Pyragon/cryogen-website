@@ -5,8 +5,8 @@ import PostBlock from '../posts/PostBlock';
 import '../../../styles/forums/PostList.css'
 
 export default function PostList({ posts }) {
-    return posts.map((data, index) => 
-        <div key={index} className="post-block">
+    return posts.map(data => 
+        <div key={data.post._id} className="post-block">
             <PostAuthor data={data} />
             <PostBlock data={data} />
         </div>
