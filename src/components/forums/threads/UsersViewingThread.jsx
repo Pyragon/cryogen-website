@@ -18,7 +18,7 @@ export default function UsersViewingThread({ thread }) {
         <Widget title="Users viewing thread" description="Real-Time stats about users viewing this thread">
             { activities.length === 0 && <p className='t-center'>No users are currently viewing this thread.</p> }
             { activities.length > 0 && 
-                <div class="users-viewing-container">
+                <div className="users-viewing-container">
                     { activities.map((activity, index) =>
                         <DisplayUser
                             key={index}
