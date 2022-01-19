@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../../utils/axios';
+import setUserActivity from '../../../utils/user-activity';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ export default function NewThread() {
     let [ title, setTitle ] = useState('');
     let [ content, setContent ] = useState('');
     let { forumId } = useParams();
+    setUserActivity(user, 'Creating new thread', 'creating');
     let navigate = useNavigate();
     async function createThread() {
 
@@ -53,10 +55,6 @@ export default function NewThread() {
             })
             .catch(console.error);
     }, [ forumId ]);
-    if(!user) {
-        navigate('/forums');
-        return;
-    }
     return (
         <ForumContainer breadcrumbs={breadcrumbs}>
             <CollapsibleWidget
@@ -80,6 +78,12 @@ export default function NewThread() {
                     />
                 </div>
                 <Button title='Create Thread' className='create-thread-btn' onClick={createThread}/>
+            </CollapsibleWidget>
+            <CollapsibleWidget
+                title='Poll Options'
+                description='Add a poll to this thread'
+                collapsed={true}
+            >
             </CollapsibleWidget>
         </ForumContainer>
     )
