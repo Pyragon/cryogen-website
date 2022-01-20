@@ -1,0 +1,48 @@
+.section-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    padding: 2rem;
+    gap: 2rem;
+    row-gap: 0px;
+}
+
+.section-list {
+    grid-column: span 3;
+}
+
+.section-content {
+    grid-column: span 9;
+}
+
+.section-btn {
+    background: #124d70;
+    border: 1px solid #111;
+    padding: 10px 0;
+    -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    text-align: center;
+    transition: all .3s;
+    margin: 2rem auto;
+    width: 100%;
+    padding: 0;
+    color: white;
+    width: 20rem;
+    height: 3rem;
+    border-radius: 10px;
+}
+
+.section-btn.active {
+    background: #0a354f;
+}
+
+.section-btn:first-of-type {
+    margin: .5rem auto;
+}
+
+.section-btn:hover {
+    cursor: pointer;
+    background: #0e4464;
+    color: white;
+}

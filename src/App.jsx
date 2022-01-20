@@ -13,6 +13,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import UserContext from './utils/contexts/UserContext';
 import NewThread from './components/forums/threads/NewThread';
 import RegisterPage from './pages/account/RegisterPage';
+import PrivatePage from './pages/forums/private/PrivatePage';
 
 export default function App() {
     let [ user, setUser ] = useState(null);
@@ -33,6 +34,8 @@ export default function App() {
                     <Route path="/" element={<IndexPage />} />
                     <Route path="/register" element={<RegisterPage/>}/>
                     <Route path="/forums" element={<ForumIndex/>} />
+                    <Route path="/forums/private" element={<PrivatePage/> } />
+                    <Route path="/forums/private/:section" element={<PrivatePage/> } />
                     <Route path="/forums/:forumId" element={<ForumPage/>} />
                     <Route path="/forums/:forumId/new" element={<NewThread/>} />
                     <Route path="/forums/threads/:threadId" element={<ThreadPage/>} />

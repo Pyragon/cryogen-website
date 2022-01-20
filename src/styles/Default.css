@@ -144,6 +144,11 @@ h4.title {
     margin-top: 8px;
 }
 
+.input-container {
+    margin-bottom: 1rem;
+}
+
+.input-title p,
 .input-container p {
     color: white;
     margin-left: 10px;
@@ -292,6 +297,11 @@ button:focus {
 
 .news-post p {
     margin-bottom: 3px;
+}
+
+.input-description {
+    color: #999;
+    font-size: .9rem;
 }
 
 .minimize,

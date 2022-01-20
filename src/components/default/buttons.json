@@ -69,7 +69,7 @@
             },
             {
                 "title": "Inbox",
-                "link": "/inbox",
+                "link": "/forums/private/inbox",
                 "requiresLogin": true
             },
             {
