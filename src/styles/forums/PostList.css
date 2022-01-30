@@ -81,6 +81,7 @@
 }
 
 .moderate-thread-btn {
-    float: right;
-    margin-bottom: 10px;
+    display: grid;
+    justify-content: right;
+    margin-bottom: 5px;
 }

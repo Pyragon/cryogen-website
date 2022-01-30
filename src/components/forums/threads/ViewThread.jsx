@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import axios from '../../../utils/axios';
+import Noty from 'noty';
 
 import Permissions from '../../../utils/permissions';
 
@@ -15,6 +16,7 @@ import Button from '../../utils/Button';
 
 import PostList from './PostList';
 import Pages from './Pages';
+import Dropdown from '../../utils/Dropdown';
 
 async function clickedReply(thread, reply, setReply, setPosts) {
     let link = '/forums/posts/';
@@ -30,6 +32,42 @@ async function clickedReply(thread, reply, setReply, setPosts) {
     } catch(err) {
         console.error(err.message || err);
     }
+}
+
+function pinThread(thread, user) {
+    if(!user) return false;
+    if(thread.permissions.canModerate(user)) return true;
+    axios.post(`/forums/threads/${thread._id}/pin`)
+        .then(res => {
+            if(res.data.message) {
+                console.error(res.data.message);
+                return;
+            }
+            thread.pinned = res.data.pinned;
+        }).catch(console.error);
+}
+
+function lockThread(thread, user) {
+    if(!user) return false;
+    if(thread.permissions.canModerate(user)) return true;
+    axios.post(`/forums/threads/${thread._id}/lock`)
+        .then(res => {
+            if(res.data.message) {
+                console.error(res.data.message);
+                return;
+            }
+            thread.open = res.data.open;
+        }).catch(console.error);
+}
+
+function deleteThread(thread) {
+    let n = new Noty({
+        type: 'success',
+        text: <p>Test 2</p>,
+        timeout: '3000',
+        theme: 'cryogen',
+    });
+    n.show();
 }
 
 function canReply(user, thread) {
@@ -51,7 +89,6 @@ export default function ViewThread({ thread }) {
     function scrollToTop() {
         scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-
     useEffect(() => {
         async function fetchData() {
             let response = await axios.get('http://localhost:8081/forums/posts/children/'+thread._id+'/'+page);
@@ -71,17 +108,36 @@ export default function ViewThread({ thread }) {
         fetchData();
     }, [ user, thread, page ]);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
-
     return (
         <div style={{position: 'relative'}}>
             { thread.permissions && thread.permissions.canModerate(user) &&
-                <>
-                    <Button className="moderate-thread-btn small" onClick={() => console.log('open options')}>
-                        <span>Moderation Options </span>
-                        <i className="fas fa-chevron-down"></i>
-                    </Button>
-                    <div style={{clear: 'both' }}/>
-                </>
+                <Dropdown
+                    title='Moderator Options'
+                    className='moderate-thread-btn'
+                    options={[
+                        {
+                            title: (thread.pinned ? 'Unp' : 'P') + 'in Thread',
+                            icon: 'fas fa-thumbtack',
+                            onClick: () => pinThread(thread, user),
+                        },
+                        {
+                            title: (!thread.open ? 'Unl' : 'L') + 'ock Thread',
+                            icon: 'fas fa-'+(!thread.open ? 'unlock' : 'lock'),
+                            onClick: () => lockThread(thread, user),
+                        },
+                        {
+                            title: (!thread.archived ? 'Delete' : 'Restore')+' Thread',
+                            icon: 'fas fa-trash-'+(!thread.archived ? 'alt' : 'restore'),
+                            onClick: () => deleteThread(thread, user),
+                        },
+                        {
+                            title: 'Move Thread',
+                            icon: 'fas fa-arrows-alt',
+                            onClick: () => {
+                            }
+                        },
+                    ]}
+                />
             }
             <EditorContext.Provider value={providerValue}>
                 <CollapsibleWidget

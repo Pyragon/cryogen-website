@@ -46,3 +46,26 @@
     background: #0e4464;
     color: white;
 }
+
+.table-section-info {
+    display: grid;
+    padding: 1rem;
+    font-size: .9rem;
+    gap: 2rem;
+}
+
+.table-section-actions {
+    display: grid;
+    justify-content: right;
+    padding: 1rem;
+}
+
+.table-section-action span {
+    margin-left: 5px;
+}
+
+.table-section-search {
+    display: grid;
+    justify-content: right;
+    padding: 1rem;
+}

@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 
-import Widget from './Widget';
-import Button from './Button';
-import SectionContext from '../../utils/contexts/SectionContext';
+import Widget from '../Widget';
+import Button from '../Button';
+import SectionContext from '../../../utils/contexts/SectionContext';
 
-import '../../styles/utils/Section.css';
+import '../../../styles/utils/Section.css';
 
 export default function Sections({ sections, active }) {
     let { setSection } = useContext(SectionContext);

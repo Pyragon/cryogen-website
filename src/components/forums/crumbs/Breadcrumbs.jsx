@@ -8,6 +8,7 @@ export default function Breadcrumbs({ breadcrumbs }) {
         <div className="breadcrumbs">
             { breadcrumbs.map((breadcrumb, index) => 
                 <Breadcrumb 
+                    key={breadcrumb.id}
                     {...breadcrumb }
                     separator={index < breadcrumbs.length - 1 ? ' > ' : null}
                 />

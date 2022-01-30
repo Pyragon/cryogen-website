@@ -6,7 +6,7 @@ import DraftSection from '../../../components/forums/private/DraftSection';
 import InboxSection from '../../../components/forums/private/InboxSection';
 import NewMessage from '../../../components/forums/private/NewMessage';
 import SentSection from '../../../components/forums/private/SentSection';
-import Sections from '../../../components/utils/Sections';
+import Sections from '../../../components/utils/sections/Sections';
 import SectionContext from '../../../utils/contexts/SectionContext';
 
 import '../../../styles/forums/Private.css';

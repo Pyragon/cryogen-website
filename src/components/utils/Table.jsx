@@ -1,15 +1,20 @@
-import React from 'react'
+import React from 'react';
 
-export default function Table({ headers, children}) {
+import '../../styles/utils/Table.css';
+
+export default function Table({ headers, rows }) {
+    if(!headers || !rows) return <></>;
     return (
-        <table className="table">
+        <table>
             <thead>
-                <tr>
-                    { headers.map((header, index) => <th key={index}>{header}</th>) }
-                </tr>
+                { headers.map((el, index) => <th key={index}>{el}</th>)}
             </thead>
             <tbody>
-                {children}
+                { rows.map((row, index) => (
+                    <tr key={index}>
+                        { row.map((el, index) => <td key={index}>{el}</td>)}
+                    </tr>
+                ))}
             </tbody>
         </table>
     )

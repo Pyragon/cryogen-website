@@ -18,6 +18,10 @@
     color: #fff;
 }
 
+.red {
+    color: #c10000;
+}
+
 .small {
     font-size: .75em;
 }

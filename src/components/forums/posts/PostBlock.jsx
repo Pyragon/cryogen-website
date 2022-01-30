@@ -10,6 +10,7 @@ import UserContext from '../../../utils/contexts/UserContext';
 import DisplayUser from '../../utils/user/DisplayUser';
 import Button from '../../utils/Button';
 import EditPost from './EditPost';
+import Dropdown from '../../utils/Dropdown';
 
 async function clickedThanks(e, add, post, setThanks) {
     e.preventDefault();
@@ -58,12 +59,24 @@ export default function PostBlock({ data }) {
                         <Post post={postState} />
                         <div className="edit-options">
                             { permissions.canModerate(user) &&
-                                <Button className="edit-option small">
-                                    Mod Options 
-                                    <span>
-                                        <i style={{marginLeft: '2px'}}className="fa fa-chevron-down" />
-                                    </span>
-                                </Button>
+                                <Dropdown
+                                    title='Moderator Options'
+                                    className='edit-option'
+                                    options={[
+                                        {
+                                            title: 'Edit',
+                                            onClick: () => setEditing(true),
+                                            icon: 'fa fa-edit'
+                                        },
+                                        {
+                                            title: 'Delete',
+                                            onClick: () => {
+
+                                            },
+                                            icon: 'fa fa-trash'
+                                        }
+                                    ]}
+                                />
                             }
                             { loggedIn && 
                                 <>

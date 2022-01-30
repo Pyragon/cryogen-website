@@ -1,0 +1,33 @@
+.dropdown {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.dropdown i {
+    margin-left: .5rem;
+}
+
+.dropdown-content {
+    position: absolute;
+    background: #111;
+    /* padding: .5rem; */
+    border-bottom-left-radius: 5%;
+    border-bottom-right-radius: 5%;
+    transition: border .3s, color .3s;
+    border: 1px solid #000;
+    z-index: 1;
+}
+
+.dropdown-content div {
+    padding: .3rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.dropdown-content div:hover {
+    background: #222;
+}
+
+.dropdown-content i {
+    margin-right: .5rem;
+}
