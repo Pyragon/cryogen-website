@@ -17,7 +17,7 @@ export default function ForumRecents() {
                 <CollapsibleWidget 
                     key={thread._id} 
                     title={thread.title} 
-                    link={`/forums/thread/${thread._id}`}
+                    link={`/forums/threads/${thread._id}`}
                     description={
                         <DisplayUser 
                             user={thread.firstPost?.author} 

@@ -11,6 +11,7 @@ import DisplayUser from '../../utils/user/DisplayUser';
 import Button from '../../utils/Button';
 import EditPost from './EditPost';
 import Dropdown from '../../utils/Dropdown';
+import { sendErrorNotification, sendNotification } from '../../../utils/notifications';
 
 async function clickedThanks(e, add, post, setThanks) {
     e.preventDefault();
@@ -36,7 +37,39 @@ async function clickedQuote(e, post, setReply) {
     setReply((prev) => prev + (prev ? '\n' : '') + reply);
 }
 
-export default function PostBlock({ data }) {
+async function deletePost(user, post, setPosts) {
+    if(!user) return;
+    if(!post.permissions.canModerate(user)) return;
+    sendNotification({
+        text: 'Are you sure?',
+        layout: 'center',
+        buttons: [
+            {
+                addClass: 'btn btn-success',
+                text: 'Yes',
+                onClick: (noty) => {
+                    axios.post('/forums/posts/' + post._id + '/delete')
+                    .then(res => {
+                        setPosts(res.data.posts);
+                        sendNotification({
+                            text: 'Post has been deleted.',
+                        })
+                        noty.close();
+                    }).catch(sendErrorNotification);
+                },
+            },
+            {
+                addClass: 'btn btn-danger',
+                text: 'Cancel',
+                onClick: (noty) => {
+                    noty.close();
+                },
+            }
+        ],
+    });
+}
+
+export default function PostBlock({ data, setPosts }) {
     let post = data.post;
     let { user } = useContext(UserContext);
     let { setReply } = useContext(EditorContext);
@@ -45,8 +78,24 @@ export default function PostBlock({ data }) {
     let loggedIn = user !== null, canPost = true;
     let [ thanks, setThanks ] = useState(data.thanks);
 
-    let permissions = new Permissions(post.thread.subforum.permissions);
-    let canEdit = user._id === post.author._id || permissions.canModerate(user, post.thread);
+    let options = [
+        {
+            title: 'Edit',
+            onClick: () => setEditing(true),
+            icon: 'fa fa-edit'
+        }
+    ];
+
+    if(data.index !== 0) {
+        options.push({
+            title: 'Delete',
+            onClick: () => deletePost(user, post, setPosts),
+            icon: 'fa fa-trash'
+        });
+    }
+
+    post.permissions = new Permissions(post.thread.subforum.permissions);
+    let canEdit = user._id === post.author._id || post.permissions.canModerate(user, post.thread);
     return (
         <div key={postState._id} className="post-content-block">
             <div className="post-date-block">
@@ -58,24 +107,11 @@ export default function PostBlock({ data }) {
                     <>
                         <Post post={postState} />
                         <div className="edit-options">
-                            { permissions.canModerate(user) &&
+                            { post.permissions.canModerate(user) &&
                                 <Dropdown
                                     title='Moderator Options'
                                     className='edit-option'
-                                    options={[
-                                        {
-                                            title: 'Edit',
-                                            onClick: () => setEditing(true),
-                                            icon: 'fa fa-edit'
-                                        },
-                                        {
-                                            title: 'Delete',
-                                            onClick: () => {
-
-                                            },
-                                            icon: 'fa fa-trash'
-                                        }
-                                    ]}
+                                    options={options}
                                 />
                             }
                             { loggedIn && 

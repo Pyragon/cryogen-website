@@ -18,3 +18,27 @@
     border: 1px solid #000;
     color: #999;
 }
+
+.btn-success {
+    background: #2ecc71;
+    border: 1px solid #2ecc71;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #27ae60;
+    border: 1px solid #27ae60;
+    color: #fff;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    border: 1px solid #e74c3c;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    border: 1px solid #c0392b;
+    color: #fff;
+}

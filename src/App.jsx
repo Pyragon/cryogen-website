@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import axios from './utils/axios';
-import Noty from 'noty';
 import IndexPage from './pages/IndexPage';
 import ForumIndex from './pages/forums/ForumIndex';
 import ForumPage from './pages/forums/ForumPage';
@@ -9,8 +8,6 @@ import Header from './components/default/Header';
 import Footer from './components/default/Footer';
 import './styles/Default.css';
 import './styles/utils/Helpers.css';
-import '../node_modules/noty/lib/noty.css';
-import './styles/noty/cryogen.css';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import UserContext from './utils/contexts/UserContext';

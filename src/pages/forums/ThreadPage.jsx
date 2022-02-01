@@ -16,7 +16,7 @@ export default function ThreadPage() {
     let [ page, setPage ] = useState(Number(pageParam));
     let [ thread, setThread ] = useState(null);
     let [ breadcrumbs, setBreadcrumbs ] = useState([]);
-    let providerValue = useMemo(() => ({ page, setPage }), [ page, setPage ]);
+    let pageProvider = useMemo(() => ({ page, setPage }), [ page, setPage ]);
     useEffect(() => {
         if(!threadId) return;
         axios.get(`http://localhost:8081/forums/threads/${threadId}`)
@@ -29,9 +29,9 @@ export default function ThreadPage() {
             .catch(console.error);
     }, [ threadId ]);
     return (
-        <ForumContainer thread={thread} breadcrumbs={breadcrumbs}>
-            <PageContext.Provider value={providerValue}>
-                { thread && <ViewThread thread={thread}/> }
+        <ForumContainer breadcrumbs={breadcrumbs} thread={thread}>
+            <PageContext.Provider value={pageProvider}>
+                { thread && <ViewThread thread={thread} setThread={setThread}/> }
             </PageContext.Provider>
         </ForumContainer>
     )

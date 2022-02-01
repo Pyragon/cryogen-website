@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import axios from '../../../utils/axios';
-import Noty from 'noty';
+import { sendNotification, sendErrorNotification } from '../../../utils/notifications';
 
 import Permissions from '../../../utils/permissions';
 
@@ -30,44 +30,76 @@ async function clickedReply(thread, reply, setReply, setPosts) {
         setReply('');
         setPosts(prev => [...prev, results]);
     } catch(err) {
-        console.error(err.message || err);
+        sendErrorNotification(err);
     }
 }
 
-function pinThread(thread, user) {
+function pinThread(thread, user, setThread) {
     if(!user) return false;
-    if(thread.permissions.canModerate(user)) return true;
+    if(!thread.permissions.canModerate(user)) return true;
     axios.post(`/forums/threads/${thread._id}/pin`)
         .then(res => {
             if(res.data.message) {
                 console.error(res.data.message);
                 return;
             }
-            thread.pinned = res.data.pinned;
-        }).catch(console.error);
+            let thread = res.data.thread;
+            sendNotification({
+                text: 'Thread has been ' + (!thread.pinned ? 'unpinned' : 'pinned') + '.',
+            });
+            setThread(thread);
+        }).catch(sendErrorNotification);
 }
 
-function lockThread(thread, user) {
-    if(!user) return false;
-    if(thread.permissions.canModerate(user)) return true;
+function lockThread(thread, user, setThread) {
+    if(!user) return;
+    if(!thread.permissions.canModerate(user)) return;
     axios.post(`/forums/threads/${thread._id}/lock`)
         .then(res => {
             if(res.data.message) {
                 console.error(res.data.message);
                 return;
             }
-            thread.open = res.data.open;
-        }).catch(console.error);
+            let thread = res.data.thread;
+            sendNotification({
+                text: 'Thread has been ' + (thread.open ? 'unlocked' : 'locked') + '.',
+            });
+            setThread(thread);
+        }).catch(sendErrorNotification);
 }
 
-function deleteThread(thread) {
-    let n = new Noty({
-        type: 'success',
-        text: <p>Test 2</p>,
-        timeout: '3000',
-        theme: 'cryogen',
+function deleteThread(thread, user, setThread) {
+    if(!user) return;
+    if(!thread.permissions.canModerate(user)) return;
+    sendNotification({
+        text: 'Are you sure?',
+        layout: 'center',
+        buttons: [
+            {
+                addClass: 'btn btn-success',
+                text: 'Yes',
+                onClick: (noty) => {
+                    axios.post(`/forums/threads/${thread._id}/archive`)
+                        .then(res => {
+                            if(res.data.message) {
+                                console.error(res.data.message);
+                                return;
+                            }
+                            noty.close();
+                            sendNotification({ text: 'Thread has been ' + (res.data.thread.archived ? 'deleted' : 'restored') + '.' });
+                            setThread(res.data.thread);
+                        }).catch(sendErrorNotification);
+                },
+            },
+            {
+                addClass: 'btn btn-danger',
+                text: 'Cancel',
+                onClick: (noty) => {
+                    noty.close();
+                },
+            }
+        ],
     });
-    n.show();
 }
 
 function canReply(user, thread) {
@@ -77,9 +109,32 @@ function canReply(user, thread) {
     return thread.permissions.canReply(user, thread);
 }
 
-export default function ViewThread({ thread }) {
+export default function ViewThread({ thread, setThread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
+    let [ options ] = useState([
+            {
+                title: 'Pin Thread',
+                icon: 'fas fa-thumbtack',
+                onClick: () => pinThread(thread, user, setThread),
+            },
+            {
+                title: 'Lock Thread',
+                icon: 'fas fa-lock',
+                onClick: () => lockThread(thread, user, setThread),
+            },
+            {
+                title: 'Delete Thread',
+                icon: 'fas fa-trash-alt',
+                onClick: () => deleteThread(thread, user, setThread),
+            },
+            {
+                title: 'Move Thread',
+                icon: 'fas fa-arrows-alt',
+                onClick: () => {
+                }
+            },
+        ]);
     let scrollRef = useRef(null);
     let { user } = useContext(UserContext);
     let { page } = useContext(PageContext);
@@ -106,6 +161,11 @@ export default function ViewThread({ thread }) {
             setUserActivity(user, 'Viewing thread: ' + thread.title, 'thread', thread._id);
         }
         fetchData();
+        options[0].title = thread.pinned ? 'Unpin Thread' : 'Pin Thread';
+        options[1].title = thread.open ? 'Lock Thread' : 'Unlock Thread';
+        options[1].icon = thread.open ? 'fas fa-lock' : 'fas fa-lock-open';
+        options[2].title = thread.archived ? 'Restore Thread' : 'Delete Thread';
+        options[2].icon = thread.archived ? 'fas fa-trash-restore' : 'fas fa-trash-alt';
     }, [ user, thread, page ]);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
     return (
@@ -114,29 +174,7 @@ export default function ViewThread({ thread }) {
                 <Dropdown
                     title='Moderator Options'
                     className='moderate-thread-btn'
-                    options={[
-                        {
-                            title: (thread.pinned ? 'Unp' : 'P') + 'in Thread',
-                            icon: 'fas fa-thumbtack',
-                            onClick: () => pinThread(thread, user),
-                        },
-                        {
-                            title: (!thread.open ? 'Unl' : 'L') + 'ock Thread',
-                            icon: 'fas fa-'+(!thread.open ? 'unlock' : 'lock'),
-                            onClick: () => lockThread(thread, user),
-                        },
-                        {
-                            title: (!thread.archived ? 'Delete' : 'Restore')+' Thread',
-                            icon: 'fas fa-trash-'+(!thread.archived ? 'alt' : 'restore'),
-                            onClick: () => deleteThread(thread, user),
-                        },
-                        {
-                            title: 'Move Thread',
-                            icon: 'fas fa-arrows-alt',
-                            onClick: () => {
-                            }
-                        },
-                    ]}
+                    options={options}
                 />
             }
             <EditorContext.Provider value={providerValue}>
@@ -145,7 +183,7 @@ export default function ViewThread({ thread }) {
                     minimizable={false}
                     ref={scrollRef}
                 >
-                    { posts && <PostList posts={posts} /> }
+                    { posts && <PostList posts={posts} setPosts={setPosts} /> }
                 </CollapsibleWidget>
                 <Pages 
                     thread={thread}
