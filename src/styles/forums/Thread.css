@@ -17,6 +17,12 @@
     border-bottom: none;
 }
 
+.pinned {
+    background: rgba(0, 0, 0, .4);
+    border-radius: 5px;
+    padding: .5rem;
+}
+
 .new-thread-btn {
     float: right;
     margin-bottom: 5px;
@@ -41,4 +47,8 @@
 
 .new-thread-title {
     width: 95%;
+}
+
+.thread-title span:not(:first-of-type) {
+    margin-left: 5px;
 }
