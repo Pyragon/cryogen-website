@@ -36,6 +36,7 @@ export default function App() {
                     <Route path="/forums" element={<ForumIndex/>} />
                     <Route path="/forums/private" element={<PrivatePage/> } />
                     <Route path="/forums/private/:section" element={<PrivatePage/> } />
+                    <Route path="/forums/private/:section/:page" element={<PrivatePage/> } />
                     <Route path="/forums/:forumId" element={<ForumPage/>} />
                     <Route path="/forums/:forumId/new" element={<NewThread/>} />
                     <Route path="/forums/threads/:threadId" element={<ThreadPage/>} />

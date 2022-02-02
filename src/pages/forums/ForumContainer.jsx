@@ -8,7 +8,6 @@ import UsersViewingThread from '../../components/forums/threads/UsersViewingThre
 import LoginWidget from '../../components/index/account/LoginWidget';
 import OnlineUsers from '../../components/forums/OnlineUsers';
 
-import '../../styles/forums/Thread.css';
 import Breadcrumbs from '../../components/forums/crumbs/Breadcrumbs';
 
 export default function ForumContainer({ children, index=false, thread, breadcrumbs }) {

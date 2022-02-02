@@ -10,6 +10,7 @@ import Sections from '../../../components/utils/sections/Sections';
 import SectionContext from '../../../utils/contexts/SectionContext';
 
 import '../../../styles/forums/Private.css';
+import PageContext from '../../../utils/contexts/PageContext';
 
 const sections = [
     {
@@ -35,7 +36,7 @@ const sections = [
 ];
 
 export default function PrivatePage() {
-    let { section: sectionParam } = useParams();
+    let { section: sectionParam, page: pageParam } = useParams();
     let active = sections.find(section => section.title.match(new RegExp(sectionParam, 'i')));
     if(!active)
         active = sections.find(section => section.title === 'Inbox');
@@ -48,17 +49,25 @@ export default function PrivatePage() {
         setSectionState(newSection);
     };
 
+    pageParam = pageParam || 1;
+
+    let [ page, setPage ] = useState(pageParam);
     let [ section, setSectionState ] = useState(active);
 
     useEffect(() => {
-        window.history.replaceState(null, '', '/forums/private/'+section.title.toLowerCase());
-    }, [ section ]);
+        let p = '/'+page.toString();
+        if(section.title === 'New')
+            p = '';
+        window.history.replaceState(null, '', '/forums/private/'+section.title.toLowerCase()+p);
+    }, [ section, page ]);
     return (
         <SectionContext.Provider value={{section, setSection}}>
-            <Sections 
-                sections={sections}
-                active={section}
-            />
+            <PageContext.Provider value={{page, setPage}}>
+                <Sections 
+                    sections={sections}
+                    active={section}
+                />
+            </PageContext.Provider>
         </SectionContext.Provider>
     )
 }

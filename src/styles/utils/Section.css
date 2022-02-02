@@ -60,6 +60,10 @@
     padding: 1rem;
 }
 
+.table-section-action {
+    cursor: pointer;
+}
+
 .table-section-action span {
     margin-left: 5px;
 }

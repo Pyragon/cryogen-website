@@ -1,6 +1,5 @@
 import React from 'react';
 
-//export button using react.forwardRef
 export default React.forwardRef(({ title, style, onClick, className="", defaultClassName="btn ", children}, ref) => {
     children = children || title;
     style = style || {};

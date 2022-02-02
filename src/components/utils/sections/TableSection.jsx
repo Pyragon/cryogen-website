@@ -16,7 +16,7 @@ export default function TableSection({ info, rows, actions, headers, allowSearch
             </div>
             <div className='table-section-actions'>
                 { actions.map(action => (
-                    <div key={action.title} className='table-section-action'>
+                    <div key={action.title} onClick={() => action.onClick && action.onClick() } className='table-section-action'>
                         { action.icon && <i className={'fa '+action.icon} /> }
                         <span>{action.title}</span>
                     </div>

@@ -1,7 +1,27 @@
+.table-container {
+    padding: .5rem;
+    background: #111111;
+    border-radius: 5px;
+}
+
 table {
     border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #ddd;
     text-align: center;
+    width: 100%;
+    font-size: .9rem;
+}
+
+thead {
+    color: white;
+    border-bottom: 1px solid #1C1C1C;
+    margin-bottom: 1rem;
+}
+
+th,
+td {
+    padding: .3rem;
+}
+
+tr:not(:last-of-type) {
+    border-bottom: 1px solid #1C1C1C;
 }

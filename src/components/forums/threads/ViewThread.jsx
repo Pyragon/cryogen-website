@@ -15,8 +15,9 @@ import PageContext from '../../../utils/contexts/PageContext';
 import Button from '../../utils/Button';
 
 import PostList from './PostList';
-import Pages from './Pages';
+import Pages from '../../utils/Pages';
 import Dropdown from '../../utils/Dropdown';
+import '../../../styles/forums/Thread.css';
 
 async function clickedReply(thread, reply, setReply, setPosts) {
     let link = '/forums/posts/';
@@ -186,7 +187,8 @@ export default function ViewThread({ thread, setThread }) {
                     { posts && <PostList posts={posts} setPosts={setPosts} /> }
                 </CollapsibleWidget>
                 <Pages 
-                    thread={thread}
+                    pageTotal={thread.pageTotal}
+                    base={`/forums/thread/${thread.id}`}
                     scroll={scrollToTop}
                 />
                 { canReply(user, thread) && 
