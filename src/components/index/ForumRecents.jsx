@@ -20,14 +20,14 @@ export default function ForumRecents() {
                     link={`/forums/threads/${thread._id}`}
                     description={
                         <DisplayUser 
-                            user={thread.firstPost?.author} 
+                            user={thread.firstPost.author} 
                             prefix='Posted Today by '
                         />
                     }  
                     index={index}
                     collapsed={index !== 0 && index !== 1}
                 >
-                    {thread.firstPost?.content}
+                    {thread.firstPost.content}
                 </CollapsibleWidget> ) )
             }
         </>

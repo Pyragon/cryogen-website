@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import axios from '../../../utils/axios';
-import { sendNotification, sendErrorNotification } from '../../../utils/notifications';
+import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 import Permissions from '../../../utils/permissions';
 
@@ -19,7 +19,7 @@ import Pages from '../../utils/Pages';
 import Dropdown from '../../utils/Dropdown';
 import '../../../styles/forums/Thread.css';
 
-async function clickedReply(thread, reply, setReply, setPosts) {
+async function clickedReply(sendErrorNotification, thread, reply, setReply, setPosts) {
     let link = '/forums/posts/';
     try {
         let results = await axios.post(link, { threadId: thread._id, content: reply });
@@ -35,7 +35,7 @@ async function clickedReply(thread, reply, setReply, setPosts) {
     }
 }
 
-function pinThread(thread, user, setThread) {
+function pinThread(sendNotification, sendErrorNotification, thread, user, setThread) {
     if(!user) return false;
     if(!thread.permissions.canModerate(user)) return true;
     axios.post(`/forums/threads/${thread._id}/pin`)
@@ -52,7 +52,7 @@ function pinThread(thread, user, setThread) {
         }).catch(sendErrorNotification);
 }
 
-function lockThread(thread, user, setThread) {
+function lockThread(sendNotification, sendErrorNotification, thread, user, setThread) {
     if(!user) return;
     if(!thread.permissions.canModerate(user)) return;
     axios.post(`/forums/threads/${thread._id}/lock`)
@@ -69,7 +69,7 @@ function lockThread(thread, user, setThread) {
         }).catch(sendErrorNotification);
 }
 
-function deleteThread(thread, user, setThread) {
+function deleteThread(sendNotification, sendErrorNotification, thread, user, setThread) {
     if(!user) return;
     if(!thread.permissions.canModerate(user)) return;
     sendNotification({
@@ -113,21 +113,22 @@ function canReply(user, thread) {
 export default function ViewThread({ thread, setThread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
+    let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
     let [ options ] = useState([
             {
                 title: 'Pin Thread',
                 icon: 'fas fa-thumbtack',
-                onClick: () => pinThread(thread, user, setThread),
+                onClick: () => pinThread(sendNotification, sendErrorNotification, thread, user, setThread),
             },
             {
                 title: 'Lock Thread',
                 icon: 'fas fa-lock',
-                onClick: () => lockThread(thread, user, setThread),
+                onClick: () => lockThread(sendNotification, sendErrorNotification, thread, user, setThread),
             },
             {
                 title: 'Delete Thread',
                 icon: 'fas fa-trash-alt',
-                onClick: () => deleteThread(thread, user, setThread),
+                onClick: () => deleteThread(sendNotification, sendErrorNotification, thread, user, setThread),
             },
             {
                 title: 'Move Thread',
@@ -203,7 +204,7 @@ export default function ViewThread({ thread, setThread }) {
                         }
                     >
                         <RichTextEditor value={reply} setState={setReply}/>
-                        <Button className="reply-btn" title="Reply" onClick={async() => await clickedReply(thread, reply, setReply, setPosts)}/>
+                        <Button className="reply-btn" title="Reply" onClick={async() => await clickedReply(sendErrorNotification, thread, reply, setReply, setPosts)}/>
                         <div style={{clear: 'both' }}/>
                     </CollapsibleWidget> 
                 }

@@ -7,6 +7,7 @@ import LatestThreads from '../../components/forums/latest/LatestThreads';
 import UsersViewingThread from '../../components/forums/threads/UsersViewingThread';
 import LoginWidget from '../../components/index/account/LoginWidget';
 import OnlineUsers from '../../components/forums/OnlineUsers';
+import Poll from '../../components/forums/threads/polls/Poll';
 
 import Breadcrumbs from '../../components/forums/crumbs/Breadcrumbs';
 
@@ -23,6 +24,7 @@ export default function ForumContainer({ children, index=false, thread, breadcru
             </div>
             <div className="grid-col-3">
                 { user === null && <LoginWidget header={false}/>}
+                { thread && thread.poll && <Poll thread={thread}/> }
                 { thread && <UsersViewingThread thread={thread}/> }
                 <ForumStats />
                 <LatestThreads />

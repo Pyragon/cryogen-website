@@ -27,9 +27,9 @@ export default function ThreadBlock({ thread, index }) {
             </div>
             <div className='thread-last-post small'>
                 <DisplayUser
-                    user={thread.lastPost?.author}
+                    user={thread.lastPost.author}
                     prefix='Last post by '
-                    suffix={ ', '+formatDate(thread.lastPost?.createdAt)}
+                    suffix={ ', '+formatDate(thread.lastPost.createdAt)}
                 />
             </div>
             <div className='thread-view-info'>

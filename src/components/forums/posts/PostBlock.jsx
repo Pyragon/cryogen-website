@@ -6,12 +6,11 @@ import Permissions from '../../../utils/permissions';
 import Post from './Post';
 
 import EditorContext from '../../../utils/contexts/EditorContext';
+import NotificationContext from '../../../utils/contexts/NotificationContext';
 import UserContext from '../../../utils/contexts/UserContext';
 import DisplayUser from '../../utils/user/DisplayUser';
-import Button from '../../utils/Button';
 import EditPost from './EditPost';
 import Dropdown from '../../utils/Dropdown';
-import { sendErrorNotification, sendNotification } from '../../../utils/notifications';
 
 async function clickedThanks(e, add, post, setThanks) {
     e.preventDefault();
@@ -37,7 +36,7 @@ async function clickedQuote(e, post, setReply) {
     setReply((prev) => prev + (prev ? '\n' : '') + reply);
 }
 
-async function deletePost(user, post, setPosts) {
+async function deletePost(sendNotification, sendErrorNotification, user, post, setPosts) {
     if(!user) return;
     if(!post.permissions.canModerate(user)) return;
     sendNotification({
@@ -77,6 +76,7 @@ export default function PostBlock({ data, setPosts }) {
     let [ postState, setPostState ] = useState(post);
     let loggedIn = user !== null, canPost = true;
     let [ thanks, setThanks ] = useState(data.thanks);
+    let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
 
     let options = [
         {
@@ -89,7 +89,7 @@ export default function PostBlock({ data, setPosts }) {
     if(data.index !== 0) {
         options.push({
             title: 'Delete',
-            onClick: () => deletePost(user, post, setPosts),
+            onClick: () => deletePost(sendNotification, sendErrorNotification, user, post, setPosts),
             icon: 'fa fa-trash'
         });
     }

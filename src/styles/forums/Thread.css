@@ -45,3 +45,16 @@
 .thread-title span:not(:first-of-type) {
     margin-left: 5px;
 }
+
+.poll-config-container {
+    display: 'grid';
+    justify-content: center;
+    align-items: center;
+}
+
+.poll-change-vote {
+    width: 100px;
+    margin: 10px auto 0 auto;
+    text-decoration: underline;
+    cursor: pointer;
+}

@@ -11,6 +11,7 @@ import SectionContext from '../../../utils/contexts/SectionContext';
 
 import '../../../styles/forums/Private.css';
 import PageContext from '../../../utils/contexts/PageContext';
+import MessageContext from '../../../utils/contexts/MessageContext';
 
 const sections = [
     {
@@ -53,6 +54,7 @@ export default function PrivatePage() {
 
     let [ page, setPage ] = useState(pageParam);
     let [ section, setSectionState ] = useState(active);
+    let [ newMessageValues, setNewMessageValues ] = useState({});
 
     useEffect(() => {
         let p = '/'+page.toString();
@@ -63,10 +65,12 @@ export default function PrivatePage() {
     return (
         <SectionContext.Provider value={{section, setSection}}>
             <PageContext.Provider value={{page, setPage}}>
-                <Sections 
-                    sections={sections}
-                    active={section}
-                />
+                <MessageContext.Provider value={{newMessageValues, setNewMessageValues}}>
+                    <Sections 
+                        sections={sections}
+                        active={section}
+                    />
+                </MessageContext.Provider>
             </PageContext.Provider>
         </SectionContext.Provider>
     )

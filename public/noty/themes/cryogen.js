@@ -105,7 +105,9 @@ $.noty.themes.cryogen = {
         });
 
         this.$buttons.find('button').css('grid-column', '4');
-        this.$buttons.find('button:first').css('grid-column', '3');
+
+        if (this.$buttons.find('button').length > 1)
+            this.$buttons.find('button:first').css('grid-column', '3');
 
         this.$buttons.find('button:first').css({
             display: 'grid',

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function LabelInput({ className="", title, description, value, placeholder="", type="text", setState}) {
+const LabelInput = React.forwardRef(({ className="", title, description, value, placeholder="", type="text", setState}, ref) => {
     return (
         <div className="input-container" style={{gridTemplateColumns: '1fr'}}>
             <div className='input-title'>
@@ -9,7 +9,9 @@ export default function LabelInput({ className="", title, description, value, pl
                     { description && <span className='input-description'>{' - '+description}</span>}
                 </p>
             </div>
-            <input className={"input "+className} value={value} type={type} placeholder={placeholder} onChange={e => setState(e.target.value)}/>
+            <input ref={ref} className={"input "+className} value={value} type={type} placeholder={placeholder} onChange={e => setState(e.target.value)}/>
         </div>
     )
-}
+});
+
+export default LabelInput;

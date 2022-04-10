@@ -29,7 +29,7 @@ export default function SubforumBlock({ forum }) {
                                 : 
                                 <Link to={"/forums/"+subforum._id} className="link">{subforum.name} </Link> }               
                             <div className="m-top-5 small grey">{subforum.description}</div>
-                            { subforum.subforums?.length > 0 && (
+                            { subforum.subforums.length > 0 && (
                                 <>
                                     <p className="small">Subforums:</p>
                                     { subforum.subforums.slice(0, 4).map((sub) => (
@@ -42,24 +42,24 @@ export default function SubforumBlock({ forum }) {
                         </div>
                         <div className="subforum-last-post">
                             { 
-                            subforum.extraData && subforum.extraData?.lastPost && 
+                            subforum.extraData && subforum.extraData.lastPost && subforum.extraData.lastPost.thread &&
                                 <>
-                                    <Link to={'/forums/threads/'+subforum.extraData?.lastPost?.thread?._id} className="link">
-                                        {subforum.extraData?.lastPost.thread.title}
+                                    <Link to={'/forums/threads/'+subforum.extraData.lastPost.thread._id} className="link">
+                                        {subforum.extraData.lastPost.thread.title}
                                     </Link>
                                     <div className="m-top-5 small">
                                         <DisplayUser 
-                                            user={subforum.extraData?.lastPost.author} 
+                                            user={subforum.extraData.lastPost.author} 
                                             prefix='by '
-                                            suffix={ ', '+formatDate(subforum.extraData?.lastPost.createdAt)}
+                                            suffix={ ', '+formatDate(subforum.extraData.lastPost.createdAt)}
                                         />
                                     </div>
                                 </>
                             }
                         </div>
                         <div className="subforum-stats">
-                            <p className="small">{'Threads: '+subforum.extraData?.totalThreads || 0}</p>
-                            <div className="m-top-5 small">{'Posts: '+subforum.extraData?.totalPosts || 0}</div>
+                            <p className="small">{'Threads: '+subforum.extraData.totalThreads || 0}</p>
+                            <div className="m-top-5 small">{'Posts: '+subforum.extraData.totalPosts || 0}</div>
                         </div>
                     </div>
                 )

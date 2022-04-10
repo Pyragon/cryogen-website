@@ -1,0 +1,100 @@
+.notifications-container {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.notification {
+    position: relative;
+    width: 17rem;
+    height: 2rem;
+    background-color: #111;
+    border-radius: 5px;
+    border: 1px solid #555;
+    color: #AAA;
+    cursor: pointer;
+}
+
+.notification-value {
+    padding: .5rem;
+    font-size: .8rem;
+}
+
+.popout {
+    animation: popout .5s ease;
+    -webkit-animation: popout .5s ease;
+}
+
+.popin {
+    animation: popin .5s ease;
+    -webkit-animation: popin .5s ease;
+}
+
+.modal {
+    position: absolute;
+    width: 20rem;
+    background-color: #111;
+    border: 1px solid #555;
+    border-radius: 5px;
+}
+
+.modal-content {}
+
+.modal-footer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: .5rem;
+    border-top: 2px solid #18597f;
+}
+
+.modal-btn {
+    margin-left: .5rem;
+}
+
+@keyframes popin {
+    from {
+        transform: scale(1)
+    }
+    20% {
+        transform: scale(1.1)
+    }
+    to {
+        transform: scale(0)
+    }
+}
+
+@-webkit-keyframes popin {
+    from {
+        -webkit-transform: scale(1)
+    }
+    20% {
+        -webkit-transform: scale(1.1)
+    }
+    to {
+        -webkit-transform: scale(0)
+    }
+}
+
+@keyframes popout {
+    from {
+        transform: scale(0)
+    }
+    80% {
+        transform: scale(1.1)
+    }
+    to {
+        transform: scale(1)
+    }
+}
+
+@-webkit-keyframes popout {
+    from {
+        -webkit-transform: scale(0)
+    }
+    80% {
+        transform: scale(1.1)
+    }
+    to {
+        -webkit-transform: scale(1)
+    }
+}

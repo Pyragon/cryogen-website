@@ -5,6 +5,8 @@ import RichTextEditor from '../../utils/editor/RichTextEditor';
 import Button from '../../utils/Button';
 import axios from '../../../utils/axios';
 import SectionContext from '../../../utils/contexts/SectionContext';
+import MessageContext from '../../../utils/contexts/MessageContext';
+import { useEffect } from 'react';
 
 async function sendMessage(recipients, subject, body, setSection) {
     if(!recipients || !subject || !body) {
@@ -50,9 +52,12 @@ async function saveDraft(recipients, subject, body, setSection) {
 
 export default function NewMessage() {
     let {setSection} = useContext(SectionContext);
-    let [ recipients, setRecipients ] = useState('');
-    let [ subject, setSubject ] = useState('');
-    let [ body, setBody ] = useState('');
+    let { newMessageValues, setNewMessageValues } = useContext(MessageContext);
+    let [ recipients, setRecipients ] = useState(newMessageValues.recipients || '');
+    let [ subject, setSubject ] = useState(newMessageValues.subject || '');
+    let [ body, setBody ] = useState(newMessageValues.body || '');
+
+    useEffect(() => setNewMessageValues({}), []);
 
     return (
         <div>

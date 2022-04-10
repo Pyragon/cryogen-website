@@ -46,7 +46,18 @@ export default class Permissions {
         if (!user) return false;
         let data = this.permissions.canCreateThreads;
         if (data.includes('-1') || data.includes('-2')) return true;
-        console.log(data, this.permissions);
+        for (let id of data)
+            if (id === user.displayGroup._id) return true;
+        if (user.userGroups)
+            for (let i = 0; i < user.usergroups.length; i++)
+                if (data.includes(user.usergroups[i])) return true;
+        return false;
+    }
+
+    canCreatePolls(user) {
+        if (!user) return false;
+        let data = this.permissions.canCreatePolls;
+        if (data.includes('-1') || data.includes('-2')) return true;
         for (let id of data)
             if (id === user.displayGroup._id) return true;
         if (user.userGroups)
