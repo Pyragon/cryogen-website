@@ -7,10 +7,11 @@ import SectionContext from '../../../utils/contexts/SectionContext';
 import '../../../styles/utils/Section.css';
 
 export default function Sections({ sections, active }) {
-    let { setSection } = useContext(SectionContext);
+    let { setSection, sectionTitle, sectionDescription, sectionSidebar } = useContext(SectionContext);
     return (
         <div key={active.title} className='section-container'>
             <div className='section-list'>
+                { sectionSidebar }
                 { sections.map((section, index) => 
                     <Button
                         key={index}
@@ -22,8 +23,8 @@ export default function Sections({ sections, active }) {
             </div>
             <div className='section-content'>
                 <Widget 
-                    title={active.title}
-                    description={active.description}
+                    title={sectionTitle || active.title}
+                    description={sectionDescription || active.description}
                 >
                     { active.content }
                 </Widget>

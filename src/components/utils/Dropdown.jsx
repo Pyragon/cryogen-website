@@ -48,7 +48,10 @@ export default function Dropdown({ title, className='', options}) {
                 { options.map(option => (
                     <div 
                         key={option.title}
-                        onClick={option.onClick}
+                        onClick={() => {
+                            setOpen(false);
+                            option.onClick();
+                        }}
                     >
                         <i className={option.icon}/>
                         <span>{option.title}</span>

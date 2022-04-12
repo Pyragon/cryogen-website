@@ -5,8 +5,6 @@ import DisplayUser from '../../utils/user/DisplayUser';
 import SpanIcon from '../../utils/SpanIcon';
 
 export default function PostAuthor({ data }) {
-    if(!data.post)
-        console.log(data);
     return (
         <div className="post-author-block">
             <DisplayUser 
@@ -23,8 +21,6 @@ export default function PostAuthor({ data }) {
             <SpanIcon icon="fa-thumbs-up" className="post-author-block-line small">
                 {' Thanks Given: '+data.thanksGiven}
             </SpanIcon>
-            <div className="total-level small">
-            </div>
         </div>
     )
 }

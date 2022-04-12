@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import PageContext from '../../utils/contexts/PageContext';
 
 function getPages(pageTotal, currentPage) {
+    currentPage = parseInt(currentPage);
     if(pageTotal === 1) return [ 1 ];
     let pages = [];
     //-1 = prev, -2 = next, -3 = first, -4 = last
@@ -31,6 +32,7 @@ function getPages(pageTotal, currentPage) {
 
 export default React.forwardRef(({ pageTotal, base, scroll }, ref) => {
     let { page: currentPage, setPage } = useContext(PageContext);
+    currentPage = parseInt(currentPage);
     let pages = getPages(pageTotal, currentPage);
 
     async function gotoPage(page, setPage) {

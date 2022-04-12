@@ -6,7 +6,7 @@ export default function Widget({ title, description, descriptions=[], style, chi
             <div className="header">
                 <h4>{title}</h4>
                 { description && <p className="small">{description}</p> }
-                { descriptions.map(description => <p className="small">{description}</p>)}
+                { descriptions.map((description, index) => <p key={index} className="small">{description}</p>)}
             </div>
             <div className="content">
                 {children}

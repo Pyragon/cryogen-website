@@ -19,12 +19,12 @@ async function sendMessage(recipients, subject, body, setSection) {
     }
     if(recipients.includes(','))
         recipients = recipients.split(', ?');
-    axios.post('http://localhost:8081/forums/private/message', {
+    axios.post('http://localhost:8081/forums/private/message/chain', {
         recipients,
         subject,
         body
     })
-    .then(_ => setSection('Inbox'))
+    .then(_ => setSection('Messages'))
     .catch(console.error);
 }
 
@@ -51,7 +51,7 @@ async function saveDraft(recipients, subject, body, setSection) {
 }
 
 export default function NewMessage() {
-    let {setSection} = useContext(SectionContext);
+    let { setSection } = useContext(SectionContext);
     let { newMessageValues, setNewMessageValues } = useContext(MessageContext);
     let [ recipients, setRecipients ] = useState(newMessageValues.recipients || '');
     let [ subject, setSubject ] = useState(newMessageValues.subject || '');

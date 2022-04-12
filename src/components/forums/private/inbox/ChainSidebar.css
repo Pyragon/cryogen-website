@@ -1,0 +1,17 @@
+.chain-stats-widget {
+    margin-bottom: 20px;
+}
+
+.chain-stats-title {
+    margin: 10px;
+    color: white;
+}
+
+.chain-stats-title span {
+    font-size: .85rem;
+    margin-left: 5px;
+}
+
+.chain-stats-value {
+    margin-left: 5px;
+}

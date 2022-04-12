@@ -1,0 +1,23 @@
+.go-back-button {
+    margin: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.view-message-container {
+    margin: 20px;
+}
+
+.view-chain-reply-container {
+    margin: 20px;
+}
+
+.view-chain-reply-btn-container {
+    display: grid;
+    justify-content: right;
+    align-items: right;
+}
+
+.chain-pages {
+    margin: -10px 10px 10px 10px;
+}
