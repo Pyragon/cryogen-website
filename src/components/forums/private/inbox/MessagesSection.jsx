@@ -35,7 +35,7 @@ export default function InboxSection() {
     let rows = chains.map(chain => {
         return [
             {
-                value: chain.notifyUsersWarning.some(notifyUser => notifyUser._id == user._id),
+                value: chain.notifyUsersWarning.some(notifyUser => notifyUser._id === user._id),
                 type: 'notify',
             },
             {
@@ -93,7 +93,7 @@ export default function InboxSection() {
                             onClick: () => setSection('New')
                         }
                     ]}
-                    headers={[ 'Author', 'Recipient', 'Subject', 'Last message from', 'Created', 'Read', 'Mark as Read' ]}
+                    headers={[ 'Author', 'Recipient(s)', 'Subject', 'Last message from', 'Created', 'Read', 'Mark as Read' ]}
                     rows={rows}
                 />
                 <Pages

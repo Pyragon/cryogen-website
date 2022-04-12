@@ -8,7 +8,7 @@ import SectionContext from '../../../utils/contexts/SectionContext';
 import MessageContext from '../../../utils/contexts/MessageContext';
 import { useEffect } from 'react';
 
-async function sendMessage(recipients, subject, body, setSection) {
+async function sendMessage(recipients, subject, body, draft, setSection) {
     if(!recipients || !subject || !body) {
         console.error('All fields must be filled out.');
         return;
@@ -19,13 +19,19 @@ async function sendMessage(recipients, subject, body, setSection) {
     }
     if(recipients.includes(','))
         recipients = recipients.split(', ?');
-    axios.post('http://localhost:8081/forums/private/message/chain', {
+
+    let res = await axios.post('http://localhost:8081/forums/private/message/chain', {
         recipients,
         subject,
         body
-    })
-    .then(_ => setSection('Messages'))
-    .catch(console.error);
+    });
+    if(res.data.error) {
+        console.error(res.data.error);
+        return;
+    }
+    if(draft)
+        await axios.delete('/forums/private/drafts/'+draft._id);
+    setSection('Messages');
 }
 
 async function clear(setRecipients, setSubject, setBody) {
@@ -35,19 +41,30 @@ async function clear(setRecipients, setSubject, setBody) {
     //TODO - maybe an 'are you sure?' if the body is more than 500 chars?
 }
 
-async function saveDraft(recipients, subject, body, setSection) {
+async function saveDraft(recipients, subject, body, draft, setSection) {
     
-    if (!recipients && !subject && !body) {
-        console.error('At least one field must be filled out.');
+    if (!subject) {
+        console.error('The subject must be filled out!');
         return;
     }
-    axios.post('http://localhost:8081/forums/private/drafts', {
-        recipients,
-        subject,
-        body
-    })
-    .then(_ => setSection('Drafts'))
-    .catch(console.error);
+    let res;
+    if(!draft)
+        res = await axios.post('/forums/private/drafts', {
+            recipients,
+            subject,
+            body
+        });
+    else
+        res = await axios.put('/forums/private/drafts/'+draft._id, {
+            recipients,
+            subject,
+            body
+        });
+    if(res.data.error) {
+        console.error(res.data.error);
+        return;
+    }
+    setSection('Drafts');
 }
 
 export default function NewMessage() {
@@ -56,6 +73,7 @@ export default function NewMessage() {
     let [ recipients, setRecipients ] = useState(newMessageValues.recipients || '');
     let [ subject, setSubject ] = useState(newMessageValues.subject || '');
     let [ body, setBody ] = useState(newMessageValues.body || '');
+    let [ draft ] = useState(newMessageValues.draft);
 
     useEffect(() => setNewMessageValues({}), []);
 
@@ -83,12 +101,12 @@ export default function NewMessage() {
             <Button
                 title='Send Message'
                 className='send-message-btn'
-                onClick={() => sendMessage(recipients, subject, body, setSection)}
+                onClick={() => sendMessage(recipients, subject, body, draft, setSection)}
             />
             <Button
                 title='Save as Draft'
                 className='send-message-btn'
-                onClick={() => saveDraft(recipients, subject, body, setSection)}
+                onClick={() => saveDraft(recipients, subject, body, draft, setSection)}
             />
             <Button
                 title='Clear'

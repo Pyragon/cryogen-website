@@ -25,7 +25,7 @@ export default function Table({ headers, rows }) {
                         return (
                             <tr key={index} style={shouldBeNotified ? notifyStyle : {}}>
                                 { Object.values(row).map((el, index) => {
-                                    if(el.type === 'notify') return <></>;
+                                    if(el.type === 'notify') return null;
                                     if(el.type === 'user')
                                         return (
                                             <td key={index}>

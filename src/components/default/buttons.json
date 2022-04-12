@@ -96,6 +96,11 @@
             {
                 "title": "Forum Admin Panel",
                 "link": "/forums/admin"
+            },
+            {
+                "title": "Test",
+                "link": "/default",
+                "isATag": true
             }
         ]
     }

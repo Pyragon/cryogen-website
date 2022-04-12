@@ -71,10 +71,8 @@ export default function ViewChain({ chain, setViewingChain, setChains }) {
                 console.error(res.data.error);
                 return;
             }
-            if(chain.notifyUsersWarning.some(notifyUser => notifyUser._id == user._id)) {
-                console.log('removing user from notify');
-                setChains(chains => chains.map(chain => chain._id == chain._id ? { ...chain, notifyUsersWarning: chain.notifyUsersWarning.filter(notifyUser => notifyUser._id != user._id) } : chain));
-            }
+            if(chain.notifyUsersWarning.some(notifyUser => notifyUser._id === user._id))
+                setChains(chains => chains.map(c => c._id === chain._id ? { ...chain, notifyUsersWarning: chain.notifyUsersWarning.filter(notifyUser => notifyUser._id !== user._id) } : c));
             setPageTotal(res.data.pageTotal);
             setMessages(res.data.messages.map(toPost));
         };

@@ -3,11 +3,13 @@ import React, { useContext } from 'react';
 import axios from '../../utils/axios';
 
 import UserContext from '../../utils/contexts/UserContext';
+import NotificationContext from '../../utils/contexts/NotificationContext';
 
 import { Link } from 'react-router-dom';
 
 export default function FooterButton({ button, index }) {
     let { user, setUser } = useContext(UserContext);
+    let { sendNotification } = useContext(NotificationContext);
     let loggedIn = user !== null;
     let staff = loggedIn && user.displayGroup.rights > 0;
     if(button.requiresLogin !== undefined && button.requiresLogin !== loggedIn)
@@ -18,13 +20,21 @@ export default function FooterButton({ button, index }) {
     if(button.link === '/logout')
         onClick = async(e) => {
             e.preventDefault();
-            axios.post('/users/logout').then(() => {
-                setUser(null);
-                localStorage.removeItem('sessionId');
-                sessionStorage.removeItem('sessionId');
-                console.log('Logged out');
-            }).catch(console.error);
+            let res = await axios.post('/users/logout');
+            if(res.data.error) {
+                console.error(res.data.error);
+                return;
+            }
+            setUser(null);
+            localStorage.removeItem('sessionId');
+            sessionStorage.removeItem('sessionId');
         };
+    if(button.link === '/default') {
+        onClick = async(e) => {
+            e.preventDefault();
+            sendNotification({ text: 'Test notification ' });
+        };
+    }
     return (
         <li>
             { button.isATag ? (

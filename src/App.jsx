@@ -24,6 +24,7 @@ import { useLayoutEffect } from 'react';
 export default function App() {
     let [user, setUser] = useState(null);
     let modal = useRef();
+    let notificationsContainer = useRef();
     let [ modalButtons, setModalButtons ] = useState([]);
     let [ modalContent, setModalContent ] = useState(<></>);
     let [ modalOpen, setModalOpen ] = useState(false);
@@ -36,7 +37,7 @@ export default function App() {
         if(!onClick)
             onClick = remove;
         if(timeout) setTimeout(remove, timeout);
-        setNotifications(notifications => [ { id, text, timeout, template, onClick }, ...notifications ]);
+        setNotifications(notifications => [ { id, text, timeout, template, onClick, popout: true }, ...notifications.map(notification => { delete notification.popout; return notification}) ]);
     }
 
     function sendConfirmation({ text, onSuccess, onClose }) {
@@ -110,8 +111,9 @@ export default function App() {
                                         {modalContent}
                                     </div>
                                     <div className='modal-footer'>
-                                        { modalButtons.map(button => (
+                                        { modalButtons.map((button, index) => (
                                             <Button 
+                                                key={index}
                                                 title={button.title} 
                                                 className={'modal-btn ' + button.className}
                                                 style={{gridColumn: button.column}}
@@ -121,10 +123,12 @@ export default function App() {
                                     </div>
                                 </div> 
                             } 
-                            <div className='notifications-container'>
+                            <div className='notifications-container' ref={notificationsContainer}>
                                 {
-                                    notifications.map(n => 
-                                        <Notification key={n.id} {...n} />
+                                    notifications.map((n, index) => {
+                                        console.log(n);
+                                        return <Notification key={index} {...n} />
+                                    }
                                     )
                                 }
                             </div>

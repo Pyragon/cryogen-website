@@ -1,5 +1,5 @@
 .notifications-container {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     right: 1rem;
 }
@@ -13,6 +13,7 @@
     border: 1px solid #555;
     color: #AAA;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .notification-value {
