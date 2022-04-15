@@ -7,7 +7,7 @@ import Button from '../../utils/Button';
 
 async function savePost(post, edit, setEditing, setPost) {
     try {
-        let results = await axios.post('/forums/posts/'+post._id+'/edit', 
+        let results = await axios.put('/forums/posts/'+post._id, 
             { content: edit });
         results = results.data;
         if(results.message) {

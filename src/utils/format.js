@@ -13,7 +13,14 @@ let formatNumber = (number) => {
 };
 
 let formatDate = (date, format = 'MMMM Do, YYYY h:mm:ss a') => {
-    return moment(date).format(format);
+    return moment(date).calendar(null, {
+        sameDay: '[Today at] h:mm a',
+        nextDay: '[Tomorrow at] h:mm a',
+        nextWeek: format,
+        lastDay: '[Yesterday at] h:mm a',
+        lastWeek: format,
+        sameElse: format
+    });
 };
 
 let formatMessage = (message) => {

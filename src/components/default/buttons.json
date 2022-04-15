@@ -98,6 +98,12 @@
                 "link": "/forums/admin"
             },
             {
+                "title": "Refresh BBCodes",
+                "link": "/forums/bbcodes/refresh",
+                "apiCall": true,
+                "isATag": true
+            },
+            {
                 "title": "Test",
                 "link": "/default",
                 "isATag": true

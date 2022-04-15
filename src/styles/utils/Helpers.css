@@ -46,6 +46,14 @@
     margin-top: 5px;
 }
 
+.m-right-5 {
+    margin-right: 5px;
+}
+
+.m-left-5 {
+    margin-left: 5px;
+}
+
 .link {
     color: white;
     text-decoration: none;

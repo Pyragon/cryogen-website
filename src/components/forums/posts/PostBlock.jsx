@@ -79,11 +79,6 @@ export default function PostBlock({ data, setPosts }) {
     let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
 
     let options = [
-        {
-            title: 'Edit',
-            onClick: () => setEditing(true),
-            icon: 'fa fa-edit'
-        }
     ];
 
     if(data.index !== 0) {
@@ -96,6 +91,12 @@ export default function PostBlock({ data, setPosts }) {
 
     post.permissions = new Permissions(post.thread.subforum.permissions);
     let canEdit = user._id === post.author._id || post.permissions.canModerate(user, post.thread);
+
+    let editColumns = postState.edited ? 1 : 0; //last edited
+    if(loggedIn) editColumns++; //thanks
+    if(canPost) editColumns++; //quote
+    if(canEdit) editColumns++; //edit
+    if(post.permissions.canModerate(user)) editColumns++; //moderation options
     return (
         <div key={postState._id} className="post-content-block">
             <div className="post-date-block">
@@ -106,27 +107,27 @@ export default function PostBlock({ data, setPosts }) {
                 { editing ? <EditPost post={postState} setEditing={setEditing} setPost={setPostState}/> :
                     <>
                         <Post post={postState} />
-                        <div className="edit-options">
-                            { post.permissions.canModerate(user) &&
-                                <Dropdown
-                                    title='Moderator Options'
-                                    className='edit-option'
-                                    options={options}
-                                />
-                            }
-                            { loggedIn && 
-                                <>
-                                    { thanks.find(thank => thank.user._id === user._id) ? 
-                                        <div className="link edit-option" onClick={(e) => clickedThanks(e, false, postState, setThanks)}>Remove Thanks</div> : 
-                                        <div className="link edit-option" onClick={(e) => clickedThanks(e, true, postState, setThanks)}>Thanks</div> 
-                                    }
-                                </>
-                            }
-                            { loggedIn && canPost && <div className="quote-post link edit-option" onClick={(e) => clickedQuote(e, postState, setReply)}>Quote</div> }
-                            { loggedIn && canEdit && <div className="edit-post link edit-option" onClick={() => {setEditing(true)}}>Edit</div> }
-                            { postState.edited && <div className="last-edited edit-option small">{'Lasted Edited: '+formatDate(postState.edited)}</div> }
-                        </div>
                     </>
+                }
+            </div>
+            <div className="edit-options" style={{gridTemplateColumns: `repeat(${editColumns}, auto)`}}>
+                { postState.edited && <div className="last-edited edit-option small">{'Lasted Edited: '+formatDate(postState.edited)}</div> }
+                { loggedIn && canEdit && <div className="edit-post link edit-option" onClick={() => {setEditing(true)}}>Edit</div> }
+                { loggedIn && canPost && <div className="quote-post link edit-option" onClick={(e) => clickedQuote(e, postState, setReply)}>Quote</div> }
+                { loggedIn && 
+                    <>
+                        { thanks.find(thank => thank.user._id === user._id) ? 
+                            <div className="link edit-option" onClick={(e) => clickedThanks(e, false, postState, setThanks)}>Remove Thanks</div> : 
+                            <div className="link edit-option" onClick={(e) => clickedThanks(e, true, postState, setThanks)}>Thanks</div> 
+                        }
+                    </>
+                }
+                { post.permissions.canModerate(user) &&
+                    <Dropdown
+                        title='Moderator Options'
+                        className='edit-option'
+                        options={options}
+                    />
                 }
             </div>
             <div className="post-thanks-block small">
