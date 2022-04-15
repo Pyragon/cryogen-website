@@ -5,7 +5,7 @@ import Button from './Button';
 import '../../styles/utils/Dropdown.css';
 import { useEffect } from 'react';
 
-export default function Dropdown({ title, className='', options}) {
+export default function Dropdown({ title, className='', options, useGrid }) {
     let [ open, setOpen ] = useState(false);
     let buttonRef = useRef();
     let dropdownRef = useRef();
@@ -29,7 +29,7 @@ export default function Dropdown({ title, className='', options}) {
         borderBottomRightRadius: '5px',
     }
 
-
+    let openClass = useGrid ? 'dropdown-open-grid' : 'dropdown-open';
 
     return (
         <div className={'dropdown '+className}>
@@ -42,7 +42,7 @@ export default function Dropdown({ title, className='', options}) {
                 <i className={'fas fa-chevron-'+(open ? 'up' : 'down')}/>
             </Button>
             <div 
-                className={'dropdown-content small ' +(open ? 'dropdown-open' : '')}
+                className={'dropdown-content small ' +(open ? openClass : '')}
                 ref={dropdownRef}
             >
                 { options.map(option => (

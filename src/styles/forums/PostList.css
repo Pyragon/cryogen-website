@@ -82,10 +82,10 @@
     float: right;
 }
 
-.moderate-thread-btn {
+.moderation-btn-container {
+    margin-bottom: 10px;
     display: grid;
     justify-content: right;
-    margin-bottom: 5px;
 }
 
 .quote {

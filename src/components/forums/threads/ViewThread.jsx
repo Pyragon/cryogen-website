@@ -171,13 +171,18 @@ export default function ViewThread({ thread, setThread }) {
     }, [ user, thread, page ]);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
     return (
-        <div style={{position: 'relative'}}>
+        <div>
             { thread.permissions && thread.permissions.canModerate(user) &&
-                <Dropdown
-                    title='Moderator Options'
-                    className='moderate-thread-btn'
-                    options={options}
-                />
+                <>
+                    <div className='moderation-btn-container'>
+                        <Dropdown
+                            title='Moderator Options'
+                            className='moderate-thread-btn'
+                            options={options}
+                            useGrid={true}
+                        />
+                    </div>
+                </>
             }
             <EditorContext.Provider value={providerValue}>
                 <CollapsibleWidget
