@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { formatDate } from '../../utils/format';
 
 import '../../styles/utils/Table.css';
@@ -21,7 +23,8 @@ export default function Table({ headers, rows }) {
                 </thead>
                 <tbody>
                     { rows.map((row, index) => {
-                        let shouldBeNotified = row.find(el => el.type === 'notify').value;
+                        let notifyEl = row.find(el => el.type === 'notify');
+                        let shouldBeNotified = notifyEl && notifyEl.value;
                         return (
                             <tr key={index} style={shouldBeNotified ? notifyStyle : {}}>
                                 { Object.values(row).map((el, index) => {
@@ -51,6 +54,8 @@ export default function Table({ headers, rows }) {
                                             return <td key={index}>{formatDate(el.value)}</td>
                                     else if(el.type === 'button')
                                             return <td key={index} onClick={el.onClick}>{el.value}</td>
+                                    else if(el.type === 'link')
+                                            return <td key={index} onClick={el.onClick}><Link className='link' to={el.link}>{el.value}</Link></td>
                                     else
                                         return <td key={index}>{el.value}</td>;
                                     

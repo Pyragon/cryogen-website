@@ -208,7 +208,7 @@ export default function ViewThread({ thread, setThread }) {
                             </>
                         }
                     >
-                        <RichTextEditor value={reply} setState={setReply}/>
+                        <RichTextEditor value={reply} setState={setReply} />
                         <Button className="reply-btn" title="Reply" onClick={async() => await clickedReply(sendErrorNotification, thread, reply, setReply, setPosts)}/>
                         <div style={{clear: 'both' }}/>
                     </CollapsibleWidget> 

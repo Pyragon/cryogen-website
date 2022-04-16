@@ -37,7 +37,8 @@ export default React.forwardRef(({ pageTotal, base, scroll }, ref) => {
 
     async function gotoPage(page, setPage) {
         setPage(page);
-        window.history.replaceState(null, '', `${base}/${page}`);
+        if(base)
+            window.history.replaceState(null, '', `${base}/${page}`);
         if(scroll)
             scroll();
     }

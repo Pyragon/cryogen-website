@@ -1,0 +1,53 @@
+.user-widget-btns {
+    margin-bottom: 5px;
+    display: grid;
+    grid-gap: 5px;
+    justify-content: left;
+}
+
+.user-info-container {
+    display: grid;
+    justify-content: left;
+    grid-gap: 5px;
+    grid-template-columns: repeat(2, auto);
+    margin-bottom: 15px;
+    background-color: rgba(0, 0, 0, .7);
+    border: 1px solid #000;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.user-info-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 5px;
+    grid-column-gap: 125px;
+    margin: 10px 0;
+}
+
+.send-visitor-message-btn-container {
+    display: grid;
+    justify-content: right;
+}
+
+.visitor-message {
+    background: rgba(0, 0, 0, .7);
+    margin: 5px;
+    height: 4rem;
+    border-radius: 5px;
+    border: 1px solid #000;
+}
+
+.visitor-message-header {
+    margin: 5px;
+    color: white;
+    font-size: .85rem;
+}
+
+.visitor-message-body {
+    margin: 5px;
+}
+
+.visitor-message-header span {
+    margin-left: 2px;
+}

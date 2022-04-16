@@ -23,7 +23,7 @@ export default function PostAuthor({ data }) {
                     {' Thanks Given: '+data.thanksGiven}
                 </SpanIcon>
                 <SpanIcon icon="fa-thumbs-up" className="post-author-block-line small">
-                    {' In-game Total: 0'}
+                    {' In-game Total: '+(data.totalLevel === -1 ? 'N/A' : data.totalLevel)}
                 </SpanIcon>
             </div>
         </div>

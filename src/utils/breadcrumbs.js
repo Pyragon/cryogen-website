@@ -1,5 +1,5 @@
 export default function generateBreadcrumbs({ thread, subforum, user, extend }) {
-    if (!thread && !subforum && !user) return [{ title: 'Home', id: -1 }];
+    if (!thread && !subforum && !user && !extend) return [{ title: 'Home', id: -1 }];
     if (user)
         return [{ title: 'Home', link: '/forums', id: -1 }, { title: user.displayName, id: user._id }];
     let breadcrumbs = [];
@@ -23,13 +23,15 @@ export default function generateBreadcrumbs({ thread, subforum, user, extend }) 
         breadcrumbs.push(breadcrumb);
     }
 
-    subforum = subforum || thread.subforum;
-    while ((subforum = subforum.parent) != null)
-        breadcrumbs.push({
-            title: subforum.name,
-            link: `/forums/${subforum._id}`,
-            id: subforum._id
-        });
+    if(thread || subforum) {
+        subforum = subforum || thread.subforum;
+        while ((subforum = subforum.parent) != null)
+            breadcrumbs.push({
+                title: subforum.name,
+                link: `/forums/${subforum._id}`,
+                id: subforum._id
+            });
+    }
 
     breadcrumbs.push({
         title: 'Home',

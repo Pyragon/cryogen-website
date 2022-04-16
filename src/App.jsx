@@ -17,6 +17,7 @@ import NotificationContext from './utils/contexts/NotificationContext';
 import NewThread from './components/forums/threads/NewThread';
 import RegisterPage from './pages/account/RegisterPage';
 import PrivatePage from './pages/forums/private/PrivatePage';
+import UserPage from './pages/forums/UserPage';
 import Notification from './components/utils/notifications/Notification';
 import Button from './components/utils/Button';
 import { useLayoutEffect } from 'react';
@@ -143,6 +144,8 @@ export default function App() {
                                 <Route path="/forums/:forumId/new" element={<NewThread />} />
                                 <Route path="/forums/threads/:threadId" element={<ThreadPage />} />
                                 <Route path="/forums/threads/:threadId/:page" element={<ThreadPage />} />
+
+                                <Route path="/forums/users/:id" element={<UserPage />} />
                             </Routes>
                             <Footer />
                         </NotificationContext.Provider>

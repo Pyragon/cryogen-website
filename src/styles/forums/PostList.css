@@ -23,6 +23,7 @@
 
 .post-author-block {
     max-height: 180px;
+    margin-bottom: 10px;
 }
 
 .post-date-block {
@@ -35,6 +36,7 @@
     white-space: pre-wrap;
     text-align: left;
     margin: 10px;
+    min-height: 105px;
 }
 
 .edit-options {

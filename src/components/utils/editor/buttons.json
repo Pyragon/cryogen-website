@@ -1,0 +1,19 @@
+[{
+        "name": "Bold BBCode",
+        "type": "bbcode",
+        "text": "[b]$highlight[/b]",
+        "icon": "fa fa-bold"
+    },
+    {
+        "name": "Strikethrough BBCode",
+        "type": "bbcode",
+        "text": "[s]$highlight[/s]",
+        "icon": "fa fa-strikethrough"
+    },
+    {
+        "name": "Name of Viewer BBCode",
+        "type": "bbcode",
+        "text": "[username]",
+        "icon": "fa fa-user"
+    }
+]

@@ -3,7 +3,7 @@ import IconInput from '../IconInput';
 import Table from '../Table';
 import Filters from './Filters';
 
-export default function TableSection({ info, rows, actions, headers, allowSearch=true, toNotify }) {
+export default function TableSection({ info, rows, actions, headers, allowSearch=true }) {
     let [ search, setSearch ] = useState('');
     let [ filters ] = useState([]);
     let infoStyle = {
@@ -37,7 +37,6 @@ export default function TableSection({ info, rows, actions, headers, allowSearch
                 <Table
                     headers={headers}
                     rows={rows}
-                    toNotify={toNotify}
                 />
             </div>
         </div>

@@ -13,7 +13,6 @@
     display: none;
     position: absolute;
     background: #111;
-    /* padding: .5rem; */
     border-bottom-left-radius: 5%;
     border-bottom-right-radius: 5%;
     transition: border .3s, color .3s;
