@@ -6,6 +6,8 @@ import { formatDate } from '../../utils/format';
 
 import '../../styles/utils/Table.css';
 import DisplayUser from './user/DisplayUser';
+import TileImage from './table/TileImage';
+import LongText from './table/LongText';
 
 export default function Table({ headers, rows }) {
     if(!headers || !rows) return <></>;
@@ -56,8 +58,13 @@ export default function Table({ headers, rows }) {
                                             return <td key={index} onClick={el.onClick}>{el.value}</td>
                                     else if(el.type === 'link')
                                             return <td key={index} onClick={el.onClick}><Link className='link' to={el.link}>{el.value}</Link></td>
-                                    else
+                                    else if(el.type === 'tile')
+                                            return <TileImage key={index} tile={el.value} />
+                                    else {
+                                        if(el.value.length > 20)
+                                            return <LongText text={el.value} />
                                         return <td key={index}>{el.value}</td>;
+                                    }
                                     
                                 })}
                             </tr>

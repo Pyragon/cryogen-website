@@ -10,8 +10,8 @@ import { Link } from 'react-router-dom';
 export default function FooterButton({ button, index }) {
     let { user, setUser } = useContext(UserContext);
     let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
-    let loggedIn = user !== null;
-    let staff = loggedIn && user.displayGroup.rights > 0;
+    let staff = user && user.displayGroup.rights > 0;
+    let loggedIn = typeof user !== 'undefined';
     if(button.requiresLogin !== undefined && button.requiresLogin !== loggedIn)
         return (<></>)
     if(button.requiresStaff && !staff)

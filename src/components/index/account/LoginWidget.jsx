@@ -9,6 +9,8 @@ import SpanIcon from '../../utils/SpanIcon';
 import Button from '../../utils/Button';
 import Widget from '../../utils/Widget';
 
+import NotificationContext from '../../../utils/contexts/NotificationContext';
+
 import './../../../styles/Buttons.css'
 
 export default function LoginWidget( { header=true } ) {
@@ -19,6 +21,8 @@ export default function LoginWidget( { header=true } ) {
     let [ rememberMe, setRememberMe ] = useState(false);
     let [ otp, setOtp ] = useState("");
 
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     let submitAuth = async() => {
         try {
             let response = await axios.post('http://localhost:8081/users/auth', {
@@ -26,18 +30,18 @@ export default function LoginWidget( { header=true } ) {
                 password,
                 otp
             });
-            let valid = response.data.success;
-            if(!valid) {
-                console.error(response.data.message); //TODO - use notification instead
+            if(response.data.error) {
+                sendErrorNotification(response.data.error);
                 return;
             }
+            console.log('we made it through? ', response.data);
             let sessionId = response.data.sessionId;
             //if rememberMe, set to localStorage, else set to sessionStorage
             let storage = rememberMe ? localStorage : sessionStorage;
             storage.setItem('sessionId', sessionId);
             setUser(response.data.user);
         } catch(err) {
-            console.error(err);
+            sendErrorNotification(err);
         }
     };
 

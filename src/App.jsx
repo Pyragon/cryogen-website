@@ -17,6 +17,7 @@ import NotificationContext from './utils/contexts/NotificationContext';
 import NewThread from './components/forums/threads/NewThread';
 import RegisterPage from './pages/account/RegisterPage';
 import PrivatePage from './pages/forums/private/PrivatePage';
+import LogPage from './pages/forums/LogPage';
 import UserPage from './pages/forums/UserPage';
 import Notification from './components/utils/notifications/Notification';
 import Button from './components/utils/Button';
@@ -79,7 +80,7 @@ export default function App() {
 
     function sendErrorNotification(error) {
         console.error(error);
-        sendNotification({ text: <span className='red'>Error</span>, timeout: 10000 });
+        sendNotification({ text: <span className='white'>{error.response ? error.response.data.message : error.message}</span>, timeout: 10000 });
     }
 
     function repositionModal() {
@@ -146,6 +147,10 @@ export default function App() {
                                 <Route path="/forums/threads/:threadId/:page" element={<ThreadPage />} />
 
                                 <Route path="/forums/users/:id" element={<UserPage />} />
+
+                                <Route path="/staff/logs" element={<LogPage />} />
+                                <Route path="/staff/logs/:section" element={<LogPage />} />
+                                <Route path="/staff/logs/:section/:page" element={<LogPage />} />
                             </Routes>
                             <Footer />
                         </NotificationContext.Provider>

@@ -25,3 +25,22 @@ td {
 tr:not(:last-of-type) {
     border-bottom: 1px solid #1C1C1C;
 }
+
+.tile-image-container {
+    position: absolute;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.tile-image {
+    max-width: 150px;
+}
+
+.long-text-container {
+    position: absolute;
+    background-color: #222;
+    padding: 0 5px;
+    border-radius: 5px;
+    color: white;
+}
