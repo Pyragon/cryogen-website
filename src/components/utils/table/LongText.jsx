@@ -29,7 +29,7 @@ export default function LongText({ text }) {
                         setOpenedFromHover(false);
                 }}
                 onMouseEnter={onMouseEnter}
-                onMouseOut={onMouseOut}
+                onMouseLeave={onMouseOut}
             >
                 { text.substring(0, 20) + '...'}
             </span>

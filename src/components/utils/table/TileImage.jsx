@@ -37,7 +37,7 @@ export default function TileImage({ tile: data }) {
                         setOpenedFromHover(false);
                 }}
                 onMouseEnter={onMouseEnter}
-                onMouseOut={onMouseOut}
+                onMouseLeave={onMouseOut}
             >
                 {data}
             </span>
