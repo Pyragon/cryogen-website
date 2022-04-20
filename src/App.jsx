@@ -48,9 +48,9 @@ export default function App() {
                 title: 'Yes',
                 column: 3,
                 className: 'btn-success',
-                onClick: () => {
+                onClick: async () => {
                     let close = () => setModalOpen(false);
-                    if(onSuccess) onSuccess(close);
+                    if(onSuccess) await onSuccess(close);
                     else close();
                 }   
             },
@@ -58,9 +58,9 @@ export default function App() {
                 title: 'Cancel',
                 column: 4,
                 className: 'btn-danger',
-                onClick: () => {
+                onClick: async() => {
                     setModalOpen(false);
-                    if(onClose) onClose();
+                    if(onClose) await onClose();
                 }
             }
         ];
