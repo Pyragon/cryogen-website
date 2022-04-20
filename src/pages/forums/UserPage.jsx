@@ -10,11 +10,11 @@ import ForumContainer from './ForumContainer';
 import NotificationContext from '../../utils/contexts/NotificationContext';
 import ViewingUserContext from '../../utils/contexts/ViewingUserContext';
 import CollapsibleWidget from '../../components/utils/CollapsibleWidget';
-import VisitorMessages from './users/VisitorMessages';
+import VisitorMessages from '../../components/account/profile/VisitorMessages';
 import Button from '../../components/utils/Button';
-import About from './users/About';
-import UserPosts from './users/UserPosts';
-import UserThreads from './users/UserThreads';
+import About from '../../components/account/profile/About';
+import UserPosts from '../../components/account/profile/UserPosts';
+import UserThreads from '../../components/account/profile/UserThreads';
 
 import SpanIcon from '../../components/utils/SpanIcon';
 

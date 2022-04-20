@@ -32,7 +32,7 @@
 }
 
 .modal {
-    position: absolute;
+    position: fixed;
     width: 20rem;
     background-color: #111;
     border: 1px solid #555;

@@ -73,7 +73,7 @@ export default function VisitorMessages() {
 			{ messages.length > 0 &&
 				<PageContext.Provider value = {{ page, setPage }}>
 					{ messages.map((message, index) => 
-						<VisitorMessage key={index} message={ message } />
+						<VisitorMessage key={index} message={ message } setMessages={setMessages} />
 					)}
 					<Pages
 						pageTotal={pageTotal}

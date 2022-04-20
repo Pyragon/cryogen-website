@@ -36,6 +36,7 @@
     height: 4rem;
     border-radius: 5px;
     border: 1px solid #000;
+    position: relative;
 }
 
 .visitor-message-header {
@@ -50,4 +51,11 @@
 
 .visitor-message-header span {
     margin-left: 2px;
+}
+
+.visitor-message-delete {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
 }

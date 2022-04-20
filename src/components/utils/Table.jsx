@@ -66,6 +66,10 @@ export default function Table({ headers, rows }) {
                                     else if(el.type === 'items')
                                         return <ItemsContainer key={index} items={el.value} short={el.short} />
                                     else {
+                                        if(typeof el.value === 'undefined') {
+                                            console.log('No value:', el);
+                                            return <></>
+                                        }
                                         if(!el.noLongText && el.value.length > 20)
                                             return <LongText key={index} text={el.value} />
                                         return <td key={index}>{el.value}</td>;

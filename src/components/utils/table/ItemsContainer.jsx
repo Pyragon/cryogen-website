@@ -32,7 +32,7 @@ export default function ItemsContainer({ items, short }) {
                 onMouseOut={onMouseOut}
             >
                 { short && 'Hover/Click for more'}
-                { !short && items.length+' Item'+(items.length == 0 || items.length > 1 ? 's' : '')+' (Hover/Click for more)' }
+                { !short && items.length+' Item'+(items.length === 0 || items.length > 1 ? 's' : '')+' (Hover/Click for more)' }
             </span>
             <div
                 className='items-container'
