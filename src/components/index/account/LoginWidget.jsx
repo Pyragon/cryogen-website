@@ -28,15 +28,14 @@ export default function LoginWidget( { header=true } ) {
             let response = await axios.post('http://localhost:8081/users/auth', {
                 username,
                 password,
-                otp
+                otp,
+                remember: rememberMe
             });
             if(response.data.error) {
                 sendErrorNotification(response.data.error);
                 return;
             }
-            console.log('we made it through? ', response.data);
             let sessionId = response.data.sessionId;
-            //if rememberMe, set to localStorage, else set to sessionStorage
             let storage = rememberMe ? localStorage : sessionStorage;
             storage.setItem('sessionId', sessionId);
             setUser(response.data.user);
