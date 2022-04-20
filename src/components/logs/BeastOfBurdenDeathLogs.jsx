@@ -20,6 +20,7 @@ export default function BeastOfBurdenDeathLogs() {
 
 	
 	let rows = logs.map(log => {
+		console.log(log.items);
 		return [
 			{
 				type: 'user',
@@ -35,7 +36,7 @@ export default function BeastOfBurdenDeathLogs() {
 			},
 			{
 				type: 'items',
-				value: log.items.length+' Items (Hover/Click for more)',
+				value: log.items,
 			},
 			{
 				type: 'text',
@@ -77,7 +78,7 @@ export default function BeastOfBurdenDeathLogs() {
 			/>
 			<Pages
 				pageTotal={pageTotal}
-				base='/staff/logs/beast_of_burden_deaths'
+				base='/staff/logs/beast_of_burden_death'
 			/>
 		</>
 	)

@@ -23,6 +23,15 @@ let formatDate = (date, format = 'MMMM Do, YYYY h:mm:ss a') => {
     });
 };
 
+let formatGp = gp => {
+    if (gp > 1000000)
+        return (gp / 1000000).toFixed(1) + 'M';
+    if (gp > 1000)
+        return (gp / 1000).toFixed(1) + 'K';
+    return gp;
+
+};
+
 let formatMessage = (message) => {
     //Uppercase first letter and all letters after a period
     // let formattedMessage = message.toLowerCase();
@@ -31,4 +40,4 @@ let formatMessage = (message) => {
     return formattedMessage;
 };
 
-module.exports = { formatNameForProtocol, crownUser, formatNumber, formatDate, formatMessage };
+module.exports = { formatNameForProtocol, crownUser, formatNumber, formatGp, formatDate, formatMessage };

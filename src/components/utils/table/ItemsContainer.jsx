@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
-export default function LongText({ text }) {
+export default function ItemsContainer({ items, short }) {
     let [ open, setOpen ] = useState(false);
     let [ openedFromHover, setOpenedFromHover ] = useState(false);
 
@@ -15,7 +15,7 @@ export default function LongText({ text }) {
         if(!openedFromHover) return false;
         setOpen(false);
     };
-
+    
     return (
         <td>
             <span
@@ -31,13 +31,18 @@ export default function LongText({ text }) {
                 onMouseEnter={onMouseEnter}
                 onMouseOut={onMouseOut}
             >
-                { text.substring(0, 20) + '...'}
+                { short && 'Hover/Click for more'}
+                { !short && items.length+' Item'+(items.length == 0 || items.length > 1 ? 's' : '')+' (Hover/Click for more)' }
             </span>
             <div
-                className='long-text-container'
+                className='items-container'
                 style={{ display: open ? 'block' : 'none' }}
             >
-                { <p className='long-text'>{text}</p> }
+                { open && items.map((item, index) => (
+                    <div key={index}>
+                        { item.defs.name+' ('+item.id+') x'+item.amount }
+                    </div>
+                ))}
             </div>
         </td>
     )

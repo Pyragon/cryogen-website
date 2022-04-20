@@ -17,7 +17,7 @@ import NotificationContext from './utils/contexts/NotificationContext';
 import NewThread from './components/forums/threads/NewThread';
 import RegisterPage from './pages/account/RegisterPage';
 import PrivatePage from './pages/forums/private/PrivatePage';
-import LogPage from './pages/forums/LogPage';
+import LogPage from './pages/LogPage';
 import UserPage from './pages/forums/UserPage';
 import Notification from './components/utils/notifications/Notification';
 import Button from './components/utils/Button';

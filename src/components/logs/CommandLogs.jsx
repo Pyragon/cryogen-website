@@ -30,7 +30,7 @@ export default function CommandLogs() {
 			},
 			{
 				type: 'text',
-				value: log.extra.cmd.splice(0, 1).join(', '),
+				value: log.extra.cmd.slice(1).join(', '),
 			},
 			{
 				type: 'text',

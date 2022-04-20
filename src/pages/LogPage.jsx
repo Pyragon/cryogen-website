@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import PageContext from '../../utils/contexts/PageContext';
-import SectionContext from '../../utils/contexts/SectionContext';
+import PageContext from '../utils/contexts/PageContext';
+import SectionContext from '../utils/contexts/SectionContext';
 
-import BeastOfBurdenLogs from '../../components/logs/BeastOfBurdenLogs';
-import BeastOfBurdenDeathLogs from '../../components/logs/BeastOfBurdenDeathLogs';
-import ChatLogs from '../../components/logs/ChatLogs';
-import CommandLogs from '../../components/logs/CommandLogs';
-import DeathLogs from '../../components/logs/DeathLogs';
-import DicingLogs from '../../components/logs/DicingLogs';
-import DuellingLogs from '../../components/logs/DuellingLogs';
-import GrandExchangeLogs from '../../components/logs/GrandExchangeLogs';
-import LoginLogs from '../../components/logs/LoginLogs';
-import NPCDropLogs from '../../components/logs/NPCDropLogs';
-import PickupLogs from '../../components/logs/PickupLogs';
-import PlayerOwnedShopLogs from '../../components/logs/PlayerOwnedShopLogs';
-import PvPLogs from '../../components/logs/PvPLogs';
-import ShopLogs from '../../components/logs/ShopLogs';
-import TradeLogs from '../../components/logs/TradeLogs';
+import BeastOfBurdenLogs from '../components/logs/BeastOfBurdenLogs';
+import BeastOfBurdenDeathLogs from '../components/logs/BeastOfBurdenDeathLogs';
+import ChatLogs from '../components/logs/ChatLogs';
+import CommandLogs from '../components/logs/CommandLogs';
+import DeathLogs from '../components/logs/DeathLogs';
+import DicingLogs from '../components/logs/DicingLogs';
+import DropLogs from '../components/logs/DropLogs';
+import DuellingLogs from '../components/logs/DuellingLogs';
+import GrandExchangeLogs from '../components/logs/GrandExchangeLogs';
+import LoginLogs from '../components/logs/LoginLogs';
+import NPCDropLogs from '../components/logs/NPCDropLogs';
+import PickupLogs from '../components/logs/PickupLogs';
+import PlayerOwnedShopLogs from '../components/logs/PlayerOwnedShopLogs';
+import PvPLogs from '../components/logs/PvPLogs';
+import ShopLogs from '../components/logs/ShopLogs';
+import TradeLogs from '../components/logs/TradeLogs';
 
-import Sections from '../../components/utils/sections/Sections';
+import Sections from '../components/utils/sections/Sections';
 
-import '../../styles/logs/LogPage.css';
+import '../styles/logs/LogPage.css';
 
 export default function LogPage() {
     let { section: sectionParam, page: pageParam } = useParams();
@@ -99,6 +100,11 @@ const sections = [
         title: 'Dicing',
         content: <DicingLogs />,
         description: 'Logs of all dicing wins or losses.',
+    },
+    {
+        title: 'Drop',
+        content: <DropLogs />,
+        description: 'Logs of all items dropped by players.',
     },
     {
         title: 'Duelling',

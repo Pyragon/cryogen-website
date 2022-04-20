@@ -2,12 +2,13 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { formatDate } from '../../utils/format';
+import { formatDate, formatGp, formatNumber } from '../../utils/format';
 
 import '../../styles/utils/Table.css';
 import DisplayUser from './user/DisplayUser';
 import TileImage from './table/TileImage';
 import LongText from './table/LongText';
+import ItemsContainer from './table/ItemsContainer';
 
 export default function Table({ headers, rows }) {
     if(!headers || !rows) return <></>;
@@ -60,9 +61,13 @@ export default function Table({ headers, rows }) {
                                             return <td key={index} onClick={el.onClick}><Link className='link' to={el.link}>{el.value}</Link></td>
                                     else if(el.type === 'tile')
                                             return <TileImage key={index} tile={el.value} />
+                                    else if(el.type === 'gp')
+                                            return <td key={index} title={formatNumber(el.value)}>{formatGp(el.value)}</td>
+                                    else if(el.type === 'items')
+                                        return <ItemsContainer key={index} items={el.value} short={el.short} />
                                     else {
-                                        if(el.value.length > 20)
-                                            return <LongText text={el.value} />
+                                        if(!el.noLongText && el.value.length > 20)
+                                            return <LongText key={index} text={el.value} />
                                         return <td key={index}>{el.value}</td>;
                                     }
                                     
