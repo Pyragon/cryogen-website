@@ -79,6 +79,7 @@ export default function App() {
     }
 
     function sendErrorNotification(error) {
+        if(typeof error === 'string') error = { message: error };
         console.error(error);
         sendNotification({ text: <span className='white'>{error.response ? error.response.data.message : error.message}</span>, timeout: 10000 });
     }
