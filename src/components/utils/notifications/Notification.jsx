@@ -5,7 +5,6 @@ export default function Notification({ id, text, onClick, children, popout }) {
     setTimeout(() => {
         if(!notification.current) return;
         notification.current.className = 'notification';
-        console.log(notification.current);
     }, 500);
     return (
         <div className={'notification '+(popout ? 'popout' : '')} key={id} onClick={onClick} ref={notification}>
