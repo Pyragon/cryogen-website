@@ -29,9 +29,15 @@
 }
 
 .register-info h3 {
-    margin-bottom: 0;
+    margin: 10px auto 0 auto;
 }
 
 .register-info li {
     margin: 1rem;
+}
+
+.register-info i {
+    display: grid;
+    justify-content: center;
+    font-size: 2rem;
 }

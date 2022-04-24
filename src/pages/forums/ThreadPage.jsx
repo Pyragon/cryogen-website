@@ -19,7 +19,7 @@ export default function ThreadPage() {
     let pageProvider = useMemo(() => ({ page, setPage }), [ page, setPage ]);
     useEffect(() => {
         if(!threadId) return;
-        axios.get(`http://localhost:8081/forums/threads/${threadId}`)
+        axios.get(`/forums/threads/${threadId}`)
             .then(results => {
                 let thread = results.data;
                 let breadcrumbs = generateBreadcrumbs({ thread });

@@ -90,7 +90,7 @@ export default function PostBlock({ data, setPosts }) {
     }
 
     post.permissions = new Permissions(post.thread.subforum.permissions);
-    let canEdit = user && user._id === post.author._id || post.permissions.canModerate(user, post.thread);
+    let canEdit = user && (user._id === post.author._id || post.permissions.canModerate(user, post.thread));
 
     let editColumns = postState.edited ? 1 : 0; //last edited
     if(loggedIn) editColumns++; //thanks

@@ -12,4 +12,12 @@ instance.interceptors.request.use(config => {
     return config;
 });
 
+function get(path, params) {
+
+}
+
+function post(path, params) {
+
+}
+
 export default instance;

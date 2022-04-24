@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import UserContext from '../../../utils/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
 
@@ -10,6 +10,7 @@ import Button from '../../utils/Button';
 import Widget from '../../utils/Widget';
 
 import NotificationContext from '../../../utils/contexts/NotificationContext';
+import UserContext from '../../../utils/contexts/UserContext';
 
 import './../../../styles/Buttons.css'
 
@@ -22,6 +23,8 @@ export default function LoginWidget( { header=true } ) {
     let [ otp, setOtp ] = useState("");
 
     let { sendErrorNotification } = useContext(NotificationContext);
+
+    let navigate = useNavigate();
 
     let submitAuth = async() => {
         try {
@@ -45,7 +48,7 @@ export default function LoginWidget( { header=true } ) {
     };
 
     let forgotPassword = () => {
-
+        navigate('/recover?username='+username);
     };
     return (
         <div>

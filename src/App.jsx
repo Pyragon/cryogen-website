@@ -16,6 +16,7 @@ import UserContext from './utils/contexts/UserContext';
 import NotificationContext from './utils/contexts/NotificationContext';
 import NewThread from './components/forums/threads/NewThread';
 import RegisterPage from './pages/account/RegisterPage';
+import RecoverPage from './pages/account/recover/RecoverPage';
 import PrivatePage from './pages/forums/private/PrivatePage';
 import LogPage from './pages/LogPage';
 import UserPage from './pages/forums/UserPage';
@@ -152,6 +153,9 @@ export default function App() {
                                 <Route path="/staff/logs" element={<LogPage />} />
                                 <Route path="/staff/logs/:section" element={<LogPage />} />
                                 <Route path="/staff/logs/:section/:page" element={<LogPage />} />
+
+                                <Route path="/recover" element={<RecoverPage />} />
+                                <Route path="/recover/:section" element={<RecoverPage />} />
                             </Routes>
                             <Footer />
                         </NotificationContext.Provider>

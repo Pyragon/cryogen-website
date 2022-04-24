@@ -1,0 +1,44 @@
+.create-recovery-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 1rem;
+}
+
+.create-recovery-btn-container {
+    display: grid;
+    justify-content: center;
+    margin: 10px;
+}
+
+.create-recovery-info {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    color: #999;
+}
+
+.create-recovery-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.create-recovery-info h3,
+.create-recovery-inputs h3 {
+    margin: 10px auto 0 auto;
+    text-align: center;
+}
+
+.create-recovery-info li {
+    margin: 1rem;
+}
+
+.create-recovery-info i {
+    display: grid;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.create-recovery-select {
+    margin: 10px;
+}
