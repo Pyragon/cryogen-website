@@ -1,17 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../../utils/axios';
 
 import Widget from '../../utils/Widget';
 import DisplayUser from '../../utils/user/DisplayUser';
 
+import NotificationContext from '../../../utils/contexts/NotificationContext';
+
 export default function UsersViewingThread({ thread }) {
     let [ activities, setActivities ] = useState([]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
+    console.log(thread._id);
+
     useEffect(() => {
-        let interval = setInterval(() => {
-            axios.get(`/forums/threads/${thread.id}/users`)
-                .then(res => setActivities(res.data))
-                .catch(console.error);
-        }, 5000);
+
+        let load = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/threads/${thread._id}/users`);
+
+                setActivities(res.data.activities);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+        };
+
+        load();
+
+        let interval = setInterval(load, 5000);
+
         return () => clearInterval(interval);
     }, [ thread ]);
     return (

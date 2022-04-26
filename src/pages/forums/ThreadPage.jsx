@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
 import axios from '../../utils/axios';
@@ -8,25 +8,36 @@ import ViewThread from '../../components/forums/threads/ViewThread';
 
 import ForumContainer from './ForumContainer';
 import PageContext from '../../utils/contexts/PageContext';
+import NotificationContext from '../../utils/contexts/NotificationContext';
 
 export default function ThreadPage() {
     let { threadId, page: pageParam } = useParams();
-    if(!pageParam)
-        pageParam = 1;
-    let [ page, setPage ] = useState(Number(pageParam));
+    let [ page, setPage ] = useState(Number(pageParam) || 1);
     let [ thread, setThread ] = useState(null);
     let [ breadcrumbs, setBreadcrumbs ] = useState([]);
     let pageProvider = useMemo(() => ({ page, setPage }), [ page, setPage ]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     useEffect(() => {
-        if(!threadId) return;
-        axios.get(`/forums/threads/${threadId}`)
-            .then(results => {
-                let thread = results.data;
-                let breadcrumbs = generateBreadcrumbs({ thread });
-                setBreadcrumbs(breadcrumbs);
-                setThread(thread);
-            })
-            .catch(console.error);
+
+        let loadThread = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/threads/${threadId}`);
+
+                setThread(res.data.thread);
+                setBreadcrumbs(generateBreadcrumbs(res.data));
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        loadThread();
+
     }, [ threadId ]);
     return (
         <ForumContainer breadcrumbs={breadcrumbs} thread={thread}>

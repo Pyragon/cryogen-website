@@ -52,20 +52,14 @@ export default function NPCDropLogs() {
 		let loadPage = async () => {
 
 			try {
-				let res = await axios.get('/logs/'+page, {
-					params: {
-						type: 'npc_drop'
-					}
-				});
-				if(res.data.error) {
-					sendErrorNotification(res.data.error);
-					return;
-				}
+
+				let res = await axios.get(`/logs/${page}?type=npc_drop`);
 
 				setLogs(res.data.logs);
 				setPageTotal(res.data.pageTotal);
-			} catch(err) {
-				sendErrorNotification(err);
+
+			} catch(error) {
+				sendErrorNotification(error);
 			}
 		};
 

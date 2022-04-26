@@ -1,14 +1,32 @@
 import axios from '../../utils/axios';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 import CollapsibleWidget from '../utils/CollapsibleWidget';
 import DisplayUser from '../utils/user/DisplayUser';
+import NotificationContext from '../../utils/contexts/NotificationContext';
 
 export default function ForumRecents() {
     let [ threads, setThreads ] = useState([]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     useEffect(() => {
-        axios.get('http://localhost:8081/forums/threads/news')
-            .then(res => setThreads(res.data));
+
+        let loadThreads = async() => {
+
+            try {
+
+                let res = await axios.get(`/forums/threads/news`);
+
+                setThreads(res.data.threads);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        loadThreads();
     }, []);
     return (
         <>

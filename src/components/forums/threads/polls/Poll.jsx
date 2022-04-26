@@ -1,13 +1,12 @@
 import React, { useContext, useState } from 'react';
 
 import _Poll from '../../../../utils/poll';
-
+import Widget from '../../../utils/Widget';
+import PollVoting from './PollVoting';
 import PollResults from './PollResults';
 
 import UserContext from '../../../../utils/contexts/UserContext';
-
-import Widget from '../../../utils/Widget';
-import PollVoting from './PollVoting';
+import NotificationContext from '../../../../utils/contexts/NotificationContext';
 
 export default function Poll({ thread }) {
     let { user } = useContext(UserContext);
@@ -15,13 +14,15 @@ export default function Poll({ thread }) {
 
     let [ showResults, setShowResults ] = useState(false);
 
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     let voteOnOption = async(index) => {
         if(user === null) {
-            console.error('You must be logged in to vote!');
+            sendErrorNotification('You must be logged in to vote!');
             return;
         }
         if(poll.hasVoted(user) && !poll.allowVoteChange) {
-            console.error('You have already voted on this poll and it does not allow you to change your vote!');
+            sendErrorNotification('You have already voted on this poll and it does not allow you to change your vote!');
             return;
         }
         setPoll(await poll.vote(thread.poll, index));

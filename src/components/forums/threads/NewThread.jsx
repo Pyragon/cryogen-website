@@ -1,24 +1,27 @@
 import React, { useState, useEffect, useContext, createRef } from 'react';
-import axios from '../../../utils/axios';
-import setUserActivity from '../../../utils/user-activity';
-
-import Permissions from '../../../utils/permissions';
-
 import { useParams, useNavigate } from 'react-router-dom';
 
-import ForumContainer from '../../../pages/forums/ForumContainer';
+import axios from '../../../utils/axios';
+import setUserActivity from '../../../utils/user-activity';
+import Permissions from '../../../utils/permissions';
 import generateBreadcrumbs from '../../../utils/breadcrumbs';
+import { validate } from '../../../utils/validate';
+
+import ForumContainer from '../../../pages/forums/ForumContainer';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import LabelInput from '../../utils/LabelInput';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
 import Button from '../../utils/Button';
-import UserContext from '../../../utils/contexts/UserContext';
-import PollOption from './polls/PollOption';
-
-import '../../../styles/forums/Thread.css';
+import PollOption from './polls/PollOption'
 import PollOptions from './polls/PollOptions';
 
+import UserContext from '../../../utils/contexts/UserContext';
+import NotificationContext from '../../../utils/contexts/NotificationContext';
+
+import '../../../styles/forums/Thread.css';
+
 export default function NewThread() {
+    let navigate = useNavigate();
     let { user } = useContext(UserContext);
     let [ breadcrumbs, setBreadcrumbs ] = useState([]);
     let [ subforum, setSubforum ] = useState(null);
@@ -26,73 +29,105 @@ export default function NewThread() {
     let [ content, setContent ] = useState('');
     let { forumId } = useParams();
     let [ question, setQuestion ] = useState('');
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     let answer1Ref = createRef();
     let answer2Ref = createRef();
     let [ options, setOptions ] = useState([
         { ref: answer1Ref, option: <PollOption key={0} index={0} ref={answer1Ref}/>},
         { ref: answer2Ref, option: <PollOption key={1} index={1} ref={answer2Ref}/>}
     ]);
+
     setUserActivity(user, 'Creating new thread', 'creating');
-    let navigate = useNavigate();
-    async function createThread() {
 
-        if (title.length < 5 || title.length > 50) {
-            console.error('Title must be between 5 and 50 characters.');
+    let createThread = async() => {
+
+        let validateOptions = {
+            title: {
+                required: true,
+                name: 'Title',
+                min: 5,
+                max: 50,
+            },
+            content: {
+                required: true,
+                name: 'Content',
+                min: 4,
+                max: 1000,
+            }
+        };
+
+        let [ validated, error ] = validate(validateOptions, { title, content });
+        if(!validated) {
+            sendErrorNotification(error);
             return;
         }
 
-        if (content.length < 4 || content.length > 1000) {
-            console.error('Content must be between 4 and 1000 characters.');
-            return;
-        }
         let pollOptions = [];
         if(question) {
             if(question.length < 5 || question.length > 50) {
-                console.error('Question must be between 5 and 50 characters.');
+                sendErrorNotification('Question must be between 5 and 50 characters.');
                 return;
             }
             for(let i = 0; i < 6; i++) {
                 if(!options[i]) continue;
                 let option = options[i].ref.current.value;
                 if(pollOptions.includes(option)) {
-                    console.error('You cannot have duplicate answers.');
+                    sendErrorNotification('You cannot have duplicate answers.');
                     return;
                 }
                 if(option.length < 4 || option.length > 25) {
-                    console.error('Answers must be between 4 and 25 characters.');
+                    sendErrorNotification('Answers must be between 4 and 25 characters.');
                     return;
                 }
                 pollOptions.push(option);
             }
             if(pollOptions.length < 2) {
-                console.error('You must have at least two answers.');
+                sendErrorNotification('You must have at least two answers.');
                 return;
             }
         }
-        axios.post('/forums/threads/', { title, content, subforum: forumId, question, pollOptions })
-            .then(res => {
-                let thread = res.data.thread;
-                if(!thread) {
-                    console.error('Error creating thread.');
-                    return;
-                }
-                navigate(`/forums/threads/${thread._id}`);
-            }).catch(console.error);
+
+        try {
+
+            let res = await axios.post('/forums/threads', { title, content, subforum: forumId, question, pollOptions });
+
+            navigate(`/forums/threads/${res.data.thread._id}`);
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
     }
+
     useEffect(() => {
-        axios.get('/forums/subforums/'+forumId)
-            .then(res => {
-                let forum = res.data;
+
+        let load = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/subforums/${forumId}`);
+
+                let forum = res.data.forum;
+                if(forum.permissions)
+                    forum.permissions = new Permissions(forum.permissions);
+
+                setSubforum(forum);
                 setBreadcrumbs(generateBreadcrumbs({ subforum: forum, extend: {
                     title: 'Create new thread',
                     id: 0
                 } }));
-                if(forum.permissions)
-                    forum.permissions = new Permissions(forum.permissions);
-                setSubforum(forum);
-            })
-            .catch(console.error);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        load();
+
     }, [ forumId ]);
+
     return (
         <ForumContainer breadcrumbs={breadcrumbs}>
             <CollapsibleWidget

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 
 import axios from '../../../utils/axios';
+import { validate } from '../../../utils/validate';
 
 import RichTextEditor from '../../../components/utils/editor/RichTextEditor';
 import VisitorMessage from './VisitorMessage';
@@ -13,22 +14,30 @@ import UserContext from '../../../utils/contexts/UserContext';
 import Pages from '../../../components/utils/Pages';
 
 async function sendVisitorMessage(user, message, setMessage, setMessages, sendErrorNotification) {
-	if(message.length < 5 || message.length > 200) {
-		sendErrorNotification('Message must be between 5 and 200 characters.');
+	let [ validated, error ] = validate({
+		message: {
+			required: true,
+			name: 'Visitor Message',
+			min: 3,
+			max: 100,
+		}
+	}, { message });
+
+	if(!validated) {
+		sendErrorNotification(error);
 		return;
 	}
 
-	let res = await axios.post('/users/'+user._id+'/messages', {
-		message
-	});
+	try {
 
-	if(res.data.error) {
-		sendErrorNotification(res.data.error);
-		return;
+		let res = await axios.post(`/users/${user._id}/messages`, { message });
+
+		setMessage('');
+		setMessages(messages => [ ...messages, res.data.message ]);
+
+	} catch(error) {
+		sendErrorNotification(error);
 	}
-
-	setMessage('');
-	setMessages(messages => [ ...messages, res.data.message ]);
 }
 
 export default function VisitorMessages() {
@@ -46,14 +55,16 @@ export default function VisitorMessages() {
 
 		let loadMessages = async() => {
 
-			let res = await axios.get('/users/'+viewingUser._id+'/messages/'+page);
-			if(res.data.error) {
-				sendErrorNotification(res.data.error);
-				return;
-			}
+			try {
 
-			setMessages(res.data.messages);
-			setPageTotal(res.data.pageTotal);
+				let res = await axios.get(`/users/${viewingUser._id}/messages/${page}`);
+
+				setMessages(res.data.messages);
+				setPageTotal(res.data.pageTotal);
+
+			} catch(error) {
+				sendErrorNotification(error);
+			}
 
 		};
 

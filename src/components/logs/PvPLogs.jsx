@@ -56,20 +56,14 @@ export default function PvPLogs() {
 		let loadPage = async () => {
 
 			try {
-				let res = await axios.get('/logs/'+page, {
-					params: {
-						type: 'pvp'
-					}
-				});
-				if(res.data.error) {
-					sendErrorNotification(res.data.error);
-					return;
-				}
+
+				let res = await axios.get(`/logs/${page}?type=pvp`);
 
 				setLogs(res.data.logs);
 				setPageTotal(res.data.pageTotal);
-			} catch(err) {
-				sendErrorNotification(err);
+
+			} catch(error) {
+				sendErrorNotification(error);
 			}
 		};
 

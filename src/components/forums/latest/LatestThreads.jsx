@@ -1,24 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 import axios from '../../../utils/axios';
+import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 import Widget from '../../utils/Widget'
 
 import LatestThread from './LatestThread';
 
-async function fetchLatestThreads(setThreads) {
-    let response = await axios.get('/forums/threads/latest');
-    if(!response || !response.data) return;
-    setThreads(response.data);
-}
-
 export default function LatestThreads() {
     let [ threads, setThreads ] = useState([]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     useEffect(() => {
-        fetchLatestThreads(setThreads);
-        let threadsInterval = setInterval(() => fetchLatestThreads(setThreads), 5000);
+
+        let loadThreads = async() => {
+
+            try {
+    
+                let res = await axios.get('/forums/threads/latest');
+
+                setThreads(res.data.threads);
+    
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+        };
+
+        loadThreads();
+
+        let threadsInterval = setInterval(loadThreads, 5000);
         return () => clearInterval(threadsInterval);
-        //not clearing like it should be
     }, []);
     return (
         <Widget title="Latest Threads">

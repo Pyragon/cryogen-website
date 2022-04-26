@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Breadcrumb({ id, title, link, icon, separator }) {
-    console.log(id, title);
     return (
         <span key={id} className="breadcrumb">
             { icon && <i className={icon}/> }

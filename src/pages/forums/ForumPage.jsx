@@ -9,25 +9,41 @@ import { useParams } from 'react-router-dom';
 import ViewForum from '../../components/forums/subforums/ViewForum';
 import ForumContainer from './ForumContainer';
 import UserContext from '../../utils/contexts/UserContext';
+import NotificationContext from '../../utils/contexts/NotificationContext';
 
 export default function ForumPage() {
     let { user } = useContext(UserContext);
     let { forumId } = useParams();
     let [ forum, setForum ] = useState(null);
     let [ breadcrumbs, setBreadcrumbs ] = useState([]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     useEffect(() => {
-        if(!forumId) return;
-        axios.get(`/forums/subforums/${forumId}`)
-            .then(results => {
-                let forum = results.data;
+
+        let loadForum = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/subforums/${forumId}`);
+
+                let forum = res.data.forum;
                 let breadcrumbs = generateBreadcrumbs({ subforum: forum });
                 forum.permissions = new Permissions(forum.permissions);
                 setForum(forum);
                 setBreadcrumbs(breadcrumbs);
                 setUserActivity(user, 'Viewing forum: '+forum.name, 'forum', forum._id);
-            })
-            .catch(console.error);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        loadForum();
+        
     }, [ forumId, user ]);
+
     return (
         <ForumContainer breadcrumbs={breadcrumbs}>
             { forum && <ViewForum forum={forum} /> }

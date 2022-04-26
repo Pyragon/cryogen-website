@@ -113,22 +113,76 @@ function canReply(user, thread) {
 export default function ViewThread({ thread, setThread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
-    let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
+    let scrollRef = useRef(null);
+
+    let { user } = useContext(UserContext);
+    let { page } = useContext(PageContext);
+    let { sendErrorNotification, sendConfirmation } = useContext(NotificationContext);
+
+    let pin = async () => {
+
+        try {
+
+            let res = await axios.post(`/forums/threads/${thread._id}/pin`);
+
+            setThread(res.data.thread);
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
+    };
+
+    let lock = async () => {
+
+        try {
+
+            let res = await axios.post(`/forums/threads/${thread._id}/lock`);
+
+            setThread(res.data.thread);
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
+
+    };
+
+    let deleteThread = async () => {
+        if(!thread.permissions.canModerate(user)) {
+            sendErrorNotification('You do not have permission to delete this thread.');
+            return;
+        }
+
+        let onSuccess = async () => {
+
+            try {
+                let res = await axios.delete(`/forums/threads/${thread._id}`);
+
+                setThread(res.data.thread);
+
+                sendErrorNotification(`Thread has been ${res.data.thread.archived ? 'deleted' : 'restored'}.`);
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+        }
+
+        sendConfirmation('Are you sure you wish to delete this thread?', onSuccess);
+    };
+
     let [ options ] = useState([
             {
                 title: 'Pin Thread',
                 icon: 'fas fa-thumbtack',
-                onClick: () => pinThread(sendNotification, sendErrorNotification, thread, user, setThread),
+                onClick: pin,
             },
             {
                 title: 'Lock Thread',
                 icon: 'fas fa-lock',
-                onClick: () => lockThread(sendNotification, sendErrorNotification, thread, user, setThread),
+                onClick: lock,
             },
             {
                 title: 'Delete Thread',
                 icon: 'fas fa-trash-alt',
-                onClick: () => deleteThread(sendNotification, sendErrorNotification, thread, user, setThread),
+                onClick: deleteThread,
             },
             {
                 title: 'Move Thread',
@@ -137,9 +191,6 @@ export default function ViewThread({ thread, setThread }) {
                 }
             },
         ]);
-    let scrollRef = useRef(null);
-    let { user } = useContext(UserContext);
-    let { page } = useContext(PageContext);
     if(thread.subforum.permissions)
         thread.permissions = new Permissions(thread.subforum.permissions);
 
@@ -147,27 +198,38 @@ export default function ViewThread({ thread, setThread }) {
         scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
     useEffect(() => {
-        async function fetchData() {
-            let response = await axios.get('http://localhost:8081/forums/posts/children/'+thread._id+'/'+page);
-            if(!response.data) {
-                console.error('No posts found for thread '+thread._id);
-                return;
-            }
-            let posts = response.data.map(post => {
-                if(!post.permissions) return post;
-                post.permissions = new Permissions(post.permissions);
-                return post;
-            });
 
-            setPosts(posts);
-            setUserActivity(user, 'Viewing thread: ' + thread.title, 'thread', thread._id);
-        }
-        fetchData();
+        let load = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/posts/children/${thread._id}/${page}`);
+
+                let posts = res.data.posts;
+
+                posts = posts.map(post => {
+                    if(!post.permissions) return post;
+                    post.permissions = new Permissions(post.permissions);
+                    return post;
+                });
+
+                setPosts(posts);
+                setUserActivity(user, 'Viewing thread: ' + thread.title, 'thread', thread._id);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        load();
+
         options[0].title = thread.pinned ? 'Unpin Thread' : 'Pin Thread';
         options[1].title = thread.open ? 'Lock Thread' : 'Unlock Thread';
         options[1].icon = thread.open ? 'fas fa-lock' : 'fas fa-lock-open';
         options[2].title = thread.archived ? 'Restore Thread' : 'Delete Thread';
         options[2].icon = thread.archived ? 'fas fa-trash-restore' : 'fas fa-trash-alt';
+
     }, [ user, thread, page ]);
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
     return (

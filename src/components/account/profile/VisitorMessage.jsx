@@ -36,11 +36,7 @@ export default function VisitorMessage({ message, setMessages }) {
                 onSuccess: async(close) => {
                     try {
                         
-                        let res = await axios.delete('/users/messages/'+message._id);
-                        if(res.data.error) {
-                            sendErrorNotification(res.data.error);
-                            return;
-                        }
+                        await axios.delete(`/users/messages/${message._id}`);
             
                         setMessages(messages => messages.filter(m => m._id !== message._id));
                         sendNotification({ text: 'Message successfully deleted.' });

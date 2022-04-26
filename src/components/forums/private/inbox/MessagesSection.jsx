@@ -16,12 +16,6 @@ const info = [
     'Examples: from:cody, subject: example, between: (01/01/2022-01/31/2022)'
 ];
 
-function markAsReadOrUnread(sendErrorNotification, message, setMessages) {
-    axios.post(`/forums/private/inbox/${message._id}/mark`)
-        .then(res => setMessages(messages => messages.map(m => m._id === message._id ? res.data.message : m)))
-        .catch(sendErrorNotification);
-}
-
 export default function InboxSection() {
     let { user } = useContext(UserContext);
     let { page } = useContext(PageContext);
@@ -62,23 +56,27 @@ export default function InboxSection() {
                 value: <div style={{textDecoration: 'underline', cursor: 'pointer'}}>Read</div>,
                 type: 'button',
                 onClick: () => setViewingChain(chain),
-            },
-            {
-                value: <div style={{textDecoration: 'underline', cursor: 'pointer'}}>{'Mark as '+(chain.readAt ? 'Unr' : 'R')+'ead'}</div>,
-                type: 'button',
-                onClick: () => markAsReadOrUnread(sendErrorNotification, chain, setChains)
             }
         ]
     });
     useEffect(() => {
-        axios.get('http://localhost:8081/forums/private/inbox/'+page)
-            .then(res => {
+
+        let load = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/private/inbox/${page}`);
+
                 setChains(res.data.chains);
                 setPageTotal(res.data.pageTotal);
-                // if(res.data.chains.length > 0)
-                //     setViewingChain(res.data.chains[0]);
-            })
-            .catch(console.error);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        load();
     }, [ page ]);
     return (
         <>
@@ -93,7 +91,7 @@ export default function InboxSection() {
                             onClick: () => setSection('New')
                         }
                     ]}
-                    headers={[ 'Author', 'Recipient(s)', 'Subject', 'Last message from', 'Created', 'Read', 'Mark as Read' ]}
+                    headers={[ 'Author', 'Recipient(s)', 'Subject', 'Last message from', 'Created', 'Read' ]}
                     rows={rows}
                 />
                 <Pages

@@ -12,12 +12,50 @@ instance.interceptors.request.use(config => {
     return config;
 });
 
-function get(path, params) {
+let requestFunctions = {
+    get: instance.get,
+    post: instance.post,
+    put: instance.put,
+    delete: instance.delete,
+}
 
+function request(requestFunction, path, params) {
+    return new Promise(async(resolve, reject) => {
+        try {
+
+            let res = await requestFunction(path, params);
+            if (res.data.error) {
+                reject(res.data.error);
+                return;
+            }
+
+            resolve(res);
+
+        } catch (error) {
+            let message = 'Error requesting from server. Please try again or report this message if it repeats.';
+            if (error.response)
+                message = error.response.data.error;
+            if (!message)
+                message = 'Error requesting from server. Please try again or report this message if it repeats.';
+            reject(message);
+        }
+    });
+}
+
+function get(path, params) {
+    return request(requestFunctions.get, path, params);
 }
 
 function post(path, params) {
-
+    return request(requestFunctions.post, path, params);
 }
 
-export default instance;
+function put(path, params) {
+    return request(requestFunctions.put, path, params);
+}
+
+function del(path, params) {
+    return request(requestFunctions.delete, path, params);
+}
+
+export default {get, post, put, delete: del };

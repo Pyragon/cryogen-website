@@ -21,15 +21,18 @@ export default function UserThreads() {
 	useEffect(() => {
 
 		let loadThreads = async () => {
+			
+			try {
 
-			let res = await axios.get('/users/'+viewingUser._id+'/threads/'+page);
-			if(res.data.error) {
-				sendErrorNotification(res.data.error);
-				return;
+				let res = await axios.get(`/users/${viewingUser.id}/threads/${page}`);
+
+				setThreads(res.data.threads);
+				setPageTotal(res.data.pageTotal);
+
+			} catch(error) {
+				console.log(error);
+				sendErrorNotification(error);
 			}
-
-			setThreads(res.data.threads);
-			setPageTotal(res.data.pageTotal);
 			
 		};
 
@@ -59,7 +62,6 @@ export default function UserThreads() {
 		]
 	});
 
-	//table displaying all the posts, and what threads they were posted in
 	return (
 		<>
 			<PageContext.Provider value={{ page, setPage }}>

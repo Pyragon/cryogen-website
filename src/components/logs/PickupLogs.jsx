@@ -52,20 +52,14 @@ export default function PickupLogs() {
 		let loadPage = async () => {
 
 			try {
-				let res = await axios.get('/logs/'+page, {
-					params: {
-						type: 'pickup'
-					}
-				});
-				if(res.data.error) {
-					sendErrorNotification(res.data.error);
-					return;
-				}
+
+				let res = await axios.get(`/logs/${page}?type=pickup`);
 
 				setLogs(res.data.logs);
 				setPageTotal(res.data.pageTotal);
-			} catch(err) {
-				sendErrorNotification(err);
+
+			} catch(error) {
+				sendErrorNotification(error);
 			}
 		};
 

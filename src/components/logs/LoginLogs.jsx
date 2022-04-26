@@ -40,20 +40,14 @@ export default function LoginLogs() {
 		let loadPage = async () => {
 
 			try {
-				let res = await axios.get('/logs/'+page, {
-					params: {
-						type: 'login'
-					}
-				});
-				if(res.data.error) {
-					sendErrorNotification(res.data.error);
-					return;
-				}
+
+				let res = await axios.get(`/logs/${page}?type=login`);
 
 				setLogs(res.data.logs);
 				setPageTotal(res.data.pageTotal);
-			} catch(err) {
-				sendErrorNotification(err);
+
+			} catch(error) {
+				sendErrorNotification(error);
 			}
 		};
 

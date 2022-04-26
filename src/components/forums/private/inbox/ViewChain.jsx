@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import axios from '../../../../utils/axios';
+import { validate } from '../../../../utils/validate';
 
 import EditorContext from '../../../../utils/contexts/EditorContext';
 import SectionContext from '../../../../utils/contexts/SectionContext';
@@ -14,24 +15,6 @@ import Pages from '../../../utils/Pages';
 import './ViewChain.css';
 import ChainSidebar from './ChainSidebar';
 import UserContext from '../../../../utils/contexts/UserContext';
-
-async function clickedReply(sendErrorNotification, chain, reply, setReply, setMessages) {
-    if(reply.length < 5 || reply.length > 2000) {
-        sendErrorNotification('Reply must be between 5 and 2000 characters.');
-        return;
-    }
-    let res = await axios.post('/forums/private/message', {
-        chain: chain._id,
-        content: reply,
-    });
-    if(res.data.error) {
-        sendErrorNotification(res.data.error);
-        return;
-    }
-    setReply('');
-    console.log(res.data);
-    setMessages(messages => [ ...messages, toPost({ message: res.data.message, thanks: res.data.thanks }) ]);
-}
 
 function toPost({ message, thanks }) {
     return {
@@ -58,6 +41,8 @@ export default function ViewChain({ chain, setViewingChain, setChains }) {
     
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
 
+    useEffect(() => setSectionSidebar(<ChainSidebar chain={chain} messages={messages} />), [ messages ]);
+
     useEffect(() => {
         setSectionTitle('Inbox - Viewing Chain');
         setSectionDescription('Viewing message chain: ' + chain.subject+' (#'+chain._id+')');
@@ -66,19 +51,55 @@ export default function ViewChain({ chain, setViewingChain, setChains }) {
 
     useEffect(() => {
         let loadMessages = async() => {
-            let res = await axios.get('/forums/private/message/chain/'+chain._id+'/'+page);
-            if(res.data.error) {
-                console.error(res.data.error);
-                return;
+
+            try {
+
+                let res = await axios.get(`/forums/private/message/chain/${chain._id}/${page}`);
+
+                if(chain.notifyUsersWarning.some(notifyUser => notifyUser._id === user._id))
+                    setChains(chains => chains.map(c => c._id === chain._id ? { ...chain, notifyUsersWarning: chain.notifyUsersWarning.filter(notifyUser => notifyUser && notifyUser._id !== user._id) } : c));
+
+                setMessages(res.data.messages.map(toPost));
+                setPageTotal(res.data.pageTotal);
+
+            } catch(error) {
+                sendErrorNotification(error);
             }
-            if(chain.notifyUsersWarning.some(notifyUser => notifyUser._id === user._id))
-                setChains(chains => chains.map(c => c._id === chain._id ? { ...chain, notifyUsersWarning: chain.notifyUsersWarning.filter(notifyUser => notifyUser._id !== user._id) } : c));
-            setPageTotal(res.data.pageTotal);
-            setMessages(res.data.messages.map(toPost));
         };
         loadMessages();
     }, [ page ]);
-    useEffect(() => setSectionSidebar(<ChainSidebar chain={chain} messages={messages} />), [ messages ]);
+    
+    let replyToPost = async () => {
+        let validateOptions = {
+            reply: {
+                type: 'string',
+                required: true,
+                name: 'Message',
+                min: 5,
+                max: 2000,
+            }
+        };
+
+        let [ validated, error ] = validate(validateOptions, { reply });
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
+        }
+
+        try {
+
+            let res = await axios.post('/forums/private/message', {
+                chain: chain._id,
+                content: reply,
+            });
+
+            setReply('');
+            setMessages(messages => [ ...messages, toPost({ message: res.data.message, thanks: res.data.thanks }) ]);
+        } catch(error) {
+            sendErrorNotification(error);
+        }
+    };
+
     let goBack = () => {
         setViewingChain(null);
         setSectionTitle(null);
@@ -104,7 +125,7 @@ export default function ViewChain({ chain, setViewingChain, setChains }) {
                 <div className='view-chain-reply-container'>
                     <RichTextEditor value={reply} setState={setReply}/>
                     <div className='view-chain-reply-btn-container'>
-                        <Button title="Reply" onClick={async() => await clickedReply(sendErrorNotification, chain, reply, setReply, setMessages)}/>
+                        <Button title="Reply" onClick={replyToPost}/>
                     </div>
                 </div>
             </EditorContext.Provider>

@@ -46,18 +46,17 @@ export default function ChatLogs() {
 	useEffect(() => {
 
 		let loadPage = async () => {
-			let res = await axios.get('/logs/'+page, {
-				params: {
-					type: 'chat'
-				}
-			});
-			if(res.data.error) {
-				sendErrorNotification(res.data.error);
-				return;
-			}
 
-			setLogs(res.data.logs);
-			setPageTotal(res.data.pageTotal);
+			try {
+
+				let res = await axios.get(`/logs/${page}?type=chat`);
+
+				setLogs(res.data.logs);
+				setPageTotal(res.data.pageTotal);
+
+			} catch(error) {
+				sendErrorNotification(error);
+			}
 		};
 
 		loadPage();

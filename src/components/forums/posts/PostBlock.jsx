@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { formatDate } from '../../../utils/format';
 import axios from '../../../utils/axios';
@@ -97,6 +97,7 @@ export default function PostBlock({ data, setPosts }) {
     if(canPost) editColumns++; //quote
     if(canEdit) editColumns++; //edit
     if(post.permissions.canModerate(user)) editColumns++; //moderation options
+    
     return (
         <div key={postState._id} className="post-content-block">
             <div className="post-date-block">

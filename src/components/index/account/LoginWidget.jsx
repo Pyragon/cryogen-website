@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
+import { validate, validateUsername, validatePassword } from '../../../utils/validate';
 
 import LabelInput from '../../utils/LabelInput';
 import Checkbox from '../../utils/Checkbox';
@@ -12,7 +13,11 @@ import Widget from '../../utils/Widget';
 import NotificationContext from '../../../utils/contexts/NotificationContext';
 import UserContext from '../../../utils/contexts/UserContext';
 
-import './../../../styles/Buttons.css'
+import './../../../styles/Buttons.css';
+
+const validateOtp = {
+
+};
 
 export default function LoginWidget( { header=true } ) {
     let { setUser } = useContext(UserContext);
@@ -27,21 +32,25 @@ export default function LoginWidget( { header=true } ) {
     let navigate = useNavigate();
 
     let submitAuth = async() => {
+
+        let [ validated, error ] = validate({ username: validateUsername, password: validatePassword, otp: validateOtp }, { username, password, otp });
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
+        }
+
         try {
-            let response = await axios.post('http://localhost:8081/users/auth', {
+            let res = await axios.post('/users/auth', {
                 username,
                 password,
                 otp,
                 remember: rememberMe
             });
-            if(response.data.error) {
-                sendErrorNotification(response.data.error);
-                return;
-            }
-            let sessionId = response.data.sessionId;
+            
+            let sessionId = res.data.sessionId;
             let storage = rememberMe ? localStorage : sessionStorage;
             storage.setItem('sessionId', sessionId);
-            setUser(response.data.user);
+            setUser(res.data.user);
         } catch(err) {
             sendErrorNotification(err);
         }

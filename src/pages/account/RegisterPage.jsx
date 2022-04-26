@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../utils/axios';
+import { validate, validateUsername, validatePassword } from '../../utils/validate';
+
 import RegisterInfo from '../../components/account/RegisterInfo';
 import RegisterInputs from '../../components/account/RegisterInputs';
 import Widget from '../../components/utils/Widget';
@@ -10,44 +12,7 @@ import UserContext from '../../utils/contexts/UserContext';
 import RegisterInputContext from '../../utils/contexts/RegisterInputContext';
 
 import '../../styles/account/Register.css';
-
-async function register({ username, password, passwordCheck }, navigate, setUser) {
-    if(!username) {
-        console.error('Username is required');
-        return;
-    }
-    if(!password || !passwordCheck || password !== passwordCheck) {
-        console.error('Passwords must be equal and filled out.');
-        return;
-    }
-    if(username.length < 3 || username.length > 12) {
-        console.error('Username must be between 3 and 12 characters.');
-        return;
-    }
-    if(password.length < 8 || password.length > 50) {
-        console.error('Password must be between 8 and 50 characters.');
-        return;
-    }
-    try {
-        axios.post('/users', { 
-            username,
-            password
-        })
-        .then(res => {
-            if(!res.data.success) {
-                console.error('Error creating user.');
-                return;
-            }
-            let sessionId = res.data.sessionId;
-            sessionStorage.setItem('sessionId', sessionId);
-            setUser(res.data.user);
-            navigate('/');
-        })
-        .catch(console.error);
-    } catch(err) {
-        console.error(err);
-    }
-}
+import NotificationContext from '../../utils/contexts/NotificationContext';
 
 export default function RegisterPage() {
     let [ registerInputs, setRegisterInputs ] = useState({});
@@ -55,6 +20,42 @@ export default function RegisterPage() {
     let navigate = useNavigate();
 
     let providerValue = useMemo(() => ({ registerInputs, setRegisterInputs }), [ registerInputs, setRegisterInputs ]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
+    let register = async() => {
+        let validateOptions = {
+            username: validateUsername,
+            password: validatePassword,
+        };
+
+        let username = registerInputs.username.toLowerCase().replaceAll(' ', '_');
+        let password = registerInputs.password;
+    
+        let [ validated, error ] = validate(validateOptions, { username, password });
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
+        }
+    
+        if(password !== registerInputs.passwordCheck) {
+            sendErrorNotification('Passwords do not match.');
+            return;
+        }
+        try {
+    
+            let res = await axios.post('/users', { username, password });
+    
+            let sessionId = res.data.sessionId;
+            sessionStorage.setItem('sessionId', sessionId);
+            setUser(res.data.user);
+            navigate('/');
+    
+        } catch(err) {
+            sendErrorNotification(err);
+        }
+    }
+
     return (
         <Widget
             className='register-widget'
@@ -71,7 +72,7 @@ export default function RegisterPage() {
                 <Button 
                     title='Create Account' 
                     className='register-btn' 
-                    onClick={() => register(registerInputs, navigate, setUser)} 
+                    onClick={register} 
                 />
             </div>
             <div style={{clear: 'both' }} />

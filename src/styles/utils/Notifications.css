@@ -7,7 +7,7 @@
 .notification {
     position: relative;
     width: 17rem;
-    height: 2rem;
+    min-height: 2rem;
     background-color: #111;
     border-radius: 5px;
     border: 1px solid #555;

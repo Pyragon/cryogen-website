@@ -48,20 +48,14 @@ export default function DropLogs() {
 		let loadPage = async () => {
 
 			try {
-				let res = await axios.get('/logs/'+page, {
-					params: {
-						type: 'drop'
-					}
-				});
-				if(res.data.error) {
-					sendErrorNotification(res.data.error);
-					return;
-				}
+
+				let res = await axios.get(`/logs/${page}?type=drop`);
 
 				setLogs(res.data.logs);
 				setPageTotal(res.data.pageTotal);
-			} catch(err) {
-				sendErrorNotification(err);
+
+			} catch(error) {
+				sendErrorNotification(error);
 			}
 		};
 

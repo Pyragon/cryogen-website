@@ -10,9 +10,7 @@ import ForumContainer from './ForumContainer';
 export default function ForumIndex() {
     let { user } = useContext(UserContext);
     let breadcrumbs = generateBreadcrumbs({});
-    useEffect(() => {
-        setUserActivity(user, 'Viewing Index', 'subforum');
-    }, [ user ]);
+    useEffect(() => setUserActivity(user, 'Viewing Index', 'subforum'), [ user ]);
     return (
         <ForumContainer index={true} breadcrumbs={breadcrumbs}>
             <Subforums />

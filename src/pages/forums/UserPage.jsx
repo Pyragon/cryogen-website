@@ -62,18 +62,16 @@ export default function UserPage() {
     useEffect(() => {
 
         let loadUser = async() => {
-            let res = await axios.get('/users/'+id);
-            if(res.data.error) {
-                sendErrorNotification(res.data.error);
-                return;
+
+            try {
+
+                let res = await axios.get(`/users/${id}`);
+    
+                setUser(res.data.user);
+                setBreadcrumbs(generateBreadcrumbs(res.data));
+            } catch(error) {
+                sendErrorNotification(error);
             }
-
-            let breadcrumbs = generateBreadcrumbs({ user: res.data.user });
-
-            setUser(res.data.user);
-            setBreadcrumbs(breadcrumbs);
-
-            //TODO - add a button called 'shop' if the user has a personal shop
         };
 
         loadUser();
@@ -90,9 +88,7 @@ export default function UserPage() {
         setWidgetContent(button.content);
 
     }, [ activeButton ]);
-    //user avatar in top left
-    //some stats to the right of avatar
-    //buttons above the widget to change it's content
+    
     if(!user)
         return <></>
     return (

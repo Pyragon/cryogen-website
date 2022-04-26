@@ -10,10 +10,7 @@ import './../../../styles/index/MiniHighscores.css';
 export default function MiniHighscores() {
     let [highscores, setHighscores] = useState([]);
     useEffect(() => {
-        axios.get('http://localhost:8081/highscores/mini')
-            .then(results => {
-                setHighscores(results.data);
-            });
+        
     }, []);
     return (
         <Widget title="Highscores" style={{marginTop: '20px'}}>

@@ -20,7 +20,6 @@ export default function BeastOfBurdenDeathLogs() {
 
 	
 	let rows = logs.map(log => {
-		console.log(log.items);
 		return [
 			{
 				type: 'user',
@@ -52,18 +51,17 @@ export default function BeastOfBurdenDeathLogs() {
 	useEffect(() => {
 
 		let loadPage = async () => {
-			let res = await axios.get('/logs/'+page, {
-				params: {
-					type: 'bob_death'
-				}
-			});
-			if(res.data.error) {
-				sendErrorNotification(res.data.error);
-				return;
-			}
 
-			setLogs(res.data.logs);
-			setPageTotal(res.data.pageTotal);
+			try {
+
+				let res = await axios.get(`/logs/${page}?type=bob_death`);
+	
+				setLogs(res.data.logs);
+				setPageTotal(res.data.pageTotal);
+
+			} catch(error) {
+				sendErrorNotification(error);
+			}
 		};
 
 		loadPage();

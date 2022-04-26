@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../../utils/axios';
 
 import { formatDate } from '../../../utils/format';
@@ -7,14 +7,30 @@ import { Link } from 'react-router-dom';
 
 import DisplayUser from '../../utils/user/DisplayUser';
 
+import NotificationContext from '../../../utils/contexts/NotificationContext';
+
 import '../../../styles/forums/Subforum.css';
 
 export default function SubforumBlock({ forum }) {
     let [ subforums, setSubforums ] = useState([]);
+
+    let { sendErrorNotification } = useContext(NotificationContext);
     useEffect(() => {
-        axios.get('http://localhost:8081/forums/subforums/children/' + forum._id)
-            .then(response => setSubforums(response.data))
-            .catch(console.error);
+
+        let load = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/subforums/children/${forum._id}`);
+
+                setSubforums(res.data.forums);
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        load();
     }, [ forum ]);
     return (
         <>

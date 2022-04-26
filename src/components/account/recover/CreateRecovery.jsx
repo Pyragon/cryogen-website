@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import axios from '../../../utils/axios';
+import { validate, validateUsername, validateEmail } from '../../../utils/validate';
 
 import CreateRecoveryInfo from './CreateRecoveryInfo';
 
@@ -13,7 +14,7 @@ import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 export default function CreateRecovery({ usernameInput }) {
 
-    let [ username, setUsername ] = useState(usernameInput || '');
+    let [ username, setUsername ] = useState(usernameInput || 'cody');
     let [ email, setEmail ] = useState('');
     let [ discord, setDiscord ] = useState('');
     let [ previousPasswords, setPreviousPasswords ] = useState([ '', '', '' ]);
@@ -34,13 +35,15 @@ export default function CreateRecovery({ usernameInput }) {
 
         let loadQuestions = async () => {
 
-            let res = await axios.get('/account/recovery/questions');
-            if(res.data.error) {
-                sendErrorNotification(res.data.error);
-                return;
-            }
+            try {
 
-            setRecoveryQuestions(res.data.questions);
+                let res = await axios.get('/account/recovery/questions');
+    
+                setRecoveryQuestions(res.data.questions);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
 
         };
 
@@ -49,56 +52,63 @@ export default function CreateRecovery({ usernameInput }) {
     }, []);
 
     let submit = async () => {
-        if(!username) {
-            sendErrorNotification('Username is required');
-            return;
-        }
 
-        if(username.length < 3 || username.length > 12) {
-            sendErrorNotification('Username must be between 3 and 12 characters');
-            return;
-        }
-
-        let emailRegexp = new RegExp('^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$');
-        let discordRegexp = new RegExp('[a-zA-Z0-9_]{3,32}#[0-9]{4}');
-
-        if(email && !emailRegexp.test(email)) {
-            sendErrorNotification('Email is invalid');
-            return;
-        }
-
-        if(discord && !discordRegexp.test(discord)) {
-            sendErrorNotification('Discord name is invalid. Please make sure to include the # and tag.');
-            return;
-        }
-
-        if(geoLocation && (geoLocation.length < 3 || geoLocation.length > 100)) {
-            sendErrorNotification('City/Country must be between 3 and 100 characters');
-            return;
-        }
-
-        if(isp && (isp.length < 2 || isp.length > 100)) {
-            sendErrorNotification('ISP must be between 2 and 100 characters');
-            return;
-        }
-
-        if(additional && (additional.length < 2 || additional.length > 500)) {
-            sendErrorNotification('Additional information must be between 2 and 500 characters');
-            return;
-        }
-
-        let passwords = [];
-        for(let password of previousPasswords) {
-            if(!password) continue;
-            if(password.length < 8 || password.length > 50) {
-                sendErrorNotification('Passwords must be between 8 and 50 characters');
-                return;
+        let validateOptions = {
+            username: validateUsername,
+            email: validateEmail,
+            discord: {
+                type: 'string',
+                name: 'Discord',
+                required: false,
+                regexp: /[a-zA-Z0-9_]{3,32}#[0-9]{4}/
+            },
+            geoLocation: {
+                type: 'string',
+                name: 'City/Country',
+                required: false,
+                min: 3,
+                max: 100,
+            },
+            isp: {
+                type: 'string',
+                name: 'ISP',
+                required: false,
+                min: 3,
+                max: 100,
+            },
+            additional: {
+                type: 'string',
+                name: 'Additional Information',
+                required: false,
+                min: 3,
+                max: 500,
+            },
+            passwords: {
+                type: ['string'],
+                name: 'Previous Passwords',
+                required: false,
+                min: 8,
+                max: 50,
+                duplicates: {
+                    allowed: false,
+                    error: 'Please do not enter the same previous password twice',
+                }
             }
-            if(passwords.includes(password)) {
-                sendErrorNotification('You cannot input the same previous password twice.');
-                return;
-            }
-            passwords.push(password);
+        }
+    
+        let [validated, error] = validate(validateOptions, {
+            username,
+            email,
+            discord,
+            geoLocation,
+            isp,
+            additional,
+            passwords: previousPasswords,
+        });
+
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
         }
 
         let questions = [];
@@ -121,7 +131,7 @@ export default function CreateRecovery({ usernameInput }) {
                 username,
                 email,
                 discord,
-                passwords,
+                passwords: previousPasswords,
                 questions,
                 answers: recoveryAnswers,
                 geoLocation,
@@ -129,13 +139,8 @@ export default function CreateRecovery({ usernameInput }) {
                 additional
             });
 
-            if(res.data.error) {
-                sendErrorNotification(res.data.error);
-                return;
-            }
-
         } catch(error) {
-            sendErrorNotification(error.response.data.error);
+            sendErrorNotification(error);
             return;
         }
 

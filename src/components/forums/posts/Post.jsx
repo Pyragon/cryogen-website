@@ -19,34 +19,40 @@ export default function Post({ post }) {
     let { sendErrorNotification } = useContext(NotificationContext);
     let style = post.style || {};
 
+    let loadPost = async(id) => {
+
+        try {
+            if(post._id === id) return null;
+
+            let res = await axios.get(`/forums/posts/${id}`);
+
+            return res.data.post;
+        } catch(error) {
+            sendErrorNotification(error);
+            return null;
+        }
+
+    };
+
     useEffect(() => {
 
-        setFormatted(formatted.replaceAll('[username]', !user ? 'Guest' : ReactDOMServer.renderToString(<DisplayUser user={user} useATag={true} />)));
-    
-        let regexp = new RegExp(quoteRegex);
-        let match;
-        while((match = regexp.exec(formatted))) {
-            let quoteId = match[1];
-    
-            let loadPost = async(quoteId) => {
+        let load = async () => {
 
-                if(post._id === quoteId) return null;
-    
-                let res = await axios.get('/forums/posts/'+quoteId);
-                if(res.data.error) {
-                    sendErrorNotification(res.data.error);
-                    return null;
-                }
-    
-                return res.data.post;
-    
-            };
-    
-            loadPost(quoteId).then(quote => {
-                setFormatted(formatted => formatted.replace(regexp, ReactDOMServer.renderToString(<Quote quote={quote} />)));
-            });
-            break;
-        }
+            setFormatted(post.formatted);
+            setFormatted(formatted => formatted.replaceAll('[username]', !user ? 'Guest' : ReactDOMServer.renderToString(<DisplayUser user={user} useATag={true} />)));
+        
+            let regexp = new RegExp(quoteRegex);
+            let match;
+            while((match = regexp.exec(formatted))) {
+                let quoteId = match[1];
+
+                let post = await loadPost(quoteId);
+                if(!post) continue;
+                setFormatted(formatted => formatted.replace(regexp, ReactDOMServer.renderToString(<Quote quote={post} />)));
+            }
+        };
+
+        load();
     }, [ post ]);
 
     return (

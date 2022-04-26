@@ -1,29 +1,36 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import ProgressBar from '../../../utils/ProgressBar';
 
 import axios from '../../../../utils/axios';
 import Poll from '../../../../utils/poll';
 
+import NotificationContext from '../../../../utils/contexts/NotificationContext';
+
 export default function PollResults({ poll, setPoll, showResults, setShowResults }) {
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     let removeVote = async() => {
         if(showResults) {
-            console.log('setting');
             setShowResults(false);
             return;
         }
         if(!poll.allowVoteChange) {
-            console.error('You cannot remove your vote from this poll!');
+            sendErrorNotification('You cannot remove your vote from this poll!');
             return;
         }
-        let res = await axios.post('/forums/threads/polls/removeVote', {
-            poll: poll._id
-        });
-        if(res.data.error) {
-            console.error(res.data.error);
-            return;
+
+        try {
+
+            let res = await axios.post('/forums/threads/polls/removeVote', { poll: poll._id });
+    
+            setPoll(new Poll(res.data.poll));
+
+        } catch(error) {
+            sendErrorNotification(error);
         }
-        setPoll(new Poll(res.data.poll));
     };
+
     return (
         <>
             { poll.answers.map((answer, index) => {

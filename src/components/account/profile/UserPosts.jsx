@@ -22,14 +22,16 @@ export default function UserPosts({ user }) {
 		//get user posts for page
 		let loadPosts = async () => {
 
-			let res = await axios.get('/users/'+viewingUser._id+'/posts/'+page);
-			if(res.data.error) {
-				sendErrorNotification(res.data.error);
-				return;
-			}
+			try {
 
-			setPosts(res.data.posts);
-			setPageTotal(res.data.pageTotal);
+				let res = await axios.get(`/users/${viewingUser._id}/posts/${page}`);
+	
+				setPosts(res.data.posts);
+				setPageTotal(res.data.pageTotal);
+
+			} catch (err) {
+				sendErrorNotification(err);
+			}
 			
 		};
 
@@ -59,7 +61,6 @@ export default function UserPosts({ user }) {
 		]
 	});
 
-	//table displaying all the posts, and what threads they were posted in
 	return (
 		<>
 			<PageContext.Provider value={{ page, setPage }}>

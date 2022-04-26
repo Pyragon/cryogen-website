@@ -16,21 +16,6 @@ const info = [
     'Examples: to:cody, subject: example'
 ];
 
-async function deleteDraft(message, setMessages, sendConfirmation, sendNotification, sendErrorNotification) {
-    sendConfirmation({
-        text: 'Are you sure you want to delete this message?',
-        onSuccess: (close) => {
-            axios.delete(`/forums/private/drafts/${message._id}`)
-                .then(res => {
-                    setMessages(messages => messages.filter(m => m._id !== message._id));
-                    sendNotification({ text: 'Message has been deleted.' });
-                    close();
-                })
-                .catch(sendErrorNotification);
-        }
-    })
-}
-
 export default function DraftSection() {
     let { setSection } = useContext(SectionContext);
     let { setNewMessageValues } = useContext(MessageContext);
@@ -40,13 +25,42 @@ export default function DraftSection() {
     let [ messages, setMessages ] = useState([]);
     let [ pageTotal, setPageTotal ] = useState(1);
 
+    let deleteMessage = async(message) => {
+        
+        let onSuccess = async(close) => {
+            try {
+
+                await axios.delete(`/forums/private/drafts/${message._id}`);
+
+                setMessages(messages => messages.filter(m => m._id !== message._id));
+                sendNotification({ text: 'Message has been deleted.' });
+                close();
+
+            } catch(error) {
+                sendErrorNotification(error);
+                return;
+            }
+        };
+
+        sendConfirmation({ text: 'Are you sure you want to delete this message?', onSuccess });
+    };
+
     useEffect(() => {
-        axios.get('/forums/private/drafts/'+page)
-            .then(res => {
+
+        let load = async () => {
+
+            try {
+
+                let res = await axios.get(`/forums/private/drafts/${page}`);
+
                 setMessages(res.data.drafts);
                 setPageTotal(res.data.pageTotal);
-            })
-            .catch(console.error);
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+        };
+
+        load();
     }, []);
 
     let continueDraft = message => {
@@ -87,7 +101,7 @@ export default function DraftSection() {
             {
                 value: <div style={{textDecoration: 'underline', cursor: 'pointer'}}>Delete</div>,
                 type: 'button',
-                onClick: () => deleteDraft(message, setMessages, sendConfirmation, sendNotification, sendErrorNotification),
+                onClick: () => deleteMessage(message),
             }
         ];
     });

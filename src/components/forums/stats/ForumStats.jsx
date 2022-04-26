@@ -1,26 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../../utils/axios';
 
 import Widget from '../../utils/Widget'
-
-import '../../../styles/forums/ForumStats.css';
 import ForumStat from './ForumStat';
 
-async function fetchStats(stats, setStats) {
-    let newStats = await axios.get('http://localhost:8081/forums/stats');
-    newStats = await newStats.data;
-    if(JSON.stringify(stats) === JSON.stringify(newStats))
-        return;
-    setStats(newStats);
-}
+import NotificationContext from '../../../utils/contexts/NotificationContext';
+
+import '../../../styles/forums/ForumStats.css';
 
 export default function ForumStats() {
     let [ stats, setStats ] = useState({});
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     useEffect(() => {
-        let statsInterval = setInterval(() => fetchStats(stats, setStats), 5000);
-        fetchStats(stats, setStats);
-        return () => clearInterval(statsInterval);
-    }, [ stats ]);
+
+        let fetch = async () => {
+
+            try {
+
+                let res = await axios.get('/forums/stats');
+
+                setStats(res.data.stats);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        fetch();
+
+        let interval = setInterval(fetch, 5000);
+
+        return () => clearInterval(interval);
+
+    }, []);
     return (
         <Widget title="Forum Stats" description="Real-Time stats about the forums">
             <ForumStat title="Registered Users" value={stats.registered || 0} />

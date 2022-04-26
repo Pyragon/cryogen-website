@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import UserContext from '../../../utils/contexts/UserContext';
 import axios from '../../../utils/axios';
+import { validate } from '../../../utils/validate';
 
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import Input from '../../utils/Input';
@@ -8,37 +8,69 @@ import Button from '../../utils/Button';
 
 import '../../../styles/forums/Chatbox.css';
 import ChatboxMessage from './ChatboxMessage';
-
-async function fetchMessages(messages, setMessages) {
-    let results = await axios.get('/forums/chatbox');
-    let newMessages = results.data;
-    if(JSON.stringify(messages) === JSON.stringify(newMessages.messages))
-        return;
-    setMessages(newMessages.messages);
-    //scroll to bottom if already there, if not, leave it alone
-}
+import NotificationContext from '../../../utils/contexts/NotificationContext';
+import UserContext from '../../../utils/contexts/UserContext';
 
 export default function Chatbox() {
     let [ messages, setMessages ] = useState([]);
-    let [ text, setText ] = useState('');
+    let [ message, setMessage ] = useState('');
     let { user } = useContext(UserContext);
-    let loggedIn = user !== null;
+
+    let { sendErrorNotification } = useContext(NotificationContext);
+
     useEffect(() => {
-        fetchMessages(messages, setMessages);
-        let interval = setInterval(() => fetchMessages(messages, setMessages), 5000);
+
+        let loadMessages = async () => {
+
+            try {
+
+                let res = await axios.get('/forums/chatbox');
+
+                setMessages(res.data.messages);
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        loadMessages();
+
+        let interval = setInterval(loadMessages, 5000);
         return () => clearInterval(interval);
+
     }, [ messages ]);
+
     let submitMessage = async() => {
-        let results = await axios.post('/forums/chatbox', {
-            message: text
-        });
-        if(!results || results.message) {
-            console.error(results.message || 'Error submitting message');
+
+        let validateOptions = {
+            message: {
+                required: true,
+                type: 'string',
+                name: 'Message',
+                min: 4,
+                max: 200
+            }
+        };
+
+        let [ validated, error ] = validate(validateOptions, { message });
+        if(!validated) {
+            sendErrorNotification(error);
             return;
         }
-        setText('');
-        fetchMessages(messages, setMessages);
+
+        try {
+
+            let res = await axios.post('/forums/chatbox', { message });
+
+            setMessage('');
+            setMessages(messages => [ ...messages, res.data.message ]);
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
     };
+
     return (
         <CollapsibleWidget
             title="Chatbox"
@@ -47,17 +79,15 @@ export default function Chatbox() {
             collapsed={true}
             style={{ marginBottom: '0px'}}>
                 <div className="message-container">
-                    { messages.map((data, index) => 
+                    { messages.map(message => 
                         <ChatboxMessage 
-                            key={index} 
-                            index={data._id}
-                            author={data.author}
-                            message={data.message}
-                            time={data.createdAt}
-                    />) }
+                            key={message._id} 
+                            message={message}
+                        />
+                    ) }
                 </div> 
-                { loggedIn && <div className="input-container">
-                    <Input style={{ marginLeft: '0px' }} value={text} className="chat-input" type="text" placeholder="Type a message..." setState={setText} onEnter={submitMessage}/>
+                { user && <div className="input-container">
+                    <Input style={{ marginLeft: '0px' }} value={message} className="chat-input" placeholder="Type a message..." setState={setMessage} onEnter={submitMessage}/>
                     <Button className="chat-button" title="Send" onClick={submitMessage}/>
                 </div> }
         </CollapsibleWidget>
