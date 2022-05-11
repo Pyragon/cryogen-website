@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import axios from '../../../utils/axios';
+import { validate } from '../../../utils/validate';
 import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 import Permissions from '../../../utils/permissions';
@@ -18,90 +19,6 @@ import PostList from './PostList';
 import Pages from '../../utils/Pages';
 import Dropdown from '../../utils/Dropdown';
 import '../../../styles/forums/Thread.css';
-
-async function clickedReply(sendErrorNotification, thread, reply, setReply, setPosts) {
-    let link = '/forums/posts/';
-    try {
-        let results = await axios.post(link, { threadId: thread._id, content: reply });
-        results = results.data;
-        if(results.message) {
-            console.error(results.message);
-            return;
-        }
-        setReply('');
-        setPosts(prev => [...prev, results]);
-    } catch(err) {
-        sendErrorNotification(err);
-    }
-}
-
-function pinThread(sendNotification, sendErrorNotification, thread, user, setThread) {
-    if(!user) return false;
-    if(!thread.permissions.canModerate(user)) return true;
-    axios.post(`/forums/threads/${thread._id}/pin`)
-        .then(res => {
-            if(res.data.message) {
-                console.error(res.data.message);
-                return;
-            }
-            let thread = res.data.thread;
-            sendNotification({
-                text: 'Thread has been ' + (!thread.pinned ? 'unpinned' : 'pinned') + '.',
-            });
-            setThread(thread);
-        }).catch(sendErrorNotification);
-}
-
-function lockThread(sendNotification, sendErrorNotification, thread, user, setThread) {
-    if(!user) return;
-    if(!thread.permissions.canModerate(user)) return;
-    axios.post(`/forums/threads/${thread._id}/lock`)
-        .then(res => {
-            if(res.data.message) {
-                console.error(res.data.message);
-                return;
-            }
-            let thread = res.data.thread;
-            sendNotification({
-                text: 'Thread has been ' + (thread.open ? 'unlocked' : 'locked') + '.',
-            });
-            setThread(thread);
-        }).catch(sendErrorNotification);
-}
-
-function deleteThread(sendNotification, sendErrorNotification, thread, user, setThread) {
-    if(!user) return;
-    if(!thread.permissions.canModerate(user)) return;
-    sendNotification({
-        text: 'Are you sure?',
-        layout: 'center',
-        buttons: [
-            {
-                addClass: 'btn btn-success',
-                text: 'Yes',
-                onClick: (noty) => {
-                    axios.post(`/forums/threads/${thread._id}/archive`)
-                        .then(res => {
-                            if(res.data.message) {
-                                console.error(res.data.message);
-                                return;
-                            }
-                            noty.close();
-                            sendNotification({ text: 'Thread has been ' + (res.data.thread.archived ? 'deleted' : 'restored') + '.' });
-                            setThread(res.data.thread);
-                        }).catch(sendErrorNotification);
-                },
-            },
-            {
-                addClass: 'btn btn-danger',
-                text: 'Cancel',
-                onClick: (noty) => {
-                    noty.close();
-                },
-            }
-        ],
-    });
-}
 
 function canReply(user, thread) {
     if(!user) return false;
@@ -168,6 +85,35 @@ export default function ViewThread({ thread, setThread }) {
         sendConfirmation('Are you sure you wish to delete this thread?', onSuccess);
     };
 
+    let replyToThread = async () => {
+
+        let validateOptions = {
+            content: {
+                required: true,
+                name: 'Content',
+                min: 4,
+                max: 1000,
+            }
+        }; 
+
+        let [ validated, error ] = validate(validateOptions, { content: reply });
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
+        }
+
+        try {
+
+            let res = await axios.post('/forums/posts', { threadId: thread._id, content: reply });
+
+            setReply('');
+            setPosts(prev => [...prev, res.data.post]);
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
+    };
+
     let [ options ] = useState([
             {
                 title: 'Pin Thread',
@@ -203,7 +149,7 @@ export default function ViewThread({ thread, setThread }) {
 
             try {
 
-                let res = await axios.get(`/forums/posts/children/${thread._id}/${page}`);
+                let res = await axios.get(`/forums/threads/${thread._id}/posts/${page}`);
 
                 let posts = res.data.posts;
 
@@ -271,7 +217,7 @@ export default function ViewThread({ thread, setThread }) {
                         }
                     >
                         <RichTextEditor value={reply} setState={setReply} />
-                        <Button className="reply-btn" title="Reply" onClick={async() => await clickedReply(sendErrorNotification, thread, reply, setReply, setPosts)}/>
+                        <Button className="reply-btn" title="Reply" onClick={replyToThread}/>
                         <div style={{clear: 'both' }}/>
                     </CollapsibleWidget> 
                 }

@@ -9,11 +9,16 @@ import ThreadBlock from '../threads/ThreadBlock';
 
 import UserContext from '../../../utils/contexts/UserContext';
 import NotificationContext from '../../../utils/contexts/NotificationContext';
+import PageContext from '../../../utils/contexts/PageContext';
+import Pages from '../../utils/Pages';
 
 export default function ViewForum({ forum }) {
+
     let [ subforums, setSubforums ] = useState([]);
     let [ threads, setThreads ] = useState([]);
+    let [ pageTotal, setPageTotal ] = useState(1);
     let { user } = useContext(UserContext);
+    let { page } = useContext(PageContext);
     let navigate = useNavigate();
 
     let { sendErrorNotification } = useContext(NotificationContext);
@@ -24,11 +29,10 @@ export default function ViewForum({ forum }) {
 
             try {
 
-                let res = await axios.get(`/forums/subforums/children/${forum._id}`);
-                setSubforums(res.data.forums);
-
-                res = await axios.get(`/forums/threads/children/${forum._id}`);
+                let res = await axios.get(`/forums/subforums/${forum._id}/${page}`);
+                setSubforums(res.data.subforum.subforums);
                 setThreads(res.data.threads);
+                setPageTotal(res.data.pageTotal);
 
             } catch(error) {
                 sendErrorNotification(error);
@@ -75,6 +79,10 @@ export default function ViewForum({ forum }) {
                                 ))
                         }
                     </CollapsibleWidget>
+                    <Pages
+                        pageTotal={pageTotal}
+                        base={`/subforums/${forum._id}`}
+                    />
                 </>
             }
             

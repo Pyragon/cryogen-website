@@ -108,7 +108,7 @@ export default function NewThread() {
 
                 let res = await axios.get(`/forums/subforums/${forumId}`);
 
-                let forum = res.data.forum;
+                let forum = res.data.subforum;
                 if(forum.permissions)
                     forum.permissions = new Permissions(forum.permissions);
 

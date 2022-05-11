@@ -19,7 +19,9 @@ export default function Categories() {
 
                 let res = await axios.get('/forums/subforums');
 
-                setSubforums(res.data.forums);
+                console.log(res.data);
+
+                setSubforums(res.data.subforums);
 
             } catch(error) {
                 sendErrorNotification(error);

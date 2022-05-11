@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { formatDate } from '../../../utils/format';
 import axios from '../../../utils/axios';
@@ -68,20 +68,19 @@ async function deletePost(sendNotification, sendErrorNotification, user, post, s
     });
 }
 
-export default function PostBlock({ data, setPosts }) {
-    let post = data.post;
+export default function PostBlock({ post, setPosts }) {
     let { user } = useContext(UserContext);
     let { setReply } = useContext(EditorContext);
     let [ editing, setEditing ] = useState(false);
     let [ postState, setPostState ] = useState(post);
     let loggedIn = user !== null, canPost = true;
-    let [ thanks, setThanks ] = useState(data.thanks);
+    let [ thanks, setThanks ] = useState(post.thanks);
     let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
 
     let options = [
     ];
 
-    if(data.index !== 0) {
+    if(post.index !== 0) {
         options.push({
             title: 'Delete',
             onClick: () => deletePost(sendNotification, sendErrorNotification, user, post, setPosts),
@@ -90,7 +89,7 @@ export default function PostBlock({ data, setPosts }) {
     }
 
     post.permissions = new Permissions(post.thread.subforum.permissions);
-    let canEdit = user && (user._id === post.author._id || post.permissions.canModerate(user, post.thread));
+    let canEdit = post.permissions.canEdit(user, post);
 
     let editColumns = postState.edited ? 1 : 0; //last edited
     if(loggedIn) editColumns++; //thanks

@@ -11,8 +11,6 @@ export default function UsersViewingThread({ thread }) {
 
     let { sendErrorNotification } = useContext(NotificationContext);
 
-    console.log(thread._id);
-
     useEffect(() => {
 
         let load = async () => {

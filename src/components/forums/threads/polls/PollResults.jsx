@@ -22,7 +22,7 @@ export default function PollResults({ poll, setPoll, showResults, setShowResults
 
         try {
 
-            let res = await axios.post('/forums/threads/polls/removeVote', { poll: poll._id });
+            let res = await axios.post('/forums/threads/polls/vote', { poll: poll._id, remove: true });
     
             setPoll(new Poll(res.data.poll));
 

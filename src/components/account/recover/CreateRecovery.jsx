@@ -14,7 +14,7 @@ import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 export default function CreateRecovery({ usernameInput }) {
 
-    let [ username, setUsername ] = useState(usernameInput || 'cody');
+    let [ username, setUsername ] = useState(usernameInput || '');
     let [ email, setEmail ] = useState('');
     let [ discord, setDiscord ] = useState('');
     let [ previousPasswords, setPreviousPasswords ] = useState([ '', '', '' ]);

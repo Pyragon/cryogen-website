@@ -4,26 +4,26 @@ import DisplayUser from '../../utils/user/DisplayUser';
 
 import SpanIcon from '../../utils/SpanIcon';
 
-export default function PostAuthor({ data }) {
+export default function PostAuthor({ post }) {
     return (
         <div className="post-author-container">
             <div className='post-author-block'>
                 <DisplayUser 
-                    user={data.post.author} 
+                    user={post.author} 
                     useUserTitle={true}
-                    avatar={data.post.author.avatar || '/images/default_avatar.png'}
+                    avatar={post.author.avatar || '/images/default_avatar.png'}
                 />
                 <SpanIcon icon="fa-clipboard" className="post-author-block-line small">
-                    {' Post Count: '+data.postCount}
+                    {' Post Count: '+post.postCount}
                 </SpanIcon>
                 <SpanIcon icon="fa-thumbs-up" className="post-author-block-line small">
-                    {' Thanks Received: '+data.thanksReceived}
+                    {' Thanks Received: '+post.thanksReceived}
                 </SpanIcon>
                 <SpanIcon icon="fa-thumbs-up" className="post-author-block-line small">
-                    {' Thanks Given: '+data.thanksGiven}
+                    {' Thanks Given: '+post.thanksGiven}
                 </SpanIcon>
                 <SpanIcon icon="fa-thumbs-up" className="post-author-block-line small">
-                    {' In-game Total: '+(data.totalLevel === -1 ? 'N/A' : data.totalLevel)}
+                    {' In-game Total: '+(post.totalLevel === -1 ? 'N/A' : post.totalLevel)}
                 </SpanIcon>
             </div>
         </div>

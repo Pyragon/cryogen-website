@@ -21,9 +21,9 @@ export default function SubforumBlock({ forum }) {
 
             try {
 
-                let res = await axios.get(`/forums/subforums/children/${forum._id}`);
+                let res = await axios.get(`/forums/subforums/${forum._id}`);
 
-                setSubforums(res.data.forums);
+                setSubforums(res.data.subforum.subforums);
             } catch(error) {
                 sendErrorNotification(error);
             }

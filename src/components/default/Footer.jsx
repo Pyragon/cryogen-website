@@ -3,11 +3,12 @@ import UserContext from '../../utils/contexts/UserContext';
 
 import FooterButton from './FooterButton';
 
-const buttons = require('./buttons.json');
+import buttons from './buttons';
 
 export default function Footer() {
     let { user } = useContext(UserContext);
     let isAdmin = user && user.displayGroup.rights > 0;
+
     return (
         <div className="footer">
             <div className={"footer-btns "+(user && isAdmin ? "footer-btns-4" : "")}>

@@ -18,12 +18,23 @@ export default class Permissions {
         return false;
     }
 
+    canEdit(user, post) {
+        if (!user || !post) return false;
+        let data = this.permissions.canEdit;
+        if (data.includes('-3') && post.author._id === user._id) return true;
+        for (let id of data)
+            if (id === user.displayGroup._id) return true;
+        for (let i = 0; i < user.usergroups.length; i++)
+            if (data.includes(user.usergroups[i])) return true;
+        return false;
+    }
+
     canModerate(user) {
         if (!user) return false;
         let data = this.permissions.canModerate
         for (let id of data)
             if (id === user.displayGroup._id) return true;
-        if (user.userGroups)
+        if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
                 if (data.includes(user.usergroups[i])) return true;
         return false;
@@ -35,7 +46,7 @@ export default class Permissions {
         if (data.includes('-1') || data.includes('-2')) return true;
         for (let id of data)
             if (id === user.displayGroup._id) return true;
-        if (user.userGroups)
+        if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
                 if (data.includes(user.usergroups[i])) return true;
         if (data.includes('-3') && thread.author._id === user._id) return true;
@@ -48,7 +59,7 @@ export default class Permissions {
         if (data.includes('-1') || data.includes('-2')) return true;
         for (let id of data)
             if (id === user.displayGroup._id) return true;
-        if (user.userGroups)
+        if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
                 if (data.includes(user.usergroups[i])) return true;
         return false;
@@ -60,7 +71,7 @@ export default class Permissions {
         if (data.includes('-1') || data.includes('-2')) return true;
         for (let id of data)
             if (id === user.displayGroup._id) return true;
-        if (user.userGroups)
+        if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
                 if (data.includes(user.usergroups[i])) return true;
         return false;
