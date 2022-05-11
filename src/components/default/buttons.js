@@ -115,21 +115,16 @@ export default [{
             },
             {
                 title: 'Default',
-                link: '/default',
+                link: '#',
                 onClick: async(e, { sendNotification, sendErrorNotification }) => {
-                    e.preventDefault();
-
-                    console.log('test');
-                    sendNotification({ text: 'Test' });
 
                 },
-
+                isATag: true
             },
             {
                 title: 'Refresh BBCodes',
                 link: '#',
                 onClick: async(e, { sendNotification, sendErrorNotification }) => {
-                    e.preventDefault();
 
                     try {
 

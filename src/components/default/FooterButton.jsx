@@ -16,7 +16,10 @@ export default function FooterButton({ button, index }) {
         return (<></>)
     let onClick = null;
     if(button.onClick)
-        onClick = async(e) => await button.onClick(e, { setUser, sendNotification, sendErrorNotification });
+        onClick = async(e) => {
+            e.preventDefault();
+            await button.onClick(e, { setUser, sendNotification, sendErrorNotification });
+        };
 
     return (
         <li>
