@@ -9,12 +9,13 @@ export default function RegisterInputs() {
     let [ username, setUsername ] = useState(registerInputs.username || '');
     let [ password, setPassword ] = useState(registerInputs.password || '');
     let [ passwordCheck, setPasswordCheck ] = useState(registerInputs.passwordCheck || '');
+    let [ email, setEmail ] = useState(registerInputs.email || '');
     function updateInputs() {
-        setRegisterInputs({ ...registerInputs, username, password, passwordCheck });
+        setRegisterInputs({ ...registerInputs, username, password, passwordCheck, email });
     }
     useEffect(() => {
         updateInputs();
-    }, [ username, password, passwordCheck ]);
+    }, [ username, password, passwordCheck, email ]);
     return (
         <div className='register-inputs'>
             <LabelInput
@@ -22,6 +23,12 @@ export default function RegisterInputs() {
                 placeholder='Enter desired username'
                 value={username}
                 setState={setUsername}
+            />
+            <LabelInput
+                title='Email'
+                placeholder='Enter email'
+                value={email}
+                setState={setEmail}
             />
             <LabelInput
                 title='Password'

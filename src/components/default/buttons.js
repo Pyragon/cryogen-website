@@ -84,7 +84,6 @@ export default [{
                 title: 'Logout',
                 link: '/logout',
                 onClick: async(e, { setUser, sendErrorNotification }) => {
-                    e.preventDefault();
 
                     try {
 
@@ -98,7 +97,8 @@ export default [{
                         sendErrorNotification(error);
                     }
                 },
-                requiresLogin: true
+                requiresLogin: true,
+                isATag: true,
             }
         ]
     },

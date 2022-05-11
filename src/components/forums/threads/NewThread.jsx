@@ -5,7 +5,7 @@ import axios from '../../../utils/axios';
 import setUserActivity from '../../../utils/user-activity';
 import Permissions from '../../../utils/permissions';
 import generateBreadcrumbs from '../../../utils/breadcrumbs';
-import { validate } from '../../../utils/validate';
+import { validate, validatePost } from '../../../utils/validate';
 
 import ForumContainer from '../../../pages/forums/ForumContainer';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
@@ -50,12 +50,7 @@ export default function NewThread() {
                 min: 5,
                 max: 50,
             },
-            content: {
-                required: true,
-                name: 'Content',
-                min: 4,
-                max: 1000,
-            }
+            content: validatePost,
         };
 
         let [ validated, error ] = validate(validateOptions, { title, content });

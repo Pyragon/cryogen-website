@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../utils/axios';
-import { validate, validateUsername, validatePassword } from '../../utils/validate';
+import { validate, validateUsername, validatePassword, validateEmail } from '../../utils/validate';
 
 import RegisterInfo from '../../components/account/RegisterInfo';
 import RegisterInputs from '../../components/account/RegisterInputs';
@@ -27,12 +27,14 @@ export default function RegisterPage() {
         let validateOptions = {
             username: validateUsername,
             password: validatePassword,
+            email: validateEmail,
         };
 
         let username = registerInputs.username.toLowerCase().replaceAll(' ', '_');
         let password = registerInputs.password;
+        let email = registerInputs.email;
     
-        let [ validated, error ] = validate(validateOptions, { username, password });
+        let [ validated, error ] = validate(validateOptions, { email, username, password });
         if(!validated) {
             sendErrorNotification(error);
             return;
@@ -44,7 +46,7 @@ export default function RegisterPage() {
         }
         try {
     
-            let res = await axios.post('/users', { username, password });
+            let res = await axios.post('/users', { username, password, email });
     
             let sessionId = res.data.sessionId;
             sessionStorage.setItem('sessionId', sessionId);

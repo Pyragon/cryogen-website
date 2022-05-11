@@ -18,15 +18,12 @@ import UserContext from '../../../../utils/contexts/UserContext';
 
 function toPost({ message, thanks }) {
     return {
-        post: {
-            ...message,
-            isMessage: true,
-        },
+        ...message,
+        isMessage: true,
         thanks,
         postCount: 0,
         thanksReceived: 0,
-        thanksGiven: 0,
-        isMessage: true
+        thanksGiven: 0
     }
 }
 

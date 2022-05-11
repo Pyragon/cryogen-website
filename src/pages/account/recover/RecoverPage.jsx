@@ -10,7 +10,7 @@ import ViewRecovery from '../../../components/account/recover/ViewRecovery';
 import '../../../styles/account/Recovery.css';
 
 export default function RecoverPage() {
-    let { section: sectionParam } = useParams();
+    let { section: sectionParam, viewKey: viewKeyParam } = useParams();
     let [ searchParams ] = useSearchParams();
 
     let setSection = (newSection) => {
@@ -25,6 +25,8 @@ export default function RecoverPage() {
     let [ sectionTitle, setSectionTitle ] = useState(null);
     let [ sectionDescription, setSectionDescription ] = useState(null);
     let [ sectionSidebar, setSectionSidebar ] = useState(null);
+    let [ viewKey, setViewKey ] = useState('');
+    let [ created, setCreated ] = useState(true);
 
     useEffect(() => {
         let username = searchParams.get('username') || '';
@@ -43,13 +45,15 @@ export default function RecoverPage() {
     }, []);
 
     return (
-        <SectionContext.Provider value={{section, setSection, sectionTitle, setSectionTitle, sectionDescription, setSectionDescription, sectionSidebar, setSectionSidebar }}>
-            { section && 
-                <Sections 
-                    sections={sections}
-                    active={section}
-                /> 
-            }
+        <SectionContext.Provider value={{section, setSection, sectionTitle, setSectionTitle, 
+            sectionDescription, setSectionDescription, sectionSidebar, setSectionSidebar, 
+            viewKey, setViewKey, created, setCreated }}>
+                { section && 
+                    <Sections 
+                        sections={sections}
+                        active={section}
+                    /> 
+                }
         </SectionContext.Provider>
     );
 }

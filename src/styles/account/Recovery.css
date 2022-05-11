@@ -42,3 +42,31 @@
 .create-recovery-select {
     margin: 10px;
 }
+
+.enter-recovery-key {
+    text-align: center;
+}
+
+.recovery-key-input {
+    width: 200px;
+    margin-left: 0;
+}
+
+.recovery-key-input-container {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+.recovery-key-input-container button {
+    width: 50%;
+    margin: 5px auto 10px auto;
+}
+
+.view-recovery-container {
+    text-align: center;
+}
+
+.view-recovery-key p {
+    margin: .5rem;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import axios from '../../../utils/axios';
-import { validate } from '../../../utils/validate';
+import { validate, validatePost } from '../../../utils/validate';
 import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 import Permissions from '../../../utils/permissions';
@@ -88,12 +88,7 @@ export default function ViewThread({ thread, setThread }) {
     let replyToThread = async () => {
 
         let validateOptions = {
-            content: {
-                required: true,
-                name: 'Content',
-                min: 4,
-                max: 1000,
-            }
+            content: validatePost,
         }; 
 
         let [ validated, error ] = validate(validateOptions, { content: reply });

@@ -35,8 +35,6 @@ export default function ViewMessageBlock({ message }) {
     let { user } = useContext(UserContext);
     let { setReply } = useContext(EditorContext);
 
-    message = message.post;
-
     return (
         <div key={message._id} className="post-content-block">
             <div className="post-date-block">

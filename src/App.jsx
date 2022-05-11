@@ -157,6 +157,7 @@ export default function App() {
 
                                 <Route path="/recover" element={<RecoverPage />} />
                                 <Route path="/recover/:section" element={<RecoverPage />} />
+                                <Route path="/recover/:section/:viewKey" element={<RecoverPage />} />
                             </Routes>
                             <Footer />
                         </NotificationContext.Provider>

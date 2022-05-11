@@ -27,7 +27,7 @@ export default function CreateRecovery({ usernameInput }) {
     //captcha
 
     let { sendErrorNotification } = useContext(NotificationContext);
-    let { setSection } = useContext(SectionContext);
+    let { setSection, setViewKey, setCreated } = useContext(SectionContext);
 
     let questionRefs = [ useRef(), useRef(), useRef() ];
 
@@ -55,7 +55,10 @@ export default function CreateRecovery({ usernameInput }) {
 
         let validateOptions = {
             username: validateUsername,
-            email: validateEmail,
+            email: {
+                ...validateEmail,
+                required: true
+            },
             discord: {
                 type: 'string',
                 name: 'Discord',
@@ -139,14 +142,16 @@ export default function CreateRecovery({ usernameInput }) {
                 additional
             });
 
+            let viewKey = res.data.viewKey;
+
+            setSection('View Recovery');
+            setViewKey(viewKey);
+            setCreated(true);
+
         } catch(error) {
             sendErrorNotification(error);
             return;
         }
-
-        // setSection('View Recovery');
-        sendErrorNotification('Recovery has been submitted');
-        //set section to view recovery, set recovery to view as the one we just submitted
     };
     
     let { setSectionSidebar } = useContext(SectionContext);
