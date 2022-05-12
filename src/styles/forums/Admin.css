@@ -1,0 +1,10 @@
+.create-usergroup-container {
+    padding: 5px 10px;
+    text-align: center;
+}
+
+.create-usergroup-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
+}

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from '../../../utils/axios';
+import axios from '../../../../utils/axios';
 
-import NotificationContext from '../../../utils/contexts/NotificationContext';
-import TableSection from '../../utils/sections/TableSection';
+import NotificationContext from '../../../../utils/contexts/NotificationContext';
+import TableSection from '../../../utils/sections/TableSection';
 
 export default function Permissions({ setCreating }) {
 

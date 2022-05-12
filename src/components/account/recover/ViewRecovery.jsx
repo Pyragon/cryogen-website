@@ -82,6 +82,7 @@ export default function ViewRecovery() {
                     <div className='view-recovery-comments'>
                     </div>
                 }
+                { comments.map(comment => 'temp')}
             </div>
         </>
     )

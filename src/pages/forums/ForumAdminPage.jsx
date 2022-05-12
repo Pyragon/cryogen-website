@@ -2,10 +2,13 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Sections from '../../components/utils/sections/Sections';
-import Permissions from '../../components/forums/admin/Permissions';
+import Permissions from '../../components/forums/admin/permissions/Permissions';
 
 import SectionContext from '../../utils/contexts/SectionContext';
 import PageContext from '../../utils/contexts/PageContext';
+import Usergroups from '../../components/forums/admin/usergroups/Usergroups';
+
+import '../../styles/forums/Admin.css';
 
 export default function ForumAdminPage() {
     let { section: sectionParam, page: pageParam } = useParams();
@@ -65,6 +68,7 @@ const sections = [
     },
     {
         title: 'Usergroups',
+        content: <Usergroups />,
         description: 'Manage the usergroups and their settings.',
     },
     {

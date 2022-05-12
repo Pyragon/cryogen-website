@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from '../../../utils/axios';
+import axios from '../../../../utils/axios';
 
-import TableSection from '../../utils/sections/TableSection';
+import TableSection from '../../../utils/sections/TableSection';
 import CreatePermissions from './CreatePermissions';
-import Pages from '../../utils/Pages';
+import Pages from '../../../utils/Pages';
 
-import SectionContext from '../../../utils/contexts/SectionContext';
-import PageContext from '../../../utils/contexts/PageContext';
-import NotificationContext from '../../../utils/contexts/NotificationContext';
+import SectionContext from '../../../../utils/contexts/SectionContext';
+import PageContext from '../../../../utils/contexts/PageContext';
+import NotificationContext from '../../../../utils/contexts/NotificationContext';
 
 const info = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
@@ -23,7 +23,7 @@ export default function Permissions() {
     let [ permissions, setPermissions ] = useState([]);
     let [ creating, setCreating ] = useState(false);
 
-    let { sendErrorNotification, openModal } = useContext(NotificationContext);
+    let { sendErrorNotification } = useContext(NotificationContext);
 
     let edit = async () => {
 

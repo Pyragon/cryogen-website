@@ -80,10 +80,10 @@ function validate(options, values) {
             continue;
         }
 
-        if (!value && option.required === true)
+        if ((typeof value === 'undefined' || value === null || value === '') && option.required === true)
             return [false, `${name} is required`];
 
-        if (!value) continue;
+        if (typeof value === 'undefined' || value === null || value === '') continue;
 
         if (option.type && typeof value !== option.type)
             return [false, `${name} must be a ${option.type}`];
