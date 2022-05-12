@@ -23,6 +23,7 @@ import UserPage from './pages/forums/UserPage';
 import Notification from './components/utils/notifications/Notification';
 import Button from './components/utils/Button';
 import { useLayoutEffect } from 'react';
+import ForumAdminPage from './pages/forums/ForumAdminPage';
 
 export default function App() {
     let [user, setUser] = useState(null);
@@ -148,6 +149,10 @@ export default function App() {
                                 <Route path="/forums/:forumId/new" element={<NewThread />} />
                                 <Route path="/forums/threads/:threadId" element={<ThreadPage />} />
                                 <Route path="/forums/threads/:threadId/:page" element={<ThreadPage />} />
+
+                                <Route path="/forums/admin" element={<ForumAdminPage /> } />
+                                <Route path="/forums/admin/:section" element={<ForumAdminPage /> } />
+                                <Route path="/forums/admin/:section/:page" element={<ForumAdminPage /> } />
 
                                 <Route path="/forums/users/:id" element={<UserPage />} />
 

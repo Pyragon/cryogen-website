@@ -17,11 +17,19 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
     return (
         <>
             {prefix}
-            { noLink && <UserWithCrowns user={user} style={style} imgStyle={imgStyle}/> }
+            { noLink && 
+                <WithCrowns 
+                    name={user.displayName}
+                    group={user.displayGroup} 
+                    style={style} 
+                    imgStyle={imgStyle}
+                /> 
+            }
             { !useATag && !noLink && 
                 <Link to={"/forums/users/"+user._id} className="link" title={title}>
-                    <UserWithCrowns
-                        user={user}
+                    <WithCrowns
+                        name={user.displayName}
+                        group={user.displayGroup}
                         style={style}
                         imgStyle={imgStyle}
                     />
@@ -29,8 +37,9 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
             }
             { useATag && !noLink && 
                 <a href={"/forums/users/"+user._id} className="link" title={title}>
-                    <UserWithCrowns
-                        user={user}
+                    <WithCrowns
+                        name={user.displayName}
+                        group={user.displayGroup}
                         style={style}
                         imgStyle={imgStyle}
                     />
@@ -43,12 +52,12 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
     )
 }
 
-function UserWithCrowns({style, imgStyle, user}) {
+function WithCrowns({style, imgStyle, group, name}) {
     return (
         <span style={style}>
-            { user.displayGroup.imageBefore && <img style={imgStyle} src={user.displayGroup.imageBefore} alt='Prefix' /> }
-            {user.displayName}
-            { user.displayGroup.imageAfter && <img style={imgStyle} src={user.displayGroup.imageAfter} alt='Suffix'/> }
+            { group.imageBefore && <img style={imgStyle} src={group.imageBefore} alt='Prefix' /> }
+            {name}
+            { group.imageAfter && <img style={imgStyle} src={group.imageAfter} alt='Suffix'/> }
         </span>
     );
 }

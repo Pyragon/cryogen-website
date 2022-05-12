@@ -25,7 +25,7 @@ export default function RecoverPage() {
     let [ sectionTitle, setSectionTitle ] = useState(null);
     let [ sectionDescription, setSectionDescription ] = useState(null);
     let [ sectionSidebar, setSectionSidebar ] = useState(null);
-    let [ viewKey, setViewKey ] = useState('');
+    let [ viewKey, setViewKey ] = useState(viewKeyParam);
     let [ created, setCreated ] = useState(true);
 
     useEffect(() => {
