@@ -23,7 +23,7 @@ export default function Usergroups() {
 
     let { sendNotification, sendErrorNotification, openModal, closeModal, sendConfirmation } = useContext(NotificationContext);
 
-    let valueRef = useRef();
+    let valueRef = useRef({});
 
     let rows = groups.map(group => {
         return [
@@ -88,10 +88,14 @@ export default function Usergroups() {
 
         try {
 
-            await axios.post('/forums/usergroups', values);
+            let res = await axios.post('/forums/usergroups', values);
 
             closeModal();
             valueRef.current = {};
+
+            sendNotification({ text: 'Usergroup successfully created.' });
+
+            setGroups([ ...groups, res.data.usergroup ]);
 
         } catch(error) {
             sendErrorNotification(error);
@@ -138,13 +142,15 @@ export default function Usergroups() {
                 title: 'Cancel',
                 column: 4,
                 className: 'btn-danger',
-                onClick: closeModal,
+                onClick: () => {
+                    closeModal();
+                    valueRef.current = {};
+                },  
             }
         ];
         openModal(
             { 
-                contents: 
-                    <CreateUsergroup ref={valueRef} />, 
+                contents: <CreateUsergroup ref={valueRef} />, 
                 buttons 
             }
         );
