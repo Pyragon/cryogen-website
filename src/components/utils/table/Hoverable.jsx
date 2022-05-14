@@ -40,7 +40,6 @@ export default function Hoverable({ shortTitle=false, values }) {
                 style={{ display: open ? 'block' : 'none' }}
             >
                 { open && values.map((value, index) => {
-                    console.log(value);
                     return (
                         <div key={index} className='hoverable-value'>
                             { typeof value !== 'object' && value }
