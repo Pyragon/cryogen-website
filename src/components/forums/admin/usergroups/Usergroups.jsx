@@ -150,7 +150,7 @@ export default function Usergroups() {
         ];
         openModal(
             { 
-                contents: <CreateUsergroup ref={valueRef} />, 
+                contents: <CreateUsergroup ref={valueRef} create={create} />, 
                 buttons 
             }
         );
