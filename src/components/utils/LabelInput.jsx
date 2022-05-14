@@ -1,6 +1,7 @@
 import React from 'react'
+import Input from './Input';
 
-const LabelInput = React.forwardRef(({ className="", title, description, value, placeholder="", type="text", setState}, ref) => {
+const LabelInput = React.forwardRef(({ className="", title, description, value, placeholder="", type="text", setState, onEnter, next }, ref) => {
     return (
         <div className="input-container" style={{gridTemplateColumns: '1fr'}}>
             <div className='input-title'>
@@ -9,7 +10,16 @@ const LabelInput = React.forwardRef(({ className="", title, description, value, 
                     { description && <span className='input-description'>{' - '+description}</span>}
                 </p>
             </div>
-            <input ref={ref} className={"input "+className} value={value} type={type} placeholder={placeholder} onChange={e => setState(e.target.value)}/>
+            <Input 
+                ref={ref} 
+                type={type} 
+                className={"input "+className} 
+                placeholder={placeholder} 
+                value={value} 
+                setState={setState}
+                onEnter={onEnter}
+                next={next}
+            />
         </div>
     )
 });
