@@ -85,8 +85,16 @@ function validate(options, values) {
 
         if (typeof value === 'undefined' || value === null || value === '') continue;
 
-        if (option.type && typeof value !== option.type)
-            return [false, `${name} must be a ${option.type}`];
+        if (option.type) {
+            if (option.type === 'number' && isNaN(value))
+                return [false, `${name} must be a number but ${value} is not a number. ${isNaN(value)}`];
+
+            if (option.type === 'string' && typeof value !== 'string')
+                return [false, `${name} must be a string`];
+
+            if (option.type === 'boolean' && typeof value !== 'boolean')
+                return [false, `${name} must be a boolean`];
+        }
 
         if (option.min && value.length < option.min)
             return [false, `${name} must be between ${option.min} and ${option.max} characters`];

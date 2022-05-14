@@ -104,7 +104,32 @@ export default function Usergroups() {
 
     let edit = (group) => {
         valueRef.current = group;
-        openCreateModal();
+        openCreateModal(submitEdit, group);
+    };
+
+    let submitEdit = async(group) => {
+        let values = valueRef.current;
+        
+        let [ validated, error ] = validate(validateOptions, values);
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
+        }
+
+        try {
+
+            let res = await axios.put(`/forums/usergroups/${group._id}`, values);
+
+            closeModal();
+            valueRef.current = {};
+
+            sendNotification({ text: 'Usergroup successfully edited.' });
+
+            setGroups(groups => groups.map(g => g._id === group._id ? res.data.usergroup : g));
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
     };
 
     let deleteGroup = async (group) => {
@@ -130,13 +155,13 @@ export default function Usergroups() {
         sendConfirmation({ text: 'Are you sure you wish to delete this usergroup?', onSuccess });
     };
 
-    let openCreateModal = () => {
+    let openCreateModal = (edit, group) => {
         let buttons = [
             {
-                title: 'Create',
+                title: edit ? 'Edit' : 'Create',
                 column: 3,
                 className: 'btn-success',
-                onClick: create
+                onClick: edit ? () => edit(group) : create,
             },
             {
                 title: 'Cancel',
@@ -150,7 +175,7 @@ export default function Usergroups() {
         ];
         openModal(
             { 
-                contents: <CreateUsergroup ref={valueRef} create={create} />, 
+                contents: <CreateUsergroup ref={valueRef} create={edit ? () => edit(group) : create} />, 
                 buttons 
             }
         );

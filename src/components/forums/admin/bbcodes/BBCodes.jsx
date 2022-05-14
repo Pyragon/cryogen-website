@@ -104,7 +104,34 @@ export default function BBCodes() {
 
     let edit = (code) => {
         valueRef.current = code;
-        openCreateModal();
+        openCreateModal(submitEdit, code);
+    };
+
+    let submitEdit = async (code) => {
+        let values = valueRef.current;
+
+        values.matches = values.matches.filter(match => match !== '');
+
+        let [ validated, error ] = validate(validateOptions, values);
+        if(!validated) {
+            sendErrorNotification(error);
+            return;
+        }
+
+        try {
+
+            let res = await axios.put(`/forums/bbcodes/${code._id}`, values);
+
+            closeModal();
+            valueRef.current = {};
+
+            sendNotification({ text: 'BBCode successfully edited.' });
+
+            setCodes(code => code.map(c => c._id === code._id ? res.data.bbcode : c));
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
     };
 
     let create = async () => {
@@ -134,13 +161,13 @@ export default function BBCodes() {
         }
     };
 
-    let openCreateModal = () => {
+    let openCreateModal = (edit, code) => {
         let buttons = [
             {
-                title: 'Create',
+                title: edit ? 'Edit' : 'Create',
                 column: 3,
                 className: 'btn-success',
-                onClick: create,
+                onClick: edit ? () => edit(code) : create,
             },
             {
                 title: 'Cancel',
@@ -153,7 +180,7 @@ export default function BBCodes() {
             }
         ];
         openModal({
-            contents: <CreateBBCode ref={valueRef} create={create} />,
+            contents: <CreateBBCode ref={valueRef} create={edit ? () => edit(code) : create} />,
             buttons
         })
     };
