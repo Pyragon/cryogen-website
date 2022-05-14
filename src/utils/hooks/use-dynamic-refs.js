@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import { createRef } from 'react';
 
 const map = new Map();
 
@@ -6,12 +6,12 @@ function setRef(key) {
     if (!key) return console.error('useDyanmicRefs: key is required');
     const ref = createRef();
     map.set(key, ref);
-    console.log('Creating ref for: ' + key);
     return ref;
 }
 
 function getRef(key) {
     if (!key) return console.error('useDyanmicRefs: key is required');
+    if (!map.has(key)) return setRef(key);
     return map.get(key);
 }
 
