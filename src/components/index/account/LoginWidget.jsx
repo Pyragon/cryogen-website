@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import axios from '../../../utils/axios';
@@ -28,6 +28,9 @@ export default function LoginWidget( { header=true } ) {
     let [ otp, setOtp ] = useState("");
 
     let { sendErrorNotification } = useContext(NotificationContext);
+
+    let passwordRef = useRef();
+    let tfaRef = useRef();
 
     let navigate = useNavigate();
 
@@ -63,15 +66,46 @@ export default function LoginWidget( { header=true } ) {
         <div>
             { header && <h4 className="title t-center">Account & Community</h4> }
             <Widget title="Login">
-                <LabelInput title="Username" placeholder="Enter username" value={username} setState={setUsername}/>
-                <LabelInput title="Password" placeholder="Enter password" type="password" value={password} setState={setPassword} />
-                <SpanIcon className="toggle-tfa" onClick={() => setTfaToggled(!tfaToggled)} icon={"fa-"+(tfaToggled ? "minus": "plus")+"-square"}>
+                <LabelInput 
+                    title="Username" 
+                    placeholder="Enter username" 
+                    value={username} 
+                    setState={setUsername} 
+                    next={passwordRef} 
+                />
+                <LabelInput 
+                    ref={passwordRef} 
+                    title="Password" 
+                    placeholder="Enter password" 
+                    type="password" 
+                    value={password} 
+                    setState={setPassword} 
+                    onEnter={submitAuth}
+                    next={tfaToggled ? tfaRef : null}
+                />
+                <SpanIcon 
+                    className="toggle-tfa" 
+                    onClick={() => setTfaToggled(!tfaToggled)} 
+                    icon={"fa-"+(tfaToggled ? "minus": "plus")+"-square"}
+                >
                     Two-factor Authentication Options
                 </SpanIcon>
                 { tfaToggled &&
-                    <LabelInput title="One-time password" placeholder="Enter OTP" type="text" value={otp} setState={setOtp}/>
+                    <LabelInput
+                        ref={tfaRef}
+                        title="One-time password" 
+                        placeholder="Enter OTP" 
+                        type="text" 
+                        value={otp} 
+                        setState={setOtp}
+                    />
                 }
-                <Checkbox title="Keep me logged in" className="remember-me-block" value={rememberMe} setState={setRememberMe}/>
+                <Checkbox 
+                    title="Keep me logged in" 
+                    className="remember-me-block" 
+                    value={rememberMe} 
+                    setState={setRememberMe}
+                />
                 <div className="login-buttons">
                     <Button title="Login" onClick={submitAuth}/>
                     <Button title="Forgot Password" onClick={forgotPassword}/>
