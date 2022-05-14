@@ -1,16 +1,21 @@
-import React from 'react'
+import React from 'react';
 
-export default function Input({ className="", style, value="", type="text", placeholder="", setState, onEnter }) {
+const Input = React.forwardRef(({ className="", style, value="", type="text", placeholder="", setState, onEnter, next }, ref) => {
     return (
         <input className={"input "+className} 
             style={style} 
             value={value} 
-            type={type} 
+            type={type}
+            ref={ref}
             placeholder={placeholder} 
             onChange={e => setState(e.target.value)}
             onKeyDown={e => {
-                if(onEnter && e.key === 'Enter')
-                    onEnter();
+                if(e.key === 'Enter') {
+                    if(next) next.current.focus();
+                    else if(onEnter) onEnter();
+                }
             }}/>
     )
-}
+});
+
+export default Input;
