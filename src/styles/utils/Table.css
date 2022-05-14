@@ -33,6 +33,7 @@ tr:not(:last-of-type) {
 .long-text-container,
 .tile-image-container,
 .permissions-groups-container,
+.hoverable-container,
 .items-container {
     position: absolute;
     background-color: #222;
@@ -47,10 +48,15 @@ tr:not(:last-of-type) {
     padding: 10px 5px;
 }
 
-.permissions-groups-container {
+.permissions-groups-container,
+.hoverable-container {
     padding: 10px 5px;
     min-width: 150px;
     min-height: 1.5rem;
+}
+
+.hoverable-value:not(:first-of-type) {
+    margin-top: 5px;
 }
 
 .tile-image-container {

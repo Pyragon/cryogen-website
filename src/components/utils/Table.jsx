@@ -10,6 +10,7 @@ import TileImage from './table/TileImage';
 import LongText from './table/LongText';
 import ItemsContainer from './table/ItemsContainer';
 import UserGroupsHover from './table/UserGroupsHover';
+import Hoverable from './table/Hoverable';
 
 export default function Table({ headers, rows }) {
     if(!headers || !rows) return <></>;
@@ -92,6 +93,12 @@ export default function Table({ headers, rows }) {
                                         return (
                                             <td key={index} style={el.style} className={el.className}>
                                                 <UserGroupsHover allowed={el.value} groups={el.groups} />
+                                            </td>
+                                        )
+                                    if(el.type === 'hover')
+                                        return (
+                                            <td key={index}>
+                                                <Hoverable shortTitle={el.shortTitle} values={el.value} />
                                             </td>
                                         )
                                     if(!el.noLongText && el.value.length > 20)

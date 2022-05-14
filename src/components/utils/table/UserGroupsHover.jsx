@@ -10,7 +10,6 @@ const DEFAULT_NAMES = {
 };
 
 export default function UserGroupsHover({ allowed, groups }) {
-    console.log(groups);
     let [ open, setOpen ] = useState(false);
     let [ openedFromHover, setOpenedFromHover ] = useState(false);
     let [ formatted, setFormatted ] = useState([]);
@@ -52,7 +51,7 @@ export default function UserGroupsHover({ allowed, groups }) {
                 onMouseEnter={onMouseEnter}
                 onMouseOut={onMouseOut}
             >
-                Hover/Click for more
+                Hover/Click
             </span>
             <div
                 className='permissions-groups-container'

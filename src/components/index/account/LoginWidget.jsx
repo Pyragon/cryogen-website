@@ -16,7 +16,10 @@ import UserContext from '../../../utils/contexts/UserContext';
 import './../../../styles/Buttons.css';
 
 const validateOtp = {
-
+    required: true,
+    name: 'One Time Password',
+    min: 6,
+    max: 6,
 };
 
 export default function LoginWidget( { header=true } ) {

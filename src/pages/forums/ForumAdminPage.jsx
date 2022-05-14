@@ -9,6 +9,7 @@ import PageContext from '../../utils/contexts/PageContext';
 import Usergroups from '../../components/forums/admin/usergroups/Usergroups';
 
 import '../../styles/forums/Admin.css';
+import BBCodes from '../../components/forums/admin/bbcodes/BBCodes';
 
 export default function ForumAdminPage() {
     let { section: sectionParam, page: pageParam } = useParams();
@@ -73,6 +74,7 @@ const sections = [
     },
     {
         title: 'BBCodes',
+        content: <BBCodes />,
         description: 'Manage the BBCodes and their settings.',
     },
     {

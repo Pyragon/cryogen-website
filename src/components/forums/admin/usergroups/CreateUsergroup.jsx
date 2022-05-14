@@ -11,7 +11,7 @@ const CreateUsergroup = React.forwardRef(({ create }, ref) => {
     let [ imageBefore, setImageBefore ] = useState(ref.current.imageBefore || '');
     let [ imageAfter, setImageAfter ] = useState(ref.current.imageAfter || '');
 
-    let [ getRef, setRef ] = useDyanmicRefs([ 'rights', 'colour', 'title', 'imageBefore', 'imageAfter' ]);
+    let [ getRef ] = useDyanmicRefs([ 'rights', 'colour', 'title', 'imageBefore', 'imageAfter' ]);
 
     useEffect(() => ref.current = {
             name,

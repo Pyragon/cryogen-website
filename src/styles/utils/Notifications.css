@@ -40,7 +40,10 @@
     z-index: 10;
 }
 
-.modal-content {}
+.modal-content {
+    overflow-y: auto;
+    max-height: calc(100vh / 1.5);
+}
 
 .modal-footer {
     display: grid;

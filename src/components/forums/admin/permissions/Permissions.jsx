@@ -69,11 +69,24 @@ export default function Permissions() {
                 groups: permission.usergroups,
             },
             {
+                type: 'date',
+                value: permission.createdAt,
+            },
+            {
+                type: 'date',
+                value: permission.updatedAt,
+            },
+            {
                 type: 'button',
                 className: 'link',
                 value: 'Edit',
                 onClick: edit
             },
+            {
+                type: 'button',
+                className: 'link',
+                value: 'Delete',
+            }
         ];
     });
 
@@ -117,7 +130,7 @@ export default function Permissions() {
                         }
                     }
                 ]}
-                headers={[ 'Name', 'Can See', 'Can Reply', 'Can Edit', 'Can Create Threads', 'Can Moderate', 'Can Create Polls', 'Edit' ]}
+                headers={[ 'Name', 'Can See', 'Can Reply', 'Can Edit', 'Can Create Threads', 'Can Moderate', 'Can Create Polls', 'Created', 'Updated', 'Edit', 'Delete' ]}
                 rows={rows}
             />
             <Pages

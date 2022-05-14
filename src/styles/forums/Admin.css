@@ -1,10 +1,16 @@
-.create-usergroup-container {
+.create-usergroup-container,
+.create-bbcode-container {
     padding: 5px 10px;
     text-align: center;
 }
 
-.create-usergroup-values {
+.create-usergroup-values,
+.create-bbcode-values {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 10px;
+}
+
+.create-bbcode-matches input:not(:first-of-type) {
+    margin-top: 5px;
 }
