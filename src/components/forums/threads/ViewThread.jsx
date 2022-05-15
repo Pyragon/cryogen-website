@@ -91,8 +91,8 @@ export default function ViewThread({ thread, setThread }) {
             content: validatePost,
         }; 
 
-        let [ validated, error ] = validate(validateOptions, { content: reply });
-        if(!validated) {
+        let error = validate(validateOptions, { content: reply });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

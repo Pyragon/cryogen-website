@@ -39,8 +39,8 @@ export default function RegisterPage() {
         let password = registerInputs.password;
         let email = registerInputs.email;
     
-        let [ validated, error ] = validate(validateOptions, { email, username, password });
-        if(!validated) {
+        let error = validate(validateOptions, { email, username, password });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

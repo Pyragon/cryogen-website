@@ -19,8 +19,8 @@ export default function EditPost({ post, setEditing, setPost }) {
             edit: validatePost
         };
 
-        let [ validated, error ] = validate(validateOptions, { edit });
-        if(!validated) {
+        let error = validate(validateOptions, { edit });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

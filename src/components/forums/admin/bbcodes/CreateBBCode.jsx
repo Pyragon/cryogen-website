@@ -23,9 +23,9 @@ const CreateBBCode = React.forwardRef(({ create }, ref) => {
     let addMatch = () => setMatches([ ...matches, '' ]);
 
     return (
-        <div className='create-bbcode-container'>
+        <div className='create-modal-container'>
             <h1>Create BBCode</h1>
-            <div className='create-bbcode-values'>
+            <div className='create-modal-values'>
                 <p>Name</p>
                 <Input 
                     className='m-auto'

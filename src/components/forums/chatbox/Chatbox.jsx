@@ -53,8 +53,8 @@ export default function Chatbox() {
             }
         };
 
-        let [ validated, error ] = validate(validateOptions, { message });
-        if(!validated) {
+        let error = validate(validateOptions, { message });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

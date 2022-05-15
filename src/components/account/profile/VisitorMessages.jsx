@@ -14,7 +14,7 @@ import UserContext from '../../../utils/contexts/UserContext';
 import Pages from '../../../components/utils/Pages';
 
 async function sendVisitorMessage(user, message, setMessage, setMessages, sendErrorNotification) {
-	let [ validated, error ] = validate({
+	let error = validate({
 		message: {
 			required: true,
 			name: 'Visitor Message',
@@ -23,7 +23,7 @@ async function sendVisitorMessage(user, message, setMessage, setMessages, sendEr
 		}
 	}, { message });
 
-	if(!validated) {
+	if(error) {
 		sendErrorNotification(error);
 		return;
 	}

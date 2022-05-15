@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import DisplayUsergroup from '../user/DisplayUsergroup';
+import { DisplayUsergroup } from '../user/DisplayUsergroup';
 
 const DEFAULT_NAMES = {
     '-1': 'Everyone',

@@ -99,7 +99,7 @@ export default function CreateRecovery({ usernameInput }) {
             }
         }
     
-        let [validated, error] = validate(validateOptions, {
+        let error = validate(validateOptions, {
             username,
             email,
             discord,
@@ -109,7 +109,7 @@ export default function CreateRecovery({ usernameInput }) {
             passwords: previousPasswords,
         });
 
-        if(!validated) {
+        if(error) {
             sendErrorNotification(error);
             return;
         }

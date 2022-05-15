@@ -40,13 +40,13 @@ export default function Hoverable({ shortTitle=false, values }) {
                 style={{ display: open ? 'block' : 'none' }}
             >
                 { open && values.map((value, index) => {
+                    if(typeof value === 'object') {
+                        if(value.dangerous)
+                            value = <span dangerouslySetInnerHTML={{ __html: value.value }}/>;
+                    }
                     return (
                         <div key={index} className='hoverable-value'>
-                            { typeof value !== 'object' && value }
-                            { typeof value === 'object' && 
-                                value.dangerous &&
-                                <span dangerouslySetInnerHTML={{ __html: value.value }}/>
-                            }
+                            { value }
                         </div>
                     )
                 })}

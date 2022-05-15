@@ -77,8 +77,8 @@ export default function ViewChain({ chain, setViewingChain, setChains }) {
             }
         };
 
-        let [ validated, error ] = validate(validateOptions, { reply });
-        if(!validated) {
+        let error = validate(validateOptions, { reply });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

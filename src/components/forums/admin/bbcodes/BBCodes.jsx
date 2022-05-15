@@ -112,8 +112,8 @@ export default function BBCodes() {
 
         values.matches = values.matches.filter(match => match !== '');
 
-        let [ validated, error ] = validate(validateOptions, values);
-        if(!validated) {
+        let error = validate(validateOptions, values);
+        if(error) {
             sendErrorNotification(error);
             return;
         }
@@ -139,8 +139,8 @@ export default function BBCodes() {
 
         values.matches = values.matches.filter(match => match !== '');
 
-        let [ validated, error ] = validate(validateOptions, values);
-        if(!validated) {
+        let error = validate(validateOptions, values);
+        if(error) {
             sendErrorNotification(error);
             return;
         }

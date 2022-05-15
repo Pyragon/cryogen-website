@@ -32,6 +32,7 @@ export default function App() {
     let [ modalButtons, setModalButtons ] = useState([]);
     let [ modalContent, setModalContent ] = useState(<></>);
     let [ modalOpen, setModalOpen ] = useState(false);
+    let [ modalSize, setModalSize ] = useState(null);
 
     let [ notifications, setNotifications ] = useState([]);
 
@@ -70,7 +71,8 @@ export default function App() {
         openModal({ contents, buttons });
     }
 
-    function openModal({ contents, buttons }) {
+    function openModal({ contents, buttons, modalSize }) {
+        setModalSize(modalSize);
         setModalOpen(true);
         setModalContent(contents);
         setModalButtons(buttons);
@@ -78,6 +80,7 @@ export default function App() {
 
     function closeModal() {
         setModalOpen(false);
+        setModalSize(null);
     }
 
     function sendErrorNotification(error) {
@@ -90,6 +93,8 @@ export default function App() {
         if(!modal.current) return;
         modal.current.style.top = (window.innerHeight - modal.current.offsetHeight) / 2 + 'px';
         modal.current.style.left = (window.innerWidth - modal.current.offsetWidth) / 2 + 'px';
+        if(modalSize)
+            modal.current.style.width = modalSize.width;
     }
 
     useEffect(() => {
@@ -98,9 +103,7 @@ export default function App() {
         window.addEventListener('resize', repositionModal);
     }, []);
 
-    useLayoutEffect(() => {
-        repositionModal();
-    }, [modalOpen]);
+    useLayoutEffect(repositionModal, [modalOpen]);
 
     let providerValue = useMemo(() => ({ user, setUser }), [user, setUser]);
     return (

@@ -39,8 +39,8 @@ export default function LoginWidget( { header=true } ) {
 
     let submitAuth = async() => {
 
-        let [ validated, error ] = validate({ username: validateUsername, password: validatePassword, otp: validateOtp }, { username, password, otp });
-        if(!validated) {
+        let error = validate({ username: validateUsername, password: validatePassword, otp: validateOtp }, { username, password, otp });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

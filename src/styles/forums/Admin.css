@@ -1,11 +1,11 @@
 .create-usergroup-container,
-.create-bbcode-container {
+.create-modal-container {
     padding: 5px 10px;
     text-align: center;
 }
 
 .create-usergroup-values,
-.create-bbcode-values {
+.create-modal-values {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 10px;

@@ -53,8 +53,8 @@ export default function NewThread() {
             content: validatePost,
         };
 
-        let [ validated, error ] = validate(validateOptions, { title, content });
-        if(!validated) {
+        let error = validate(validateOptions, { title, content });
+        if(error) {
             sendErrorNotification(error);
             return;
         }

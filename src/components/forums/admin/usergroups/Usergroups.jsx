@@ -80,8 +80,8 @@ export default function Usergroups() {
     let create = async () => {
         let values = valueRef.current;
 
-        let [ validated, error ] = validate(validateOptions, values);
-        if(!validated) {
+        let error = validate(validateOptions, values);
+        if(error) {
             sendErrorNotification(error);
             return;
         }
@@ -110,8 +110,8 @@ export default function Usergroups() {
     let submitEdit = async(group) => {
         let values = valueRef.current;
         
-        let [ validated, error ] = validate(validateOptions, values);
-        if(!validated) {
+        let error = validate(validateOptions, values);
+        if(error) {
             sendErrorNotification(error);
             return;
         }

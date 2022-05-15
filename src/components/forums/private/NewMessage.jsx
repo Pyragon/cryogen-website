@@ -40,8 +40,8 @@ export default function NewMessage() {
 
     let save = async () => {
         
-        let [ validated, error ] = validate(validateOptionsForDraft, { subject, recipients, body });
-        if(!validated) {
+        let error = validate(validateOptionsForDraft, { subject, recipients, body });
+        if(error) {
             sendErrorNotification(error);
             return;
         }
@@ -61,8 +61,8 @@ export default function NewMessage() {
 
     let send = async () => {
 
-        let [ validated, error ] = validate(validateOptionsForSend, { subject, recipients, body });
-        if(!validated) {
+        let error = validate(validateOptionsForSend, { subject, recipients, body });
+        if(error) {
             sendErrorNotification(error);
             return;
         }
