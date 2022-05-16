@@ -44,7 +44,7 @@ export default function UserPosts({ user }) {
 			{
 				type: 'link',
 				value: post.thread.title,
-				link: '/forums/threads/' + post.thread.id
+				link: '/forums/threads/' + post.thread._id
 			},
 			{
 				type: 'text',

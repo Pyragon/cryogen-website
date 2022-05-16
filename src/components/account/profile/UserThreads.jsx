@@ -24,7 +24,7 @@ export default function UserThreads() {
 			
 			try {
 
-				let res = await axios.get(`/users/${viewingUser.id}/threads/${page}`);
+				let res = await axios.get(`/users/${viewingUser._id}/threads/${page}`);
 
 				setThreads(res.data.threads);
 				setPageTotal(res.data.pageTotal);
@@ -45,7 +45,7 @@ export default function UserThreads() {
 			{
 				type: 'link',
 				value: thread.title,
-				link: '/forums/threads/' + thread.id
+				link: '/forums/threads/' + thread._id
 			},
 			{
 				type: 'text',

@@ -197,7 +197,7 @@ export default function ViewThread({ thread, setThread }) {
                 </CollapsibleWidget>
                 <Pages 
                     pageTotal={thread.pageTotal}
-                    base={`/forums/thread/${thread.id}`}
+                    base={`/forums/thread/${thread._id}`}
                     scroll={scrollToTop}
                 />
                 { canReply(user, thread) && 
