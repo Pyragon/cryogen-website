@@ -35,7 +35,7 @@ export default React.forwardRef(({ pageTotal, base, scroll }, ref) => {
     currentPage = parseInt(currentPage);
     let pages = getPages(pageTotal, currentPage);
 
-    async function gotoPage(page, setPage) {
+    async function gotoPage(page) {
         setPage(page);
         if(base)
             window.history.replaceState(null, '', `${base}/${page}`);
@@ -50,12 +50,12 @@ export default React.forwardRef(({ pageTotal, base, scroll }, ref) => {
                     <span>Pages: </span>
                     { pages.map(page => (
                         <span key={page}>
-                            {page === -3 && <span className='link' onClick={() => gotoPage(1, setPage)}>First </span>}
-                            {page === -1 && <span className='link' onClick={() => gotoPage(currentPage-1, setPage)}>Prev </span>}
-                            {page === -2 && <span className='link' onClick={() => gotoPage(currentPage+1, setPage)}>Next </span>}
-                            {page === -4 && <span className='link' onClick={() => gotoPage(pageTotal, setPage)}>Last </span>}
+                            {page === -3 && <span className='link' onClick={() => gotoPage(1)}>First </span>}
+                            {page === -1 && <span className='link' onClick={() => gotoPage(currentPage-1)}>Prev </span>}
+                            {page === -2 && <span className='link' onClick={() => gotoPage(currentPage+1)}>Next </span>}
+                            {page === -4 && <span className='link' onClick={() => gotoPage(pageTotal)}>Last </span>}
                             {page === currentPage && <span>{'['+page+'] '}</span>}
-                            {page > 0 && page !== currentPage && <span className='link' onClick={() => gotoPage(page, setPage)}>{page+' '}</span>}
+                            {page > 0 && page !== currentPage && <span className='link' onClick={() => gotoPage(page)}>{page+' '}</span>}
                         </span>
                     ))}
                 </div>
