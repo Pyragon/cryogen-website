@@ -12,7 +12,7 @@ export default class Permissions {
         for (let id of data)
             if (id === user.displayGroup._id) return true;
         for (let i = 0; i < user.usergroups.length; i++)
-            if (data.includes(user.usergroups[i])) return true;
+            if (data.includes(user.usergroups[i]._id)) return true;
         if (data.includes('-3') && user !== null && thread && thread.author._id === user._id) return true;
         if (data.includes('-4') && user !== null && thread && thread.author.displayGroup.rights > 0) return true;
         return false;
@@ -25,7 +25,7 @@ export default class Permissions {
         for (let id of data)
             if (id === user.displayGroup._id) return true;
         for (let i = 0; i < user.usergroups.length; i++)
-            if (data.includes(user.usergroups[i])) return true;
+            if (data.includes(user.usergroups[i]._id)) return true;
         return false;
     }
 
@@ -36,7 +36,7 @@ export default class Permissions {
             if (id === user.displayGroup._id) return true;
         if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
-                if (data.includes(user.usergroups[i])) return true;
+                if (data.includes(user.usergroups[i]._id)) return true;
         return false;
     }
 
@@ -48,7 +48,7 @@ export default class Permissions {
             if (id === user.displayGroup._id) return true;
         if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
-                if (data.includes(user.usergroups[i])) return true;
+                if (data.includes(user.usergroups[i]._id)) return true;
         if (data.includes('-3') && thread.author._id === user._id) return true;
         return false;
     }
@@ -56,12 +56,14 @@ export default class Permissions {
     canCreateThreads(user) {
         if (!user) return false;
         let data = this.permissions.canCreateThreads;
+        console.log('Checking if user can create threads');
+        console.log(user, data);
         if (data.includes('-1') || data.includes('-2')) return true;
         for (let id of data)
             if (id === user.displayGroup._id) return true;
         if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
-                if (data.includes(user.usergroups[i])) return true;
+                if (data.includes(user.usergroups[i]._id)) return true;
         return false;
     }
 
@@ -73,7 +75,7 @@ export default class Permissions {
             if (id === user.displayGroup._id) return true;
         if (user.usergroups)
             for (let i = 0; i < user.usergroups.length; i++)
-                if (data.includes(user.usergroups[i])) return true;
+                if (data.includes(user.usergroups[i]._id)) return true;
         return false;
     }
 
