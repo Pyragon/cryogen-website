@@ -66,6 +66,10 @@
     margin: auto;
 }
 
+.m-top-not-first:not(:first-of-type) {
+    margin-top: 5px;
+}
+
 .link {
     color: white;
     text-decoration: none;

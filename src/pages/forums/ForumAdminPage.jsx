@@ -10,6 +10,7 @@ import Usergroups from '../../components/forums/admin/usergroups/Usergroups';
 
 import '../../styles/forums/Admin.css';
 import BBCodes from '../../components/forums/admin/bbcodes/BBCodes';
+import Users from '../../components/forums/admin/users/Users';
 
 export default function ForumAdminPage() {
     let { section: sectionParam, page: pageParam } = useParams();
@@ -65,6 +66,7 @@ const sections = [
     },
     {
         title: 'Users',
+        content: <Users />,
         description: 'Manage the users and their settings.',
     },
     {

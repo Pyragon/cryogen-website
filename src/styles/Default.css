@@ -170,6 +170,12 @@ h4.title {
     height: 1rem;
 }
 
+option .input {
+    color: #999;
+    height: 1rem;
+    background: rgba(0, 0, 0, .4);
+}
+
 input:focus,
 select:focus,
 textarea:focus,

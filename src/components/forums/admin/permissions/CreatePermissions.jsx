@@ -71,10 +71,10 @@ export default function Permissions({ setCreating }) {
 };
 
 let specialOptions = {
-    'Everyone': -1,
-    'Logged In': -2,
-    'Only the Author': -3,
-    'If author is Staff': -4
+    '-1': 'Everyone',
+    '-2': 'Logged In',
+    '-3': 'Only the Author',
+    '-4': 'If author is Staff',
 };
 
 const permissions = {

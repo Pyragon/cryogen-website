@@ -78,7 +78,7 @@ export default function Table({ headers, rows }) {
                                             <td key={index} style={el.style} className={el.className}>
                                                 <select className='input' ref={el.ref}>
                                                     { Object.keys(el.value).map((key, index) => (
-                                                        <option key={index} value={el.value[key]}>{key}</option>
+                                                        <option key={index} value={key}>{el.value[key]}</option>
                                                     ))}
                                                 </select>
                                             </td>
