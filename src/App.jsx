@@ -85,6 +85,7 @@ export default function App() {
 
     function sendErrorNotification(error) {
         if(typeof error === 'string') error = { message: error };
+        if(error.message === '') return;
         console.error(error);
         sendNotification({ text: <span className='white'>{error.response ? error.response.data.message : error.message}</span>, timeout: 10000 });
     }
@@ -134,7 +135,6 @@ export default function App() {
                             <div className='notifications-container' ref={notificationsContainer}>
                                 {
                                     notifications.map((n, index) => {
-                                        console.log(n);
                                         return <Notification key={index} {...n} />
                                     }
                                     )
