@@ -73,21 +73,12 @@ export default function Users() {
             },
             {
                 type: 'button',
-                value: 'View',
-                className: 'link',
-                onClick: async() => await view(user),
-            },
-            {
-                type: 'button',
                 value: 'Edit',
                 className: 'link',
                 onClick: () => edit(user),
             }
         ]
     });
-
-    let view = async(user) => {
-    };
 
     let edit = async(user) => {
         valueRef.current = user;
@@ -214,7 +205,7 @@ export default function Users() {
                         onClick: openCreateModal
                     }
                 ]}
-                headers={[ 'Username', 'Display Name', 'Email', 'Discord', 'Usergroups', 'Posts', 'Threads', 'Created', 'Updated', 'View', 'Edit' ]}
+                headers={[ 'Username', 'Display Name', 'Email', 'Discord', 'Usergroups', 'Posts', 'Threads', 'Created', 'Updated', 'Edit' ]}
                 rows={rows}
             />
             <Pages
