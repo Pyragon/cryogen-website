@@ -39,6 +39,8 @@ export default function LoginWidget( { header=true } ) {
 
     let submitAuth = async() => {
 
+        username = username.replace(/ /g, '_');
+
         let error = validate({ username: validateUsername, password: validatePassword, otp: validateOtp }, { username, password, otp });
         if(error) {
             sendErrorNotification(error);
