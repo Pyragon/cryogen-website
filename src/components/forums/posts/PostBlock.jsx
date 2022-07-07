@@ -88,6 +88,11 @@ export default function PostBlock({ post, setPosts }) {
         });
     }
 
+    let copyIdToClipboard = () => {
+        navigator.clipboard.writeText(postState._id);
+        sendNotification({ text: 'Copied post id to clipboard.' });
+    };
+
     post.permissions = new Permissions(post.thread.subforum.permissions);
     let canEdit = post.permissions.canEdit(user, post);
 
@@ -101,7 +106,7 @@ export default function PostBlock({ post, setPosts }) {
         <div key={postState._id} className="post-content-block">
             <div className="post-date-block">
                 <div className="post-date small">{formatDate(postState.createdAt)}</div>
-                <div className="post-id small link">{'#'+postState._id}</div>
+                <div className="post-id small link" onClick={copyIdToClipboard}>{'#'+postState._id}</div>
             </div>
             <div className="post-message-block">
                 { editing ? <EditPost post={postState} setEditing={setEditing} setPost={setPostState}/> :
