@@ -19,19 +19,30 @@ let requestFunctions = {
     delete: instance.delete,
 }
 
+let timeoutError = false;
+
 function request(requestFunction, path, params) {
     return new Promise(async(resolve, reject) => {
         try {
 
             let res = await requestFunction(path, params);
+            timeoutError = false;
             if (res.data.error) {
                 reject(res.data.error);
                 return;
             }
-
             resolve(res);
 
         } catch (error) {
+            if (timeoutError) {
+                reject('');
+                return;
+            }
+            if (error.message && error.message.includes('timeout')) {
+                timeoutError = true;
+                reject('It looks like the server has timed out. Please wait for it to come back online.');
+                return;
+            }
             let message = 'Error requesting from server. Please try again or report this message if it repeats.';
             if (error.response)
                 message = error.response.data.error;
