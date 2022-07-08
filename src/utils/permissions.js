@@ -1,3 +1,5 @@
+import constants from "./constants";
+
 export default class Permissions {
 
     constructor(permissions) {
@@ -42,6 +44,7 @@ export default class Permissions {
 
     canReply(user, thread) {
         if (!user) return false;
+        if (user.displayGroup._id === constants.BANNED_USERGROUP) return false;
         let data = this.permissions.canReply;
         if (data.includes('-1') || data.includes('-2')) return true;
         for (let id of data)
