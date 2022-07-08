@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Link } from 'react-router-dom';
+import { escapeHtml } from '../../../utils/format';
 
 export default function DisplayUser({ user, prefix='', suffix=' ', title=undefined, userTitleStyle={}, useUserTitle=false, avatar, width, height, fontSize, useATag=false, noLink=false }) {
     let style = {};
@@ -53,11 +54,10 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
 }
 
 function WithCrowns({style, imgStyle, group, name}) {
+    let html = group.htmlBefore || '';
+    html += escapeHtml(name);
+    html += group.htmlAfter || '';
     return (
-        <span style={style}>
-            { group.imageBefore && <img style={imgStyle} src={group.imageBefore} alt='Prefix' /> }
-            {name}
-            { group.imageAfter && <img style={imgStyle} src={group.imageAfter} alt='Suffix'/> }
-        </span>
+        <span style={style} dangerouslySetInnerHTML={{ __html: html }}/>
     );
 }

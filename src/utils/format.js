@@ -40,4 +40,13 @@ let formatMessage = (message) => {
     return formattedMessage;
 };
 
-module.exports = { formatNameForProtocol, crownUser, formatNumber, formatGp, formatDate, formatMessage };
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+module.exports = { formatNameForProtocol, crownUser, formatNumber, formatGp, formatDate, formatMessage, escapeHtml };

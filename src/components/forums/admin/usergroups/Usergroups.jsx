@@ -8,6 +8,7 @@ import CreateUsergroup from './CreateUsergroup';
 
 import PageContext from '../../../../utils/contexts/PageContext';
 import NotificationContext from '../../../../utils/contexts/NotificationContext';
+import DisplayUsergroup from '../../../utils/user/DisplayUsergroup';
 
 const info = [
     'The following page can be used to create usergroups for the Cryogen Website and in-game',
@@ -28,8 +29,8 @@ export default function Usergroups() {
     let rows = groups.map(group => {
         return [
             {
-                type: 'text',
-                value: group.name,
+                type: 'element',
+                value: <DisplayUsergroup group={group} />,
             },
             {
                 type: 'text',
@@ -48,9 +49,9 @@ export default function Usergroups() {
                 type: 'element',
                 value: (
                     <span>
-                        { group.imageBefore && <img src={group.imageBefore} alt='Prefix' /> }
-                        { group.imageBefore && group.imageAfter && ' / ' }
-                        { group.imageAfter && <img src={group.imageAfter} alt='Suffix' /> }
+                        {group.htmlBefore && <span>{group.htmlBefore}</span>}
+                        {group.htmlBefore && group.htmlAfter && ' / ' }
+                        {group.htmlAfter && <span>{group.htmlAfter}</span>}
                     </span>
                 )
             },
@@ -253,14 +254,14 @@ let validateOptions = {
         min: 1,
         max: 50,
     },
-    imageBefore: {
+    htmlBefore: {
         required: false,
         type: 'string',
         name: 'Image before',
         min: 1,
         max: 200,
     },
-    imageAfter: {
+    htmlAfter: {
         required: false,
         type: 'string',
         name: 'Image after',

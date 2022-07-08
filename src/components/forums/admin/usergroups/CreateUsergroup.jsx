@@ -8,19 +8,19 @@ const CreateUsergroup = React.forwardRef(({ create }, ref) => {
     let [ rights, setRights ] = useState(ref.current.rights || 0);
     let [ colour ] = useState(ref.current.colour || '');
     let [ title, setTitle ] = useState(ref.current.title || '');
-    let [ imageBefore, setImageBefore ] = useState(ref.current.imageBefore || '');
-    let [ imageAfter, setImageAfter ] = useState(ref.current.imageAfter || '');
+    let [ htmlBefore, setHtmlBefore ] = useState(ref.current.htmlBefore || '');
+    let [ htmlAfter, setHtmlAfter ] = useState(ref.current.htmlAfter || '');
 
-    let [ getRef ] = useDyanmicRefs([ 'rights', 'colour', 'title', 'imageBefore', 'imageAfter' ]);
+    let [ getRef ] = useDyanmicRefs([ 'rights', 'colour', 'title', 'htmlBefore', 'htmlAfter' ]);
 
     useEffect(() => ref.current = {
             name,
             rights,
             colour,
             title,
-            imageBefore,
-            imageAfter,
-        }, [ name, rights, colour, title, imageBefore, imageAfter ]);
+            htmlBefore,
+            htmlAfter,
+        }, [ name, rights, colour, title, htmlBefore, htmlAfter ]);
 
     return (
         <div className='create-usergroup-container'>
@@ -53,24 +53,24 @@ const CreateUsergroup = React.forwardRef(({ create }, ref) => {
                     placeholder='Title' 
                     value={title} 
                     setState={setTitle} 
-                    next={getRef('imageBefore')}
+                    next={getRef('htmlBefore')}
                 />
-                <p>Image Before</p>
+                <p>HTML Before</p>
                 <Input 
-                    ref={getRef('imageBefore')}
+                    ref={getRef('htmlBefore')}
                     className='m-auto'
-                    placeholder='Image Before' 
-                    value={imageBefore} 
-                    setState={setImageBefore} 
-                    next={getRef('imageAfter')}
+                    placeholder='HTML Before' 
+                    value={htmlBefore} 
+                    setState={setHtmlBefore} 
+                    next={getRef('htmlAfter')}
                 />
-                <p>Image After</p>
+                <p>HTML After</p>
                 <Input 
-                    ref={getRef('imageAfter')}
+                    ref={getRef('htmlAfter')}
                     className='m-auto'
-                    placeholder='Image After' 
-                    value={imageAfter} 
-                    setState={setImageAfter}
+                    placeholder='HTML After' 
+                    value={htmlAfter} 
+                    setState={setHtmlAfter}
                     onEnter={create}
                 />
             </div>

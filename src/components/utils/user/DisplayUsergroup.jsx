@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { escapeHtml } from '../../../utils/format';
+
 export default function DisplayUsergroup({ prefix='', suffix='', group, width, height, fontSize }) {
     let style = {};
     let imgStyle = {};
@@ -31,12 +33,11 @@ function WithCrowns({ style, imgStyle, group, name, width, height, fontSize }) {
         style.fontSize = fontSize;
     if(group.colour)
         style.color = group.colour;
+    let html = group.htmlBefore || '';
+    html += escapeHtml(name);
+    html += group.htmlAfter || '';
     return (
-        <span style={style}>
-            {group.imageBefore && <img style={imgStyle} src={group.imageBefore} alt='Prefix' />}
-            {name}
-            {group.imageAfter && <img style={imgStyle} src={group.imageAfter} alt='Suffix' />}
-        </span>
+        <span style={style} dangerouslySetInnerHTML={{ __html: html }}/>
     );
 }
 
