@@ -34,7 +34,7 @@ export default function Users() {
                 type: 'element',
                 value: (
                     <WithCrowns
-                        name={user.displayName}
+                        name={user.display.name}
                         group={user.displayGroup}
                     />
                 )
@@ -144,24 +144,46 @@ export default function Users() {
         
     };
 
+    let deleteUser = (user) => {
+        try {
+
+            axios.delete(`/users/${user._id}`);
+
+            sendNotification({ text: 'User successfully deleted.' });
+
+            setUsers(users.filter(u => u._id !== user._id));
+
+
+        } catch(error) {
+            sendErrorNotification(error);
+        }
+        closeModal();
+    };
+
     let openCreateModal = (edit, user) => {
-        let buttons = [
-            {
-                title: edit ? 'Edit' : 'Create',
+        let buttons = [];
+        buttons.push({
+            title: edit ? 'Edit' : 'Create',
+            column: edit ? 2 : 3,
+            className: 'btn-success',
+            onClick: edit ? () => edit(user) : create,
+        });
+        if(edit)
+            buttons.push({
+                title: 'Delete',
                 column: 3,
-                className: 'btn-success',
-                onClick: edit ? () => edit(user) : create,
-            },
-            {
-                title: 'Cancel',
-                column: 4,
                 className: 'btn-danger',
-                onClick: () => {
-                    closeModal();
-                    valueRef.current = {};
-                }
+                onClick: () => sendConfirmation({ text: 'Are you sure you want to delete this user?', onSuccess: () => deleteUser(user) }),
+            });
+        buttons.push({
+            title: 'Cancel',
+            column: 4,
+            className: 'btn-danger',
+            onClick: () => {
+                closeModal();
+                valueRef.current = {};
             }
-        ];
+        });
         openModal({
             contents: <CreateUser ref={valueRef} create={edit ? () => edit(user) : create } isCreate={!edit}/>,
             buttons,
@@ -182,6 +204,7 @@ export default function Users() {
                 let res = await axios.get(`/users/admin/${page}`);
 
                 setUsers(res.data.users);
+
                 setPageTotal(res.data.pageTotal);
 
             } catch(error) {

@@ -8,11 +8,10 @@ import Input from '../../../utils/Input';
 import Button from '../../../utils/Button';
 
 const CreateUser = React.forwardRef(({ create, isCreate }, ref) => {
-    console.log(ref.current);
     let usergroupsValue = ref.current.usergroups ? ref.current.usergroups.map(group => group._id) : [ '' ];
     if(usergroupsValue.length === 0) usergroupsValue = [ '' ];
     let [ username, setUsername ] = useState(ref.current.username || '');
-    let [ displayName, setDisplayName ] = useState(ref.current.displayName || '');
+    let [ displayName, setDisplayName ] = useState(ref.current.display ? ref.current.display.name : '');
     let [ email, setEmail ] = useState(ref.current.email || '');
     let [ discord, setDiscord ] = useState(ref.current.discord || '');
     let [ displayGroup, setDisplayGroup ] = useState(ref.current.displayGroup ? ref.current.displayGroup._id : '');
@@ -46,6 +45,10 @@ const CreateUser = React.forwardRef(({ create, isCreate }, ref) => {
         };
 
         sendConfirmation({ text: 'Are you sure you wish to revoke their logins?', onSuccess });
+    };
+
+    let viewAsUser = () => {
+        sessionStorage.setItem('viewAsUser', ref.current._id);
     };
     
     useEffect(() => ref.current = {
@@ -206,6 +209,14 @@ const CreateUser = React.forwardRef(({ create, isCreate }, ref) => {
                         className='m-auto'
                         onClick={revokeLogins}
                         title='Revoke'
+                    />
+                }
+                { !isCreate && <p>View website as User</p>}
+                { !isCreate &&
+                    <Button
+                        className='m-auto'
+                        onClick={viewAsUser}
+                        title='View'
                     />
                 }
             </div>

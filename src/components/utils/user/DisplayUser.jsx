@@ -14,13 +14,13 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
         style.fontSize = fontSize;
     if(user.displayGroup.colour)
         style.color = user.displayGroup.colour;
-    title = title || user.displayName;
+    title = title || user.display.name;
     return (
         <>
             {prefix}
             { noLink && 
                 <WithCrowns 
-                    name={user.displayName}
+                    name={user.display.name}
                     group={user.displayGroup} 
                     style={style} 
                     imgStyle={imgStyle}
@@ -29,7 +29,7 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
             { !useATag && !noLink && 
                 <Link to={"/forums/users/"+user._id} className="link" title={title}>
                     <WithCrowns
-                        name={user.displayName}
+                        name={user.display.name}
                         group={user.displayGroup}
                         style={style}
                         imgStyle={imgStyle}
@@ -39,7 +39,7 @@ export default function DisplayUser({ user, prefix='', suffix=' ', title=undefin
             { useATag && !noLink && 
                 <a href={"/forums/users/"+user._id} className="link" title={title}>
                     <WithCrowns
-                        name={user.displayName}
+                        name={user.display.name}
                         group={user.displayGroup}
                         style={style}
                         imgStyle={imgStyle}
@@ -57,6 +57,7 @@ function WithCrowns({style, imgStyle, group, name}) {
     let html = group.htmlBefore || '';
     html += escapeHtml(name);
     html += group.htmlAfter || '';
+    console.log(html);
     return (
         <span style={style} dangerouslySetInnerHTML={{ __html: html }}/>
     );

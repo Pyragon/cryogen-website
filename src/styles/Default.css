@@ -28,6 +28,7 @@ body {
     height: 6rem;
     width: 6rem;
     margin: auto;
+    display: block;
 }
 
 .footer {
