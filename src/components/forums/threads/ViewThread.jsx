@@ -125,7 +125,35 @@ export default function ViewThread({ thread, setThread }) {
     let renameThread = async () => {
 
         let success = async () => {
-            console.log('Renaming to: '+threadTitle);
+
+            console.log('renaming');
+
+            let validateOptions = {
+                title: {
+                    required: true,
+                    name: 'Title',
+                    min: 5,
+                    max: 50,
+                }
+            };
+    
+            let error = validate(validateOptions, { title: threadTitle });
+            if(error) {
+                sendErrorNotification(error);
+                return;
+            }
+
+            try {
+                
+                let res = await axios.post('/forums/threads/'+thread._id+'/rename', { title: threadTitle });
+
+                setThread(res.data.thread);
+                sendNotification({ text: 'Thread has been successfully renamed.'});
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
             closeModal();
         };
 
@@ -167,8 +195,6 @@ export default function ViewThread({ thread, setThread }) {
         scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
     useEffect(() => {
-
-        console.log('loading');
 
         let load = async () => {
 
