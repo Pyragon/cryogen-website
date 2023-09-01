@@ -151,7 +151,7 @@ export default function NewThread() {
                 <CollapsibleWidget
                     title='Poll Options'
                     description='Add a poll to this thread'
-                    collapsed={false}
+                    collapsed={true}
                 >
                     <PollOptions options={options} setOptions={setOptions} question={question} setQuestion={setQuestion}/>
                 </CollapsibleWidget>
