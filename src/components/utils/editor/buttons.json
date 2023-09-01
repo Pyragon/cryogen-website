@@ -5,15 +5,68 @@
         "icon": "fa fa-bold"
     },
     {
+        "name": "Italics BBCode",
+        "type": "bbcode",
+        "text": "[i]$highlight[/i]",
+        "icon": "fas fa-italic"
+    },
+    {
+        "name": "Underline BBCode",
+        "type": "bbcode",
+        "text": "[u]$highlight[/u]",
+        "icon": "fa-solid fa-underline"
+    },
+    {
         "name": "Strikethrough BBCode",
         "type": "bbcode",
         "text": "[s]$highlight[/s]",
         "icon": "fa fa-strikethrough"
     },
     {
+        "name": "Image BBCode",
+        "type": "bbcode",
+        "text": "[img]$highlight[/img]",
+        "icon": "fa-solid fa-image"
+    },
+    {
+        "name": "Link BBCode",
+        "type": "bbcode",
+        "text": "[url=$highlight]$highlight[/url]",
+        "icon": "fa-solid fa-link"
+    },
+    {
+        "name": "Align Left BBCode",
+        "type": "bbcode",
+        "text": "[align=left]$highlight[/align]",
+        "icon": "fa-solid fa-align-left"
+    },
+    {
+        "name": "Align Center BBCode",
+        "type": "bbcode",
+        "text": "[align=center]$highlight[/align]",
+        "icon": "fa-solid fa-align-center"
+    },
+    {
+        "name": "Align Right BBCode",
+        "type": "bbcode",
+        "text": "[align=right]$highlight[/align]",
+        "icon": "fa-solid fa-align-right"
+    },
+    {
+        "name": "Font Colour BBCode",
+        "type": "button",
+        "icon": "fa-solid fa-palette"
+    },
+    {
         "name": "Name of Viewer BBCode",
         "type": "bbcode",
         "text": "[username]",
         "icon": "fa fa-user"
+    },
+    {
+        "name": "Post Count BBCode",
+        "type": "bbcode",
+        "text": "[postcount=1]$highlight[/postcount]",
+        "icon": "fa fa-p"
     }
 ]

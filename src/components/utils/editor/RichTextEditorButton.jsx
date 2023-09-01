@@ -24,9 +24,24 @@ const RichTextEditorButton = React.forwardRef(({ button, value, setState }, ref)
 
 
     };
+    //TODO - Add colour picker
+    // if(button.type == 'button') {
+    //     if(button.name == 'Font Colour BBCode') {
+    //         //open colour palette
+    //         return (
+    //             <i
+    //                 className={button.icon}
+    //                 title={button.name}
+    //                 onClick={() => {
+                        
+    //                 }}
+    //             />
+    //         )
+    //     }
+    // }
     return (
-        <i className=
-            {button.icon} 
+        <i 
+            className={button.icon} 
             title={button.name}
             onClick={() => click(button)}
         />

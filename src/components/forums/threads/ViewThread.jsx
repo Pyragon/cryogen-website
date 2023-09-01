@@ -10,7 +10,6 @@ import UserContext from '../../../utils/contexts/UserContext';
 import setUserActivity from '../../../utils/user-activity';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
-import RenameThread from './RenameThread';
 
 import EditorContext from '../../../utils/contexts/EditorContext';
 import PageContext from '../../../utils/contexts/PageContext';
@@ -20,10 +19,10 @@ import Button from '../../utils/Button';
 import PostList from './PostList';
 import Pages from '../../utils/Pages';
 import Dropdown from '../../utils/Dropdown';
-import '../../../styles/forums/Thread.css';
 import LabelInput from '../../utils/LabelInput';
-import ChangeLabelInput from '../../utils/ChangeLabelInput';
 import DisplayUser from '../../utils/user/DisplayUser';
+
+import '../../../styles/forums/Thread.css';
 
 function canReply(user, thread) {
     if(!user) return false;
@@ -36,7 +35,6 @@ export default function ViewThread({ thread, setThread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
     let threadTitle = thread.title;
-    let [ test, setTest ] = useState('');
     
     let scrollRef = useRef(null);
 
