@@ -70,6 +70,11 @@
     margin-top: 5px;
 }
 
+.link-no-col {
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .link {
     color: white;
     text-decoration: none;

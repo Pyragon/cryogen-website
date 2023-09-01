@@ -39,7 +39,7 @@ export default function Chatbox() {
         let interval = setInterval(loadMessages, 5000);
         return () => clearInterval(interval);
 
-    }, [ messages ]);
+    }, [ ]);
 
     let submitMessage = async() => {
 

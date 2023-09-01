@@ -36,38 +36,6 @@ async function clickedQuote(e, post, setReply) {
     setReply((prev) => prev + (prev ? '\n' : '') + reply);
 }
 
-async function deletePost(sendNotification, sendErrorNotification, user, post, setPosts) {
-    if(!user) return;
-    if(!post.permissions.canModerate(user)) return;
-    sendNotification({
-        text: 'Are you sure?',
-        layout: 'center',
-        buttons: [
-            {
-                addClass: 'btn btn-success',
-                text: 'Yes',
-                onClick: (noty) => {
-                    axios.post('/forums/posts/' + post._id + '/delete')
-                    .then(res => {
-                        setPosts(res.data.posts);
-                        sendNotification({
-                            text: 'Post has been deleted.',
-                        })
-                        noty.close();
-                    }).catch(sendErrorNotification);
-                },
-            },
-            {
-                addClass: 'btn btn-danger',
-                text: 'Cancel',
-                onClick: (noty) => {
-                    noty.close();
-                },
-            }
-        ],
-    });
-}
-
 export default function PostBlock({ post, setPosts }) {
     let { user } = useContext(UserContext);
     let { setReply } = useContext(EditorContext);
@@ -75,23 +43,47 @@ export default function PostBlock({ post, setPosts }) {
     let [ postState, setPostState ] = useState(post);
     let loggedIn = user !== null, canPost = true;
     let [ thanks, setThanks ] = useState(post.thanks);
-    let { sendNotification, sendErrorNotification } = useContext(NotificationContext);
+    let { sendNotification, sendErrorNotification, sendConfirmation, closeModal } = useContext(NotificationContext);
 
-    let options = [
-    ];
+    let confirmDeletion = () => {
+        if(!user) return;
+        if(!post.permissions.canModerate(user)) return;
+        
+        let deletePost = async () => {
 
-    if(post.index !== 0) {
-        options.push({
-            title: 'Delete',
-            onClick: () => deletePost(sendNotification, sendErrorNotification, user, post, setPosts),
-            icon: 'fa fa-trash'
-        });
-    }
+            try {
+
+                closeModal();
+
+                await axios.delete(`/forums/posts/${post._id}`);
+
+                setPosts(posts => posts.filter(p => p._id !== post._id));
+                sendNotification({ text: 'Post has been deleted.' });
+
+            } catch(error) {
+                sendErrorNotification(error);
+            }
+
+        };
+
+        sendConfirmation({ text: 'Are you sure you wish to delete this post?', onSuccess: deletePost });
+        
+    };
 
     let copyIdToClipboard = () => {
         navigator.clipboard.writeText(postState._id);
         sendNotification({ text: 'Copied post id to clipboard.' });
     };
+
+    let options = [];
+
+    if(post.first !== true) {
+        options.push({
+            title: 'Delete',
+            onClick: confirmDeletion,
+            icon: 'fa fa-trash'
+        });
+    }
 
     post.permissions = new Permissions(post.thread.subforum.permissions);
     let canEdit = post.permissions.canEdit(user, post);
@@ -127,7 +119,7 @@ export default function PostBlock({ post, setPosts }) {
                         }
                     </>
                 }
-                { post.permissions.canModerate(user) &&
+                { post.permissions.canModerate(user) && options.length > 0 &&
                     <Dropdown
                         title='Moderator Options'
                         className='edit-option'

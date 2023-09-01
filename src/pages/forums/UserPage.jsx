@@ -57,7 +57,7 @@ export default function UserPage() {
     //debating whether or not to allow a '/section' param to be passed to this page
     let [ activeButton, setActiveButton ] = useState(0);
 
-    let avatar = user && user.avatar ? user.avatar : '/images/default_avatar.png'
+    let avatar = user && user.settings.avatar ? user.settings.avatar : '/images/default_avatar.png'
 
     useEffect(() => {
 
@@ -125,6 +125,29 @@ export default function UserPage() {
                             <SpanIcon icon="fa-thumbs-up" className="small white">
                                 {' In-game Total: '+(user.totalLevel === -1 ? 'N/A' : user.totalLevel)}
                             </SpanIcon>
+                        </div>
+                        <div className='user-info-buttons'>
+                            { user.settings.showEmail && 
+                                <a 
+                                    className='link' 
+                                    href={'mailto:'+user.email}
+                                >
+                                    <i className="fa fa-envelope" />
+                                </a> }
+                            { user.settings.showDiscord && user.discord && 
+                                <a href={'https://discordapp.com/users/'+user.discord} target='__blank'>
+                                    <img 
+                                        src='/images/discord.png' 
+                                        alt='Add Discord'
+                                        style={{ 
+                                            width: '16px', 
+                                            height: '16px',
+                                            marginLeft: '5px',
+                                            verticalAlign: 'middle'
+                                        }} 
+                                    /> 
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>

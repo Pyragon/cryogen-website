@@ -31,7 +31,9 @@ export default function ForumRecents() {
     return (
         <>
             <h4 className="title">Recent News:</h4>
-            { threads.map((thread, index) => ( 
+            { threads.map((thread, index) => { 
+                console.log(thread);
+                return( 
                 <CollapsibleWidget 
                     key={thread._id} 
                     title={thread.title} 
@@ -45,8 +47,8 @@ export default function ForumRecents() {
                     index={index}
                     collapsed={index !== 0 && index !== 1}
                 >
-                    {thread.firstPost.content}
-                </CollapsibleWidget> ) )
+                    <span style={{ whiteSpace: 'pre-wrap' }}dangerouslySetInnerHTML={{ __html: thread.formatted }} />
+                </CollapsibleWidget> ) })
             }
         </>
     )

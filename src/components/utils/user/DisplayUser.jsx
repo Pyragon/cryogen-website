@@ -57,7 +57,6 @@ function WithCrowns({style, imgStyle, group, name}) {
     let html = group.htmlBefore || '';
     html += escapeHtml(name);
     html += group.htmlAfter || '';
-    console.log(html);
     return (
         <span style={style} dangerouslySetInnerHTML={{ __html: html }}/>
     );

@@ -11,6 +11,7 @@ import Usergroups from '../../components/forums/admin/usergroups/Usergroups';
 import '../../styles/forums/Admin.css';
 import BBCodes from '../../components/forums/admin/bbcodes/BBCodes';
 import Users from '../../components/forums/admin/users/Users';
+import Subforums from '../../components/forums/admin/subforums/Subforums';
 
 export default function ForumAdminPage() {
     let { section: sectionParam, page: pageParam } = useParams();
@@ -57,6 +58,7 @@ export default function ForumAdminPage() {
 const sections = [
     {
         title: 'Forums',
+        content: <Subforums />,
         description: 'Manage the main forums including subforums.',
     },
     {

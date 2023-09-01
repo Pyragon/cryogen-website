@@ -71,6 +71,15 @@ export default function VisitorMessages() {
 		loadMessages();
 
 	}, [ page ]);
+	if(!viewingUser.settings.allowVisitorMessages) {
+		return (
+			<p
+				style={{ textAlign: 'center', marginBottom: '20px'}}
+			>
+				This user has chosen not to allow visitor messages.
+			</p>
+		)
+	}
 	return (
 		<>
 			{ messages.length === 0 && 

@@ -40,6 +40,7 @@ function request(requestFunction, path, params) {
             }
             if (error.message && error.message.includes('timeout')) {
                 timeoutError = true;
+                console.error('Timed out while requesting ' + path);
                 reject('It looks like the server has timed out. Please wait for it to come back online.');
                 return;
             }

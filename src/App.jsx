@@ -136,8 +136,7 @@ export default function App() {
                                 {
                                     notifications.map((n, index) => {
                                         return <Notification key={index} {...n} />
-                                    }
-                                    )
+                                    })
                                 }
                             </div>
                             <Routes>

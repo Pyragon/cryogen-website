@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 import axios from '../../../utils/axios';
 import { validate, validatePost } from '../../../utils/validate';
+import { formatDate } from '../../../utils/format';
 import NotificationContext from '../../../utils/contexts/NotificationContext';
 
 import Permissions from '../../../utils/permissions';
@@ -9,6 +10,7 @@ import UserContext from '../../../utils/contexts/UserContext';
 import setUserActivity from '../../../utils/user-activity';
 import CollapsibleWidget from '../../utils/CollapsibleWidget';
 import RichTextEditor from '../../utils/editor/RichTextEditor';
+import RenameThread from './RenameThread';
 
 import EditorContext from '../../../utils/contexts/EditorContext';
 import PageContext from '../../../utils/contexts/PageContext';
@@ -19,6 +21,9 @@ import PostList from './PostList';
 import Pages from '../../utils/Pages';
 import Dropdown from '../../utils/Dropdown';
 import '../../../styles/forums/Thread.css';
+import LabelInput from '../../utils/LabelInput';
+import ChangeLabelInput from '../../utils/ChangeLabelInput';
+import DisplayUser from '../../utils/user/DisplayUser';
 
 function canReply(user, thread) {
     if(!user) return false;
@@ -30,11 +35,14 @@ function canReply(user, thread) {
 export default function ViewThread({ thread, setThread }) {
     let [ posts, setPosts ] = useState([]);
     let [ reply, setReply ] = useState('');
+    let threadTitle = thread.title;
+    let [ test, setTest ] = useState('');
+    
     let scrollRef = useRef(null);
 
     let { user } = useContext(UserContext);
     let { page } = useContext(PageContext);
-    let { sendErrorNotification, sendConfirmation } = useContext(NotificationContext);
+    let { sendErrorNotification, sendNotification, sendConfirmation, openModal, closeModal } = useContext(NotificationContext);
 
     let pin = async () => {
 
@@ -43,6 +51,8 @@ export default function ViewThread({ thread, setThread }) {
             let res = await axios.post(`/forums/threads/${thread._id}/pin`);
 
             setThread(res.data.thread);
+
+            sendNotification({ text: `Thread has been ${res.data.thread.pinned ? 'pinned' : 'unpinned'}.`});
 
         } catch(error) {
             sendErrorNotification(error);
@@ -56,6 +66,8 @@ export default function ViewThread({ thread, setThread }) {
             let res = await axios.post(`/forums/threads/${thread._id}/lock`);
 
             setThread(res.data.thread);
+
+            sendNotification({ text: `Thread has been ${res.data.thread.open ? 'unlocked' : 'locked'}.`});
 
         } catch(error) {
             sendErrorNotification(error);
@@ -72,9 +84,10 @@ export default function ViewThread({ thread, setThread }) {
         let onSuccess = async () => {
 
             try {
-                let res = await axios.delete(`/forums/threads/${thread._id}`);
+                let res = await axios.post(`/forums/threads/${thread._id}/archive`);
 
                 setThread(res.data.thread);
+                closeModal();
 
                 sendErrorNotification(`Thread has been ${res.data.thread.archived ? 'deleted' : 'restored'}.`);
             } catch(error) {
@@ -82,7 +95,7 @@ export default function ViewThread({ thread, setThread }) {
             }
         }
 
-        sendConfirmation('Are you sure you wish to delete this thread?', onSuccess);
+        sendConfirmation({ text: 'Are you sure you wish to delete this thread?', onSuccess});
     };
 
     let replyToThread = async () => {
@@ -109,29 +122,44 @@ export default function ViewThread({ thread, setThread }) {
         }
     };
 
-    let [ options ] = useState([
+    let renameThread = async () => {
+
+        let success = async () => {
+            console.log('Renaming to: '+threadTitle);
+            closeModal();
+        };
+
+        let buttons = [
             {
-                title: 'Pin Thread',
-                icon: 'fas fa-thumbtack',
-                onClick: pin,
+                title: 'Rename',
+                column: 3,
+                className: 'btn-success',
+                onClick: success,
             },
             {
-                title: 'Lock Thread',
-                icon: 'fas fa-lock',
-                onClick: lock,
-            },
-            {
-                title: 'Delete Thread',
-                icon: 'fas fa-trash-alt',
-                onClick: deleteThread,
-            },
-            {
-                title: 'Move Thread',
-                icon: 'fas fa-arrows-alt',
-                onClick: () => {
-                }
-            },
-        ]);
+                title: 'Cancel',
+                column: 4,
+                className: 'btn-danger',
+                onClick: closeModal
+            }
+        ];
+
+        openModal({ contents: (
+            <LabelInput
+                className="rename-thread-input"
+                title='New Thread Title'
+                defaultValue={thread.title}
+                value={null}
+                setState={text => threadTitle = text}
+                placeholder='New Thread Title'
+                onEnter={success}
+            />
+        ), buttons })
+
+    };
+
+    let [ options, setOptions ] = useState([]);
+
     if(thread.subforum.permissions)
         thread.permissions = new Permissions(thread.subforum.permissions);
 
@@ -139,6 +167,8 @@ export default function ViewThread({ thread, setThread }) {
         scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
     useEffect(() => {
+
+        console.log('loading');
 
         let load = async () => {
 
@@ -165,13 +195,41 @@ export default function ViewThread({ thread, setThread }) {
 
         load();
 
-        options[0].title = thread.pinned ? 'Unpin Thread' : 'Pin Thread';
-        options[1].title = thread.open ? 'Lock Thread' : 'Unlock Thread';
-        options[1].icon = thread.open ? 'fas fa-lock' : 'fas fa-lock-open';
-        options[2].title = thread.archived ? 'Restore Thread' : 'Delete Thread';
-        options[2].icon = thread.archived ? 'fas fa-trash-restore' : 'fas fa-trash-alt';
+        setOptions([
+            {
+                title: (thread.pinned ? 'Unp' : 'P') + 'in Thread',
+                icon: 'fas fa-thumbtack',
+                onClick: pin,
+            },
+            {
+                title: (!thread.open ? 'Unl' : 'L') + 'ock Thread',
+                icon: 'fas fa-lock' + (!thread.open ? '-open' : ''),
+                onClick: lock,
+            },
+            {
+                title: 'Rename Thread',
+                icon: 'fas fa-edit',
+                onClick: renameThread,
+            },
+            {
+                title: (thread.archived ? 'Restore' : 'Delete') + ' Thread',
+                icon: 'fas fa-trash-'+(thread.archived ? 'restore' : 'alt'),
+                onClick: deleteThread,
+            },
+            {
+                title: 'Move Thread',
+                icon: 'fas fa-arrows-alt',
+                onClick: () => {
+                }
+            },
+        ]);
 
     }, [ user, thread, page ]);
+
+    useEffect(() => {
+        return closeModal;
+    }, []);
+    
     let providerValue = useMemo(() => ({ reply, setReply }), [ reply, setReply ]);
     return (
         <div>
@@ -189,7 +247,34 @@ export default function ViewThread({ thread, setThread }) {
             }
             <EditorContext.Provider value={providerValue}>
                 <CollapsibleWidget
-                    title={thread.title}
+                    title={
+                        <>
+                            { thread.pinned ?
+                                <>
+                                    <i style={{marginRight: '5px', color: 'green'}} className="fas fa-thumbtack" />
+                                </>
+                            :
+                                ''
+                            }
+                            {
+                                !thread.open ?
+                                    <>
+                                        <i style={{marginRight: '5px', color: 'red'}} className="fas fa-lock" />
+                                    </>
+                                :
+                                    ''
+                            }
+                            { thread.title }
+                        </>
+                    }
+                    description={
+                        !thread.archived ? '' 
+                        : (
+                            <>
+                                <span className='red'>Thread deleted by {<DisplayUser user={thread.archivedBy} />}</span>
+                                <span> - {formatDate(thread.archivedStamp)}</span>
+                            </>
+                        )}
                     minimizable={false}
                     ref={scrollRef}
                 >

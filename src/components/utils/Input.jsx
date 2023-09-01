@@ -11,8 +11,9 @@ const Input = React.forwardRef(({ className="", style, value="", type="text", pl
             onChange={e => setState(e.target.value)}
             onKeyDown={e => {
                 if(e.key === 'Enter') {
+                    console.log('hit enter, value:', value);
                     if(next) next.current.focus();
-                    else if(onEnter) onEnter();
+                    else if(onEnter) onEnter(value);
                 }
             }}/>
     )

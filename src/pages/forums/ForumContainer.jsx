@@ -10,6 +10,7 @@ import OnlineUsers from '../../components/forums/OnlineUsers';
 import Poll from '../../components/forums/threads/polls/Poll';
 
 import Breadcrumbs from '../../components/forums/crumbs/Breadcrumbs';
+import DiscordWidget from '../../components/utils/DiscordWidget';
 
 export default function ForumContainer({ children, index=false, thread, breadcrumbs }) {
     let { user } = useContext(UserContext);
@@ -27,6 +28,7 @@ export default function ForumContainer({ children, index=false, thread, breadcru
                 { thread && thread.poll && <Poll thread={thread}/> }
                 { thread && <UsersViewingThread thread={thread}/> }
                 <ForumStats />
+                <DiscordWidget />
                 <LatestThreads />
             </div>
             { index && <OnlineUsers />}

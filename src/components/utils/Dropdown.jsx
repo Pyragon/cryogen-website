@@ -36,7 +36,7 @@ export default function Dropdown({ title, className='', options, useGrid }) {
             <Button 
                 style={style}
                 ref={buttonRef}
-                onClick={() => setOpen(!open)}
+                onClick={() => { setOpen(!open); console.log(dropdownRef.current.getBoundingClientRect()) }}
             >
                 <span>{title}</span>
                 <i className={'fas fa-chevron-'+(open ? 'up' : 'down')}/>
@@ -45,18 +45,20 @@ export default function Dropdown({ title, className='', options, useGrid }) {
                 className={'dropdown-content small ' +(open ? openClass : '')}
                 ref={dropdownRef}
             >
-                { options.map(option => (
-                    <div 
-                        key={option.title}
-                        onClick={() => {
-                            setOpen(false);
-                            option.onClick();
-                        }}
-                    >
-                        <i className={option.icon}/>
-                        <span>{option.title}</span>
-                    </div>
-                )) }
+                { options.map(option => {
+                    return (
+                        <div 
+                            key={option.title}
+                            onClick={() => {
+                                setOpen(false);
+                                option.onClick();
+                            }}
+                        >
+                            <i className={option.icon}/>
+                            <span>{option.title}</span>
+                        </div>
+                    )
+                 }) }
             </div>
         </div>
     );

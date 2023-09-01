@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import Input from './Input';
 
-const LabelInput = React.forwardRef(({ className="", title, description, defaultValue, value, placeholder="", type="text", setState, onEnter, next }, ref) => {
-    let text, setText;
-    if(!value)
-        [ text, setText ] = useState(defaultValue);
+const ChangeLabelInput = React.forwardRef(({ className="", title, description, defaultText, placeholder="", type="text", onEnter, next, stateChange }, ref) => {
+    let [ text, setText ] = useState(defaultText);
     return (
         <div className="input-container" style={{gridTemplateColumns: '1fr'}}>
             <div className='input-title'>
@@ -18,10 +16,10 @@ const LabelInput = React.forwardRef(({ className="", title, description, default
                 type={type} 
                 className={"input "+className} 
                 placeholder={placeholder} 
-                value={value || text} 
-                setState={newValue => {
-                    if(!value) setText(newValue);
-                    setState(newValue);
+                value={text} 
+                setState={(value) => {
+                    setText(value);
+                    stateChange(value);
                 }}
                 onEnter={onEnter}
                 next={next}
@@ -30,4 +28,4 @@ const LabelInput = React.forwardRef(({ className="", title, description, default
     )
 });
 
-export default LabelInput;
+export default ChangeLabelInput;

@@ -11,7 +11,7 @@ export default function PostAuthor({ post }) {
                 <DisplayUser 
                     user={post.author} 
                     useUserTitle={true}
-                    avatar={post.author.avatar || '/images/default_avatar.png'}
+                    avatar={post.author.settings.avatar || '/images/default_avatar.png'}
                 />
                 <SpanIcon icon="fa-clipboard" className="post-author-block-line small">
                     {' Post Count: '+post.postCount}
